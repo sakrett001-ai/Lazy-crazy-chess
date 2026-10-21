@@ -1,0 +1,16 @@
+import {build} from '../../human-base/node_modules/esbuild/lib/main.js';
+import {readFile,writeFile} from 'node:fs/promises';
+import {fileURLToPath} from 'node:url';
+import path from 'node:path';
+const root=path.dirname(path.dirname(fileURLToPath(import.meta.url)));
+const shared=path.resolve(root,'../human-base');
+const bundle=await build({entryPoints:[path.join(root,'src/viewer.mjs')],nodePaths:[path.join(root,'node_modules'),path.join(shared,'node_modules')],bundle:true,minify:true,write:false,format:'iife',legalComments:'inline',target:'es2022'});
+let html=await readFile(path.join(root,'src/index.html'),'utf8');
+const css=await readFile(path.join(root,'src/style.css'),'utf8');
+const model=(await readFile(path.join(root,'assets/white-pawn.glb'))).toString('base64');
+const poster=(await readFile(path.join(root,'review/neutral.png'))).toString('base64');
+const license=await readFile(path.join(shared,'licenses/three-MIT.txt'),'utf8');
+const cameraLicense=await readFile(path.join(shared,'licenses/anatomy-MIT.txt'),'utf8');
+html=html.replace('/*STYLE*/',()=>css).replace('/*SCRIPT*/',()=>`/* Three.js MIT license:\n${license}\nCamera helper (Anatomy):\n${cameraLicense}\n*/\n`+bundle.outputFiles[0].text.replaceAll('</script','<\\/script')).replace('/*MODEL*/',()=>model).replace('/*POSTER*/',()=>`data:image/png;base64,${poster}`);
+await writeFile(path.join(root,'white-pawn.html'),html);
+console.log(`Standalone white pawn: ${(Buffer.byteLength(html)/1048576).toFixed(1)} MiB; no external resources.`);

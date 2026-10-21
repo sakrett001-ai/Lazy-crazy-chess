@@ -1,0 +1,85 @@
+{
+  "version": "0.1.0",
+  "base_glb_sha256": "6f12aaa99ced53983ea3188493a755c46342c908055caf125c5b3576eb099962",
+  "glb_sha256": "ebc1aa828665c9727781f365d4da584f8c2c7530490317ca12f4faef5a7a0618",
+  "clips": [
+    "Guard_Breath",
+    "Shield_Brace",
+    "Spear_Study"
+  ],
+  "durations": {
+    "Guard_Breath": 6,
+    "Shield_Brace": 4,
+    "Spear_Study": 4
+  },
+  "frames": {
+    "spear_grip": [
+      -0.28447425365448,
+      -0.3348909020423889,
+      1.148618459701538
+    ],
+    "spear_axis": [
+      -2.575106918811798e-07,
+      4.3213367462158203e-07,
+      1.0
+    ],
+    "spear_bone": "wrist.R",
+    "shield_grip": [
+      0.005519441328942776,
+      -0.21178458631038666,
+      1.1586188077926636
+    ],
+    "shield_right": [
+      0.9911236763000488,
+      0.1329430341720581,
+      3.1292398716686876e-07
+    ],
+    "shield_up": [
+      5.662444664267241e-07,
+      -1.4901169720360485e-07,
+      1.0
+    ],
+    "shield_handle_axis": [
+      5.662444664267241e-07,
+      -1.4901169720360485e-07,
+      1.0
+    ],
+    "shield_bone": "wrist.L",
+    "shield_forearm_axis": [
+      -0.7737805247306824,
+      -0.10379084199666977,
+      -0.6248928904533386
+    ],
+    "shield_strap_centers": [
+      [
+        0.23994030058383942,
+        -0.22122913599014282,
+        1.2530138492584229
+      ],
+      [
+        0.17535240948200226,
+        -0.22989261150360107,
+        1.2008538246154785
+      ]
+    ]
+  },
+  "render_seconds": {
+    "neutral.png": 17.05,
+    "model-front.png": 4.25,
+    "model-back.png": 3.97,
+    "model-left.png": 3.57,
+    "model-right.png": 3.84,
+    "model-top.png": 3.41,
+    "model-bottom.png": 3.83,
+    "model-Shield_Brace.png": 8.11,
+    "model-Spear_Study.png": 9.94,
+    "model-spear-grip.png": 12.62,
+    "model-shield-grip.png": 10.57
+  },
+  "scope": "First equipped white pawn; fitted grip and solo motion studies. No chess logic or paired combat.",
+  "limits": [
+    "No cloth/horsehair simulation",
+    "Full board LOD remains future work",
+    "Armor is fantasy equipment, not a historical replica"
+  ]
+}

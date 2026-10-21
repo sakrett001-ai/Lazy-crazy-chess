@@ -1,0 +1,12 @@
+{
+  "status": "passed",
+  "scope": "Caption-only revision: offline390px load, two clip controls and truthful captions, no console/network errors, embeddedGLB byte equality. No renewed geometric-clearance claim.",
+  "html_sha256": "ad13842b6d8744cb0e9ca80fd7405d64a39dd9cda0cb675901adbcf6100e36ca",
+  "glb_sha256": "ebc1aa828665c9727781f365d4da584f8c2c7530490317ca12f4faef5a7a0618",
+  "captions": [
+    "Тест щита · движение руки и щита без переноса веса",
+    "Вынос копья · наклон древка на 45° и возврат"
+  ],
+  "errors": [],
+  "network": []
+}

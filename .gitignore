@@ -6,3 +6,5 @@ __pycache__/
 prototypes/human-base/review/browser-*.png
 prototypes/human-base/review/model-*.png
 .venv/
+prototypes/white-pawn/review/browser-*.png
+prototypes/white-pawn/review/model-*.png
