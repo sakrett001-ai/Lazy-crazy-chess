@@ -1,0 +1,191 @@
+{
+  "status": "passed",
+  "bpy_version": "4.5.3 LTS",
+  "pose_sha256": "237c45565c22d3d2dada0d78dd39c65e4abcfc459d31f2452bb621769a4e0e3e",
+  "pose": "rest",
+  "subdivision_after_skin": {
+    "R": {
+      "thumb_triangles": 1668,
+      "opposing_hand_triangles": 11351,
+      "distal_skin_vertices": 399,
+      "handle_radius_m": 0.014,
+      "minimum_thumb_triangle_radius_m": 0.015038007584158915,
+      "minimum_handle_gap_m": 0.0010380075841589145,
+      "thumb_vertices_inside_handle": 0,
+      "thumb_hand_bvh_candidates": 0,
+      "thumb_hand_triangle_intersections": 0,
+      "distal_to_other_skin_min_m": 0.004632868338376284,
+      "distal_axial_range_m": [
+        0.02606785282693469,
+        0.04652141912618535
+      ]
+    },
+    "L": {
+      "thumb_triangles": 1668,
+      "opposing_hand_triangles": 12377,
+      "distal_skin_vertices": 399,
+      "handle_radius_m": 0.014,
+      "minimum_thumb_triangle_radius_m": 0.015037907142104885,
+      "minimum_handle_gap_m": 0.0010379071421048845,
+      "thumb_vertices_inside_handle": 0,
+      "thumb_hand_bvh_candidates": 0,
+      "thumb_hand_triangle_intersections": 0,
+      "distal_to_other_skin_min_m": 0.0046327002346515656,
+      "distal_axial_range_m": [
+        0.02606772869333618,
+        0.046521528660245615
+      ]
+    }
+  },
+  "export_subdivision_before_skin": {
+    "R": {
+      "thumb_triangles": 1668,
+      "opposing_hand_triangles": 11351,
+      "distal_skin_vertices": 399,
+      "handle_radius_m": 0.014,
+      "minimum_thumb_triangle_radius_m": 0.014953407461345885,
+      "minimum_handle_gap_m": 0.000953407461345885,
+      "thumb_vertices_inside_handle": 0,
+      "thumb_hand_bvh_candidates": 0,
+      "thumb_hand_triangle_intersections": 0,
+      "distal_to_other_skin_min_m": 0.004632703494280577,
+      "distal_axial_range_m": [
+        0.026055931912432495,
+        0.046521419126253294
+      ]
+    },
+    "L": {
+      "thumb_triangles": 1668,
+      "opposing_hand_triangles": 12377,
+      "distal_skin_vertices": 399,
+      "handle_radius_m": 0.014,
+      "minimum_thumb_triangle_radius_m": 0.014953330004451496,
+      "minimum_handle_gap_m": 0.0009533300044514952,
+      "thumb_vertices_inside_handle": 0,
+      "thumb_hand_bvh_candidates": 0,
+      "thumb_hand_triangle_intersections": 0,
+      "distal_to_other_skin_min_m": 0.004632236436009407,
+      "distal_axial_range_m": [
+        0.026055926991547906,
+        0.04652152866032555
+      ]
+    }
+  },
+  "negative_old_grip": {
+    "R": {
+      "thumb_triangles": 1668,
+      "opposing_hand_triangles": 11351,
+      "distal_skin_vertices": 399,
+      "handle_radius_m": 0.014,
+      "minimum_thumb_triangle_radius_m": 0.014560832631894087,
+      "minimum_handle_gap_m": 0.0005608326318940864,
+      "thumb_vertices_inside_handle": 0,
+      "thumb_hand_bvh_candidates": 84,
+      "thumb_hand_triangle_intersections": 83,
+      "distal_to_other_skin_min_m": 5.985364623484202e-05,
+      "distal_axial_range_m": [
+        -0.013320681661640243,
+        0.015050772949088409
+      ]
+    },
+    "L": {
+      "thumb_triangles": 1668,
+      "opposing_hand_triangles": 12377,
+      "distal_skin_vertices": 399,
+      "handle_radius_m": 0.014,
+      "minimum_thumb_triangle_radius_m": 0.014560688219673228,
+      "minimum_handle_gap_m": 0.0005606882196732277,
+      "thumb_vertices_inside_handle": 0,
+      "thumb_hand_bvh_candidates": 84,
+      "thumb_hand_triangle_intersections": 83,
+      "distal_to_other_skin_min_m": 6.010658398736268e-05,
+      "distal_axial_range_m": [
+        -0.013320553452223383,
+        0.015050662689069627
+      ]
+    }
+  },
+  "failures": [],
+  "scope": "Weighted thumb triangles (>0.25) against non-thumb hand triangles (<0.05), excluding the adjoining web transition. Exact triangle-edge intersection checks and triangle distance to a conservative infinite 14 mm cylinder. Not whole-body, armor, continuous-motion or final-GLB validation. Action peak snapshots are also included; no continuous-motion claim.",
+  "checked_at_utc": "2026-10-21T19:07:11.047948+00:00",
+  "input_asset": "prototypes/human-base/assets/human-base.blend",
+  "input_asset_sha256": "aee22c11262c7cbd9f0905eb8fe425652c642a08660db54653136ccf4c290206",
+  "reproduction": "python prototypes/white-pawn/scripts/thumb_checks.py --motion-peaks --out report.json",
+  "motion_peaks": {
+    "Shield_Brace": {
+      "time_s": 1.8,
+      "hands": {
+        "R": {
+          "thumb_triangles": 1668,
+          "opposing_hand_triangles": 11361,
+          "distal_skin_vertices": 399,
+          "handle_radius_m": 0.014,
+          "minimum_thumb_triangle_radius_m": 0.014953337820104504,
+          "minimum_handle_gap_m": 0.0009533378201045037,
+          "thumb_vertices_inside_handle": 0,
+          "thumb_hand_bvh_candidates": 0,
+          "thumb_hand_triangle_intersections": 0,
+          "distal_to_other_skin_min_m": 0.004632491152733564,
+          "distal_axial_range_m": [
+            0.026055809105136607,
+            0.04652141946647664
+          ]
+        },
+        "L": {
+          "thumb_triangles": 1668,
+          "opposing_hand_triangles": 11453,
+          "distal_skin_vertices": 399,
+          "handle_radius_m": 0.014,
+          "minimum_thumb_triangle_radius_m": 0.014953249718907817,
+          "minimum_handle_gap_m": 0.0009532497189078167,
+          "thumb_vertices_inside_handle": 0,
+          "thumb_hand_bvh_candidates": 0,
+          "thumb_hand_triangle_intersections": 0,
+          "distal_to_other_skin_min_m": 0.004632347729057074,
+          "distal_axial_range_m": [
+            0.026055922338190207,
+            0.04652140383202763
+          ]
+        }
+      }
+    },
+    "Spear_Study": {
+      "time_s": 1.9,
+      "hands": {
+        "R": {
+          "thumb_triangles": 1668,
+          "opposing_hand_triangles": 11351,
+          "distal_skin_vertices": 399,
+          "handle_radius_m": 0.014,
+          "minimum_thumb_triangle_radius_m": 0.01495353813663403,
+          "minimum_handle_gap_m": 0.000953538136634029,
+          "thumb_vertices_inside_handle": 0,
+          "thumb_hand_bvh_candidates": 0,
+          "thumb_hand_triangle_intersections": 0,
+          "distal_to_other_skin_min_m": 0.004632438533008099,
+          "distal_axial_range_m": [
+            0.02605576246445218,
+            0.04652132996340819
+          ]
+        },
+        "L": {
+          "thumb_triangles": 1668,
+          "opposing_hand_triangles": 12185,
+          "distal_skin_vertices": 399,
+          "handle_radius_m": 0.014,
+          "minimum_thumb_triangle_radius_m": 0.01495343568268236,
+          "minimum_handle_gap_m": 0.0009534356826823593,
+          "thumb_vertices_inside_handle": 0,
+          "thumb_hand_bvh_candidates": 0,
+          "thumb_hand_triangle_intersections": 0,
+          "distal_to_other_skin_min_m": 0.00463249022141099,
+          "distal_axial_range_m": [
+            0.026056046345503958,
+            0.04652152483804839
+          ]
+        }
+      }
+    }
+  },
+  "motion_peaks_checked_at_utc": "2026-10-21T19:09:04.762762+00:00"
+}
