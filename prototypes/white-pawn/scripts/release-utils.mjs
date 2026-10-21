@@ -3,7 +3,7 @@ import {createHash} from 'node:crypto';
 
 export const REPOSITORY='sakrett001-ai/Lazy-crazy-chess';
 export const MAX_DOCUMENT_BYTES=2_000_000;
-export const MODEL_VERSION='0.1.0';
+export const MODEL_VERSION='0.2.0';
 export const sha256=data=>createHash('sha256').update(data).digest('hex');
 export function sourceCommit(value) {
   assert.match(value??'',/^[a-f0-9]{40}$/,'A full immutable source commit is required');
@@ -34,9 +34,13 @@ export function assertBaseChecks({modelBytes,standaloneHtml,modelReport,viewerRe
   assert.equal(viewerReport?.glbSha256,hash,'Standalone report belongs to a different model');
   assert.equal(viewerReport?.documentSha256,sha256(standaloneHtml),'Standalone report is stale for this HTML');
 }
-export function makeRelease({html,config,modelBytes,standaloneHtml,modelReport,viewerReport,hostedReport,builtAt=new Date().toISOString()}) {
+export function makeRelease({html,config,modelBytes,standaloneHtml,modelReport,equipmentReport,geometryReport,viewerReport,hostedReport,builtAt=new Date().toISOString()}) {
   const document=validateCandidate({html,config,modelBytes});
   assertBaseChecks({modelBytes,standaloneHtml,modelReport,viewerReport});
+  assert.equal(equipmentReport?.status,'passed','Equipment and motion verification did not pass');
+  assert.equal(equipmentReport?.glbSha256,sha256(modelBytes),'Equipment report belongs to different GLB bytes');
+  assert.equal(geometryReport?.status,'passed','Geometry audit did not pass');
+  assert.equal(geometryReport?.glbSha256,sha256(modelBytes),'Geometry report belongs to different GLB bytes');
   assert.equal(hostedReport?.status,'passed','Hosted browser verification did not pass');
   assert.equal(hostedReport?.sourceCommit,config.sourceCommit,'Hosted report belongs to a different commit');
   assert.equal(hostedReport?.documentSha256,document.sha256,'Hosted report is stale for this HTML');

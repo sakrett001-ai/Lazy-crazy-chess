@@ -34,6 +34,9 @@ jobs:
           cache-dependency-path: prototypes/human-base/package-lock.json
       - name: Install pinned viewer dependencies
         run: npm ci --prefix prototypes/human-base
+      - name: Verify exported equipment and motion
+        working-directory: prototypes/white-pawn
+        run: npm run verify:equipment
       - name: Install test browser
         working-directory: prototypes/human-base
         run: npx playwright install --with-deps chromium
@@ -59,6 +62,8 @@ jobs:
           if-no-files-found: ignore
           path: |
             prototypes/white-pawn/review/viewer-checks.json
+            prototypes/white-pawn/review/equipment-checks.json
+            prototypes/white-pawn/review/geometry-checks.json
             dist/review/
       - name: Publish exact release without replacing other pages
         if: github.event_name != 'pull_request'

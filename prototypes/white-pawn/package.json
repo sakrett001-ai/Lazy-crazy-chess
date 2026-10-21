@@ -1,11 +1,12 @@
 {
   "name": "lazy-crazy-chess-white-pawn",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "private": true,
   "type": "module",
   "scripts": {
     "build": "node scripts/build.mjs",
     "verify": "node scripts/verify.mjs",
+    "verify:equipment": "node scripts/verify-equipment.mjs",
     "build:hosted": "node scripts/build-hosted.mjs",
     "verify:hosted": "node scripts/verify-hosted.mjs",
     "release:hosted": "node scripts/build-hosted.mjs --release",

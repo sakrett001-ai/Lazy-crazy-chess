@@ -11,14 +11,32 @@ from mathutils import Vector, Quaternion, Matrix
 _RIG = None
 _REST = {}
 _HAND = {}
-_LEFT_WRIST_LOCAL = None
+_FOOT_TARGETS = {}
+_LEFT_GUARD = None
+_SOLVES = {}
+# Authored local rotations for the unchanged MakeHuman thumb chain (w,x,y,z).
+# Unlike the previous curl-to-palm heuristic, these oppose the thumb across
+# the cylinder and keep its distal skin outside the palm. They are pose
+# offsets, not anatomical joint angles; the source thumb is already curved.
+_THUMB_GRIP_R = (
+    (.987224996, -.032383014, .019823313, -.154742315),
+    (.964804769, -.220435858, .137705535, -.039961629),
+    (.863410830, .361466289, -.053641222, -.347831130),
+)
 
 
 def configure(rig):
-    global _RIG, _REST, _HAND, _LEFT_WRIST_LOCAL
+    global _RIG, _REST, _HAND, _FOOT_TARGETS, _LEFT_GUARD
     _RIG = rig
-    _LEFT_WRIST_LOCAL = None
+    _LEFT_GUARD = None
     _REST = {b.name: b.matrix_local.copy() for b in rig.data.bones}
+    # The complete sole keeps its bind orientation. The small stagger is part
+    # of the guard, not an unannounced step halfway through a clip.
+    _FOOT_TARGETS = {
+        side: rig.data.bones['foot.' + side].head_local.copy()
+              + Vector((0, -.10 if side == 'L' else .10, 0))
+        for side in ('L', 'R')
+    }
     _HAND = {}
     for side, sign in [('L', 1), ('R', -1)]:
         bones = rig.data.bones
@@ -30,16 +48,8 @@ def configure(rig):
         forward = (forward - across * forward.dot(across)).normalized()
         flex = across * (-1 if side == 'L' else 1)
         normal = flex.cross(forward).normalized()
-        center = (index + little + wrist) / 3
-        thumbs = {}
-        for j in range(1, 4):
-            b = bones[f'finger1-{j}.{side}']
-            direction = (b.tail_local - b.head_local).normalized()
-            toward = (center - b.head_local).normalized()
-            axis = direction.cross(toward)
-            thumbs[j] = axis.normalized() if axis.length > .01 else flex.copy()
         _HAND[side] = dict(across=across, forward=forward, flex=flex,
-                           normal=normal, thumb_axes=thumbs)
+                           normal=normal)
     apply_pose('rest', 0.)
     reset_pose()
     return rig
@@ -76,10 +86,16 @@ def _aim(name, current_vector, desired_vector):
 
 def _arm(side, target, pole):
     """Two anatomical links, keeping each original split segment intact."""
+    _two_link('upperarm01.' + side, 'lowerarm01.' + side,
+              'wrist.' + side, target, pole)
+
+
+def _two_link(upper, lower, end, target, pole):
+    """Reach with rotations only; record any unreachable target explicitly."""
     pb = _RIG.pose.bones
-    shoulder = pb['upperarm01.' + side].head.copy()
-    elbow = pb['lowerarm01.' + side].head.copy()
-    wrist = pb['wrist.' + side].head.copy()
+    shoulder = pb[upper].head.copy()
+    elbow = pb[lower].head.copy()
+    wrist = pb[end].head.copy()
     l1, l2 = (elbow - shoulder).length, (wrist - elbow).length
     direction = Vector(target) - shoulder
     distance = min(max(direction.length, abs(l1 - l2) + .002), l1 + l2 - .002)
@@ -90,10 +106,24 @@ def _arm(side, target, pole):
     height = math.sqrt(max(0, l1*l1 - along*along))
     wanted_elbow = shoulder + direction*along + projected*height
     wanted_wrist = shoulder + direction*distance
-    _aim('upperarm01.' + side, elbow - shoulder, wanted_elbow - shoulder)
-    elbow = pb['lowerarm01.' + side].head.copy()
-    wrist = pb['wrist.' + side].head.copy()
-    _aim('lowerarm01.' + side, wrist - elbow, wanted_wrist - elbow)
+    _aim(upper, elbow - shoulder, wanted_elbow - shoulder)
+    elbow = pb[lower].head.copy()
+    wrist = pb[end].head.copy()
+    _aim(lower, wrist - elbow, wanted_wrist - elbow)
+    _SOLVES[end] = {'target_error_m': (pb[end].head - Vector(target)).length,
+                   'reach_m': (Vector(target) - shoulder).length,
+                   'link_sum_m': l1 + l2}
+
+
+def _stance(translation):
+    root = _REST['root'].copy()
+    root.translation += Vector(translation)
+    _RIG.pose.bones['root'].matrix = root
+    bpy.context.view_layer.update()
+    for side, sign in [('L', 1), ('R', -1)]:
+        _two_link('upperleg01.' + side, 'lowerleg01.' + side,
+                  'foot.' + side, _FOOT_TARGETS[side], (sign*.06, -1, 0))
+        _world_quaternion('foot.' + side, _REST['foot.' + side].to_quaternion())
 
 
 def _wrist(side, shaft_axis, hand_forward):
@@ -119,51 +149,87 @@ def _grip(side):
     for finger in range(2, 6):
         for joint, angle in enumerate(angles[finger], 1):
             _rot(f'finger{finger}-{joint}.{side}', hand['flex'], angle)
-    for j, angle in [(1, 28.90), (2, 63.23), (3, 13.17)]:
-        _rot(f'finger1-{j}.{side}', hand['thumb_axes'][j], angle)
+    for j, values in enumerate(_THUMB_GRIP_R, 1):
+        w, x, y, z = values
+        if side == 'L':
+            y, z = -y, -z
+        _RIG.pose.bones[f'finger1-{j}.{side}'].rotation_quaternion = Quaternion((w, x, y, z)).normalized()
 
 
-def _pulse(t, start=.25, peak=1.6, hold=2.0, end=3.75):
-    def smooth(u):
-        u = max(0, min(1, u))
-        return u*u*(3-2*u)
-    if t <= peak:
-        return smooth((t-start)/(peak-start))
-    if t <= hold:
-        return 1.
-    return 1-smooth((t-hold)/(end-hold))
+def _smooth(t, start, end):
+    u = max(0., min(1., (t-start)/(end-start)))
+    return u*u*u*(u*(u*6.-15.)+10.)
+
+
+def _envelope(t, start, peak, hold, end):
+    return _smooth(t, start, peak) * (1.-_smooth(t, hold, end))
+
+
+def phase_state(kind, t):
+    """Named absolute-time phases shared by posing and diagnostic sampling."""
+    t = max(0., float(t))
+    if kind == 'Shield_Brace':
+        return dict(prepare=_envelope(t, .20, .65, 1.05, 1.65),
+                    brace=_envelope(t, .65, 1.65, 2.10, 3.70), aim=0., thrust=0.)
+    if kind == 'Spear_Study':
+        return dict(prepare=_envelope(t, .20, .65, 1.25, 1.90), brace=0.,
+                    aim=_envelope(t, .55, 1.20, 2.80, 3.75),
+                    thrust=_envelope(t, 1.25, 1.90, 2.10, 2.80))
+    return dict(prepare=0., brace=0., aim=0., thrust=0.)
+
+
+def _shield_arm(brace):
+    """Move the whole forearm; retain the enarmes' relative wrist frame.
+
+    The shield yaws slightly, rather than hinging its bottom out. Both arm
+    links retain their original length and the forearm/handle form one unit.
+    """
+    global _LEFT_GUARD
+    pb = _RIG.pose.bones
+    if _LEFT_GUARD is None:
+        _arm('L', (.10, -.24, 1.14), (1., -.8, -.15))
+        shield_right = pb['lowerarm01.L'].head - pb['wrist.L'].head
+        shield_right.z = 0.
+        _wrist('L', (0, 0, 1), -shield_right.normalized())
+        _LEFT_GUARD = dict(
+            upper=pb['lowerarm01.L'].head-pb['upperarm01.L'].head,
+            forearm_q=pb['lowerarm01.L'].matrix.to_quaternion(),
+            wrist_q=pb['wrist.L'].matrix.to_quaternion())
+        return
+    direction = _LEFT_GUARD['upper'] + Vector((-.015*brace, -.025*brace, .005*brace))
+    direction.normalize()
+    _aim('upperarm01.L', pb['lowerarm01.L'].head-pb['upperarm01.L'].head, direction)
+    turn = Quaternion((0, 0, 1), math.radians(12.*brace))
+    _world_quaternion('lowerarm01.L', turn @ _LEFT_GUARD['forearm_q'])
+    _world_quaternion('wrist.L', turn @ _LEFT_GUARD['wrist_q'])
 
 
 def apply_pose(kind='rest', t=0.):
-    global _LEFT_WRIST_LOCAL
     if _RIG is None:
         raise RuntimeError('Call configure(rig) first')
     reset_pose()
+    _SOLVES.clear()
     breath = math.sin(math.pi*2*max(0, min(6, t))/6) if kind == 'Guard_Breath' else 0.
-    brace = _pulse(t) if kind == 'Shield_Brace' else 0.
-    thrust = _pulse(t, .25, 1.75, 2.0, 3.75) if kind == 'Spear_Study' else 0.
-    _rot('spine03', (1, 0, 0), -1.0 - 2.1*brace - 1.2*thrust)
+    phase = phase_state(kind, t)
+    brace, thrust, aim, prepare = (phase[k] for k in ('brace', 'thrust', 'aim', 'prepare'))
+    shift = Vector((.012*brace, .020*prepare-.100*brace-.085*thrust,
+                    -.040-.018*prepare-.006*brace+.004*thrust))
+    _stance(shift)
+    _rot('spine03', (1, 0, 0), -1.0 - 3.0*brace - 2.0*thrust + .8*prepare)
+    _rot('spine02', (0, 0, 1), -4.0*aim - 3.0*thrust)
     _rot('spine01', (1, 0, 0), -.4*breath)
     _rot('head', (1, 0, 0), 1.0 + 1.5*brace)
     bpy.context.view_layer.update()
-    left = Vector((.10, -.24 - .055*brace, 1.14 + .025*brace + .002*breath))
-    right = Vector((-.325, -.245 - .100*thrust, 1.13 - .050*thrust + .002*breath))
-    _arm('L', left, (1., -.8, -.15))
-    # Raising the elbow while lowering the wrist keeps the hand aligned with
-    # the forearm as the spear is presented; no isolated wrist droop.
-    right_pole = Vector((-.7, .4, -1.5)).lerp(Vector((-1., .2, .2)), thrust)
+    _shield_arm(brace)
+    spear_axis = Vector((0, -math.sin(math.radians(85)*aim), math.cos(math.radians(85)*aim)))
+    right = Vector((-.325-.025*aim, -.245+.085*aim, 1.13-.040*aim+.002*breath))
+    # During the drive the aim is already held: wrist, grip and tip advance
+    # together along one fixed shaft direction, supported by the pelvis.
+    right += spear_axis*(.220*thrust)
+    right_pole = Vector((-.7, .4, -1.5)).lerp(Vector((-1., .1, 1.2)), aim)
     _arm('R', right, right_pole)
-    spear_axis = Vector((0, -math.sin(math.radians(45)*thrust), math.cos(math.radians(45)*thrust)))
-    _wrist('R', spear_axis, Vector((1, 0, 0)).cross(spear_axis))
-    shield_right = _RIG.pose.bones['lowerarm01.L'].head - _RIG.pose.bones['wrist.L'].head
-    shield_right.z = 0
-    shield_right.normalize()
-    if _LEFT_WRIST_LOCAL is None:
-        _wrist('L', (0, 0, 1), -shield_right)
-        _LEFT_WRIST_LOCAL = _RIG.pose.bones['wrist.L'].rotation_quaternion.copy()
-    else:
-        _RIG.pose.bones['wrist.L'].rotation_quaternion = _LEFT_WRIST_LOCAL.copy()
-        bpy.context.view_layer.update()
+    forward = Vector((1, 0, 0)).cross(spear_axis).lerp(Vector((.28, 0, -.96)), aim)
+    _wrist('R', spear_axis, forward)
     _grip('L')
     _grip('R')
     bpy.context.view_layer.update()
@@ -191,7 +257,10 @@ def equipment_frames():
     shield_right = -shield['forward']
     shield_up = shield['axis']
     shield['normal'] = shield_right.cross(shield_up).normalized()
-    shield['back_center'] = shield['point'] - shield_up*.19 + shield['normal']*.075
+    # Central point of the curved leather backing in build_pawn.py:
+    # nominal .105 depth + .055 convex crown - .027 backing recess.
+    shield['back_center'] = (shield['point'] - shield_up*.19
+                             + shield_right*.04 + shield['normal']*.133)
     shield['grip_point'] = shield['point'].copy()
     shield['handle_axis'] = shield['axis'].copy()
     spear['shaft_radius'] = .0125
