@@ -8,7 +8,7 @@
 <header><a class="brand" href="#" aria-label="Lazy Crazy Chess"><span class="brand-mark">♟</span><span>LAZY CRAZY<br>CHESS</span></a><span class="header-label">Мастерская фигур</span><span class="version">Этюд 002 <i></i> Белая пешка</span></header>
 <main>
 <aside>
- <div class="intro"><p class="eyebrow">Белая фракция · пехота</p><h1>Первая<br>линия.</h1><p class="lede">Слоновая кость и холодное серебро.<br>Ростовой щит. Копьё. Собранная стойка.</p></div>
+ <div class="intro"><p class="eyebrow">Белая фракция · пехота</p><h1>Первая<br>линия.</h1><p class="lede">Стальные доспехи. Белый щит.<br>Копьё. Собранная стойка.</p></div>
  <section><h2><span>01</span> Стойка и движение</h2>
  <div class="poses" role="group" aria-label="Движения пешки">
   <button class="pose active" data-pose="rest" aria-pressed="true"><span>A</span><div>Боевая стойка<small>Осмотр экипировки и хвата</small></div><b>↗</b></button>
@@ -21,9 +21,28 @@
  <div class="tempo"><label for="speed">Темп движения</label><select id="speed" aria-label="Темп движения"><option value="0.25">0,25×</option><option value="0.5">0,5×</option><option value="1" selected>1×</option><option value="1.5">1,5×</option></select></div>
  </section>
  <section><h2><span>02</span> Осмотр модели</h2><div class="segments" role="group" aria-label="Отображение"><button class="active" data-display="surface" aria-pressed="true">Поверхность</button><button data-display="wire" aria-pressed="false">Сетка</button></div><label class="switch"><input id="skeleton" type="checkbox"><span>Основные суставы</span></label></section>
- <section class="review-history"><h2><span>03</span> Замечания <span id="review-count">0</span></h2><details><summary>Сохранённые кадры</summary><ol id="review-list"></ol></details><label class="review-import" for="review-import">Восстановить из JSON<input id="review-import" type="file" accept="application/json,.json"></label><p id="review-import-status" role="status"></p><p id="review-storage">До 50 замечаний в этом браузере. Отправляйте файлы вручную.</p></section>
+ <section class="appearance-section" aria-label="Снаряжение">
+  <details id="appearance-panel">
+   <summary><span class="appearance-title"><span>03</span> Снаряжение</span><span id="appearance-summary">Сталь · белый щит</span></summary>
+   <p class="appearance-note">Отделка и цвета. Выбор сохраняется в этом браузере.</p>
+   <div class="appearance-fields">
+    <label for="armor-finish">Доспехи<select id="armor-finish" disabled><option value="steel" selected>Сталь</option><option value="brushed">Матовая сталь</option><option value="dark">Воронёная сталь</option><option value="bronze">Бронза</option></select></label>
+    <label class="appearance-color" for="shield-color"><span>Цвет щита</span><input id="shield-color" type="color" value="#eaeae5" disabled></label>
+    <label class="appearance-color" for="accent-color"><span>Цвет полосы</span><input id="accent-color" type="color" value="#2c676f" disabled></label>
+    <label for="weapon-wood">Древко копья<select id="weapon-wood" disabled><option value="ash" selected>Ясень</option><option value="walnut">Орех</option><option value="ebony">Эбен</option></select></label>
+    <label for="weapon-metal">Наконечник копья<select id="weapon-metal" disabled><option value="steel" selected>Сталь</option><option value="dark">Воронёная сталь</option><option value="bronze">Бронза</option></select></label>
+   </div>
+   <div class="appearance-actions"><button id="appearance-export" type="button" disabled>Сохранить набор</button><label class="appearance-import" for="appearance-import">Загрузить набор<input id="appearance-import" type="file" accept="application/json,.json" disabled></label></div>
+   <p class="appearance-file-note">Набор сохраняется в файл JSON.</p>
+   <button id="appearance-reset" class="appearance-reset" type="button" disabled>Вернуть исходный вид</button>
+   <p id="appearance-status" role="status" aria-live="polite"></p>
+   <a class="appearance-back" href="#stage">К модели ↑</a>
+  </details>
+ </section>
+ <section class="review-history"><h2><span>04</span> Замечания <span id="review-count">0</span></h2><details><summary>Сохранённые кадры</summary><ol id="review-list"></ol></details><label class="review-import" for="review-import">Восстановить из JSON<input id="review-import" type="file" accept="application/json,.json"></label><p id="review-import-status" role="status"></p><p id="review-storage">До 50 замечаний в этом браузере. Отправляйте файлы вручную.</p></section>
  <div class="next"><span class="eyebrow">Первый пехотинец</span><p>Проверяем посадку доспеха, хват и движение оружия. Парная схватка — следующий этап.</p></div>
  <button id="download" class="download" disabled>Скачать модель <span>GLB ↓</span></button>
+ <p class="appearance-file-note">GLB — базовая модель. Ваши цвета сохраняются в наборе снаряжения.</p>
  <p class="credit">Тело на основе MakeHuman · CC0.<br>Экипировка и постановка — Lazy Crazy Chess.</p>
 </aside>
 <div class="stage-wrap">

@@ -4,12 +4,13 @@ import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 import {RoomEnvironment} from 'three/addons/environments/RoomEnvironment.js';
 import {cameraRig,deterministicClip} from './camera-rig.mjs';
 import {installReview} from './review.mjs';
+import {installAppearance,DEFAULT_APPEARANCE} from './appearance.mjs';
 
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const stage=$('#stage'),timeInput=$('#timeline'),play=$('#play');
 const hosted=window.PAWN_HOSTED&&typeof window.PAWN_HOSTED==='object'?Object.freeze({...window.PAWN_HOSTED}):null;
 const clean=value=>typeof value==='string'?value.slice(0,160):'';
-const identity={version:clean(hosted?.version)||'0.2.1',modelVersion:clean(hosted?.modelVersion)||'0.2.0',sourceCommit:clean(hosted?.sourceCommit),modelSha256:clean(hosted?.modelSha256).toLowerCase(),modelUrl:clean(hosted?.modelUrl),mode:hosted?'hosted':'standalone'};
+const identity={version:clean(hosted?.version)||'0.3.0',modelVersion:clean(hosted?.modelVersion)||'0.2.1',sourceCommit:clean(hosted?.sourceCommit),modelSha256:clean(hosted?.modelSha256).toLowerCase(),modelUrl:clean(hosted?.modelUrl),mode:hosted?'hosted':'standalone'};
 $('#build-version').textContent=`Стенд ${identity.version} · модель ${identity.modelVersion}${identity.sourceCommit?' · '+identity.sourceCommit.slice(0,8):''}`;
 $('#build-version').title=identity.sourceCommit?`Исходный коммит: ${identity.sourceCommit}`:'Автономная сборка';
 const embeddedPoster=$('#poster').getAttribute('src');
@@ -138,19 +139,20 @@ async function init(){
  new ResizeObserver(resize).observe(stage);
  renderer.domElement.addEventListener('webglcontextlost',e=>{e.preventDefault();pause();renderer.domElement.hidden=true;fallback('Контекст WebGL потерян');});
  $('#poster').style.display='none';$('#loading').hidden=true;resize();
+ const appearance=installAppearance({model,render,beforeChange:pause});
  const body=meshes.filter(m=>m.isSkinnedMesh).sort((a,b)=>b.geometry.attributes.position.count-a.geometry.attributes.position.count)[0]||meshes[0];
  function measure(){updateModel();let minY=Infinity,maxY=-Infinity;const p=new THREE.Vector3();for(const mesh of meshes){const ar=mesh.geometry.attributes.position;for(let i=0;i<ar.count;i++){mesh.getVertexPosition(i,p);p.applyMatrix4(mesh.matrixWorld);minY=Math.min(minY,p.y);maxY=Math.max(maxY,p.y);}}return {minY,maxY,height:maxY-minY,finite:Number.isFinite(minY+maxY)};}
- window.whitePawn={ready:true,select,seek,pause,fit,render,measure,
+ window.whitePawn={ready:true,select,seek,pause,fit,render,measure,appearance,
   state:()=>({pose:selected,time:t,playing,speed,view,onScreen,pendingPlay,reviewLocked,fps,display,renderCalls:renderer.info.render.calls,triangles:renderer.info.render.triangles,bones:Object.keys(bones).length,clips:gltf.animations.map(c=>({name:c.name,duration:c.duration})),renderer:renderer.getContext().getParameter(renderer.getContext().RENDERER),reducedMotion:motion.matches,contained:currentRig.containment()}),
   screenshot:()=>renderer.domElement.toDataURL('image/png'),identity:{...identity},
   debug:{model,bones,body,renderer,controls,bounds,poseBounds}
  };
  const review=installReview({
   identity,
-  snapshot:()=>({pose:selected,time:t,duration:sampler?.duration||0,frame:Math.round(t*30),frameRate:30,speed,view,display,skeleton:skeletonGroup.visible,camera:{position:camera.position.toArray(),target:controls.target.toArray(),up:camera.up.toArray(),fov:camera.fov,zoom:camera.zoom,near:camera.near,far:camera.far},viewport:{width:renderer.domElement.width,height:renderer.domElement.height}}),
+  snapshot:()=>({pose:selected,time:t,duration:sampler?.duration||0,frame:Math.round(t*30),frameRate:30,speed,view,display,skeleton:skeletonGroup.visible,appearance:appearance.get(),camera:{position:camera.position.toArray(),target:controls.target.toArray(),up:camera.up.toArray(),fov:camera.fov,zoom:camera.zoom,near:camera.near,far:camera.far},viewport:{width:renderer.domElement.width,height:renderer.domElement.height}}),
   freeze:()=>{pause();reviewLocked=true;cameraPinned=true;controls.enabled=false;updateSteps();render();return renderer.domElement.toDataURL('image/png');},
   release:()=>{reviewLocked=false;controls.enabled=true;updateSteps();},
-  restore:state=>{pause();select(state.pose);seek(state.time);fit(state.view);camera.position.fromArray(state.camera.position);camera.up.fromArray(state.camera.up);camera.fov=state.camera.fov;camera.zoom=state.camera.zoom;camera.near=state.camera.near;camera.far=state.camera.far;camera.updateProjectionMatrix();controls.target.fromArray(state.camera.target);controls.update();speed=state.speed;$('#speed').value=String(speed);$(`[data-display="${state.display}"]`).click();$('#skeleton').checked=state.skeleton;skeletonGroup.visible=state.skeleton;cameraPinned=true;render();},
+  restore:state=>{pause();appearance.set(state.appearance||DEFAULT_APPEARANCE);select(state.pose);seek(state.time);fit(state.view);camera.position.fromArray(state.camera.position);camera.up.fromArray(state.camera.up);camera.fov=state.camera.fov;camera.zoom=state.camera.zoom;camera.near=state.camera.near;camera.far=state.camera.far;camera.updateProjectionMatrix();controls.target.fromArray(state.camera.target);controls.update();speed=state.speed;$('#speed').value=String(speed);$(`[data-display="${state.display}"]`).click();$('#skeleton').checked=state.skeleton;skeletonGroup.visible=state.skeleton;cameraPinned=true;render();},
   poses:['rest',...gltf.animations.map(c=>c.name)],views:Object.keys(directions)
  });
  window.whitePawn.exportReview=review.capture;window.whitePawn.restoreReview=review.restore;

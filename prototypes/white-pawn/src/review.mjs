@@ -1,4 +1,5 @@
 // Local review records contain metadata only. Images remain downloadable files.
+import {validAppearance} from './appearance.mjs';
 const KEY='lazy-crazy-chess.reviews.v1',SCHEMA='lazy-crazy-chess/review';
 const $=selector=>document.querySelector(selector);
 const clone=value=>JSON.parse(JSON.stringify(value));
@@ -11,6 +12,7 @@ export function installReview({identity,snapshot,freeze,release,restore,poses,vi
  const tell=message=>{status.textContent=message;};
  function valid(record){
   const s=record?.state,c=s?.camera;
+  if(s?.appearance!==undefined&&!validAppearance(s.appearance))return false;
   return record?.schema===SCHEMA&&record.schemaVersion===1&&typeof record.id==='string'&&/^[a-zA-Z0-9-]{1,120}$/.test(record.id)&&typeof record.createdAt==='string'&&Number.isFinite(Date.parse(record.createdAt))&&typeof record.comment==='string'&&record.comment.length<=2000&&record.identity&&['version','modelVersion','sourceCommit'].every(key=>typeof record.identity[key]==='string'&&record.identity[key].length<=160)&&typeof record.identity.modelSha256==='string'&&/^[a-f0-9]{64}$/.test(record.identity.modelSha256)&&s&&poses.includes(s.pose)&&views.includes(s.view)&&Number.isFinite(s.time)&&s.time>=0&&s.time<=60&&[.25,.5,1,1.5].includes(s.speed)&&['surface','wire'].includes(s.display)&&typeof s.skeleton==='boolean'&&c&&finiteVector(c.position,3)&&finiteVector(c.target,3)&&finiteVector(c.up,3)&&Math.hypot(...c.up)>.1&&Math.hypot(...c.position.map((v,i)=>v-c.target[i]))>.001&&Number.isFinite(c.fov)&&c.fov>=10&&c.fov<=100&&Number.isFinite(c.zoom)&&c.zoom>=.1&&c.zoom<=10&&Number.isFinite(c.near)&&c.near>0&&c.near<=1&&Number.isFinite(c.far)&&c.far>c.near&&c.far<=1000;
  }
  try{const saved=localStorage.getItem(KEY);if(saved){const parsed=JSON.parse(saved);if(!Array.isArray(parsed))throw Error();records=parsed.filter(valid).slice(0,50);}}

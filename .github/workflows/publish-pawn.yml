@@ -48,6 +48,7 @@ jobs:
         run: |
           npm run build
           npm run verify
+          npm run verify:appearance
       - name: Build and verify hosted candidate
         working-directory: prototypes/white-pawn
         run: |
@@ -64,6 +65,8 @@ jobs:
             prototypes/white-pawn/review/viewer-checks.json
             prototypes/white-pawn/review/equipment-checks.json
             prototypes/white-pawn/review/geometry-checks.json
+            prototypes/white-pawn/review/appearance-checks.json
+            prototypes/white-pawn/review/material-checks.json
             dist/review/
       - name: Publish exact release without replacing other pages
         if: github.event_name != 'pull_request'

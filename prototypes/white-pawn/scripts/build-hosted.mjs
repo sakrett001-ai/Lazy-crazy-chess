@@ -36,6 +36,7 @@ if(!publish) {
     modelReport:await readJson(path.join(root,'assets/model-checks.json')),
     equipmentReport:await readJson(path.join(root,'review/equipment-checks.json')),
     geometryReport:await readJson(path.join(root,'review/geometry-checks.json')),
+    appearanceReport:await readJson(path.join(root,'review/appearance-checks.json')),
     viewerReport:await readJson(path.join(root,'review/viewer-checks.json')),
     hostedReport:await readJson(path.join(dist,'review/hosted-checks.json'))});
   const verifiedHtml=await readFile(htmlPath);

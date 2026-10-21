@@ -1,7 +1,7 @@
 {
-  "version": "0.2.0",
+  "version": "0.2.1",
   "base_glb_sha256": "6f12aaa99ced53983ea3188493a755c46342c908055caf125c5b3576eb099962",
-  "glb_sha256": "95249c6f86fe773e4b5408f4350778df050765f67f92cb17d799fb8171858c47",
+  "glb_sha256": "521c0a51e9f4440c897a079934e876fa153cd3789fad28c43b7d444154d6f036",
   "clips": [
     "Guard_Breath",
     "Shield_Brace",
@@ -64,7 +64,7 @@
     ]
   },
   "render_seconds": {
-    "neutral.png": 17.11,
+    "neutral.png": 17.85,
     "model-front.png": 4.13,
     "model-back.png": 4.18,
     "model-left.png": 4.09,
@@ -85,5 +85,22 @@
     "No cloth/horsehair simulation",
     "Full board LOD remains future work",
     "Armor is fantasy equipment, not a historical replica"
-  ]
+  ],
+  "material_revision": {
+    "slots": [
+      "armor.main",
+      "armor.trim",
+      "shield.face",
+      "shield.trim",
+      "shield.emblem",
+      "shield.wood",
+      "shield.leather",
+      "weapon.metal",
+      "weapon.wood",
+      "weapon.grip",
+      "weapon.binding"
+    ],
+    "proof": "../review/material-checks.json",
+    "preserves_glb_geometry_of": "95249c6f86fe773e4b5408f4350778df050765f67f92cb17d799fb8171858c47"
+  }
 }
