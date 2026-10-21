@@ -1,0 +1,30 @@
+{
+  "task": "white-pawn-model-0.2",
+  "status": "implementation",
+  "baseSourceCommit": "2470a86074b5cd5b1d635f37ec289cdd07d419d1",
+  "targetModelVersion": "0.2.0",
+  "targetViewerVersion": "0.2.1",
+  "scope": [
+    "armor construction and straps",
+    "thumb grip",
+    "planted feet with whole-body shield brace",
+    "point-first spear thrust"
+  ],
+  "deferred": [
+    "face",
+    "paired combat",
+    "cloth simulation",
+    "full board LOD"
+  ],
+  "next": "Build candidate after geometry/pose integration, inspect final GLB and control renders, then publish verified release",
+  "benchmark": "docs/WHITE_PAWN_V02_BENCHMARK.md",
+  "ownership": {
+    "build_pawn.py": "geometry agent",
+    "pawn_pose.py": "pose agent",
+    "verify-equipment.mjs": "review agent",
+    "versions and documentation": "release agent"
+  },
+  "runtime": "Python3.11 bpy4.5.3",
+  "publication": "Existing Floot verified-release loader; GitHub Actions observed blocked by billing, manual verified publication authorized",
+  "recovery": "Inspect current git refs and generated hashes before resuming; this is a historical checkpoint, not proof of publication"
+}
