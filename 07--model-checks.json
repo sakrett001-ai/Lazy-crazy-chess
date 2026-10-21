@@ -1,0 +1,40 @@
+{
+  "status": "passed",
+  "sha256": "95249c6f86fe773e4b5408f4350778df050765f67f92cb17d799fb8171858c47",
+  "glb_bytes": 8018544,
+  "meshes": 7,
+  "material_primitives": 21,
+  "triangles": 222986,
+  "joints": 163,
+  "weight_sum_max_error": 1.7881393432617188e-07,
+  "clips": {
+    "Guard_Breath": {
+      "seconds": 6.0,
+      "endpoint_max_error": 0,
+      "default_max_error": 0
+    },
+    "Shield_Brace": {
+      "seconds": 4.0,
+      "endpoint_max_error": 0,
+      "default_max_error": 0
+    },
+    "Spear_Study": {
+      "seconds": 4.0,
+      "endpoint_max_error": 0,
+      "default_max_error": 0
+    }
+  },
+  "reimport_bounds_z_up_metres": [
+    [
+      -0.37381768226623535,
+      -0.38570547103881836,
+      0.0010001137852668762
+    ],
+    [
+      0.38051342964172363,
+      0.1860009729862213,
+      2.71368670463562
+    ]
+  ],
+  "scope": "File integrity; finite accessors; normalized weights; clip lengths, endpoints and default guard; posed Blender reimport. Not full collision, muscle, cloth or combat validation."
+}

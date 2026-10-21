@@ -1,0 +1,75 @@
+{
+  "runtime": "4.5.3 LTS",
+  "checked_at_utc": "2026-10-21T19:14:52.168652+00:00",
+  "pose_sha256": "237c45565c22d3d2dada0d78dd39c65e4abcfc459d31f2452bb621769a4e0e3e",
+  "input_asset": "prototypes/human-base/assets/human-base.blend",
+  "input_asset_sha256": "aee22c11262c7cbd9f0905eb8fe425652c642a08660db54653136ccf4c290206",
+  "pose_fps": 30,
+  "skin_sole_fps": 10,
+  "sole_vertices": 3166,
+  "clips": {
+    "Guard_Breath": {
+      "foot_matrix_error": 0.0,
+      "visible_sole_drift_m": 0.0,
+      "link_length_error_m": 2.3536815807467804e-07,
+      "reach_error_m": 1.0979688844813528e-06,
+      "wrist_bend_deg": 8.143915438935819,
+      "knee_flexion_deg": {
+        "L": [
+          31.066741600631474,
+          31.066741600631474
+        ],
+        "R": [
+          33.6480066917627,
+          33.6480066917627
+        ]
+      },
+      "pose_samples": 181,
+      "endpoint_matrix_error": 0.0,
+      "arbitrary_seek_matrix_error": 0.0
+    },
+    "Shield_Brace": {
+      "foot_matrix_error": 4.6193599700927734e-07,
+      "visible_sole_drift_m": 0.00021007153554819524,
+      "link_length_error_m": 2.532653308739974e-07,
+      "reach_error_m": 1.2928206574857713e-06,
+      "wrist_bend_deg": 14.408015969216976,
+      "knee_flexion_deg": {
+        "L": [
+          31.066741600631474,
+          41.531916465790005
+        ],
+        "R": [
+          28.717675620524005,
+          41.435747402276235
+        ]
+      },
+      "pose_samples": 121,
+      "endpoint_matrix_error": 0.0,
+      "arbitrary_seek_matrix_error": 0.0
+    },
+    "Spear_Study": {
+      "foot_matrix_error": 3.8743019104003906e-07,
+      "visible_sole_drift_m": 0.0001398110471200198,
+      "link_length_error_m": 3.7557159454637556e-07,
+      "reach_error_m": 1.1498058869755521e-06,
+      "wrist_bend_deg": 26.497483243538102,
+      "knee_flexion_deg": {
+        "L": [
+          31.066741600631474,
+          37.42951360498358
+        ],
+        "R": [
+          25.73834710456447,
+          41.43580204378958
+        ]
+      },
+      "pose_samples": 121,
+      "endpoint_matrix_error": 0.0,
+      "arbitrary_seek_matrix_error": 0.0
+    }
+  },
+  "scope": "Source rig/skin checks only. No mass model, complete self-collision or final-GLB claim.",
+  "completed_at_utc": "2026-10-21T19:15:55.839627+00:00",
+  "status": "passed"
+}

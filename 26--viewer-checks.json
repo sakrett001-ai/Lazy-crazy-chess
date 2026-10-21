@@ -1,0 +1,213 @@
+{
+  "date": "2026-10-21T19:44:44.286Z",
+  "browser": "141.0.7390.37",
+  "tests": [
+    "Offline load; expected clips and durations; no autoplay or HTTP requests",
+    "Default GLB pose matches equipped guard at Guard_Breath t=0",
+    "Guard_Breath: duration, matching endpoints, reverse seek, five finite complete-model-bound samples",
+    "Shield_Brace: duration, matching endpoints, reverse seek, five finite complete-model-bound samples",
+    "Spear_Study: duration, matching endpoints, reverse seek, five finite complete-model-bound samples",
+    "Full figure views and close inspection bounds fit their cameras",
+    "Playback, pause, tempo, UI timeline and keyboard camera rotation",
+    "Embedded model download",
+    "390 px without overflow; mobile Play returns to scene and advances",
+    "Reduced motion starts still",
+    "WebGL fallback retains poster and model download"
+  ],
+  "measurements": [
+    {
+      "clip": "Guard_Breath",
+      "time": 0,
+      "minY": 0.0010001154276175525,
+      "maxY": 2.713617232868445,
+      "height": 2.7126171174408276,
+      "finite": true
+    },
+    {
+      "clip": "Guard_Breath",
+      "time": 1.5,
+      "minY": 0.0010001154276175525,
+      "maxY": 2.715615873608293,
+      "height": 2.7146157581806754,
+      "finite": true
+    },
+    {
+      "clip": "Guard_Breath",
+      "time": 3,
+      "minY": 0.0010001154276175525,
+      "maxY": 2.713617232868445,
+      "height": 2.7126171174408276,
+      "finite": true
+    },
+    {
+      "clip": "Guard_Breath",
+      "time": 4.5,
+      "minY": 0.0010001154276175525,
+      "maxY": 2.711618405446658,
+      "height": 2.7106182900190405,
+      "finite": true
+    },
+    {
+      "clip": "Guard_Breath",
+      "time": 6,
+      "minY": 0.0010001154276175525,
+      "maxY": 2.713617232868445,
+      "height": 2.7126171174408276,
+      "finite": true
+    },
+    {
+      "clip": "Guard_Breath",
+      "endpointMaxError": 0,
+      "reverseSeekMaxError": 0
+    },
+    {
+      "clip": "Shield_Brace",
+      "time": 0,
+      "minY": 0.0010001154276175525,
+      "maxY": 2.713617232868445,
+      "height": 2.7126171174408276,
+      "finite": true
+    },
+    {
+      "clip": "Shield_Brace",
+      "time": 1,
+      "minY": 0.0010000994474504076,
+      "maxY": 2.713617334510193,
+      "height": 2.7126172350627424,
+      "finite": true
+    },
+    {
+      "clip": "Shield_Brace",
+      "time": 2,
+      "minY": 0.0010001186580301882,
+      "maxY": 2.71361757123558,
+      "height": 2.7126174525775495,
+      "finite": true
+    },
+    {
+      "clip": "Shield_Brace",
+      "time": 3,
+      "minY": 0.001000068630751094,
+      "maxY": 2.7136174179329897,
+      "height": 2.7126173493022385,
+      "finite": true
+    },
+    {
+      "clip": "Shield_Brace",
+      "time": 4,
+      "minY": 0.0010001154276175525,
+      "maxY": 2.713617232868445,
+      "height": 2.7126171174408276,
+      "finite": true
+    },
+    {
+      "clip": "Shield_Brace",
+      "endpointMaxError": 0,
+      "reverseSeekMaxError": 0
+    },
+    {
+      "clip": "Spear_Study",
+      "time": 0,
+      "minY": 0.0010001154276175525,
+      "maxY": 2.713617232868445,
+      "height": 2.7126171174408276,
+      "finite": true
+    },
+    {
+      "clip": "Spear_Study",
+      "time": 1,
+      "minY": 0.0010001501962312795,
+      "maxY": 1.8871080294252172,
+      "height": 1.8861078792289858,
+      "finite": true
+    },
+    {
+      "clip": "Spear_Study",
+      "time": 2,
+      "minY": 0.0010000461849709202,
+      "maxY": 1.9077877182711023,
+      "height": 1.9067876720861314,
+      "finite": true
+    },
+    {
+      "clip": "Spear_Study",
+      "time": 3,
+      "minY": 0.0010001154276175525,
+      "maxY": 1.9049181215660143,
+      "height": 1.9039180061383967,
+      "finite": true
+    },
+    {
+      "clip": "Spear_Study",
+      "time": 4,
+      "minY": 0.0010001154276175525,
+      "maxY": 2.713617232868445,
+      "height": 2.7126171174408276,
+      "finite": true
+    },
+    {
+      "clip": "Spear_Study",
+      "endpointMaxError": 0,
+      "reverseSeekMaxError": 0
+    }
+  ],
+  "errors": [],
+  "network": [],
+  "loadMs": 3805,
+  "initial": {
+    "pose": "rest",
+    "time": 0,
+    "playing": false,
+    "speed": 1,
+    "view": "three",
+    "onScreen": true,
+    "pendingPlay": false,
+    "reviewLocked": false,
+    "fps": null,
+    "display": "surface",
+    "renderCalls": 25,
+    "triangles": 225540,
+    "bones": 163,
+    "clips": [
+      {
+        "name": "Guard_Breath",
+        "duration": 6
+      },
+      {
+        "name": "Shield_Brace",
+        "duration": 4
+      },
+      {
+        "name": "Spear_Study",
+        "duration": 4
+      }
+    ],
+    "renderer": "WebKit WebGL",
+    "reducedMotion": false,
+    "contained": true
+  },
+  "defaultPoseMaxError": 0,
+  "modelStructure": {
+    "meshes": 21,
+    "skinnedMeshes": 21,
+    "objects": 191,
+    "materials": 10,
+    "vertices": 115237
+  },
+  "performance": {
+    "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+    "viewport": [
+      1440,
+      1000
+    ],
+    "drawCalls": 25,
+    "triangles": 225540,
+    "p50ReadbackMs": 597,
+    "p95ReadbackMs": 635.6000000089407,
+    "note": "Headless Chromium with software rendering; synchronous render and readback, not sustained real-device FPS."
+  },
+  "status": "passed",
+  "glbSha256": "95249c6f86fe773e4b5408f4350778df050765f67f92cb17d799fb8171858c47",
+  "documentSha256": "4cc60350aaa273a5513dfcc0090417b385152a3cd442e4946ab1c63e581063d0",
+  "scope": "Viewer integrity and selected transforms. Does not prove full collision freedom, historical accuracy, muscle simulation, combat logic, or real-phone performance."
+}

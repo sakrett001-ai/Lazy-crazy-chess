@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Белая пешка · Lazy Crazy Chess</title><style>/*STYLE*/</style>
+</head>
+<body>
+<header><a class="brand" href="#" aria-label="Lazy Crazy Chess"><span class="brand-mark">♟</span><span>LAZY CRAZY<br>CHESS</span></a><span class="header-label">Мастерская фигур</span><span class="version">Этюд 002 <i></i> Белая пешка</span></header>
+<main>
+<aside>
+ <div class="intro"><p class="eyebrow">Белая фракция · пехота</p><h1>Первая<br>линия.</h1><p class="lede">Слоновая кость и холодное серебро.<br>Ростовой щит. Копьё. Собранная стойка.</p></div>
+ <section><h2><span>01</span> Стойка и движение</h2>
+ <div class="poses" role="group" aria-label="Движения пешки">
+  <button class="pose active" data-pose="rest" aria-pressed="true"><span>A</span><div>Боевая стойка<small>Осмотр экипировки и хвата</small></div><b>↗</b></button>
+  <button class="pose" data-pose="Guard_Breath" aria-pressed="false"><span>B</span><div>Дыхание<small>Спокойная готовность</small></div><b>↗</b></button>
+  <button class="pose" data-pose="Shield_Brace" aria-pressed="false"><span>C</span><div>Упор щитом<small>Опора ног и движение корпуса</small></div><b>↗</b></button>
+  <button class="pose" data-pose="Spear_Study" aria-pressed="false"><span>D</span><div>Учебный укол<small>Наконечником вперёд и возврат</small></div><b>↗</b></button>
+ </div>
+ <div class="playback"><button id="play" aria-label="Запустить движение" disabled>▶</button><input id="timeline" type="range" min="0" max="6" step="0.01" value="0" aria-label="Время движения" disabled><output id="time">0.00 с</output></div>
+ <div class="frame-controls"><button id="step-back" disabled aria-label="Назад на один кадр">−1 кадр</button><span>30 кадров/с</span><button id="step-forward" disabled aria-label="Вперёд на один кадр">+1 кадр</button></div>
+ <div class="tempo"><label for="speed">Темп движения</label><select id="speed" aria-label="Темп движения"><option value="0.25">0,25×</option><option value="0.5">0,5×</option><option value="1" selected>1×</option><option value="1.5">1,5×</option></select></div>
+ </section>
+ <section><h2><span>02</span> Осмотр модели</h2><div class="segments" role="group" aria-label="Отображение"><button class="active" data-display="surface" aria-pressed="true">Поверхность</button><button data-display="wire" aria-pressed="false">Сетка</button></div><label class="switch"><input id="skeleton" type="checkbox"><span>Основные суставы</span></label></section>
+ <section class="review-history"><h2><span>03</span> Замечания <span id="review-count">0</span></h2><details><summary>Сохранённые кадры</summary><ol id="review-list"></ol></details><label class="review-import" for="review-import">Восстановить из JSON<input id="review-import" type="file" accept="application/json,.json"></label><p id="review-import-status" role="status"></p><p id="review-storage">До 50 замечаний в этом браузере. Отправляйте файлы вручную.</p></section>
+ <div class="next"><span class="eyebrow">Первый пехотинец</span><p>Проверяем посадку доспеха, хват и движение оружия. Парная схватка — следующий этап.</p></div>
+ <button id="download" class="download" disabled>Скачать модель <span>GLB ↓</span></button>
+ <p class="credit">Тело на основе MakeHuman · CC0.<br>Экипировка и постановка — Lazy Crazy Chess.</p>
+</aside>
+<div class="stage-wrap">
+ <div class="stage-top"><div><span class="eyebrow">WHITE PAWN / 002</span><p>Боец первой линии</p><p id="build-version" class="build-version"></p></div><div class="stage-actions"><span id="fps" title="Средняя частота кадров воспроизведения, пока сцена видима">FPS · пауза</span><button id="mark-issue" disabled>Отметить проблему</button></div></div>
+ <div id="stage" tabindex="0" aria-label="Белая пешка с ростовым щитом и копьём. Мышь: вращение, колесо: масштаб. Стрелки: вращение, плюс и минус: масштаб, H: исходный вид."><img id="poster" src="/*POSTER*/" alt="Белая пешка в доспехе с ростовым щитом и копьём"><div id="loading" role="status">Подготавливаем пешку…</div></div>
+ <div class="stage-bottom"><p id="pose-caption">Стойка · копьё в правой руке, ростовой щит слева</p><div class="view-buttons" role="group" aria-label="Ракурс"><button data-view="front">Спереди</button><button data-view="side">Сбоку</button><button data-view="back">Сзади</button><button class="active" data-view="three">¾</button><button data-view="face">Шлем</button><button data-view="spear">Хват копья</button><button data-view="shield">За щитом</button><button id="home" aria-label="Сбросить камеру">⌂</button></div><p class="gesture">Вращайте мышью или пальцем · прокрутка — масштаб</p></div>
+ <div id="fallback" hidden>Для интерактивного просмотра нужен WebGL. Здесь показан сохранённый рендер. Модель можно скачать и открыть в Blender.</div>
+</div>
+</main>
+<dialog id="review-dialog" aria-labelledby="review-title">
+ <div class="review-heading"><div><p class="eyebrow">Локальное замечание</p><h2 id="review-title">Разобрать этот кадр</h2></div><button id="review-close" aria-label="Закрыть замечание">✕</button></div>
+ <div class="review-content"><div><img id="review-preview" alt="Зафиксированный кадр модели"><p id="review-summary"></p><p id="review-identity"></p></div><div><label for="review-comment">Что нужно проверить?</label><textarea id="review-comment" maxlength="2000" rows="6" placeholder="Например: ремень щита проходит сквозь наруч"></textarea><p id="review-status" role="status"></p><button id="review-save">Сохранить замечание</button><div class="review-downloads"><button id="review-json">Скачать JSON</button><button id="review-png">Кадр PNG + подпись</button></div><p class="review-note">JSON хранит точный ракурс и время. PNG содержит кадр и подпись. На сервер ничего не отправляется.</p></div></div>
+</dialog>
+<script id="model-data" type="application/octet-stream">/*MODEL*/</script>
+<script>/*SCRIPT*/</script>
+</body></html>
