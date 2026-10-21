@@ -1,5 +1,5 @@
 {
-  "date": "2026-10-21T07:22:28.961Z",
+  "date": "2026-10-21T17:41:59.582Z",
   "browser": "141.0.7390.37",
   "tests": [
     "Offline load; expected clips and durations; no autoplay or HTTP requests",
@@ -153,7 +153,7 @@
   ],
   "errors": [],
   "network": [],
-  "loadMs": 8808,
+  "loadMs": 5595,
   "initial": {
     "pose": "rest",
     "time": 0,
@@ -162,6 +162,9 @@
     "view": "three",
     "onScreen": true,
     "pendingPlay": false,
+    "reviewLocked": false,
+    "fps": null,
+    "display": "surface",
     "renderCalls": 25,
     "triangles": 191438,
     "bones": 163,
@@ -199,11 +202,12 @@
     ],
     "drawCalls": 25,
     "triangles": 191438,
-    "p50ReadbackMs": 534.3999999985099,
-    "p95ReadbackMs": 549.6000000014901,
+    "p50ReadbackMs": 472.19999998807907,
+    "p95ReadbackMs": 494.30000001192093,
     "note": "Headless Chromium with software rendering; synchronous render and readback, not sustained real-device FPS."
   },
   "status": "passed",
   "glbSha256": "ebc1aa828665c9727781f365d4da584f8c2c7530490317ca12f4faef5a7a0618",
+  "documentSha256": "ddcdc4f37e54d2494b2f3972a2d12fc15a045ec818322830fb803ca3e5d447e8",
   "scope": "Viewer integrity and selected transforms. Does not prove full collision freedom, historical accuracy, muscle simulation, combat logic, or real-phone performance."
 }

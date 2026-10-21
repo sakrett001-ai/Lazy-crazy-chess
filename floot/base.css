@@ -1,0 +1,41 @@
+:root {
+  /* Overlay layers */
+  --z-overlay: 400;
+  --z-spotlight: 1000; /* Tutorial spotlights/guided help */
+  /* System layers */
+  --z-critical: 2000; /* Critical system notifications */
+  /* spacing */
+  --spacing-1: 0.25rem;
+  --spacing-2: 0.5rem;
+  --spacing-3: 0.75rem;
+  --spacing-4: 1rem;
+  --spacing-6: 1.5rem;
+  --spacing-8: 2rem;
+  --spacing-12: 3rem;
+  --spacing-16: 4rem;
+  --spacing-20: 5rem;
+}
+:root {
+  --background: #f7f5ef; --foreground: #263d40;
+  --surface: #e8edeb; --surface-foreground: #263d40;
+  --sidebar: #e8edeb; --sidebar-foreground: #263d40;
+  --card: #fdfcf8; --card-foreground: #263d40;
+  --popup: #fdfcf8; --popup-foreground: #263d40;
+  --primary: #376d73; --primary-foreground: #ffffff;
+  --secondary: #e0e8e6; --secondary-foreground: #263d40;
+  --accent: #376d73; --accent-foreground: #ffffff;
+  --muted: #e8edeb; --muted-foreground: #677e80;
+  --success: #376d59; --success-foreground: #ffffff;
+  --error: #a6473e; --error-foreground: #ffffff;
+  --warning: #8c682b; --warning-foreground: #ffffff;
+  --info: #376d73; --info-foreground: #ffffff; --info-hover: #2d5e64; --info-active: #214d52;
+  --border: #cbd5d2;
+  --font-family-base: system-ui, sans-serif; --font-family-display: Georgia, serif;
+  --font-family-monospace: ui-monospace, monospace; --font-family-cursive: cursive;
+  --shadow: 0 2px 8px #263d4008; --shadow-md: 0 8px 24px #263d4010;
+  --shadow-lg: 0 16px 48px #263d4018; --shadow-focus: 0 0 0 3px #376d7333;
+  --radius-sm: 4px; --radius: 8px; --radius-md: 12px; --radius-lg: 20px; --radius-full: 999px;
+  --animation-duration-fast: 120ms; --animation-duration-normal: 220ms; --animation-duration-slow: 400ms;
+  --chart-color-1: #376d73; --chart-color-2: #77938d; --chart-color-3: #bdad8e; --chart-color-4: #8c999e; --chart-color-5: #bba49c;
+}
+.dark {}

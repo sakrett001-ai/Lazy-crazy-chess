@@ -1,0 +1,35 @@
+{
+  "goal": "Publish white-pawn testing app with GitHub release bridge",
+  "phase": "Verified implementation; source and release publication pending",
+  "asOf": "2026-10-21T17:44:23.718079+00:00",
+  "repository": "sakrett001-ai/Lazy-crazy-chess",
+  "sourceBranch": "main",
+  "previousSourceCommit": "fa79319d883887d946c35d6332071c72f6c7ed24",
+  "releaseBranch": "gh-pages",
+  "releaseManifest": "chess-release.json",
+  "flootProjectId": "5311a72f-aeb2-4bc4-94ea-e491870d0b13",
+  "url": "https://lazy-crazy-chess.floot.app",
+  "flootShellPublishJob": "fc6aba88-384a-42d3-a287-677d77838169",
+  "flootShellPublishStatus": "succeeded",
+  "viewerVersion": "0.2.0",
+  "modelVersion": "0.1.0",
+  "verified": [
+    "21 release/adapter tests passed",
+    "final standalone and hosted verification passed",
+    "independent desktop/mobile and JSON/PNG visual checks passed"
+  ],
+  "standaloneSha256": "ddcdc4f37e54d2494b2f3972a2d12fc15a045ec818322830fb803ca3e5d447e8",
+  "candidateSha256": "dd5dcb2c011167e32a89b1bfbb65898bd65b75a3b1fcd80ded31c7c1de7051d1",
+  "next": [
+    "Publish verified source tree to main",
+    "Build and verify hosted release using exact final sourceCommit",
+    "Publish immutable HTML and manifest to gh-pages",
+    "Check production endpoint and real browser load"
+  ],
+  "limits": [
+    "Model geometry remains v0.1 with known issues",
+    "Notes are local to browser; no server upload",
+    "GitHub Actions account billing warning observed; next automatic run must be inspected"
+  ],
+  "resume": "Read current main and gh-pages/chess-release.json first; this checkpoint records observations before publication, not current remote state."
+}

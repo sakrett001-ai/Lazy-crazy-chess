@@ -69,6 +69,7 @@ try{
  const fallback=await browser.newContext({viewport:{width:390,height:844}});await fallback.setOffline(true);await fallback.addInitScript(()=>{const original=HTMLCanvasElement.prototype.getContext;HTMLCanvasElement.prototype.getContext=function(type,...args){if(/webgl/.test(type))return null;return original.call(this,type,...args);};});const fp=await fallback.newPage();await fp.goto(url);await fp.waitForFunction(()=>window.whitePawn?.fallback);assert(await fp.locator('#poster').isVisible());assert(await fp.locator('#fallback').isVisible());assert(await fp.locator('#download').isEnabled());await fp.screenshot({path:path.join(review,'browser-fallback.png'),fullPage:true});await fallback.close();report.tests.push('WebGL fallback retains poster and model download');
  assert.deepEqual(report.errors,[]);assert.deepEqual(report.network,[]);report.status='passed';
  report.glbSha256=createHash('sha256').update(await readFile(path.join(root,'assets/white-pawn.glb'))).digest('hex');
+ report.documentSha256=createHash('sha256').update(await readFile(path.join(root,'white-pawn.html'))).digest('hex');
  report.scope='Viewer integrity and selected transforms. Does not prove full collision freedom, historical accuracy, muscle simulation, combat logic, or real-phone performance.';
  await writeFile(path.join(review,'viewer-checks.json'),JSON.stringify(report,null,2)+'\n');
  console.log(JSON.stringify({status:report.status,tests:report.tests,structure:report.modelStructure,performance:report.performance,loadMs:report.loadMs},null,2));
