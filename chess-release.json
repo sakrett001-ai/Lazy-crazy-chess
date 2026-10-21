@@ -2,14 +2,14 @@
   "schemaVersion": 1,
   "repository": "sakrett001-ai/Lazy-crazy-chess",
   "sourceBranch": "main",
-  "sourceCommit": "cf6b689e960744a5c0614e8cb23eafeb45cedcce",
-  "version": "0.2.1",
-  "modelVersion": "0.2.0",
+  "sourceCommit": "168ac90f50913c020037abe826b08e13ba2910e9",
+  "version": "0.3.0",
+  "modelVersion": "0.2.1",
   "checks": "passed",
-  "builtAt": "2026-10-21T19:54:29.636Z",
+  "builtAt": "2026-10-21T20:25:44.355Z",
   "document": {
-    "path": "chess/releases/cf6b689e960744a5c0614e8cb23eafeb45cedcce/viewer.html",
-    "sha256": "6cfe96eef474ee50c68728fbf11230edeafb7a33d78defa4f9fbca6482e67433",
-    "bytes": 659940
+    "path": "chess/releases/168ac90f50913c020037abe826b08e13ba2910e9/viewer.html",
+    "sha256": "3cb0cee05a30c4316891f3b46a423f68cbf4b57c5624dd2655ff08e2eeccccb7",
+    "bytes": 674327
   }
 }
