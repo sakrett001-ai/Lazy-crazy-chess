@@ -1,0 +1,50 @@
+name: Browser Lab
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'tools/browser-lab/**'
+      - '.github/workflows/browser-lab.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: browser-lab-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  webgl:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    defaults:
+      run:
+        working-directory: tools/browser-lab
+    env:
+      QA_RENDERER: software
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+      - name: Record tested inputs
+        run: node scripts/record.mjs
+      - name: Install test dependencies
+        run: npm ci --ignore-scripts --no-audit --no-fund 2>&1 | tee evidence/install.log
+      - name: Verify test utilities
+        run: npm run test:logic
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium 2>&1 | tee evidence/browser-install.log
+      - name: Run WebGL and rendered-pose checks
+        run: npm test
+      - name: Retain result even when a check fails
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: browser-lab-${{ github.run_id }}-${{ github.run_attempt }}
+          path: tools/browser-lab/evidence/
+          retention-days: 7
+          if-no-files-found: error

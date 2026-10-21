@@ -1,0 +1,20 @@
+<!doctype html><html lang="ru"><meta charset="utf-8"><title>Browser Lab — WebGL</title>
+<style>body{background:#102030;color:#edf3f8;font:18px system-ui;padding:36px}canvas{display:block;width:576px;height:384px;border:1px solid #678}pre{white-space:pre-wrap;max-width:1000px}</style>
+<h1>Проверка WebGL2</h1><canvas width="192" height="128"></canvas><pre id="status">Проверка…</pre>
+<script>
+try {
+ const gl=document.querySelector('canvas').getContext('webgl2',{preserveDrawingBuffer:true,antialias:false});
+ if(!gl)throw new Error('WebGL2 context unavailable');
+ function shader(type,source){const s=gl.createShader(type);gl.shaderSource(s,source);gl.compileShader(s);if(!gl.getShaderParameter(s,gl.COMPILE_STATUS))throw new Error(gl.getShaderInfoLog(s));return s;}
+ const p=gl.createProgram();
+ gl.attachShader(p,shader(gl.VERTEX_SHADER,'#version 300 es\nconst vec2 points[3]=vec2[3](vec2(-.85,-.8),vec2(.85,-.8),vec2(0,.85));void main(){gl_Position=vec4(points[gl_VertexID],0,1);}'));
+ gl.attachShader(p,shader(gl.FRAGMENT_SHADER,'#version 300 es\nprecision highp float;out vec4 color;void main(){color=vec4(.96,.25,.5,1);}'));
+ gl.linkProgram(p);if(!gl.getProgramParameter(p,gl.LINK_STATUS))throw new Error(gl.getProgramInfoLog(p));
+ gl.viewport(0,0,192,128);gl.clearColor(16/255,32/255,48/255,1);gl.clear(gl.COLOR_BUFFER_BIT);gl.useProgram(p);gl.drawArrays(gl.TRIANGLES,0,3);
+ const pixel=new Uint8Array(4);gl.readPixels(96,64,1,1,gl.RGBA,gl.UNSIGNED_BYTE,pixel);
+ const error=gl.getError();if(error!==gl.NO_ERROR)throw new Error('GL error '+error);
+ const debug=gl.getExtension('WEBGL_debug_renderer_info');
+ window.preflight={ok:pixel[0]>230&&pixel[1]>45&&pixel[1]<85&&pixel[2]>110,pixel:Array.from(pixel),version:gl.getParameter(gl.VERSION),renderer:gl.getParameter(debug?debug.UNMASKED_RENDERER_WEBGL:gl.RENDERER)};
+}catch(error){window.preflight={ok:false,error:String(error)};}
+document.getElementById('status').textContent=JSON.stringify(window.preflight,null,2);
+</script></html>

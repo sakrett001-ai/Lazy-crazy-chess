@@ -1,0 +1,21 @@
+{
+  "name": "browser-lab",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "build": "node scripts/build-fixtures.mjs",
+    "test": "npm run build && playwright test",
+    "test:logic": "node --test unit/*.test.mjs",
+    "test:list": "playwright test --list",
+    "record": "node scripts/record.mjs",
+    "report": "playwright show-report evidence/html"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.64.0",
+    "pngjs": "7.0.0",
+    "three": "0.180.0",
+    "esbuild": "0.25.10"
+  }
+}

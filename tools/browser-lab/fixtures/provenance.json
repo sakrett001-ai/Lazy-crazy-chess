@@ -1,0 +1,21 @@
+{
+  "schema": "browser-lab-provenance/1",
+  "snapshotDate": "2026-10-21",
+  "three": "0.180.0",
+  "files": {
+    "scene.mjs": {
+      "sourceSkill": "anatomy",
+      "sourceRelativePath": "examples/contact-lab/scene.mjs",
+      "sourceSHA256": "f66827ff4609b5238b751813e2fd1a4fca96219d60582344e7306b2961d9eaed",
+      "snapshotSHA256": "ebe296174c8b41680d41ae22ba6bf84994fd70f2454e4d3b90f3b33448cd4e74",
+      "adaptation": "relative import only"
+    },
+    "contact-checks.mjs": {
+      "sourceSkill": "anatomy",
+      "sourceRelativePath": "kit/contact-checks.mjs",
+      "sourceSHA256": "8e9cee001ea8680e75f3238f6efe0ac67b8c7b247bae6afbb884a3e133ad00e0",
+      "snapshotSHA256": "8e9cee001ea8680e75f3238f6efe0ac67b8c7b247bae6afbb884a3e133ad00e0",
+      "adaptation": "none"
+    }
+  }
+}
