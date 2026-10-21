@@ -1,10 +1,10 @@
 {
   "status": "passed",
-  "sha256": "ebc1aa828665c9727781f365d4da584f8c2c7530490317ca12f4faef5a7a0618",
-  "glb_bytes": 6870168,
+  "sha256": "95249c6f86fe773e4b5408f4350778df050765f67f92cb17d799fb8171858c47",
+  "glb_bytes": 8018544,
   "meshes": 7,
   "material_primitives": 21,
-  "triangles": 188884,
+  "triangles": 222986,
   "joints": 163,
   "weight_sum_max_error": 1.7881393432617188e-07,
   "clips": {
@@ -26,14 +26,14 @@
   },
   "reimport_bounds_z_up_metres": [
     [
-      -0.3735058903694153,
-      -0.3902702331542969,
-      0.0009994804859161377
+      -0.37381768226623535,
+      -0.38570547103881836,
+      0.0010001137852668762
     ],
     [
-      0.3810090720653534,
-      0.15668810904026031,
-      2.7136855125427246
+      0.38051342964172363,
+      0.1860009729862213,
+      2.71368670463562
     ]
   ],
   "scope": "File integrity; finite accessors; normalized weights; clip lengths, endpoints and default guard; posed Blender reimport. Not full collision, muscle, cloth or combat validation."

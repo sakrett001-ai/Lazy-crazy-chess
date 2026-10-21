@@ -9,10 +9,12 @@ import {makeHostedConfig,validateCandidate,makeRelease,sourceCommit,sha256,MAX_D
 
 function fixture() {
   const modelBytes=Buffer.from('verified model fixture'),standaloneHtml=Buffer.from('<html>verified standalone</html>');
-  const config=makeHostedConfig({commit:'a'.repeat(40),version:'0.2.0',modelBytes});
+  const config=makeHostedConfig({commit:'a'.repeat(40),version:'0.2.1',modelBytes});
   const html=`<!doctype html><html><script id="model-data" type="application/octet-stream"></script><script>window.PAWN_HOSTED=Object.freeze(${JSON.stringify(config)});</script></html>`;
   return {html,config,modelBytes,standaloneHtml,
     modelReport:{status:'passed',sha256:sha256(modelBytes),glb_bytes:modelBytes.length},
+    equipmentReport:{status:'passed',glbSha256:sha256(modelBytes)},
+    geometryReport:{status:'passed',glbSha256:sha256(modelBytes)},
     viewerReport:{status:'passed',glbSha256:sha256(modelBytes),documentSha256:sha256(standaloneHtml)},
     hostedReport:{status:'passed',sourceCommit:config.sourceCommit,documentSha256:sha256(html),glbSha256:sha256(modelBytes),tamperedModelRejected:true},
     builtAt:'2026-10-21T00:00:00.000Z'};
@@ -20,7 +22,7 @@ function fixture() {
 
 test('release binds the exact verified document to its immutable source and model',()=>{
   const f=fixture(),r=makeRelease(f);
-  assert.deepEqual(r,{schemaVersion:1,repository:'sakrett001-ai/Lazy-crazy-chess',sourceBranch:'main',sourceCommit:'a'.repeat(40),version:'0.2.0',modelVersion:'0.1.0',checks:'passed',builtAt:f.builtAt,document:{path:`chess/releases/${'a'.repeat(40)}/viewer.html`,sha256:sha256(f.html),bytes:Buffer.byteLength(f.html)}});
+  assert.deepEqual(r,{schemaVersion:1,repository:'sakrett001-ai/Lazy-crazy-chess',sourceBranch:'main',sourceCommit:'a'.repeat(40),version:'0.2.1',modelVersion:'0.2.0',checks:'passed',builtAt:f.builtAt,document:{path:`chess/releases/${'a'.repeat(40)}/viewer.html`,sha256:sha256(f.html),bytes:Buffer.byteLength(f.html)}});
   assert.equal(f.config.modelUrl,`https://raw.githubusercontent.com/sakrett001-ai/Lazy-crazy-chess/${'a'.repeat(40)}/prototypes/white-pawn/assets/white-pawn.glb`);
 });
 
@@ -49,6 +51,12 @@ const failureCases=[
   ['failed model checks',f=>{f.modelReport.status='failed';}],
   ['different model bytes',f=>{f.modelBytes=Buffer.from('modified model');}],
   ['incorrect model report byte size',f=>{f.modelReport.glb_bytes++;}],
+  ['missing equipment checks',f=>{delete f.equipmentReport;},/Equipment and motion verification did not pass/],
+  ['failed equipment checks',f=>{f.equipmentReport.status='failed';},/Equipment and motion verification did not pass/],
+  ['stale equipment checks',f=>{f.equipmentReport.glbSha256='0'.repeat(64);},/Equipment report belongs to different GLB bytes/],
+  ['missing geometry audit',f=>{delete f.geometryReport;},/Geometry audit did not pass/],
+  ['failed geometry audit',f=>{f.geometryReport.status='failed';},/Geometry audit did not pass/],
+  ['stale geometry audit',f=>{f.geometryReport.glbSha256='0'.repeat(64);},/Geometry report belongs to different GLB bytes/],
   ['failed standalone checks',f=>{f.viewerReport.status='failed';}],
   ['stale standalone report',f=>{f.standaloneHtml=Buffer.from('changed viewer');}],
   ['stale standalone GLB',f=>{f.viewerReport.glbSha256='0'.repeat(64);}],
@@ -59,7 +67,7 @@ const failureCases=[
   ['wrong hosted model hash',f=>{f.hostedReport.glbSha256='0'.repeat(64);}],
   ['untested integrity failure',f=>{f.hostedReport.tamperedModelRejected=false;}],
 ];
-for(const [name,mutate] of failureCases)test(`no passed manifest for ${name}`,()=>{const f=fixture();mutate(f);assert.throws(()=>makeRelease(f));});
+for(const [name,mutate,expected] of failureCases)test(`no passed manifest for ${name}`,()=>{const f=fixture();mutate(f);assert.throws(()=>makeRelease(f),expected);});
 
 // Exercise the real command once: an old manifest must not survive a failed rebuild.
 test('failed build command removes an old publishable manifest',async()=>{

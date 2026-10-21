@@ -1,6 +1,6 @@
 {
   "task": "white-pawn-model-0.2",
-  "status": "implementation",
+  "status": "verified-source-ready-for-publication",
   "baseSourceCommit": "2470a86074b5cd5b1d635f37ec289cdd07d419d1",
   "targetModelVersion": "0.2.0",
   "targetViewerVersion": "0.2.1",
@@ -16,15 +16,12 @@
     "cloth simulation",
     "full board LOD"
   ],
-  "next": "Build candidate after geometry/pose integration, inspect final GLB and control renders, then publish verified release",
+  "next": "Publish this verified source tree, then build and publish exact hosted release; verify live manifest",
   "benchmark": "docs/WHITE_PAWN_V02_BENCHMARK.md",
-  "ownership": {
-    "build_pawn.py": "geometry agent",
-    "pawn_pose.py": "pose agent",
-    "verify-equipment.mjs": "review agent",
-    "versions and documentation": "release agent"
-  },
   "runtime": "Python3.11 bpy4.5.3",
   "publication": "Existing Floot verified-release loader; GitHub Actions observed blocked by billing, manual verified publication authorized",
-  "recovery": "Inspect current git refs and generated hashes before resuming; this is a historical checkpoint, not proof of publication"
+  "recovery": "Inspect current git refs and generated hashes before resuming; this is a historical checkpoint, not proof of publication",
+  "modelSha256": "95249c6f86fe773e4b5408f4350778df050765f67f92cb17d799fb8171858c47",
+  "verifiedAt": "2026-10-21T19:49:01.077699+00:00",
+  "verification": "docs/WHITE_PAWN_V02_REVIEW.md"
 }

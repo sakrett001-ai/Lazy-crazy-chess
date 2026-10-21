@@ -9,7 +9,7 @@ const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const stage=$('#stage'),timeInput=$('#timeline'),play=$('#play');
 const hosted=window.PAWN_HOSTED&&typeof window.PAWN_HOSTED==='object'?Object.freeze({...window.PAWN_HOSTED}):null;
 const clean=value=>typeof value==='string'?value.slice(0,160):'';
-const identity={version:clean(hosted?.version)||'0.2.0',modelVersion:clean(hosted?.modelVersion)||'0.1.0',sourceCommit:clean(hosted?.sourceCommit),modelSha256:clean(hosted?.modelSha256).toLowerCase(),modelUrl:clean(hosted?.modelUrl),mode:hosted?'hosted':'standalone'};
+const identity={version:clean(hosted?.version)||'0.2.1',modelVersion:clean(hosted?.modelVersion)||'0.2.0',sourceCommit:clean(hosted?.sourceCommit),modelSha256:clean(hosted?.modelSha256).toLowerCase(),modelUrl:clean(hosted?.modelUrl),mode:hosted?'hosted':'standalone'};
 $('#build-version').textContent=`Стенд ${identity.version} · модель ${identity.modelVersion}${identity.sourceCommit?' · '+identity.sourceCommit.slice(0,8):''}`;
 $('#build-version').title=identity.sourceCommit?`Исходный коммит: ${identity.sourceCommit}`:'Автономная сборка';
 const embeddedPoster=$('#poster').getAttribute('src');
@@ -17,7 +17,7 @@ if(hosted?.posterUrl){try{const url=new URL(hosted.posterUrl);if(url.protocol!==
 let bytes=null,renderer;
 const download=$('#download');
 download.onclick=()=>{if(!bytes)return;const url=URL.createObjectURL(new Blob([bytes],{type:'model/gltf-binary'}));const a=document.createElement('a');a.href=url;a.download='lazy-crazy-chess-white-pawn.glb';a.click();setTimeout(()=>URL.revokeObjectURL(url),30000);};
-const captions={rest:'Стойка · копьё в правой руке, ростовой щит слева',Guard_Breath:'Дыхание в стойке · оружие и щит следуют за телом',Shield_Brace:'Тест щита · движение руки и щита без переноса веса',Spear_Study:'Вынос копья · наклон древка на 45° и возврат'};
+const captions={rest:'Стойка · копьё в правой руке, ростовой щит слева',Guard_Breath:'Дыхание в стойке · оружие и щит следуют за телом',Shield_Brace:'Упор щитом · согласованное движение ног, таза и корпуса',Spear_Study:'Учебный укол · наконечником вперёд вдоль древка и возврат'};
 function fallback(message){if(renderer)renderer.domElement.hidden=true;$('#loading').hidden=true;$('#poster').style.display='block';$('#fallback').hidden=false;$('#fallback').textContent=message+'. Показан сохранённый рендер. '+(bytes?'Модель можно скачать и открыть в Blender.':'Проверьте соединение и перезагрузите страницу.');document.body.classList.add('unavailable');$$('aside button, aside input, aside select, .view-buttons button, #mark-issue').filter(b=>b!==download).forEach(b=>b.disabled=true);window.whitePawn={ready:false,fallback:message,identity:{...identity}};}
 async function loadModel(){
  if(!hosted){const embedded=$('#model-data').textContent.trim();if(!embedded||embedded==='/*MODEL*/')throw Error('В сборке нет модели');const result=Uint8Array.from(atob(embedded),c=>c.charCodeAt(0));if(globalThis.crypto?.subtle)identity.modelSha256=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',result)),n=>n.toString(16).padStart(2,'0')).join('');return result;}
