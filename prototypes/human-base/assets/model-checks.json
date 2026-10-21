@@ -1,0 +1,61 @@
+{
+  "glb_sha256": "6f12aaa99ced53983ea3188493a755c46342c908055caf125c5b3576eb099962",
+  "bpy": "4.5.3 LTS",
+  "glb_reimport": "passed, no re-export",
+  "bones": 163,
+  "rest_height_metres": 1.7981762400595471,
+  "rest_bounds_blender_z_up_metres": [
+    [
+      -0.5888762474060059,
+      -0.39208340644836426,
+      0.0006608256371691823
+    ],
+    [
+      0.5888758301734924,
+      0.09821221232414246,
+      1.7988370656967163
+    ]
+  ],
+  "meshes": [
+    {
+      "name": "Eyes",
+      "vertices": 1076,
+      "triangles": 2040,
+      "weight_sum_max_error": 0.0
+    },
+    {
+      "name": "Mesh",
+      "vertices": 70985,
+      "triangles": 107024,
+      "weight_sum_max_error": 1.7881393432617188e-07
+    },
+    {
+      "name": "Training shorts",
+      "vertices": 2926,
+      "triangles": 5856,
+      "weight_sum_max_error": 1.7881393432617188e-07
+    }
+  ],
+  "clips": [
+    {
+      "name": "Elbow_Flex",
+      "duration_seconds": 3.0,
+      "endpoint_max_error": 0,
+      "channels": 489
+    },
+    {
+      "name": "Ready_Study",
+      "duration_seconds": 3.0,
+      "endpoint_max_error": 0,
+      "channels": 489
+    },
+    {
+      "name": "Hand_Close",
+      "duration_seconds": 3.0,
+      "endpoint_max_error": 0,
+      "channels": 489
+    }
+  ],
+  "finite_accessors": true,
+  "scope": "Byte integrity, finite geometry, normalized four-joint skinning, clip endpoints/duration and Blender reimport. Not a collision or muscle deformation proof."
+}

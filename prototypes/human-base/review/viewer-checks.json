@@ -1,0 +1,249 @@
+{
+  "date": "2026-10-20T22:44:43.075Z",
+  "browser": "141.0.7390.37",
+  "tests": [
+    "offline load; no HTTP requests; expected skeleton and clips",
+    "18 pose samples finite; feet within 4 mm of floor; repeat/reverse seek stable",
+    "play, pause and tempo control",
+    "keyboard rotation and pointer interruption",
+    "embedded GLB download",
+    "390px viewport, no horizontal overflow, full model framing",
+    "mobile offscreen Play returns to model and advances time",
+    "reduced motion starts still",
+    "WebGL failure shows poster and retains download"
+  ],
+  "measurements": [
+    {
+      "name": "Elbow_Flex",
+      "t": 0,
+      "minY": 0.0006622311902399546,
+      "maxY": 1.7988364281619387,
+      "height": 1.7981741969716987,
+      "finite": true
+    },
+    {
+      "name": "Elbow_Flex",
+      "t": 0.5,
+      "minY": 0.0006622311902399546,
+      "maxY": 1.7988364281619387,
+      "height": 1.7981741969716987,
+      "finite": true
+    },
+    {
+      "name": "Elbow_Flex",
+      "t": 1.4,
+      "minY": 0.0006622311902399546,
+      "maxY": 1.7988364281619387,
+      "height": 1.7981741969716987,
+      "finite": true
+    },
+    {
+      "name": "Elbow_Flex",
+      "t": 2.5,
+      "minY": 0.0006622311902399546,
+      "maxY": 1.7988364281619387,
+      "height": 1.7981741969716987,
+      "finite": true
+    },
+    {
+      "name": "Elbow_Flex",
+      "t": 3,
+      "minY": 0.0006622311902399546,
+      "maxY": 1.7988364281619387,
+      "height": 1.7981741969716987,
+      "finite": true
+    },
+    {
+      "name": "Elbow_Flex",
+      "t": 0,
+      "minY": 0.0006622311902399546,
+      "maxY": 1.7988364281619387,
+      "height": 1.7981741969716987,
+      "finite": true
+    },
+    {
+      "name": "Ready_Study",
+      "t": 0,
+      "minY": 0.0006622311902399546,
+      "maxY": 1.7988364281619387,
+      "height": 1.7981741969716987,
+      "finite": true
+    },
+    {
+      "name": "Ready_Study",
+      "t": 0.5,
+      "minY": 0.0006622311902399546,
+      "maxY": 1.7988364276161388,
+      "height": 1.7981741964258988,
+      "finite": true
+    },
+    {
+      "name": "Ready_Study",
+      "t": 1.4,
+      "minY": 0.0006622311902399546,
+      "maxY": 1.7988364292850654,
+      "height": 1.7981741980948254,
+      "finite": true
+    },
+    {
+      "name": "Ready_Study",
+      "t": 2.5,
+      "minY": 0.0006622311902399546,
+      "maxY": 1.7988364276161388,
+      "height": 1.7981741964258988,
+      "finite": true
+    },
+    {
+      "name": "Ready_Study",
+      "t": 3,
+      "minY": 0.0006622311902399546,
+      "maxY": 1.7988364281619387,
+      "height": 1.7981741969716987,
+      "finite": true
+    },
+    {
+      "name": "Ready_Study",
+      "t": 0,
+      "minY": 0.0006622311902399546,
+      "maxY": 1.7988364281619387,
+      "height": 1.7981741969716987,
+      "finite": true
+    },
+    {
+      "name": "Hand_Close",
+      "t": 0,
+      "minY": 0.0006622311902399546,
+      "maxY": 1.7988364281619387,
+      "height": 1.7981741969716987,
+      "finite": true
+    },
+    {
+      "name": "Hand_Close",
+      "t": 0.5,
+      "minY": 0.0006622311902399546,
+      "maxY": 1.7988364281619387,
+      "height": 1.7981741969716987,
+      "finite": true
+    },
+    {
+      "name": "Hand_Close",
+      "t": 1.4,
+      "minY": 0.0006622311902399546,
+      "maxY": 1.7988364281619387,
+      "height": 1.7981741969716987,
+      "finite": true
+    },
+    {
+      "name": "Hand_Close",
+      "t": 2.5,
+      "minY": 0.0006622311902399546,
+      "maxY": 1.7988364281619387,
+      "height": 1.7981741969716987,
+      "finite": true
+    },
+    {
+      "name": "Hand_Close",
+      "t": 3,
+      "minY": 0.0006622311902399546,
+      "maxY": 1.7988364281619387,
+      "height": 1.7981741969716987,
+      "finite": true
+    },
+    {
+      "name": "Hand_Close",
+      "t": 0,
+      "minY": 0.0006622311902399546,
+      "maxY": 1.7988364281619387,
+      "height": 1.7981741969716987,
+      "finite": true
+    }
+  ],
+  "loadMs": 4036,
+  "initial": {
+    "pose": "rest",
+    "time": 0,
+    "playing": false,
+    "speed": 1,
+    "view": "three",
+    "onScreen": true,
+    "pendingPlay": false,
+    "renderCalls": 7,
+    "triangles": 117474,
+    "bones": 163,
+    "clips": [
+      {
+        "name": "Elbow_Flex",
+        "duration": 3
+      },
+      {
+        "name": "Ready_Study",
+        "duration": 3
+      },
+      {
+        "name": "Hand_Close",
+        "duration": 3
+      }
+    ],
+    "renderer": "WebKit WebGL",
+    "reducedMotion": false,
+    "contained": true
+  },
+  "performance": {
+    "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+    "viewport": [
+      1440,
+      1000
+    ],
+    "p50ReadbackMs": 274.69999999925494,
+    "p95ReadbackMs": 301.6000000014901,
+    "note": "Synchronous render + readback in headless Chromium; not sustained phone FPS."
+  },
+  "errors": [],
+  "status": "passed",
+  "model": {
+    "height_metres": 1.8,
+    "body_control_vertices": 13380,
+    "body_control_faces": 13378,
+    "bones": 163,
+    "clips": [
+      "Elbow_Flex",
+      "Ready_Study",
+      "Hand_Close"
+    ],
+    "clip_duration_seconds": 3,
+    "bpy": "4.5.3 LTS",
+    "source_revision": "a8bc2d54ff0ac92e78ff71431b1023eda42bf482",
+    "glb_bytes": 6196076,
+    "sha256": "6f12aaa99ced53983ea3188493a755c46342c908055caf125c5b3576eb099962",
+    "render_seconds": {
+      "neutral.png": 14.859,
+      "model-elbows.png": 14.872,
+      "model-ready.png": 15.047,
+      "model-hands.png": 14.732,
+      "model-face.png": 16.787,
+      "model-hand-0.png": 13.759,
+      "model-hand-1.png": 14.691
+    },
+    "renderer": "Cycles CPU, 24 samples, 900 x 1100",
+    "limits": [
+      "Technical deformation studies only; no combat actions",
+      "No corrective joint shapes or collision solver",
+      "Attachment helper frames require equipment fitting",
+      "Generic adult anatomy; not a replica of a measured person"
+    ],
+    "finger_axes": {
+      "L": [
+        0.38598230481147766,
+        0.8085812926292419,
+        -0.4440877437591553
+      ],
+      "R": [
+        0.38598230481147766,
+        -0.8085812926292419,
+        0.4440877437591553
+      ]
+    },
+    "asset_license": "CC0-1.0",
+    "asset_author": "MakeHuman Community"
+  }
+}

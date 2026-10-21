@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Человек · Lazy Crazy Chess</title><style>/*STYLE*/</style>
+</head>
+<body>
+<header><a class="brand" href="#" aria-label="Lazy Crazy Chess"><span class="brand-mark">♟</span><span>LAZY CRAZY<br>CHESS</span></a><span class="header-label">Мастерская фигур</span><span class="version">Этюд 001 <i></i> v0.1</span></header>
+<main>
+<aside>
+ <div class="intro"><p class="eyebrow">Человеческая основа</p><h1>Сначала<br>человек.</h1><p class="lede">Пропорции, суставы, движение.<br>Общая основа будущих фракций.</p></div>
+ <section><h2><span>01</span> Поза и движение</h2>
+ <div class="poses" role="group" aria-label="Проверочные движения">
+  <button class="pose active" data-pose="rest" aria-pressed="true"><span>A</span><div>Исходная поза<small>Осмотр пропорций</small></div><b>↗</b></button>
+  <button class="pose" data-pose="Elbow_Flex" aria-pressed="false"><span>B</span><div>Сгибание рук<small>Локти и предплечья</small></div><b>↗</b></button>
+  <button class="pose" data-pose="Ready_Study" aria-pressed="false"><span>C</span><div>Подготовка к стойке<small>Плечи и корпус</small></div><b>↗</b></button>
+  <button class="pose" data-pose="Hand_Close" aria-pressed="false"><span>D</span><div>Кисти и пальцы<small>Первый тест сгибания</small></div><b>↗</b></button>
+ </div>
+ <div class="playback"><button id="play" aria-label="Запустить движение" disabled>▶</button><input id="timeline" type="range" min="0" max="3" step="0.01" value="0" aria-label="Время движения" disabled><output id="time">0.00 с</output></div>
+ <div class="tempo"><label for="speed">Темп движения</label><select id="speed" aria-label="Темп движения"><option value="0.5">0,5×</option><option value="1" selected>1×</option><option value="1.5">1,5×</option></select></div>
+ </section>
+ <section><h2><span>02</span> Осмотр модели</h2><div class="segments" role="group" aria-label="Отображение"><button class="active" data-display="surface" aria-pressed="true">Поверхность</button><button data-display="wire" aria-pressed="false">Сетка</button></div><label class="switch"><input id="skeleton" type="checkbox"><span>Основные суставы</span></label></section>
+ <div class="next"><span class="eyebrow">Следующий шаг</span><p>Посадка доспехов пешки.<br>Ростовой щит и копьё.</p></div>
+ <button id="download" class="download" disabled>Скачать модель <span>GLB ↓</span></button>
+ <p class="credit">Основа MakeHuman · CC0<br>Учебные движения. Хват оружия ещё впереди.</p>
+</aside>
+<div class="stage-wrap">
+ <div class="stage-top"><div><span class="eyebrow">HUMAN / 001</span><p>Анатомический этюд</p></div><span class="scale">180 <small>см</small></span></div>
+ <div id="stage" tabindex="0" aria-label="Модель человека. Мышь: вращение, колесо: масштаб. Стрелки: вращение, плюс и минус: масштаб, H: исходный вид."><img id="poster" src="/*POSTER*/" alt="Человеческая основа в исходной позе"><div id="loading" role="status">Подготавливаем модель…</div></div>
+ <div class="stage-bottom"><p id="pose-caption">Исходная поза · тело без экипировки</p><div class="view-buttons" role="group" aria-label="Ракурс"><button data-view="front">Спереди</button><button data-view="side">Сбоку</button><button data-view="back">Сзади</button><button class="active" data-view="three">¾</button><button data-view="face">Лицо</button><button id="home" aria-label="Сбросить камеру">⌂</button></div><p class="gesture">Вращайте мышью или пальцем · прокрутка — масштаб</p></div>
+ <div id="fallback" hidden>Для интерактивного просмотра нужен WebGL. Здесь показан исходный рендер. Модель можно скачать и открыть в Blender.</div>
+</div>
+</main>
+<script id="model-data" type="application/octet-stream">/*MODEL*/</script>
+<script>/*SCRIPT*/</script>
+</body></html>

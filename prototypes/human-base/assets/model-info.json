@@ -1,0 +1,46 @@
+{
+  "height_metres": 1.8,
+  "body_control_vertices": 13380,
+  "body_control_faces": 13378,
+  "bones": 163,
+  "clips": [
+    "Elbow_Flex",
+    "Ready_Study",
+    "Hand_Close"
+  ],
+  "clip_duration_seconds": 3,
+  "bpy": "4.5.3 LTS",
+  "source_revision": "a8bc2d54ff0ac92e78ff71431b1023eda42bf482",
+  "glb_bytes": 6196076,
+  "sha256": "6f12aaa99ced53983ea3188493a755c46342c908055caf125c5b3576eb099962",
+  "render_seconds": {
+    "neutral.png": 14.859,
+    "model-elbows.png": 14.872,
+    "model-ready.png": 15.047,
+    "model-hands.png": 14.732,
+    "model-face.png": 16.787,
+    "model-hand-0.png": 13.759,
+    "model-hand-1.png": 14.691
+  },
+  "renderer": "Cycles CPU, 24 samples, 900 x 1100",
+  "limits": [
+    "Technical deformation studies only; no combat actions",
+    "No corrective joint shapes or collision solver",
+    "Attachment helper frames require equipment fitting",
+    "Generic adult anatomy; not a replica of a measured person"
+  ],
+  "finger_axes": {
+    "L": [
+      0.38598230481147766,
+      0.8085812926292419,
+      -0.4440877437591553
+    ],
+    "R": [
+      0.38598230481147766,
+      -0.8085812926292419,
+      0.4440877437591553
+    ]
+  },
+  "asset_license": "CC0-1.0",
+  "asset_author": "MakeHuman Community"
+}

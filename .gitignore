@@ -1,0 +1,8 @@
+node_modules/
+__pycache__/
+*.blend1
+*.log
+.DS_Store
+prototypes/human-base/review/browser-*.png
+prototypes/human-base/review/model-*.png
+.venv/

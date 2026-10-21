@@ -1,0 +1,9 @@
+{
+ "name":"lazy-crazy-chess-human-base",
+ "version":"0.1.0",
+ "private":true,
+ "type":"module",
+ "scripts":{"build":"node scripts/build.mjs","verify":"node scripts/verify.mjs"},
+ "dependencies":{"three":"0.180.0"},
+ "devDependencies":{"esbuild":"0.25.10","playwright":"1.56.1"}
+}

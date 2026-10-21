@@ -1,0 +1,139 @@
+{
+  "scope": "Final camera near/far change only; opening and named views, desktop and mobile.",
+  "browser": "Chromium 141 / headless software WebGL",
+  "cases": [
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "opened": true,
+      "views": [
+        {
+          "view": "front",
+          "contained": true,
+          "near": 0.03,
+          "far": 40,
+          "finite": true,
+          "calls": 7
+        },
+        {
+          "view": "side",
+          "contained": true,
+          "near": 0.03,
+          "far": 40,
+          "finite": true,
+          "calls": 7
+        },
+        {
+          "view": "back",
+          "contained": true,
+          "near": 0.03,
+          "far": 40,
+          "finite": true,
+          "calls": 7
+        },
+        {
+          "view": "three",
+          "contained": true,
+          "near": 0.03,
+          "far": 40,
+          "finite": true,
+          "calls": 7
+        },
+        {
+          "view": "face",
+          "contained": true,
+          "near": 0.03,
+          "far": 40,
+          "finite": true,
+          "calls": 5
+        },
+        {
+          "view": "top",
+          "contained": true,
+          "near": 0.03,
+          "far": 40,
+          "finite": true,
+          "calls": 7
+        },
+        {
+          "view": "bottom",
+          "contained": true,
+          "near": 0.03,
+          "far": 40,
+          "finite": true,
+          "calls": 7
+        }
+      ],
+      "errors": []
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "opened": true,
+      "views": [
+        {
+          "view": "front",
+          "contained": true,
+          "near": 0.03,
+          "far": 40,
+          "finite": true,
+          "calls": 7
+        },
+        {
+          "view": "side",
+          "contained": true,
+          "near": 0.03,
+          "far": 40,
+          "finite": true,
+          "calls": 7
+        },
+        {
+          "view": "back",
+          "contained": true,
+          "near": 0.03,
+          "far": 40,
+          "finite": true,
+          "calls": 7
+        },
+        {
+          "view": "three",
+          "contained": true,
+          "near": 0.03,
+          "far": 40,
+          "finite": true,
+          "calls": 7
+        },
+        {
+          "view": "face",
+          "contained": true,
+          "near": 0.03,
+          "far": 40,
+          "finite": true,
+          "calls": 5
+        },
+        {
+          "view": "top",
+          "contained": true,
+          "near": 0.03,
+          "far": 40,
+          "finite": true,
+          "calls": 7
+        },
+        {
+          "view": "bottom",
+          "contained": true,
+          "near": 0.03,
+          "far": 40,
+          "finite": true,
+          "calls": 7
+        }
+      ],
+      "errors": []
+    }
+  ],
+  "passed": true
+}
