@@ -1,0 +1,30 @@
+// Carry an immutable, passed contact audit forward ONLY over a proven material-only edit.
+import assert from 'node:assert/strict';
+import {readFile,writeFile} from 'node:fs/promises';
+import {execFileSync} from 'node:child_process';
+import {createHash} from 'node:crypto';
+import {fileURLToPath} from 'node:url';
+import path from 'node:path';
+const root=path.dirname(path.dirname(fileURLToPath(import.meta.url))),repo=path.resolve(root,'../..');
+const source=process.argv[2]||'cf6b689e960744a5c0614e8cb23eafeb45cedcce';
+assert.match(source,/^[a-f0-9]{40}$/);
+const hash=x=>createHash('sha256').update(x).digest('hex');
+const prior=p=>execFileSync('git',['show',`${source}:prototypes/white-pawn/${p}`],{cwd:repo,maxBuffer:32*1024*1024});
+function parse(raw){assert.equal(raw.readUInt32LE(0),0x46546c67);assert.equal(raw.readUInt32LE(4),2);assert.equal(raw.readUInt32LE(8),raw.length);const size=raw.readUInt32LE(12),offset=20+size;assert.equal(raw.readUInt32LE(16),0x4e4f534a);assert.equal(raw.readUInt32LE(offset+4),0x004e4942);const json=JSON.parse(raw.subarray(20,offset));delete json.materials;for(const mesh of json.meshes)for(const primitive of mesh.primitives)delete primitive.material;return {json,binary:raw.subarray(offset+8)};}
+const materialBytes=await readFile(path.join(root,'review/material-checks.json')),proof=JSON.parse(materialBytes);
+const before=prior('assets/white-pawn.glb'),after=await readFile(path.join(root,'assets/white-pawn.glb'));
+const oldBlend=prior('assets/white-pawn.blend'),newBlend=await readFile(path.join(root,'assets/white-pawn.blend'));
+assert.equal(proof.status,'passed');
+assert.equal(proof.sourceGlbSha256,hash(before));assert.equal(proof.glbSha256,hash(after));
+assert.equal(proof.sourceBlendSha256,hash(oldBlend));assert.equal(proof.blendSha256,hash(newBlend));
+const a=parse(before),b=parse(after);assert.deepEqual(a.json,b.json,'Non-material glTF data changed');assert(a.binary.equals(b.binary),'GLB geometry/animation buffers changed');
+assert.equal(hash(a.binary),proof.glbBinarySha256Before);assert.equal(hash(b.binary),proof.glbBinarySha256After);
+assert.match(proof.authoredSignatureBefore,/^[a-f0-9]{64}$/);assert.equal(proof.authoredSignatureBefore,proof.authoredSignatureAfter);assert.equal(proof.authoredSignatureBefore,proof.authoredSignatureAfterReopen);
+const reportBytes=prior('review/geometry-checks.json'),report=JSON.parse(reportBytes);
+assert.equal(report.status,'passed');assert.equal(report.glbSha256,hash(before));assert.equal(report.blendSha256,hash(oldBlend));
+report.inheritedFrom={sourceCommit:source,reportSha256:hash(reportBytes),glbSha256:report.glbSha256,blendSha256:report.blendSha256,checkedAt:report.checkedAt};
+report.glbSha256=hash(after);report.blendSha256=hash(newBlend);report.carriedForwardAt=new Date().toISOString();
+report.materialPreservation={report:'material-checks.json',sha256:hash(materialBytes),glbBinaryUnchanged:true,nonMaterialGltfUnchanged:true,authoredSignatureUnchanged:true};
+report.scope='Inherited without rerunning the contact sampler: exact GLB buffers and all non-material JSON are unchanged; authored geometry, weights, modifiers, rig and actions have matching before/after/reopen signatures in material-checks.json. Original audit: '+report.scope;
+await writeFile(path.join(root,'review/geometry-checks.json'),JSON.stringify(report,null,2)+'\n');
+console.log(JSON.stringify({status:'passed',kind:'material-only audit inheritance',sourceCommit:source,glbSha256:report.glbSha256,originalAuditAt:report.checkedAt,carriedForwardAt:report.carriedForwardAt}));

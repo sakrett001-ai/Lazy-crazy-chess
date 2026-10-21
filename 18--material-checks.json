@@ -1,0 +1,255 @@
+{
+  "status": "passed",
+  "checkedAt": "2026-10-21T20:14:32.323800+00:00",
+  "kind": "material-only migration, preserving prior geometry and animation",
+  "sourceModelVersion": "0.2.0",
+  "modelVersion": "0.2.1",
+  "sourceGlbSha256": "95249c6f86fe773e4b5408f4350778df050765f67f92cb17d799fb8171858c47",
+  "glbSha256": "521c0a51e9f4440c897a079934e876fa153cd3789fad28c43b7d444154d6f036",
+  "sourceBlendSha256": "0f3166a35e96ecdc6c105322faf769c0a94f14a980eea21834dd4fd7cb16cce5",
+  "blendSha256": "d729f038de79813e2a100396f7d349e7022a24ac697d887d2ae478d66050de23",
+  "glbBinarySha256Before": "fa6bbbff77915b04215e6c2a0efeb6e36fde4be55211895f7d566c76ba4ca9f1",
+  "glbBinarySha256After": "fa6bbbff77915b04215e6c2a0efeb6e36fde4be55211895f7d566c76ba4ca9f1",
+  "glbNonMaterialJsonSha256Before": "85238d240c064f0fbb6858c4c7516a865ce3050e627054ee200c6c2cc7a74327",
+  "glbNonMaterialJsonSha256After": "85238d240c064f0fbb6858c4c7516a865ce3050e627054ee200c6c2cc7a74327",
+  "authoredSignatureBefore": "b39523d2a7f985daf0c37e2e879301af55527899bb23b5fffc533e47b1d770da",
+  "authoredSignatureAfter": "b39523d2a7f985daf0c37e2e879301af55527899bb23b5fffc533e47b1d770da",
+  "authoredSignatureAfterReopen": "b39523d2a7f985daf0c37e2e879301af55527899bb23b5fffc533e47b1d770da",
+  "authoredCounts": {
+    "objects": 176,
+    "vertices": 42573,
+    "polygons": 40914,
+    "bones": 163,
+    "fcurves": 3423
+  },
+  "materialAssignments": [
+    {
+      "mesh": "ARMOR_Breastplate.002",
+      "sourceMaterial": "Ivory enamel",
+      "slot": "armor.main"
+    },
+    {
+      "mesh": "ARMOR_Breastplate.002",
+      "sourceMaterial": "Cold brushed silver",
+      "slot": "armor.trim"
+    },
+    {
+      "mesh": "ARMOR_Breastplate.002",
+      "sourceMaterial": "Dark leather",
+      "slot": "Dark leather"
+    },
+    {
+      "mesh": "Human body.003",
+      "sourceMaterial": "Human skin | neutral study",
+      "slot": "Human skin | neutral study"
+    },
+    {
+      "mesh": "CLOTH_Underarm and leggings.002",
+      "sourceMaterial": "Padded blue-grey linen",
+      "slot": "Padded blue-grey linen"
+    },
+    {
+      "mesh": "CLOTH_Underarm and leggings.002",
+      "sourceMaterial": "Dark leather",
+      "slot": "Dark leather"
+    },
+    {
+      "mesh": "CLOTH_Underarm and leggings.002",
+      "sourceMaterial": "Joint recess",
+      "slot": "Joint recess"
+    },
+    {
+      "mesh": "Eyes.001",
+      "sourceMaterial": "Eyes | brown",
+      "slot": "Eyes | brown"
+    },
+    {
+      "mesh": "HELMET_Ivory open helmet.001",
+      "sourceMaterial": "Ivory enamel",
+      "slot": "armor.main"
+    },
+    {
+      "mesh": "HELMET_Ivory open helmet.001",
+      "sourceMaterial": "Cold brushed silver",
+      "slot": "armor.trim"
+    },
+    {
+      "mesh": "HELMET_Ivory open helmet.001",
+      "sourceMaterial": "Deep teal enamel",
+      "slot": "Deep teal enamel"
+    },
+    {
+      "mesh": "HELMET_Ivory open helmet.001",
+      "sourceMaterial": "Teal horsehair",
+      "slot": "Teal horsehair"
+    },
+    {
+      "mesh": "SHIELD_Ivory face.001",
+      "sourceMaterial": "Ivory enamel",
+      "slot": "shield.face"
+    },
+    {
+      "mesh": "SHIELD_Ivory face.001",
+      "sourceMaterial": "Cold brushed silver",
+      "slot": "shield.trim"
+    },
+    {
+      "mesh": "SHIELD_Ivory face.001",
+      "sourceMaterial": "Dark leather",
+      "slot": "shield.leather"
+    },
+    {
+      "mesh": "SHIELD_Ivory face.001",
+      "sourceMaterial": "Ash wood shaft",
+      "slot": "shield.wood"
+    },
+    {
+      "mesh": "SHIELD_Ivory face.001",
+      "sourceMaterial": "Deep teal enamel",
+      "slot": "shield.emblem"
+    },
+    {
+      "mesh": "SPEAR_Ash shaft.001",
+      "sourceMaterial": "Ash wood shaft",
+      "slot": "weapon.wood"
+    },
+    {
+      "mesh": "SPEAR_Ash shaft.001",
+      "sourceMaterial": "Dark leather",
+      "slot": "weapon.grip"
+    },
+    {
+      "mesh": "SPEAR_Ash shaft.001",
+      "sourceMaterial": "Joint recess",
+      "slot": "weapon.binding"
+    },
+    {
+      "mesh": "SPEAR_Ash shaft.001",
+      "sourceMaterial": "Cold brushed silver",
+      "slot": "weapon.metal"
+    }
+  ],
+  "slots": {
+    "armor.main": {
+      "linearBaseColor": [
+        0.5,
+        0.54,
+        0.58,
+        1
+      ],
+      "metallic": 1,
+      "roughness": 0.32
+    },
+    "armor.trim": {
+      "linearBaseColor": [
+        0.6,
+        0.64,
+        0.67,
+        1
+      ],
+      "metallic": 1,
+      "roughness": 0.24
+    },
+    "shield.face": {
+      "linearBaseColor": [
+        0.82,
+        0.82,
+        0.78,
+        1
+      ],
+      "metallic": 0,
+      "roughness": 0.42
+    },
+    "shield.trim": {
+      "linearBaseColor": [
+        0.5,
+        0.57,
+        0.62,
+        1
+      ],
+      "metallic": 1,
+      "roughness": 0.27
+    },
+    "shield.emblem": {
+      "linearBaseColor": [
+        0.025,
+        0.135,
+        0.16,
+        1
+      ],
+      "metallic": 0.28,
+      "roughness": 0.31
+    },
+    "shield.wood": {
+      "linearBaseColor": [
+        0.24,
+        0.135,
+        0.061,
+        1
+      ],
+      "metallic": 0,
+      "roughness": 0.62
+    },
+    "shield.leather": {
+      "linearBaseColor": [
+        0.075,
+        0.055,
+        0.038,
+        1
+      ],
+      "metallic": 0,
+      "roughness": 0.8
+    },
+    "weapon.metal": {
+      "linearBaseColor": [
+        0.5,
+        0.57,
+        0.62,
+        1
+      ],
+      "metallic": 1,
+      "roughness": 0.27
+    },
+    "weapon.wood": {
+      "linearBaseColor": [
+        0.24,
+        0.135,
+        0.061,
+        1
+      ],
+      "metallic": 0,
+      "roughness": 0.62
+    },
+    "weapon.grip": {
+      "linearBaseColor": [
+        0.075,
+        0.055,
+        0.038,
+        1
+      ],
+      "metallic": 0,
+      "roughness": 0.8
+    },
+    "weapon.binding": {
+      "linearBaseColor": [
+        0.018,
+        0.022,
+        0.026,
+        1
+      ],
+      "metallic": 0.1,
+      "roughness": 0.65
+    }
+  },
+  "tests": [
+    "GLB BIN chunk exactly preserved",
+    "All glTF JSON outside materials and primitive material references preserved",
+    "Authored meshes, modifiers, vertex weights, bones, poses and actions unchanged before/after/save-reopen",
+    "Independent material slots assigned by equipment category",
+    "Default shield face remains white dielectric while armor and helmet are steel"
+  ],
+  "limits": [
+    "This preserves the geometry audited in model 0.2.0; it is not a rerun of the 429-pose contact audit.",
+    "Material presets change appearance only, not armor construction or weapon reach."
+  ]
+}

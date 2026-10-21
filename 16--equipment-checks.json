@@ -1,0 +1,700 @@
+{
+  "status": "passed",
+  "glbSha256": "521c0a51e9f4440c897a079934e876fa153cd3789fad28c43b7d444154d6f036",
+  "glbPath": "/workspace/scratch/c3dfd1aa64e3/Lazy-crazy-chess/prototypes/white-pawn/assets/white-pawn.glb",
+  "limits": {
+    "footDriftM": 0.006,
+    "floorPenetrationM": 0.004,
+    "soleFloorGapM": 0.008,
+    "pelvisOutsideSupportM": 0.02,
+    "seekSurfaceM": 0.000001,
+    "seekQuaternionRad": 0.000001,
+    "endpointM": 0.00001,
+    "spearElevationDeg": 20,
+    "spearAdvanceM": 0.08,
+    "spearLateralRatio": 0.6,
+    "spearAttackRotationDeg": 12,
+    "spearBackwardStepM": 0.003,
+    "shieldBandAdvanceM": 0.025,
+    "shieldVertexAdvanceM": 0.015
+  },
+  "phases": {
+    "Spear_Study": {
+      "ready": 1.25,
+      "attack": 1.9
+    },
+    "Shield_Brace": {
+      "ready": 0.65,
+      "attack": 1.65
+    }
+  },
+  "checks": [
+    {
+      "name": "Guard_Breath: planted L sole surface",
+      "passed": true,
+      "maxDriftM": 0,
+      "minY": 0.0010004391843591877,
+      "maxSoleFloorGapM": 0.0010004391843591877
+    },
+    {
+      "name": "Guard_Breath: planted R sole surface",
+      "passed": true,
+      "maxDriftM": 0,
+      "minY": 0.0010001154276175525,
+      "maxSoleFloorGapM": 0.0010001154276175525
+    },
+    {
+      "name": "Guard_Breath: sampled quaternion norms",
+      "passed": true,
+      "maxNormError": 8.55492388041057e-8
+    },
+    {
+      "name": "Guard_Breath: pelvis projection support proxy",
+      "passed": true,
+      "signedMarginM": 0.06802031171828865,
+      "hipMidpointXZ": [
+        1.0452845880526418e-8,
+        -0.007936936896051114
+      ],
+      "hullXZ": [
+        [
+          -0.28583680723529814,
+          -0.02800098590029501
+        ],
+        [
+          -0.28433805044207766,
+          -0.057459623442068425
+        ],
+        [
+          -0.2798994130195266,
+          -0.08578618678814447
+        ],
+        [
+          -0.2726914238077398,
+          -0.1118920957218599
+        ],
+        [
+          -0.262991125177162,
+          -0.13477411458323507
+        ],
+        [
+          -0.2511712845885622,
+          -0.1535529053013897
+        ],
+        [
+          -0.23768610437898088,
+          -0.16750679994736267
+        ],
+        [
+          -0.22305384700615719,
+          -0.1760995690493808
+        ],
+        [
+          -0.2078367929839489,
+          -0.17900099544023737
+        ],
+        [
+          -0.192619738503011,
+          -0.17609956632075566
+        ],
+        [
+          0.22305386450565656,
+          0.023900504305956236
+        ],
+        [
+          0.2376861177171943,
+          0.03249326965699903
+        ],
+        [
+          0.25117129519951914,
+          0.04644715892667586
+        ],
+        [
+          0.2629911345997144,
+          0.06522594284982056
+        ],
+        [
+          0.2726914336263968,
+          0.08810795375860156
+        ],
+        [
+          0.2798994248035724,
+          0.11421385388775
+        ],
+        [
+          0.28433806568528464,
+          0.1425404079156439
+        ],
+        [
+          0.28583682729848614,
+          0.1719990359837114
+        ],
+        [
+          0.28433807184330406,
+          0.2014576719796525
+        ],
+        [
+          0.2798994368829619,
+          0.22978422276446306
+        ],
+        [
+          0.2726914511629528,
+          0.2558901289143568
+        ],
+        [
+          0.2629911569195159,
+          0.27877214011832696
+        ],
+        [
+          0.2511713214448294,
+          0.29755092408032735
+        ],
+        [
+          0.2376861468794214,
+          0.31150483254565103
+        ],
+        [
+          0.22305389546411047,
+          0.32009758765532254
+        ],
+        [
+          0.2078368474838271,
+          0.3229990243612709
+        ],
+        [
+          0.1926197988970292,
+          0.3200975925013434
+        ],
+        [
+          -0.22305382359106463,
+          0.1200976085066329
+        ],
+        [
+          -0.23768608232244506,
+          0.11150485168201435
+        ],
+        [
+          -0.251171264738205,
+          0.09755093971680193
+        ],
+        [
+          -0.26299110829582095,
+          0.07877215060447929
+        ],
+        [
+          -0.2726914105441549,
+          0.05589013279767613
+        ],
+        [
+          -0.27989940388341067,
+          0.02978421884617896
+        ],
+        [
+          -0.28433804578452604,
+          0.0014576593608077448
+        ]
+      ],
+      "time": 0,
+      "frame": 0,
+      "note": "Hip-joint midpoint projected onto actual sole hull; up to20mm outside allowed. This is not a center-of-mass or dynamic balance model."
+    },
+    {
+      "name": "Guard_Breath: surface endpoint returns",
+      "passed": true,
+      "maxErrorM": 0
+    },
+    {
+      "name": "Guard_Breath: arbitrary seek is deterministic",
+      "passed": true,
+      "maxSurfaceErrorM": 0,
+      "maxQuaternionAngleRad": 5.16191365590357e-8
+    },
+    {
+      "name": "Shield_Brace: planted L sole surface",
+      "passed": true,
+      "maxDriftM": 0.0001466851722767961,
+      "minY": 0.0009320002343946743,
+      "maxSoleFloorGapM": 0.0010140166144240392,
+      "worstVertex": "CLOTH_Underarm_and_leggings002_2:66",
+      "time": 1.2333333333333334,
+      "frame": 37
+    },
+    {
+      "name": "Shield_Brace: planted R sole surface",
+      "passed": true,
+      "maxDriftM": 0.000022517881735802564,
+      "minY": 0.0009778474503968622,
+      "maxSoleFloorGapM": 0.001019245363808473,
+      "worstVertex": "CLOTH_Underarm_and_leggings002_2:587",
+      "time": 1.2333333333333334,
+      "frame": 37
+    },
+    {
+      "name": "Shield_Brace: sampled quaternion norms",
+      "passed": true,
+      "maxNormError": 8.55492388041057e-8
+    },
+    {
+      "name": "Shield_Brace: pelvis projection support proxy",
+      "passed": true,
+      "signedMarginM": 0.05000175456001795,
+      "hipMidpointXZ": [
+        5.522118425721478e-7,
+        -0.02793241765531529
+      ],
+      "hullXZ": [
+        [
+          -0.28583696994895713,
+          -0.028001105889262162
+        ],
+        [
+          -0.28433821099763235,
+          -0.05745974376431359
+        ],
+        [
+          -0.27989957150684897,
+          -0.08578630720397268
+        ],
+        [
+          -0.27269158039618346,
+          -0.11189221598797633
+        ],
+        [
+          -0.26299128010905315,
+          -0.1347742344621015
+        ],
+        [
+          -0.2511714381698873,
+          -0.15355302457034903
+        ],
+        [
+          -0.23768625696762857,
+          -0.16750691840719398
+        ],
+        [
+          -0.22305399899816322,
+          -0.17609968653196034
+        ],
+        [
+          -0.20783694479827786,
+          -0.17900111181499437
+        ],
+        [
+          -0.19261989056545645,
+          -0.17609968149969318
+        ],
+        [
+          0.22305377286886235,
+          0.023900510627426708
+        ],
+        [
+          0.23768602571125788,
+          0.032493276506614016
+        ],
+        [
+          0.2511712025219678,
+          0.046447166161113024
+        ],
+        [
+          0.26299104097388415,
+          0.06522595031096728
+        ],
+        [
+          0.27269133881206653,
+          0.08810796127963434
+        ],
+        [
+          0.27989932860619393,
+          0.11421386129954432
+        ],
+        [
+          0.28433796796345934,
+          0.1425404150532712
+        ],
+        [
+          0.28583672796939974,
+          0.17199904269278138
+        ],
+        [
+          0.2843379708859074,
+          0.20145767812224202
+        ],
+        [
+          0.2798993343387819,
+          0.2297842282244206
+        ],
+        [
+          0.2726913471344946,
+          0.2558901336017618
+        ],
+        [
+          0.26299105156632563,
+          0.27877214397294964
+        ],
+        [
+          0.2511712149773613,
+          0.2975509270739408
+        ],
+        [
+          0.23768603955095008,
+          0.3115048346831151
+        ],
+        [
+          0.22305378756100064,
+          0.3200975889744005
+        ],
+        [
+          0.20783673931452362,
+          0.322999024931174
+        ],
+        [
+          0.19261969078020932,
+          0.3200975924200747
+        ],
+        [
+          -0.22305399731699738,
+          0.12009749551571255
+        ],
+        [
+          -0.23768625538400492,
+          0.11150473745323364
+        ],
+        [
+          -0.2511714367446637,
+          0.09755082425568748
+        ],
+        [
+          -0.26299127889700014,
+          0.07877203396391874
+        ],
+        [
+          -0.27269157944387945,
+          0.05589001507588037
+        ],
+        [
+          -0.27989957085089057,
+          0.02978410018290925
+        ],
+        [
+          -0.2843382106632276,
+          0.001457539932009172
+        ]
+      ],
+      "time": 0.6666666666666666,
+      "frame": 20,
+      "note": "Hip-joint midpoint projected onto actual sole hull; up to20mm outside allowed. This is not a center-of-mass or dynamic balance model."
+    },
+    {
+      "name": "Shield_Brace: surface endpoint returns",
+      "passed": true,
+      "maxErrorM": 0
+    },
+    {
+      "name": "Shield_Brace: arbitrary seek is deterministic",
+      "passed": true,
+      "maxSurfaceErrorM": 0,
+      "maxQuaternionAngleRad": 5.960464477539063e-8
+    },
+    {
+      "name": "Spear_Study: planted L sole surface",
+      "passed": true,
+      "maxDriftM": 0.000002984854875528998,
+      "minY": 0.0009993137246789839,
+      "maxSoleFloorGapM": 0.0010013417651460127,
+      "worstVertex": "CLOTH_Underarm_and_leggings002_2:24",
+      "time": 2.3,
+      "frame": 69
+    },
+    {
+      "name": "Spear_Study: planted R sole surface",
+      "passed": true,
+      "maxDriftM": 0.00002536370670234642,
+      "minY": 0.000975940944391405,
+      "maxSoleFloorGapM": 0.0010015583977644438,
+      "worstVertex": "CLOTH_Underarm_and_leggings002_2:589",
+      "time": 1.5666666666666667,
+      "frame": 47
+    },
+    {
+      "name": "Spear_Study: sampled quaternion norms",
+      "passed": true,
+      "maxNormError": 8.55492388041057e-8
+    },
+    {
+      "name": "Spear_Study: pelvis projection support proxy",
+      "passed": true,
+      "signedMarginM": 0.049998043286424335,
+      "hipMidpointXZ": [
+        1.0452835222385382e-8,
+        -0.027936925273145383
+      ],
+      "hullXZ": [
+        [
+          -0.2858368141495782,
+          -0.0280010591533469
+        ],
+        [
+          -0.2843380580331226,
+          -0.0574596975949317
+        ],
+        [
+          -0.2798994211173902,
+          -0.0857862617798946
+        ],
+        [
+          -0.2726914322229965,
+          -0.1118921714593338
+        ],
+        [
+          -0.26299113370819116,
+          -0.13477419094461232
+        ],
+        [
+          -0.25117129302929386,
+          -0.15355298214087365
+        ],
+        [
+          -0.2376861125268135,
+          -0.16750687710078277
+        ],
+        [
+          -0.22305385466974711,
+          -0.17609964634050282
+        ],
+        [
+          -0.2078367999905602,
+          -0.1790010726875349
+        ],
+        [
+          -0.19261974470515553,
+          -0.17609964334438616
+        ],
+        [
+          0.22305394524826863,
+          0.023900374531032068
+        ],
+        [
+          0.23768619818194495,
+          0.03249314017228509
+        ],
+        [
+          0.25117137530860506,
+          0.04644702969152939
+        ],
+        [
+          0.2629912142890003,
+          0.06522581381400726
+        ],
+        [
+          0.27269151284788007,
+          0.08810782486422752
+        ],
+        [
+          0.27989950352722764,
+          0.11421372507148607
+        ],
+        [
+          0.2843381439002181,
+          0.14254027911115824
+        ],
+        [
+          0.28583690501335374,
+          0.17199890712422056
+        ],
+        [
+          0.28433814908597904,
+          0.20145754300048593
+        ],
+        [
+          0.27989951369946336,
+          0.2297840936055502
+        ],
+        [
+          0.27269152761567783,
+          0.25588999952253366
+        ],
+        [
+          0.26299123308484107,
+          0.278772010449381
+        ],
+        [
+          0.25117139741017586,
+          0.29755079410069557
+        ],
+        [
+          0.23768622273989534,
+          0.31150470223370935
+        ],
+        [
+          0.22305397131884866,
+          0.32009745700221814
+        ],
+        [
+          0.20783692343218624,
+          0.32299889337126086
+        ],
+        [
+          0.19261987503476877,
+          0.3200974611916324
+        ],
+        [
+          -0.22305382372635998,
+          0.12009754039527562
+        ],
+        [
+          -0.237686083378779,
+          0.11150478317574386
+        ],
+        [
+          -0.2511712667967566,
+          0.09755087065954682
+        ],
+        [
+          -0.26299111139925224,
+          0.07877208086134363
+        ],
+        [
+          -0.27269141469497515,
+          0.055890062260121415
+        ],
+        [
+          -0.27989940904387944,
+          0.02978414743619537
+        ],
+        [
+          -0.28433805187810013,
+          0.0014575870339132296
+        ]
+      ],
+      "time": 0.7,
+      "frame": 21,
+      "note": "Hip-joint midpoint projected onto actual sole hull; up to20mm outside allowed. This is not a center-of-mass or dynamic balance model."
+    },
+    {
+      "name": "Spear_Study: surface endpoint returns",
+      "passed": true,
+      "maxErrorM": 0
+    },
+    {
+      "name": "Spear_Study: arbitrary seek is deterministic",
+      "passed": true,
+      "maxSurfaceErrorM": 0,
+      "maxQuaternionAngleRad": 5.960464477539063e-8
+    },
+    {
+      "name": "Spear: axial attack after horizontal preparation",
+      "passed": true,
+      "advanceM": 0.21994384182782648,
+      "forwardAdvanceM": 0.2191061710760589,
+      "lateralM": 0.000009397260550127653,
+      "lateralRatio": 0.000042725727040286456,
+      "readyElevationDeg": 4.999694576059645,
+      "attackElevationDeg": 4.999993703057126,
+      "readyForwardAxis": 0.9961951626742841,
+      "attackForwardAxis": 0.996194707670358,
+      "shaftRotationDeg": 0.0003021466213673015
+    },
+    {
+      "name": "Spear: attack phase stays horizontal and advances without reversal",
+      "passed": true,
+      "samples": 22,
+      "maxElevationDeg": 5.001223726954558,
+      "maxShaftRotationDeg": 0.0040745197639422154,
+      "minAxialStepM": 0
+    },
+    {
+      "name": "Shield: upper middle and lower face advance together",
+      "passed": true,
+      "bandAdvanceM": {
+        "upper": 0.16837149373250473,
+        "middle": 0.16859986240266878,
+        "lower": 0.16830789625802348
+      },
+      "minVertexAdvanceM": 0.10629394145239845,
+      "forwardVertexFraction": 1,
+      "centroidAdvanceM": 0.1684985443867595
+    },
+    {
+      "name": "All imported bone quaternions are finite and unit length",
+      "passed": true
+    }
+  ],
+  "failures": [],
+  "negativeControls": [
+    {
+      "name": "50mm foot-bone displacement is rejected by sole vertices",
+      "passed": true,
+      "observedDriftM": 0.04999997401683769
+    },
+    {
+      "name": "Verticalized exported spear is rejected",
+      "passed": true,
+      "observed": {
+        "advanceM": 0.2633378410774142,
+        "forwardAdvanceM": -1.2901304332650558,
+        "lateralM": 1.9911679852573703,
+        "lateralRatio": 7.5612679784673285,
+        "readyElevationDeg": 4.999694576059645,
+        "attackElevationDeg": 89.99999716835316,
+        "readyForwardAxis": 0.9961951626742841,
+        "attackForwardAxis": 3.4297049302571595e-8,
+        "shaftRotationDeg": 85.0003034588625
+      }
+    },
+    {
+      "name": "Shield hinged about upper edge is rejected",
+      "passed": true,
+      "observed": {
+        "bandAdvanceM": {
+          "upper": 1.2653277118889651e-17,
+          "middle": 0.21396140159129035,
+          "lower": 0.4270443915074008
+        },
+        "minVertexAdvanceM": -0.04717911235580363,
+        "forwardVertexFraction": 0.8780487804878049,
+        "centroidAdvanceM": 0.21379036109447255
+      }
+    }
+  ],
+  "scope": "Exported GLB positions, weights, inverse bind matrices and animation tracks evaluated with Three CPU skinning. No renderer. Pelvis projection is only a geometric hip-midpoint/sole-hull proxy, not center of mass or dynamic stability. Does not establish garment/body clearance, thumb opposition, joint comfort or continuous collision freedom.",
+  "anchors": {
+    "feet": {
+      "L": {
+        "count": 128,
+        "floorM": 0.0010004391843591877,
+        "examples": [
+          "CLOTH_Underarm_and_leggings002_2:0",
+          "CLOTH_Underarm_and_leggings002_2:1",
+          "CLOTH_Underarm_and_leggings002_2:2",
+          "CLOTH_Underarm_and_leggings002_2:3"
+        ]
+      },
+      "R": {
+        "count": 128,
+        "floorM": 0.0010001154276175525,
+        "examples": [
+          "CLOTH_Underarm_and_leggings002_2:586",
+          "CLOTH_Underarm_and_leggings002_2:587",
+          "CLOTH_Underarm_and_leggings002_2:588",
+          "CLOTH_Underarm_and_leggings002_2:589"
+        ]
+      }
+    },
+    "spear": {
+      "low": 16,
+      "high": 16,
+      "tip": [
+        "SPEAR_Ash_shaft001_3:70"
+      ],
+      "grip": 32
+    },
+    "shield": {
+      "count": 1394,
+      "bands": {
+        "upper": 272,
+        "middle": 306,
+        "lower": 272
+      }
+    }
+  }
+}

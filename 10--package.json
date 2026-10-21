@@ -1,0 +1,23 @@
+{
+  "name": "lazy-crazy-chess-white-pawn",
+  "version": "0.3.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "verify": "node scripts/verify.mjs",
+    "verify:equipment": "node scripts/verify-equipment.mjs",
+    "build:hosted": "node scripts/build-hosted.mjs",
+    "verify:hosted": "node scripts/verify-hosted.mjs",
+    "release:hosted": "node scripts/build-hosted.mjs --release",
+    "test:release": "node --test scripts/release.test.mjs scripts/floot-helper.test.mjs",
+    "verify:appearance": "node scripts/verify-appearance.mjs"
+  },
+  "dependencies": {
+    "three": "0.180.0"
+  },
+  "devDependencies": {
+    "esbuild": "0.25.10",
+    "playwright": "1.56.1"
+  }
+}
