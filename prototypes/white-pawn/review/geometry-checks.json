@@ -2,9 +2,9 @@
   "status": "passed",
   "checkedAt": "2026-10-21T19:44:43.917076+00:00",
   "blendPath": "/workspace/scratch/c3dfd1aa64e3/Lazy-crazy-chess/prototypes/white-pawn/assets/white-pawn.blend",
-  "blendSha256": "0f3166a35e96ecdc6c105322faf769c0a94f14a980eea21834dd4fd7cb16cce5",
+  "blendSha256": "d729f038de79813e2a100396f7d349e7022a24ac697d887d2ae478d66050de23",
   "glbPath": "/workspace/scratch/c3dfd1aa64e3/Lazy-crazy-chess/prototypes/white-pawn/assets/white-pawn.glb",
-  "glbSha256": "95249c6f86fe773e4b5408f4350778df050765f67f92cb17d799fb8171858c47",
+  "glbSha256": "521c0a51e9f4440c897a079934e876fa153cd3789fad28c43b7d444154d6f036",
   "baseBodySha256": "aee22c11262c7cbd9f0905eb8fe425652c642a08660db54653136ccf4c290206",
   "sources": [
     "ARMOR_Shoulder leather strap L",
@@ -38,7 +38,7 @@
     {
       "clip": "Guard_Breath",
       "frame": 0,
-      "seconds": 0.0
+      "seconds": 0
     },
     {
       "clip": "Guard_Breath",
@@ -188,7 +188,7 @@
     {
       "clip": "Guard_Breath",
       "frame": 30,
-      "seconds": 1.0
+      "seconds": 1
     },
     {
       "clip": "Guard_Breath",
@@ -338,7 +338,7 @@
     {
       "clip": "Guard_Breath",
       "frame": 60,
-      "seconds": 2.0
+      "seconds": 2
     },
     {
       "clip": "Guard_Breath",
@@ -488,7 +488,7 @@
     {
       "clip": "Guard_Breath",
       "frame": 90,
-      "seconds": 3.0
+      "seconds": 3
     },
     {
       "clip": "Guard_Breath",
@@ -638,7 +638,7 @@
     {
       "clip": "Guard_Breath",
       "frame": 120,
-      "seconds": 4.0
+      "seconds": 4
     },
     {
       "clip": "Guard_Breath",
@@ -793,7 +793,7 @@
     {
       "clip": "Guard_Breath",
       "frame": 150,
-      "seconds": 5.0
+      "seconds": 5
     },
     {
       "clip": "Guard_Breath",
@@ -943,12 +943,12 @@
     {
       "clip": "Guard_Breath",
       "frame": 180,
-      "seconds": 6.0
+      "seconds": 6
     },
     {
       "clip": "Shield_Brace",
       "frame": 0,
-      "seconds": 0.0
+      "seconds": 0
     },
     {
       "clip": "Shield_Brace",
@@ -1103,7 +1103,7 @@
     {
       "clip": "Shield_Brace",
       "frame": 30,
-      "seconds": 1.0
+      "seconds": 1
     },
     {
       "clip": "Shield_Brace",
@@ -1258,7 +1258,7 @@
     {
       "clip": "Shield_Brace",
       "frame": 60,
-      "seconds": 2.0
+      "seconds": 2
     },
     {
       "clip": "Shield_Brace",
@@ -1408,7 +1408,7 @@
     {
       "clip": "Shield_Brace",
       "frame": 90,
-      "seconds": 3.0
+      "seconds": 3
     },
     {
       "clip": "Shield_Brace",
@@ -1558,12 +1558,12 @@
     {
       "clip": "Shield_Brace",
       "frame": 120,
-      "seconds": 4.0
+      "seconds": 4
     },
     {
       "clip": "Spear_Study",
       "frame": 0,
-      "seconds": 0.0
+      "seconds": 0
     },
     {
       "clip": "Spear_Study",
@@ -1718,7 +1718,7 @@
     {
       "clip": "Spear_Study",
       "frame": 30,
-      "seconds": 1.0
+      "seconds": 1
     },
     {
       "clip": "Spear_Study",
@@ -1873,7 +1873,7 @@
     {
       "clip": "Spear_Study",
       "frame": 60,
-      "seconds": 2.0
+      "seconds": 2
     },
     {
       "clip": "Spear_Study",
@@ -2023,7 +2023,7 @@
     {
       "clip": "Spear_Study",
       "frame": 90,
-      "seconds": 3.0
+      "seconds": 3
     },
     {
       "clip": "Spear_Study",
@@ -2178,7 +2178,7 @@
     {
       "clip": "Spear_Study",
       "frame": 120,
-      "seconds": 4.0
+      "seconds": 4
     }
   ],
   "overlaps": [],
@@ -2189,5 +2189,20 @@
     "passed": true,
     "trianglePairs": 2
   },
-  "scope": "Authored scene evaluated with export modifier ordering and intact base anatomy. Associated GLB hash is provenance, not a claim of evaluating that exported topology here. No disk model mutation. Tests straps against body, underclothes and armor; own rivets/backing/mounting studs are excluded. Enarmes must lie outside the actual vambrace radial surface where rays from the forearm axis hit it (1mm tolerance). Triangle intersections are not penetration volume. Two-ray interior checks assume closed local anatomy. Sampled frame audit does not prove continuous clearance or the outer ordering of every shoulder-strap segment; final front/back/side/detail renders remain required."
+  "scope": "Inherited without rerunning the contact sampler: exact GLB buffers and all non-material JSON are unchanged; authored geometry, weights, modifiers, rig and actions have matching before/after/reopen signatures in material-checks.json. Original audit: Authored scene evaluated with export modifier ordering and intact base anatomy. Associated GLB hash is provenance, not a claim of evaluating that exported topology here. No disk model mutation. Tests straps against body, underclothes and armor; own rivets/backing/mounting studs are excluded. Enarmes must lie outside the actual vambrace radial surface where rays from the forearm axis hit it (1mm tolerance). Triangle intersections are not penetration volume. Two-ray interior checks assume closed local anatomy. Sampled frame audit does not prove continuous clearance or the outer ordering of every shoulder-strap segment; final front/back/side/detail renders remain required.",
+  "inheritedFrom": {
+    "sourceCommit": "cf6b689e960744a5c0614e8cb23eafeb45cedcce",
+    "reportSha256": "13d5f666b93d9c5c6ee68f203c9e3e9b43d8b6387249785bea01e906347113b8",
+    "glbSha256": "95249c6f86fe773e4b5408f4350778df050765f67f92cb17d799fb8171858c47",
+    "blendSha256": "0f3166a35e96ecdc6c105322faf769c0a94f14a980eea21834dd4fd7cb16cce5",
+    "checkedAt": "2026-10-21T19:44:43.917076+00:00"
+  },
+  "carriedForwardAt": "2026-10-21T20:16:59.895Z",
+  "materialPreservation": {
+    "report": "material-checks.json",
+    "sha256": "fd9a86cd4572df940c5b2c4bad71d6c6d5f94a0282cca23f93839fe02af885c1",
+    "glbBinaryUnchanged": true,
+    "nonMaterialGltfUnchanged": true,
+    "authoredSignatureUnchanged": true
+  }
 }

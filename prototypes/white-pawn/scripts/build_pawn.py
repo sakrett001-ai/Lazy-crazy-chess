@@ -28,14 +28,32 @@ def mat(name,color,metal=0,rough=.5):
  m=bpy.data.materials.new(name);m.diffuse_color=(*color,1);m.use_nodes=True
  p=m.node_tree.nodes.get('Principled BSDF');p.inputs['Base Color'].default_value=(*color,1);p.inputs['Metallic'].default_value=metal;p.inputs['Roughness'].default_value=rough
  return m
-ivory=mat('Ivory enamel',(.72,.73,.66),.16,.31)
-silver=mat('Cold brushed silver',(.50,.57,.62),.85,.31)
+ivory=mat('armor.main',(.50,.54,.58),1,.32)
+silver=mat('armor.trim',(.60,.64,.67),1,.24)
 teal=mat('Deep teal enamel',(.025,.135,.16),.28,.31)
 cloth=mat('Padded blue-grey linen',(.052,.081,.091),0,.88)
 leather=mat('Dark leather',(.075,.055,.038),0,.8)
 wood=mat('Ash wood shaft',(.24,.135,.061),0,.62)
 hair=mat('Teal horsehair',(.018,.08,.095),0,.82)
 black=mat('Joint recess',(.018,.022,.026),.1,.65)
+# Stable, independent appearance slots: a painted shield must never inherit
+# steel armor, nor should weapon customization change shield reinforcement.
+slot_materials={
+ 'shield.face':mat('shield.face',(.82,.82,.78),0,.42),
+ 'shield.trim':mat('shield.trim',(.50,.57,.62),1,.27),
+ 'shield.emblem':mat('shield.emblem',(.025,.135,.16),.28,.31),
+ 'shield.wood':mat('shield.wood',(.24,.135,.061),0,.62),
+ 'shield.leather':mat('shield.leather',(.075,.055,.038),0,.8),
+ 'weapon.metal':mat('weapon.metal',(.50,.57,.62),1,.27),
+ 'weapon.wood':mat('weapon.wood',(.24,.135,.061),0,.62),
+ 'weapon.grip':mat('weapon.grip',(.075,.055,.038),0,.8),
+ 'weapon.binding':mat('weapon.binding',(.018,.022,.026),.1,.65),
+}
+for m in [ivory,silver,*slot_materials.values()]:m['customizationSlot']=m.name
+def material_for(name,material):
+ mapping=({ivory:'shield.face',silver:'shield.trim',teal:'shield.emblem',wood:'shield.wood',leather:'shield.leather'} if name.startswith('SHIELD_') else
+          {silver:'weapon.metal',wood:'weapon.wood',leather:'weapon.grip',black:'weapon.binding'} if name.startswith('SPEAR_') else {})
+ return slot_materials[mapping[material]] if material in mapping else material
 skin=body.data.materials[0];skin.name='Human skin | neutral study';skin.node_tree.nodes.get('Principled BSDF').inputs['Base Color'].default_value=(.49,.315,.215,1)
 skin.node_tree.nodes.get('Principled BSDF').inputs['Roughness'].default_value=.68
 
@@ -47,7 +65,7 @@ def rigid(ob,bone):
  return ob
 
 def mesh(name,verts,faces,material,bone=None,bevel=0):
- me=bpy.data.meshes.new(name);me.from_pydata(verts,[],faces);me.update();ob=bpy.data.objects.new(name,me);scene.collection.objects.link(ob);me.materials.append(material)
+ me=bpy.data.meshes.new(name);me.from_pydata(verts,[],faces);me.update();ob=bpy.data.objects.new(name,me);scene.collection.objects.link(ob);me.materials.append(material_for(name,material))
  for p in me.polygons:p.use_smooth=True
  if bevel:
   mod=ob.modifiers.new('Rounded edges','BEVEL');mod.width=bevel;mod.segments=3
@@ -70,7 +88,7 @@ def tube(name,points,radius,material,bone=None,res=10):
 def ellipsoid(name,center,scale,material,bone=None,segments=24,rings=12):
  bpy.ops.mesh.primitive_uv_sphere_add(segments=segments,ring_count=rings,location=center);ob=bpy.context.object;ob.name=name
  for v in ob.data.vertices:v.co=Vector((v.co.x*scale[0],v.co.y*scale[1],v.co.z*scale[2]))+Vector(center)
- ob.location=(0,0,0);ob.data.materials.append(material)
+ ob.location=(0,0,0);ob.data.materials.append(material_for(name,material))
  for p in ob.data.polygons:p.use_smooth=True
  if bone:rigid(ob,bone)
  return ob
@@ -575,5 +593,5 @@ for name,p in [('spear-grip',Vector(frames['spear_grip'])),('shield-grip',Vector
  # Shield inspection comes from the bearer's outer/rear side, clear of torso.
  position=p+sx*2.3-sf*.50-sz*.15 if name=='shield-grip' else p+Vector((-1,-2,.45))
  camera(position,p,.46 if name=='shield-grip' else .38);render('model-'+name+'.png')
-report={'version':'0.2.0','base_glb_sha256':hashlib.sha256((BASE/'assets/human-base.glb').read_bytes()).hexdigest(),'glb_sha256':hashlib.sha256((OUT/'white-pawn.glb').read_bytes()).hexdigest(),'clips':clips,'durations':{'Guard_Breath':6,'Shield_Brace':4,'Spear_Study':4},'frames':{k:v for k,v in frames.items() if k not in ('spear','shield')},'render_seconds':render_times,'scope':'First equipped white pawn; fitted grip and solo motion studies. No chess logic or paired combat.','limits':['No cloth/horsehair simulation','Full board LOD remains future work','Armor is fantasy equipment, not a historical replica']}
+report={'version':'0.2.1','base_glb_sha256':hashlib.sha256((BASE/'assets/human-base.glb').read_bytes()).hexdigest(),'glb_sha256':hashlib.sha256((OUT/'white-pawn.glb').read_bytes()).hexdigest(),'clips':clips,'durations':{'Guard_Breath':6,'Shield_Brace':4,'Spear_Study':4},'frames':{k:v for k,v in frames.items() if k not in ('spear','shield')},'render_seconds':render_times,'scope':'First equipped white pawn; fitted grip and solo motion studies. No chess logic or paired combat.','limits':['No cloth/horsehair simulation','Full board LOD remains future work','Armor is fantasy equipment, not a historical replica']}
 (OUT/'model-info.json').write_text(json.dumps(report,indent=2,default=lambda x:list(x))+'\n');print('PAWN_REPORT',json.dumps(report,default=lambda x:list(x)))

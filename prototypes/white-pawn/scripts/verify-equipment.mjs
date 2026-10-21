@@ -59,10 +59,10 @@ try{
  clip('Guard_Breath');
  const feet=Object.fromEntries(['L','R'].map(s=>[s,footAnchors(s)]));
  const guardFoot=Object.fromEntries(Object.entries(feet).map(([s,f])=>[s,positions(f.refs)]));
- const shaftRefs=refsFor(onlyMesh('SPEAR_','Ash wood shaft')),shaftYs=shaftRefs.map(r=>vertex(r).y),minS=Math.min(...shaftYs),maxS=Math.max(...shaftYs);
- const metalRefs=refsFor(onlyMesh('SPEAR_','Cold brushed silver')),maxTip=Math.max(...metalRefs.map(r=>vertex(r).y));
- const spear={low:shaftRefs.filter((r,i)=>shaftYs[i]<minS+1e-5),high:shaftRefs.filter((r,i)=>shaftYs[i]>maxS-1e-5),tip:metalRefs.filter(r=>vertex(r).y>maxTip-1e-5),grip:refsFor(onlyMesh('SPEAR_','Dark leather'))};
- const shield=refsFor(onlyMesh('SHIELD_','Ivory enamel')),shieldYs=shield.map(r=>vertex(r).y),lo=Math.min(...shieldYs),hi=Math.max(...shieldYs),h=hi-lo;
+ const shaftRefs=refsFor(onlyMesh('SPEAR_','weapon.wood')),shaftYs=shaftRefs.map(r=>vertex(r).y),minS=Math.min(...shaftYs),maxS=Math.max(...shaftYs);
+ const metalRefs=refsFor(onlyMesh('SPEAR_','weapon.metal')),maxTip=Math.max(...metalRefs.map(r=>vertex(r).y));
+ const spear={low:shaftRefs.filter((r,i)=>shaftYs[i]<minS+1e-5),high:shaftRefs.filter((r,i)=>shaftYs[i]>maxS-1e-5),tip:metalRefs.filter(r=>vertex(r).y>maxTip-1e-5),grip:refsFor(onlyMesh('SPEAR_','weapon.grip'))};
+ const shield=refsFor(onlyMesh('SHIELD_','shield.face')),shieldYs=shield.map(r=>vertex(r).y),lo=Math.min(...shieldYs),hi=Math.max(...shieldYs),h=hi-lo;
  const bands={upper:[],middle:[],lower:[]};shieldYs.forEach((y,i)=>{const t=(y-lo)/h;if(t>.8)bands.upper.push(i);if(t>.4&&t<.6)bands.middle.push(i);if(t<.2)bands.lower.push(i);});
  report.anchors={feet:Object.fromEntries(Object.entries(feet).map(([s,f])=>[s,{count:f.refs.length,floorM:f.floor,examples:f.refs.slice(0,4).map(id)}])),spear:{low:spear.low.length,high:spear.high.length,tip:spear.tip.map(id),grip:spear.grip.length},shield:{count:shield.length,bands:Object.fromEntries(Object.entries(bands).map(([k,v])=>[k,v.length]))}};
  const representative=[...feet.L.refs,...feet.R.refs,...spear.low,...spear.high,...spear.tip,...shield.filter((r,i)=>i%23===0)];
