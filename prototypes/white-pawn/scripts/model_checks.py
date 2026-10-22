@@ -36,14 +36,19 @@ for mi,m in enumerate(doc['meshes']):
    assert np.all(w>=0) and j.max()<len(mesh_skins[mi]['joints'])
   triangles+=doc['accessors'][primitive['indices']]['count']//3
 assert weight_error<1e-5
+assert {'lean','strong','veteran'}.issubset(morph_names),morph_names
 expected={'Guard_Breath':6,'Shield_Brace':4,'Spear_Study':4};clips={}
 for a in doc['animations']:
  end=0;endpoint_error=0;default_error=0
  for ch in a['channels']:
   s=a['samplers'][ch['sampler']];times=access(s['input']).ravel();values=access(s['output']);assert abs(times[0])<1e-7
+  target=ch['target']
+  if target['path']=='weights':values=values.reshape((len(times),-1))
   end=max(end,float(times[-1]));endpoint_error=max(endpoint_error,float(abs(values[0]-values[-1]).max()))
   if a['name']=='Guard_Breath':
-   target=ch['target'];default_error=max(default_error,float(abs(np.array(doc['nodes'][target['node']][target['path']])-values[0]).max()))
+   node=doc['nodes'][target['node']]
+   fallback=doc['meshes'][node['mesh']].get('weights',[0]*values.shape[1]) if target['path']=='weights' else {'translation':[0,0,0],'rotation':[0,0,0,1],'scale':[1,1,1]}[target['path']]
+   default_error=max(default_error,float(abs(np.array(node.get(target['path'],fallback))-values[0]).max()))
  assert abs(end-expected[a['name']])<1e-5 and endpoint_error<1e-5 and default_error<1e-7
  clips[a['name']]={'seconds':end,'endpoint_max_error':endpoint_error,'default_max_error':default_error}
 assert set(clips)==set(expected)

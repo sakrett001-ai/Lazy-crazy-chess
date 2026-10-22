@@ -12,7 +12,8 @@
     "release:hosted": "node scripts/build-hosted.mjs --release",
     "test:release": "node --test scripts/release.test.mjs scripts/floot-helper.test.mjs",
     "verify:appearance": "node scripts/verify-appearance.mjs",
-    "verify:variants": "node scripts/verify-variants.mjs"
+    "verify:variants": "node scripts/verify-variants.mjs",
+    "verify:geometry": "node scripts/verify-modular-geometry.mjs"
   },
   "dependencies": {
     "three": "0.180.0"

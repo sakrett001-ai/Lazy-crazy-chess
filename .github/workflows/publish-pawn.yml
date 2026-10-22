@@ -33,10 +33,15 @@ jobs:
           cache: npm
           cache-dependency-path: prototypes/human-base/package-lock.json
       - name: Install pinned viewer dependencies
-        run: npm ci --prefix prototypes/human-base
+        run: |
+          npm ci --prefix prototypes/human-base
+          npm ci --prefix prototypes/white-pawn
       - name: Verify exported equipment and motion
         working-directory: prototypes/white-pawn
         run: npm run verify:equipment
+      - name: Verify current modular geometry and runtime
+        working-directory: prototypes/white-pawn
+        run: npm run verify:geometry
       - name: Install test browser
         working-directory: prototypes/human-base
         run: npx playwright install --with-deps chromium

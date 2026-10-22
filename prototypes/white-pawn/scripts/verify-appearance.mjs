@@ -67,12 +67,17 @@ try{
  await page.screenshot({path:path.join(review,'appearance-steel-back.png'),fullPage:true,timeout:120000});
  await page.evaluate(()=>whitePawn.fit('three'));
  await openPanel(page);
+ const customizedCamera=await page.evaluate(()=>{const controls=whitePawn.debug.controls,camera=controls.object;camera.position.x+=.14;camera.position.y+=.06;controls.target.y+=.025;camera.zoom=1.12;camera.updateProjectionMatrix();controls.update();whitePawn.render();return {position:camera.position.toArray(),target:controls.target.toArray(),zoom:camera.zoom};});
+ const cameraState=()=>page.evaluate(()=>({position:whitePawn.debug.controls.object.position.toArray(),target:whitePawn.debug.controls.target.toArray(),zoom:whitePawn.debug.controls.object.zoom}));
  await page.locator('#armor-finish').selectOption('dark');
+ assert.deepEqual(await cameraState(),customizedCamera,'Changing finish reset the custom camera');
  const dark=await materials();
  report.armorChangedSlots=onlyChanged(initial,dark,['armor.','mail'],'armor finish');
  assert.equal((await get()).armorFinish,'dark');
  assert(dark['armor.main'][0].color.reduce((sum,n)=>sum+n,0)<initial['armor.main'][0].color.reduce((sum,n)=>sum+n,0),'Dark steel is not darker');
  await color('#shield-color','#cfd8e8');
+ assert.deepEqual(await cameraState(),customizedCamera,'Changing shield paint reset the custom camera');
+ report.tests.push('Material-only finish/paint changes preserve a user-adjusted camera position, target and zoom');
  const painted=await materials();
  assert.deepEqual(onlyChanged(dark,painted,['shield.face'],'shield paint'),['shield.face']);
  assert.equal(painted['shield.face'][0].srgb,'cfd8e8');

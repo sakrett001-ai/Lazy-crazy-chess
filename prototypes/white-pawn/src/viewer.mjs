@@ -166,8 +166,9 @@ async function init(){
  renderer.domElement.addEventListener('webglcontextlost',e=>{e.preventDefault();pause();renderer.domElement.hidden=true;fallback('Контекст WebGL потерян');});
  $('#poster').style.display='none';$('#loading').hidden=true;resize();
  const appearance=installAppearance({model,render,beforeChange:pause,onChange:settings=>{
+  const structural=['armorType','shieldType','weaponType','bodyBuild','experience','helmet','beard'].some(key=>settings[key]!==currentAppearance[key]);
   currentAppearance={...settings};loadout.apply(settings);refreshLoadoutControls();
-  if(!loadout.availableActions().includes(selected))select('rest');else{seek(t);fit(view);}
+  if(!loadout.availableActions().includes(selected))select('rest');else{seek(t);if(structural)fit(view);}
  }});
  refreshLoadoutControls();
  const body=meshes.filter(m=>m.isSkinnedMesh).sort((a,b)=>b.geometry.attributes.position.count-a.geometry.attributes.position.count)[0]||meshes[0];

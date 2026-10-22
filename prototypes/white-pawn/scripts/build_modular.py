@@ -5,7 +5,7 @@ Geometry, physical UVs, morphs and the rendered scene share one source.
 The original three authored clips remain; new weapon choreography is runtime IK.
 """
 from pathlib import Path
-import bpy, bmesh, math, json, hashlib, struct, subprocess, sys, time
+import bpy, bmesh, math, json, hashlib, struct, subprocess, sys, time, shutil
 from mathutils import Vector
 
 ROOT=Path(__file__).resolve().parents[1]
@@ -311,7 +311,15 @@ def configure_render(kind='plate',build='regular',experience='recruit'):
 
 def render(name,kind='plate',build='regular'):
  configure_render(kind,build);scene.render.resolution_x=720;scene.render.resolution_y=900;scene.cycles.samples=16
- scene.render.filepath=str(REVIEW/name);bpy.ops.render.render(write_still=True)
+ if kind!='plate':
+  for ob in merged:
+   if ob['equipmentSlot'] in ('weapon','shield','helmet'):ob.hide_render=True
+   if ob['equipmentSlot']=='hair':ob.hide_render=False
+  cam=scene.camera;cam.location=(2.7,-5,2.3);cam.rotation_euler=(Vector((0,0,.98))-cam.location).to_track_quat('-Z','Y').to_euler();cam.data.ortho_scale=2.12
+ temporary=Path('/tmp')/('infantry-'+name)
+ scene.render.filepath=str(temporary);bpy.ops.render.render(write_still=True)
+ data=temporary.read_bytes();assert data[-12:]==b'\x00\x00\x00\x00IEND\xaeB`\x82', 'Incomplete PNG: '+name
+ (REVIEW/name).write_bytes(data);temporary.unlink()
 
 if '--preview-only' in sys.argv:
  render('modular-mail.png','mail');render('modular-padded.png','padded');print('MODULAR_PREVIEW_READY');raise SystemExit
