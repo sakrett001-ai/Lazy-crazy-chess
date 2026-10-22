@@ -12,8 +12,8 @@ const input=path.resolve(process.env.PAWN_GLB||path.join(root,'assets/white-pawn
 const output=path.resolve(process.env.PAWN_GEOMETRY_REPORT||path.join(root,'review/geometry-checks.json'));
 const bytes=await readFile(input),runtimeSource=await readFile(path.join(root,'src/loadout.mjs'));
 const hash=value=>createHash('sha256').update(value).digest('hex');
-const limits={layerClearanceM:.0005,bindPairDistanceM:.045,thumbSurfaceDistanceM:.014,handFrameErrorM:.01,soleDriftM:.006,soleFloorGapM:.008,minimumRegionProbes:5,minimumAnatomicalWeight:.5,radialNormalAlignment:.3,maximumAxialNormalAlignment:.7};
-const report={status:'running',glbSha256:hash(bytes),runtimeSha256:hash(runtimeSource),auditSha256:hash(await readFile(fileURLToPath(import.meta.url))),limits,cases:[],checks:[],failures:[],negativeControls:[],unassessed:[],scope:'Finite signed separation of selected tracked padding patches against mail/plate, evaluated from actual exported triangles after skinning and morphs, plus nearest thumb-surface distance to actual selected handles. Exported skin weights assign anatomical regions; radial and axial normals identify the facing garment walls and exclude hems/steep folds. Walls and pairing are fixed from undeformed exported POSITION attributes and inverse-bind joint coordinates independently of the measured clearance sign; measurements use actual runtime poses and morphs. Missing or ambiguous patches remain unassessed. A negative tracked gap can also arise from lateral sliding and is not by itself a triangle-intersection proof. This is not whole-body collision freedom, cloth simulation, thumb opposition, penetration volume, dynamic stability or a full animation sweep. Hidden torso skin is absent in this model and is not assessed.'};
+const limits={layerClearanceM:.0005,bindPairDistanceM:.045,thumbSurfaceDistanceM:.014,handFrameErrorM:.01,soleDriftM:.006,soleFloorGapM:.008,minimumRegionProbes:5,minimumAnatomicalWeight:.5,radialNormalAlignment:.3,maximumAxialNormalAlignment:.7,intersectionEpsilonM:1e-8};
+const report={status:'running',glbSha256:hash(bytes),runtimeSha256:hash(runtimeSource),auditSha256:hash(await readFile(fileURLToPath(import.meta.url))),limits,cases:[],checks:[],failures:[],negativeControls:[],unassessed:[],scope:'Finite intersection gate for selected padding triangles against actual active mail/plate triangles, evaluated after skinning and morphs. Exported skin weights and bind-space radial/axial normals select garment walls; hems, steep folds, ambiguous anatomy and unmatched patches remain unassessed. Pairing and source patches are fixed from undeformed POSITION and inverse-bind joints independently of the measured gap. Signed tracked gaps are diagnostics: negative values without an actual intersection are inconclusive for layer ordering because patches can slide or fold. Thumb tests establish nearest surface reach only. This is not whole-body collision freedom, all-surface clearance, continuous collision detection, cloth simulation, thumb opposition, penetration volume, dynamic stability or a full animation sweep. Hidden torso skin is absent in this model and is not assessed.'};
 const check=(name,passed,details={})=>{report.checks.push({name,passed:!!passed,...details});if(!passed)report.failures.push(name);};
 const norm=value=>String(value||'').replace(/[._\-\s]/g,'').toLowerCase();
 const loader=new GLTFLoader();
@@ -132,7 +132,44 @@ function posedPatch(pair){
  const tri=new THREE.Triangle(...p),center=tri.getMidpoint(V()),normal=tri.getNormal(V());
  const outer=q[0].clone().multiplyScalar(pair.bary[0]).addScaledVector(q[1],pair.bary[1]).addScaledVector(q[2],pair.bary[2]);
  const delta=outer.clone().sub(center),clearanceM=delta.dot(normal);
- return{clearanceM,lateralDistanceM:delta.clone().addScaledVector(normal,-clearanceM).length(),normal,center,outer};
+ return{clearanceM,lateralDistanceM:delta.clone().addScaledVector(normal,-clearanceM).length(),normal,center,outer,p,radius:Math.max(...p.map(point=>point.distanceTo(center)))};
+}
+function triangleIntersectionPoints(p,q){
+ const epsilon=limits.intersectionEpsilonM,hits=[];
+ const add=point=>{if(!hits.some(hit=>hit.distanceToSquared(point)<=epsilon*epsilon))hits.push(point.clone());};
+ for(const [a,b]of[[p,q],[q,p]])for(let i=0;i<3;i++){
+  const start=a[i],delta=a[(i+1)%3].clone().sub(start),length=delta.length();if(length<=epsilon)continue;
+  const ray=new THREE.Ray(start,delta.multiplyScalar(1/length)),hit=ray.intersectTriangle(...b,false,V());
+  if(hit&&hit.distanceTo(start)<=length+epsilon)add(hit);
+ }
+ // Ray/triangle intersection excludes parallel rays. Handle coplanar overlap
+ // explicitly so the gate also detects coincident exported surfaces.
+ const normal=new THREE.Triangle(...p).getNormal(V());
+ if(normal.lengthSq()&&q.every(point=>Math.abs(point.clone().sub(p[0]).dot(normal))<=epsilon)){
+  for(const [a,b]of[[p,q],[q,p]])for(const point of a){
+   const bary=new THREE.Triangle(...b).getBarycoord(point,V());if(bary&&Math.min(bary.x,bary.y,bary.z)>=-1e-8)add(point);
+  }
+  const drop=[Math.abs(normal.x),Math.abs(normal.y),Math.abs(normal.z)].indexOf(Math.max(Math.abs(normal.x),Math.abs(normal.y),Math.abs(normal.z))),axes=[0,1,2].filter(i=>i!==drop),cross=(a,b)=>a[0]*b[1]-a[1]*b[0];
+  for(let i=0;i<3;i++)for(let j=0;j<3;j++){
+   const a=p[i],b=p[(i+1)%3],c=q[j],d=q[(j+1)%3],ab=axes.map(k=>b.getComponent(k)-a.getComponent(k)),cd=axes.map(k=>d.getComponent(k)-c.getComponent(k)),ac=axes.map(k=>c.getComponent(k)-a.getComponent(k)),den=cross(ab,cd);
+   if(Math.abs(den)<=epsilon*epsilon)continue;const t=cross(ac,cd)/den,u=cross(ac,ab)/den;
+   if(t>=-1e-8&&t<=1+1e-8&&u>=-1e-8&&u<=1+1e-8)add(a.clone().lerp(b,THREE.MathUtils.clamp(t,0,1)));
+  }
+ }
+ return hits;
+}
+function localSurfaceDiagnostic(result,outerFaces){
+ const intersections=[];let nearest={distanceM:Infinity};
+ for(const face of outerFaces){
+  if(face.area<1e-12)continue;const centerDistance=result.center.distanceTo(face.center);
+  if(centerDistance<=result.radius+face.radius+limits.intersectionEpsilonM){
+   const points=triangleIntersectionPoints(result.p,face.p);if(points.length)intersections.push({mesh:face.mesh.name,triangle:face.index,pointsWorld:points.map(p=>p.toArray())});
+  }
+  if(centerDistance-face.radius>nearest.distanceM)continue;
+  triangle.set(...face.p);triangle.closestPointToPoint(result.center,near);const distanceM=near.distanceTo(result.center);
+  if(distanceM<nearest.distanceM)nearest={distanceM,mesh:face.mesh.name,triangle:face.index,pointWorld:near.toArray()};
+ }
+ return{intersections,nearestPaddingCenterToSurface:nearest};
 }
 function posedDetails(result){return{...patchId(result.pair),paddingWorld:result.center.toArray(),outerWallWorld:result.outer.toArray(),paddingNormal:result.normal.toArray(),lateralDistanceM:result.lateralDistanceM,bindDistanceM:result.pair.bindDistanceM};}
 function patchId(pair){return{layer:pair.label,region:pair.region,innerMesh:pair.inner.mesh.name,innerTriangle:pair.inner.index,outerMesh:pair.outer.mesh.name,outerTriangle:pair.outer.index,barycentric:pair.bary};}
@@ -183,6 +220,8 @@ try{
  sample({armorType:'mail',weaponType:'spear',shieldType:'tower',bodyBuild:'regular'},'rest',0);
  const padding=materialMeshes('padding',['padding']),mail=materialMeshes('mail',['mail']),plate=materialMeshes('plate',['armor.main','armor.trim']);
  check('Required physical layer meshes exist',padding.length>0&&mail.length>0&&plate.length>0,{padding:padding.length,mail:mail.length,plate:plate.length});
+ const identity=new THREE.Matrix4().elements,identityFrame=matrix=>matrix.elements.every((value,i)=>Math.abs(value-identity[i])<1e-6);
+ check('Layer meshes use the audited identity bind/world frame',[...padding,...mail,...plate].every(mesh=>mesh.isSkinnedMesh&&[mesh.matrixWorld,mesh.bindMatrix,mesh.bindMatrixInverse].every(identityFrame)),{scope:'The current exported bind POSITION and inverse-bind joint origins must share an identity frame; transformed assets require adapted pairing.'});
  const inner=evaluated(padding,true),pairs={mail:pairPatches(inner,evaluated(mail,true),'padding/mail'),plate:pairPatches(inner,evaluated(plate,true),'padding/plate')};
  for(const [layer,list]of Object.entries(pairs)){
   const counts=Object.fromEntries(['torso','armL','armR','hipL','hipR'].map(region=>[region,list.filter(p=>p.region===region).length]));
@@ -198,11 +237,17 @@ try{
   const id=bodyBuild+'/'+config.id,caseResult={...config,id,bodyBuild,layers:[],thumbs:[]};
   const active=config.armorType==='mail'?pairs.mail:config.armorType==='plate'?pairs.plate:[];
   if(active.length){
-   const results=active.map(pair=>({pair,...posedPatch(pair)}));
-   const worst=results.reduce((a,b)=>a.clearanceM<b.clearanceM?a:b);
-   const failingPatches=results.filter(r=>!Number.isFinite(r.clearanceM)||r.clearanceM<limits.layerClearanceM).map(r=>({clearanceM:r.clearanceM,...posedDetails(r)}));
-   check(id+': tracked garment wall separation',results.every(r=>Number.isFinite(r.clearanceM)&&r.clearanceM>=limits.layerClearanceM),{probes:results.length,minClearanceM:worst.clearanceM,worst:posedDetails(worst)});
-   caseResult.layers.push({probes:results.length,minClearanceM:worst.clearanceM,worst:posedDetails(worst),failingPatches});
+   const results=active.map(pair=>({pair,...posedPatch(pair)})),outerFaces=evaluated(config.armorType==='mail'?mail:plate);
+   const finitePoints=points=>points.every(point=>point.toArray().every(Number.isFinite)),outerValidation={nonfiniteTriangles:outerFaces.filter(face=>!finitePoints(face.p)||!Number.isFinite(face.area)).length,unassessedDegenerateTriangles:outerFaces.filter(face=>Number.isFinite(face.area)&&face.area<1e-12).length};
+   const worst=results.reduce((a,b)=>a.clearanceM<b.clearanceM?a:b),intersectionPatches=[],inconclusivePatches=[],invalidSourcePatches=[];
+   for(const result of results){
+    if(!finitePoints(result.p)||new THREE.Triangle(...result.p).getArea()<1e-12){invalidSourcePatches.push({...posedDetails(result),reason:'Nonfinite or degenerate posed source triangle cannot support the intersection gate.'});continue;}
+    const diagnostic=localSurfaceDiagnostic(result,outerFaces);
+    if(diagnostic.intersections.length)intersectionPatches.push({...posedDetails(result),trackedGapM:result.clearanceM,...diagnostic});
+    else if(!Number.isFinite(result.clearanceM)||result.clearanceM<limits.layerClearanceM)inconclusivePatches.push({...posedDetails(result),trackedGapM:result.clearanceM,...diagnostic,reason:'Tracked gap does not establish layer ordering after sliding/folding; actual sampled triangle has no detected intersection.'});
+   }
+   check(id+': sampled garment triangles do not intersect',intersectionPatches.length===0&&invalidSourcePatches.length===0&&outerValidation.nonfiniteTriangles===0,{probes:results.length,invalidSourcePatches:invalidSourcePatches.length,outerValidation,intersectingPaddingTriangles:intersectionPatches.length,inconclusiveTrackedPatches:inconclusivePatches.length,minTrackedGapM:worst.clearanceM,worstTrackedPatch:posedDetails(worst)});
+   caseResult.layers.push({probes:results.length,minTrackedGapM:worst.clearanceM,worstTrackedPatch:posedDetails(worst),intersectionPatches,inconclusivePatches,invalidSourcePatches,outerValidation});
   }
   const state=loadout.summary();
   const frame=loadout.measure();
@@ -228,6 +273,14 @@ try{
  const saved=pair.outer.ids.map(i=>[i,attribute.getX(i),attribute.getY(i),attribute.getZ(i)]);
  for(const i of pair.outer.ids){const p=worldToPosition(pair.outer.mesh,i,vertex(pair.outer.mesh,i).addScaledVector(before.normal,-.06));attribute.setXYZ(i,p.x,p.y,p.z);}attribute.needsUpdate=true;
  const changed=posedPatch(pair);for(const [i,x,y,z]of saved)attribute.setXYZ(i,x,y,z);attribute.needsUpdate=true;
+ // Move a real exported outer triangle across the selected padding triangle.
+ // Two vertices straddle the padding plane; their connecting edge crosses the
+ // triangle centroid, giving a geometric intersection independent of gap sign.
+ const source=pair.inner.ids.map(i=>vertex(pair.inner.mesh,i)),center=new THREE.Triangle(...source).getMidpoint(V()),normal=new THREE.Triangle(...source).getNormal(V()),crossing=[center.clone().addScaledVector(normal,-.005),center.clone().addScaledVector(normal,.005),source[0].clone().lerp(source[1],.5)];
+ for(let j=0;j<3;j++){const local=worldToPosition(pair.outer.mesh,pair.outer.ids[j],crossing[j]);attribute.setXYZ(pair.outer.ids[j],local.x,local.y,local.z);}attribute.needsUpdate=true;
+ const controlOuter=pair.outer.ids.map(i=>vertex(pair.outer.mesh,i)),intersectionPoints=triangleIntersectionPoints(source,controlOuter);
+ for(const [i,x,y,z]of saved)attribute.setXYZ(i,x,y,z);attribute.needsUpdate=true;
+ report.negativeControls.push({name:'Move actual mail triangle across padding triangle',passed:intersectionPoints.length>0,intersectionPointsWorld:intersectionPoints.map(p=>p.toArray()),patch:patchId(pair)});
  report.negativeControls.push({name:'Move actual mail triangle inward60mm',passed:changed.clearanceM<0,beforeM:before.clearanceM,afterM:changed.clearanceM,patch:patchId(pair)});
  for(const control of report.negativeControls)check('Negative control: '+control.name,control.passed,control);
  report.status=report.failures.length?'failed':'passed';

@@ -1,6 +1,6 @@
 {
   "status": "passed",
-  "glbSha256": "521c0a51e9f4440c897a079934e876fa153cd3789fad28c43b7d444154d6f036",
+  "glbSha256": "69c5ce23b3885c38359a6a6389084589e38aacfd256cb9b1952c87b7f1f1ceaa",
   "glbPath": "/workspace/scratch/c3dfd1aa64e3/Lazy-crazy-chess/prototypes/white-pawn/assets/white-pawn.glb",
   "limits": {
     "footDriftM": 0.006,
@@ -215,7 +215,7 @@
       "maxDriftM": 0.0001466851722767961,
       "minY": 0.0009320002343946743,
       "maxSoleFloorGapM": 0.0010140166144240392,
-      "worstVertex": "CLOTH_Underarm_and_leggings002_2:66",
+      "worstVertex": "Human_body_3:66",
       "time": 1.2333333333333334,
       "frame": 37
     },
@@ -225,7 +225,7 @@
       "maxDriftM": 0.000022517881735802564,
       "minY": 0.0009778474503968622,
       "maxSoleFloorGapM": 0.001019245363808473,
-      "worstVertex": "CLOTH_Underarm_and_leggings002_2:587",
+      "worstVertex": "Human_body_3:587",
       "time": 1.2333333333333334,
       "frame": 37
     },
@@ -401,7 +401,7 @@
       "maxDriftM": 0.000002984854875528998,
       "minY": 0.0009993137246789839,
       "maxSoleFloorGapM": 0.0010013417651460127,
-      "worstVertex": "CLOTH_Underarm_and_leggings002_2:24",
+      "worstVertex": "Human_body_3:24",
       "time": 2.3,
       "frame": 69
     },
@@ -411,7 +411,7 @@
       "maxDriftM": 0.00002536370670234642,
       "minY": 0.000975940944391405,
       "maxSoleFloorGapM": 0.0010015583977644438,
-      "worstVertex": "CLOTH_Underarm_and_leggings002_2:589",
+      "worstVertex": "Human_body_3:589",
       "time": 1.5666666666666667,
       "frame": 47
     },
@@ -663,20 +663,20 @@
         "count": 128,
         "floorM": 0.0010004391843591877,
         "examples": [
-          "CLOTH_Underarm_and_leggings002_2:0",
-          "CLOTH_Underarm_and_leggings002_2:1",
-          "CLOTH_Underarm_and_leggings002_2:2",
-          "CLOTH_Underarm_and_leggings002_2:3"
+          "Human_body_3:0",
+          "Human_body_3:1",
+          "Human_body_3:2",
+          "Human_body_3:3"
         ]
       },
       "R": {
         "count": 128,
         "floorM": 0.0010001154276175525,
         "examples": [
-          "CLOTH_Underarm_and_leggings002_2:586",
-          "CLOTH_Underarm_and_leggings002_2:587",
-          "CLOTH_Underarm_and_leggings002_2:588",
-          "CLOTH_Underarm_and_leggings002_2:589"
+          "Human_body_3:586",
+          "Human_body_3:587",
+          "Human_body_3:588",
+          "Human_body_3:589"
         ]
       }
     },
@@ -684,7 +684,7 @@
       "low": 16,
       "high": 16,
       "tip": [
-        "SPEAR_Ash_shaft001_3:70"
+        "SPEAR_Ash_shaft_3:70"
       ],
       "grip": 32
     },

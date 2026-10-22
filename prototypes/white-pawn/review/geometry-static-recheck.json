@@ -1,0 +1,246 @@
+{
+  "glbSha256": "69c5ce23b3885c38359a6a6389084589e38aacfd256cb9b1952c87b7f1f1ceaa",
+  "scope": "Localized exact recheck of six previously proven static-defect padding triangles in regular rest, independent of whether bind matching still selects them. Does not extend the primary18-case gate or assert other surfaces are clear.",
+  "diagnostics": [
+    {
+      "armorType": "mail",
+      "bodyBuild": "regular",
+      "action": "rest",
+      "sourceMesh": "PADDING_padded",
+      "sourceTriangle": 8803,
+      "sourceWorld": [
+        [
+          -0.009924333337011083,
+          0.9170123273114955,
+          -0.09429091952078945
+        ],
+        [
+          -0.014628768569783497,
+          0.899639737067141,
+          -0.09611428590560604
+        ],
+        [
+          -0.01680767095932299,
+          0.9160540788954011,
+          -0.0984140156884882
+        ]
+      ],
+      "sourceCenterWorld": [
+        -0.013786924288705857,
+        0.9109020477580125,
+        -0.09627307370496122
+      ],
+      "intersections": [],
+      "nearestPaddingCenterToSurface": {
+        "distanceM": 0.025238273178870188,
+        "mesh": "CLOTH_Underarm_and_leggings001",
+        "triangle": 39480,
+        "pointWorld": [
+          -0.014317276869628174,
+          0.9358820679627826,
+          -0.09983506047647873
+        ]
+      }
+    },
+    {
+      "armorType": "mail",
+      "bodyBuild": "regular",
+      "action": "rest",
+      "sourceMesh": "PADDING_padded",
+      "sourceTriangle": 8925,
+      "sourceWorld": [
+        [
+          -0.012180740990583019,
+          0.8608991265594343,
+          -0.08189864560642296
+        ],
+        [
+          -0.018172285097102607,
+          0.8500290226742125,
+          -0.07796454026928605
+        ],
+        [
+          -0.01856549548792505,
+          0.8590241700802924,
+          -0.08540054149235997
+        ]
+      ],
+      "sourceCenterWorld": [
+        -0.01630617385853689,
+        0.8566507731046463,
+        -0.08175457578935633
+      ],
+      "intersections": [],
+      "nearestPaddingCenterToSurface": {
+        "distanceM": 0.038995341717433483,
+        "mesh": "CLOTH_Underarm_and_leggings001",
+        "triangle": 39099,
+        "pointWorld": [
+          -0.03135818054649916,
+          0.8607342530854385,
+          -0.11749529432678107
+        ]
+      }
+    },
+    {
+      "armorType": "mail",
+      "bodyBuild": "regular",
+      "action": "rest",
+      "sourceMesh": "PADDING_padded",
+      "sourceTriangle": 8980,
+      "sourceWorld": [
+        [
+          -0.012353580674010437,
+          0.8453044660330608,
+          -0.06685520928022187
+        ],
+        [
+          -0.012306082382490478,
+          0.8399558754875548,
+          -0.058717028524248524
+        ],
+        [
+          -0.017040771533968005,
+          0.8378586123643994,
+          -0.061275177265882316
+        ]
+      ],
+      "sourceCenterWorld": [
+        -0.013900144863489639,
+        0.8410396512950049,
+        -0.06228247169011758
+      ],
+      "intersections": [],
+      "nearestPaddingCenterToSurface": {
+        "distanceM": 0.04847403327576271,
+        "mesh": "CLOTH_Underarm_and_leggings001",
+        "triangle": 39113,
+        "pointWorld": [
+          -0.04264186729780226,
+          0.803285397993402,
+          -0.07219517319712815
+        ]
+      }
+    },
+    {
+      "armorType": "mail",
+      "bodyBuild": "regular",
+      "action": "rest",
+      "sourceMesh": "PADDING_padded",
+      "sourceTriangle": 23013,
+      "sourceWorld": [
+        [
+          0.012505600669304864,
+          0.8580174562223124,
+          -0.07915996852990705
+        ],
+        [
+          0.018517456881726742,
+          0.8469377449639516,
+          -0.07418279476263943
+        ],
+        [
+          0.012573079497304082,
+          0.8493947147041918,
+          -0.07143974348651629
+        ]
+      ],
+      "sourceCenterWorld": [
+        0.014532045682778563,
+        0.8514499719634854,
+        -0.07492750225968758
+      ],
+      "intersections": [],
+      "nearestPaddingCenterToSurface": {
+        "distanceM": 0.042706507487524845,
+        "mesh": "CLOTH_Underarm_and_leggings001",
+        "triangle": 39512,
+        "pointWorld": [
+          0.03197313898553693,
+          0.8553270674215954,
+          -0.11371696187174193
+        ]
+      }
+    },
+    {
+      "armorType": "plate",
+      "bodyBuild": "regular",
+      "action": "rest",
+      "sourceMesh": "PADDING_padded",
+      "sourceTriangle": 58352,
+      "sourceWorld": [
+        [
+          0.16162749750805583,
+          0.8656016409751874,
+          -0.04938867613998832
+        ],
+        [
+          0.17677651316641027,
+          0.8802317553468526,
+          -0.019652990795546048
+        ],
+        [
+          0.182472855797281,
+          0.8628754408927127,
+          -0.013327782032102628
+        ]
+      ],
+      "sourceCenterWorld": [
+        0.17362562215724903,
+        0.8695696124049175,
+        -0.02745648298921233
+      ],
+      "intersections": [],
+      "nearestPaddingCenterToSurface": {
+        "distanceM": 0.005283657796485347,
+        "mesh": "ARMOR_Breastplate",
+        "triangle": 15839,
+        "pointWorld": [
+          0.17841716923515974,
+          0.8705303200181456,
+          -0.029465253058785078
+        ]
+      }
+    },
+    {
+      "armorType": "plate",
+      "bodyBuild": "regular",
+      "action": "rest",
+      "sourceMesh": "PADDING_padded",
+      "sourceTriangle": 58382,
+      "sourceWorld": [
+        [
+          0.13611228535480635,
+          0.9047782666909843,
+          -0.0839322749144662
+        ],
+        [
+          0.1552921120633958,
+          0.9121403359093835,
+          -0.05998770035790686
+        ],
+        [
+          0.15809819394862132,
+          0.887537274030139,
+          -0.05561919390515458
+        ]
+      ],
+      "sourceCenterWorld": [
+        0.14983419712227447,
+        0.9014852922101688,
+        -0.0665130563925092
+      ],
+      "intersections": [],
+      "nearestPaddingCenterToSurface": {
+        "distanceM": 0.014128438529553446,
+        "mesh": "ARMOR_Breastplate",
+        "triangle": 15255,
+        "pointWorld": [
+          0.16260607664235868,
+          0.9053147358462716,
+          -0.07118501853338058
+        ]
+      }
+    }
+  ]
+}

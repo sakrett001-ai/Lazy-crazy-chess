@@ -31,11 +31,17 @@ if(!publish) {
   console.log(`Hosted candidate: ${document.bytes} bytes; ${document.path}. Run verify:hosted before release:hosted.`);
 } else {
   const readJson=async p=>JSON.parse(await readFile(p,'utf8'));
+  const geometryReportBytes=await readFile(path.join(root,'review/geometry-checks.json'));
+  let geometryAcceptance;
+  try {geometryAcceptance=await readJson(path.join(root,'review/geometry-acceptance.json'));}
+  catch(error) {if(error.code!=='ENOENT')throw error;}
   const release=makeRelease({html,config,modelBytes,
     standaloneHtml:await readFile(path.join(root,'white-pawn.html')),
     modelReport:await readJson(path.join(root,'assets/model-checks.json')),
     equipmentReport:await readJson(path.join(root,'review/equipment-checks.json')),
-    geometryReport:await readJson(path.join(root,'review/geometry-checks.json')),
+    geometryReport:JSON.parse(geometryReportBytes.toString('utf8')),
+    geometryReportBytes,geometryAcceptance,
+    geometryAuditSource:await readFile(path.join(root,'scripts/verify-modular-geometry.mjs')),
     loadoutSource:await readFile(path.join(root,'src/loadout.mjs')),
     variantReport:await readJson(path.join(root,'review/variant-checks.json')),
     appearanceReport:await readJson(path.join(root,'review/appearance-checks.json')),

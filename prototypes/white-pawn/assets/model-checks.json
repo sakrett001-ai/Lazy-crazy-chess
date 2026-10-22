@@ -1,12 +1,17 @@
 {
   "status": "passed",
-  "sha256": "521c0a51e9f4440c897a079934e876fa153cd3789fad28c43b7d444154d6f036",
-  "glb_bytes": 8020040,
-  "meshes": 7,
-  "material_primitives": 21,
-  "triangles": 222986,
+  "sha256": "69c5ce23b3885c38359a6a6389084589e38aacfd256cb9b1952c87b7f1f1ceaa",
+  "glb_bytes": 16126260,
+  "meshes": 15,
+  "material_primitives": 45,
+  "triangles": 282295,
   "joints": 163,
   "weight_sum_max_error": 1.7881393432617188e-07,
+  "morphTargets": [
+    "lean",
+    "strong",
+    "veteran"
+  ],
   "clips": {
     "Guard_Breath": {
       "seconds": 6.0,
@@ -24,6 +29,9 @@
       "default_max_error": 0
     }
   },
+  "reimport_mesh_nodes": 15,
+  "reimport_default_mesh_nodes": 6,
+  "reimport_bone_display_helpers": false,
   "reimport_bounds_z_up_metres": [
     [
       -0.37381768226623535,
@@ -36,5 +44,17 @@
       2.71368670463562
     ]
   ],
-  "scope": "File integrity; finite accessors; normalized weights; clip lengths, endpoints and default guard; posed Blender reimport. Not full collision, muscle, cloth or combat validation."
+  "catalog_bounds_z_up_metres": [
+    [
+      -0.4144744873046875,
+      -0.38570547103881836,
+      0.0010001137852668762
+    ],
+    [
+      0.4260440468788147,
+      0.1860009729862213,
+      3.4486849308013916
+    ]
+  ],
+  "scope": "File integrity; finite dense and sparse accessors; normalized weights; clip lengths, endpoints and default guard; posed Blender reimport with defaultVisible catalog selection and importer bone display helpers disabled. Not full collision, muscle, cloth or combat validation."
 }

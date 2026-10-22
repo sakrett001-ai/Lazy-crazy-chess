@@ -24,7 +24,7 @@ function fixture() {
 
 test('release binds the exact verified document to its immutable source and model',()=>{
   const f=fixture(),r=makeRelease(f);
-  assert.deepEqual(r,{schemaVersion:1,repository:'sakrett001-ai/Lazy-crazy-chess',sourceBranch:'main',sourceCommit:'a'.repeat(40),version:'0.4.0',modelVersion:'0.3.0',checks:'passed',builtAt:f.builtAt,document:{path:`chess/releases/${'a'.repeat(40)}/viewer.html`,sha256:sha256(f.html),bytes:Buffer.byteLength(f.html)}});
+  assert.deepEqual(r,{schemaVersion:1,repository:'sakrett001-ai/Lazy-crazy-chess',sourceBranch:'main',sourceCommit:'a'.repeat(40),version:'0.4.0',modelVersion:'0.3.0',checks:'passed',geometryStatus:'passed',geometryLimitations:[],builtAt:f.builtAt,document:{path:`chess/releases/${'a'.repeat(40)}/viewer.html`,sha256:sha256(f.html),bytes:Buffer.byteLength(f.html)}});
   assert.equal(f.config.modelUrl,`https://raw.githubusercontent.com/sakrett001-ai/Lazy-crazy-chess/${'a'.repeat(40)}/prototypes/white-pawn/assets/white-pawn.glb`);
 });
 
@@ -80,6 +80,71 @@ const failureCases=[
   ['untested integrity failure',f=>{f.hostedReport.tamperedModelRejected=false;}],
 ];
 for(const [name,mutate,expected] of failureCases)test(`no passed manifest for ${name}`,()=>{const f=fixture();mutate(f);assert.throws(()=>makeRelease(f),expected);});
+
+function prototypeFixture() {
+  const f=fixture();f.geometryAuditSource=Buffer.from('bounded intersection audit fixture');
+  const report=f.geometryReport={...f.geometryReport,status:'failed',auditSha256:sha256(f.geometryAuditSource),scope:'18 bounded cases; not whole-body collision freedom',unassessed:[],limits:{handFrameErrorM:.01,soleDriftM:.006,soleFloorGapM:.008,thumbSurfaceDistanceM:.014},cases:[],checks:[],failures:[],negativeControls:[]};
+  const check=(name,passed=true,details={})=>report.checks.push({name,passed,...details});
+  for(const name of ['Required physical layer meshes exist','Layer meshes use the audited identity bind/world frame','mail: local bind patch coverage','plate: local bind patch coverage','Thumb skin vertices exist on both hands','Actual sole surfaces exist'])check(name);
+  for(const bodyBuild of ['lean','regular','strong'])for(const [name,armorType,weaponType,shieldType,action,time] of [
+    ['plate-rest','plate','spear','tower','rest',0],['mail-brace','mail','spear','tower','Shield_Brace',1.65],['mail-sword','mail','sword','round','Spear_Study',1.9],['padded-rest','padded','sword','heater','rest',0],['mail-pike','mail','pike','none','Spear_Study',1.9],['plate-greatsword','plate','greatsword','none','Spear_Study',1.9]
+  ]) {
+    const id=`${bodyBuild}/${name}`,entry={id,bodyBuild,armorType,weaponType,shieldType,action,time,layers:[],thumbs:[]};report.cases.push(entry);
+    if(armorType!=='padded') {
+      const known=id==='regular/mail-sword',patch={paddingWorld:[0,1,0],outerWallWorld:[0,1,.001],paddingNormal:[0,0,1],lateralDistanceM:.001,bindDistanceM:.008,trackedGapM:-.001,intersections:[{mesh:'mail',triangle:1,pointsWorld:[[0,1,0]]}]};
+      const layer={probes:10,minTrackedGapM:known?-.001:.008,intersectionPatches:known?[patch]:[],inconclusivePatches:[],invalidSourcePatches:[],outerValidation:{nonfiniteTriangles:0,unassessedDegenerateTriangles:0}};entry.layers.push(layer);
+      const checkName=`${id}: sampled garment triangles do not intersect`;
+      check(checkName,!known,{probes:10,invalidSourcePatches:0,outerValidation:{...layer.outerValidation},intersectingPaddingTriangles:known?1:0,inconclusiveTrackedPatches:0,minTrackedGapM:layer.minTrackedGapM});
+      if(known)report.failures.push(checkName);
+    }
+    check(`${id}: hand attachment frames meet targets`,true,{rightM:0,leftM:['pike','greatsword'].includes(weaponType)?0:null});
+    for(const side of ['L','R']) {
+      check(`${id}: ${side} actual sole stays planted`,true,{maxDriftM:0,minYM:.001});
+      check(`${id}: ${side} thumb reaches actual handle`,true,{distanceM:.001});
+      entry.thumbs.push({side,distanceM:.001,thumbWorld:[0,1,0],handleWorld:[0,1,.001]});
+    }
+  }
+  report.negativeControls=[{name:'Move actual mail triangle across padding triangle',passed:true,intersectionPointsWorld:[[0,1,0]]},{name:'Move actual mail triangle inward60mm',passed:true,beforeM:.008,afterM:-.052}];
+  for(const control of report.negativeControls)check(control.name);
+  f.geometryAcceptance={schemaVersion:1,decision:'prototype-with-known-intersections',glbSha256:sha256(f.modelBytes),runtimeSha256:sha256(f.loadoutSource),geometryReportSha256:'',reviewer:'Codex',rationale:'The exact reported motion contact was visually reviewed for this prototype.',limitations:['Known mail intersection in the reviewed sword motion; not collision-free.']};
+  bindPrototypeReport(f);return f;
+}
+function bindPrototypeReport(f) {f.geometryReportBytes=Buffer.from(JSON.stringify(f.geometryReport));f.geometryAcceptance.geometryReportSha256=sha256(f.geometryReportBytes);}
+
+test('exact prototype acceptance retains failed geometry and exposes reviewed limitations',()=>{
+  const f=prototypeFixture(),before=JSON.stringify(f.geometryReport),release=makeRelease(f);
+  assert.equal(release.checks,'passed');assert.equal(release.geometryStatus,'failed');
+  assert.equal(release.geometryDecision,'prototype-with-known-intersections');
+  assert.deepEqual(release.geometryLimitations,f.geometryAcceptance.limitations);
+  assert.equal(release.geometryReportSha256,sha256(f.geometryReportBytes));
+  assert.deepEqual(release.geometryReview,{reviewer:'Codex',rationale:f.geometryAcceptance.rationale});
+  assert.equal(JSON.stringify(f.geometryReport),before);
+});
+
+test('known intersections still reject without explicit acceptance',()=>{
+  const f=prototypeFixture();delete f.geometryAcceptance;assert.throws(()=>makeRelease(f),/Geometry audit did not pass/);
+});
+
+for(const [name,mutate] of [
+  ['different report bytes',f=>{f.geometryReportBytes=Buffer.concat([f.geometryReportBytes,Buffer.from('\n')]);}],
+  ['different accepted model',f=>{f.geometryAcceptance.glbSha256='0'.repeat(64);}],
+  ['different accepted runtime',f=>{f.geometryAcceptance.runtimeSha256='0'.repeat(64);}],
+  ['different audit source',f=>{f.geometryAuditSource=Buffer.from('new audit');}],
+  ['missing raw report',f=>{delete f.geometryReportBytes;}],
+  ['changed parsed report',f=>{f.geometryReport.scope+=' changed';}],
+  ['empty limitations',f=>{f.geometryAcceptance.limitations=[];}],
+  ['blank rationale',f=>{f.geometryAcceptance.rationale=' ';}],
+  ['unknown schema field',f=>{f.geometryAcceptance.waiveAll=true;}],
+  ['nonintersection failure',f=>{const check=f.geometryReport.checks.find(c=>c.name.endsWith('L actual sole stays planted'));check.passed=false;f.geometryReport.failures.push(check.name);bindPrototypeReport(f);}],
+  ['missing required check',f=>{f.geometryReport.checks=f.geometryReport.checks.filter(c=>!c.name.endsWith('R thumb reaches actual handle'));bindPrototypeReport(f);}],
+  ['invalid source triangle',f=>{const entry=f.geometryReport.cases[0];entry.layers[0].invalidSourcePatches=[{reason:'degenerate'}];f.geometryReport.checks.find(c=>c.name===`${entry.id}: sampled garment triangles do not intersect`).invalidSourcePatches=1;bindPrototypeReport(f);}],
+  ['nonfinite outer triangle',f=>{f.geometryReport.cases[0].layers[0].outerValidation.nonfiniteTriangles=1;bindPrototypeReport(f);}],
+  ['nonfinite intersection point',f=>{f.geometryReport.cases.find(c=>c.id==='regular/mail-sword').layers[0].intersectionPatches[0].intersections[0].pointsWorld[0][0]=null;bindPrototypeReport(f);}],
+  ['failed negative control',f=>{f.geometryReport.negativeControls[0].passed=false;bindPrototypeReport(f);}],
+  ['missing sampled case',f=>{f.geometryReport.cases.pop();bindPrototypeReport(f);}],
+  ['inconsistent failure summary',f=>{f.geometryReport.failures.push('unrecorded failure');bindPrototypeReport(f);}],
+  ['error status',f=>{f.geometryReport.status='error';bindPrototypeReport(f);}]
+])test(`prototype acceptance refuses ${name}`,()=>{const f=prototypeFixture();mutate(f);assert.throws(()=>makeRelease(f));});
 
 // Exercise the real command once: an old manifest must not survive a failed rebuild.
 test('failed build command removes an old publishable manifest',async()=>{

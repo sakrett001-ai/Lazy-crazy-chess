@@ -1,7 +1,7 @@
 {
   "goal": "Rebuild and publish modular infantry equipment and independent appearance",
   "status": "in_progress",
-  "phase": "Final asset repair: continuous physique morph field and beard mask; acceptance and publication pending",
+  "phase": "Final rear overlap panel; browser acceptance pending",
   "baselineSource": "168ac90f50913c020037abe826b08e13ba2910e9",
   "targetViewer": "0.4.0",
   "targetModel": "0.3.0",
@@ -13,11 +13,12 @@
     "Baseline candidate model and equipment checks passed; final repaired bytes require fresh checks"
   ],
   "pending": [
-    "Final asset repair: continuous physique displacement and nose-free beard mask",
-    "Fresh exact-byte model, geometry and browser acceptance",
+    "Final rear overlap panel preserving rear coverage",
+    "Fresh exact-byte model, geometry and browser acceptance for repaired asset",
+    "Review any remaining motion intersections explicitly without changing failed audit status",
     "Publish verified main and gh-pages release",
     "Floot version and SHA readback"
   ],
-  "nextAction": "Finish narrow builder repairs, rebuild once, then verify frozen GLB and HTML before publication",
-  "warning": "This branch is a recovery checkpoint, not a verified release. Current stable candidate files have not passed all acceptance gates; reports for earlier bytes do not validate final repaired assets."
+  "nextAction": "Replace the open rear vent with an overlapping padded panel, rebuild the frozen candidate, then rerun exact-byte model/geometry/browser checks before publication",
+  "warning": "Candidate checkpoint only. The saved 69c5ce23 geometry report and acceptance record describe the previous candidate, not the pending rear overlap repair. Current binary assets in this branch may belong to an older checkpoint. No report or acceptance can be reused after its bound GLB/runtime/report bytes change; no publication is claimed."
 }

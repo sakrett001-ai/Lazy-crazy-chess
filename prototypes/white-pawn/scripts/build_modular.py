@@ -23,6 +23,16 @@ frames=pawn_pose.equipment_frames()
 info=json.loads(subprocess.check_output(['git','show',SOURCE+':prototypes/white-pawn/assets/model-info.json'],cwd=REPO))
 MODEL=[o for o in scene.objects if o.type=='MESH' and not o.name.startswith('STUDIO_')]
 
+# The split padded skirt crosses the lateral edge of the fitted rear hip plates.
+# Move each complete rear assembly outward/backward in bind space. The left
+# lateral edge needs an additional 10 mm, verified against its crossed facets.
+# Keeping its lames, rolled edges and rivets together preserves their overlap.
+for ob in MODEL:
+ if ob.name.startswith('ARMOR_Rear hip '):
+  side=ob.name.rsplit(' ',1)[1][0];assert side in ('L','R'),ob.name
+  shift=Vector((.014 if side=='L' else -.004,.004,0))
+  for vertex in ob.data.vertices:vertex.co+=shift
+
 def mat(name,color,metal=0,rough=.5):
  m=bpy.data.materials.get(name) or bpy.data.materials.new(name)
  m.use_nodes=True;m.diffuse_color=(*color,1);p=m.node_tree.nodes.get('Principled BSDF')
@@ -186,7 +196,14 @@ for mod in mail_collar.modifiers:
  if mod.type=='SOLIDIFY':mod.thickness=.0035;mod.offset=-1
 mail_collar.data.update();physical_uv(mail_collar)
 skirt=bpy.data.objects['CLOTH_Split padded hip skirt']
-mail_skirt=subset(skirt,'MAIL_Split skirt',lambda c:True,mail,.014)
+def outside_rear_vent(c):
+ # Anatomical medial-thigh faces offset across the midline into the other leg.
+ # A tapered rear vent separates these panels while retaining the upper seat;
+ # the continuous padded leggings remain visible inside the deliberate slit.
+ t=max(0.,min(1.,(c.z-.94)/.055))
+ half_width=.045*(1-t*t*(3-2*t))
+ return not(c.y>.035 and abs(c.x)<half_width)
+mail_skirt=subset(skirt,'MAIL_Split skirt',outside_rear_vent,mail,.014)
 for mod in mail_skirt.modifiers:
  if mod.type=='SOLIDIFY':mod.thickness=.0035;mod.offset=-1
 # A full leather girdle lies outside mail; the existing underlying belt is hidden

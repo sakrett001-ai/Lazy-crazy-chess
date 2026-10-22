@@ -1,0 +1,84 @@
+{
+  "status": "built",
+  "glbSha256": "69c5ce23b3885c38359a6a6389084589e38aacfd256cb9b1952c87b7f1f1ceaa",
+  "bytes": 16126260,
+  "meshes": 15,
+  "groups": [
+    {
+      "equipmentSlot": "base",
+      "equipmentVariant": "base",
+      "defaultVisible": true
+    },
+    {
+      "equipmentSlot": "padding",
+      "equipmentVariant": "padded",
+      "defaultVisible": true
+    },
+    {
+      "equipmentSlot": "plate",
+      "equipmentVariant": "plate",
+      "defaultVisible": true
+    },
+    {
+      "equipmentSlot": "helmet",
+      "equipmentVariant": "on",
+      "defaultVisible": true
+    },
+    {
+      "equipmentSlot": "weapon",
+      "equipmentVariant": "spear",
+      "defaultVisible": true
+    },
+    {
+      "equipmentSlot": "shield",
+      "equipmentVariant": "tower",
+      "defaultVisible": true
+    },
+    {
+      "equipmentSlot": "mail",
+      "equipmentVariant": "mail",
+      "defaultVisible": false
+    },
+    {
+      "equipmentSlot": "hair",
+      "equipmentVariant": "short",
+      "defaultVisible": false
+    },
+    {
+      "equipmentSlot": "beard",
+      "equipmentVariant": "stubble",
+      "defaultVisible": false
+    },
+    {
+      "equipmentSlot": "beard",
+      "equipmentVariant": "short",
+      "defaultVisible": false
+    },
+    {
+      "equipmentSlot": "weapon",
+      "equipmentVariant": "sword",
+      "defaultVisible": false
+    },
+    {
+      "equipmentSlot": "weapon",
+      "equipmentVariant": "greatsword",
+      "defaultVisible": false
+    },
+    {
+      "equipmentSlot": "weapon",
+      "equipmentVariant": "pike",
+      "defaultVisible": false
+    },
+    {
+      "equipmentSlot": "shield",
+      "equipmentVariant": "round",
+      "defaultVisible": false
+    },
+    {
+      "equipmentSlot": "shield",
+      "equipmentVariant": "heater",
+      "defaultVisible": false
+    }
+  ],
+  "sourceCommit": "168ac90f50913c020037abe826b08e13ba2910e9"
+}

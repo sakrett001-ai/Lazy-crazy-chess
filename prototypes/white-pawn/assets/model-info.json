@@ -1,7 +1,7 @@
 {
-  "version": "0.2.1",
+  "version": "0.3.0",
   "base_glb_sha256": "6f12aaa99ced53983ea3188493a755c46342c908055caf125c5b3576eb099962",
-  "glb_sha256": "521c0a51e9f4440c897a079934e876fa153cd3789fad28c43b7d444154d6f036",
+  "glb_sha256": "69c5ce23b3885c38359a6a6389084589e38aacfd256cb9b1952c87b7f1f1ceaa",
   "clips": [
     "Guard_Breath",
     "Shield_Brace",
@@ -82,9 +82,10 @@
   },
   "scope": "First equipped white pawn; fitted grip and solo motion studies. No chess logic or paired combat.",
   "limits": [
-    "No cloth/horsehair simulation",
-    "Full board LOD remains future work",
-    "Armor is fantasy equipment, not a historical replica"
+    "Fantasy infantry equipment, not historical replica",
+    "New weapon IK is evaluated in the browser, not baked into the three original GLB clips",
+    "Catalogue GLB contains all variants; selected appearance is saved separately in JSON",
+    "No cloth simulation or full-board LOD"
   ],
   "material_revision": {
     "slots": [
@@ -102,5 +103,80 @@
     ],
     "proof": "../review/material-checks.json",
     "preserves_glb_geometry_of": "95249c6f86fe773e4b5408f4350778df050765f67f92cb17d799fb8171858c47"
+  },
+  "source_commit": "168ac90f50913c020037abe826b08e13ba2910e9",
+  "modular": {
+    "slots": [
+      [
+        "base",
+        "base"
+      ],
+      [
+        "beard",
+        "short"
+      ],
+      [
+        "beard",
+        "stubble"
+      ],
+      [
+        "hair",
+        "short"
+      ],
+      [
+        "helmet",
+        "on"
+      ],
+      [
+        "mail",
+        "mail"
+      ],
+      [
+        "padding",
+        "padded"
+      ],
+      [
+        "plate",
+        "plate"
+      ],
+      [
+        "shield",
+        "heater"
+      ],
+      [
+        "shield",
+        "round"
+      ],
+      [
+        "shield",
+        "tower"
+      ],
+      [
+        "weapon",
+        "greatsword"
+      ],
+      [
+        "weapon",
+        "pike"
+      ],
+      [
+        "weapon",
+        "spear"
+      ],
+      [
+        "weapon",
+        "sword"
+      ]
+    ],
+    "bodyTargets": [
+      "lean",
+      "strong"
+    ],
+    "experienceTarget": "veteran",
+    "surfaceTileMetres": 0.04,
+    "mailOuterDiameterMetres": 0.0112,
+    "quiltDiagonalSpacingMetres": 0.028284,
+    "catalogueDownload": true,
+    "runtimeWeaponIKBaked": false
   }
 }
