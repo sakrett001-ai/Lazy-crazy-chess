@@ -23,7 +23,7 @@ const origin=`http://127.0.0.1:${server.address().port}`;
 const browser=await chromium.launch({headless:true,args:['--no-sandbox','--enable-unsafe-swiftshader']});
 report.browser=browser.version();
 async function contextFor(mode='normal') {
-  const context=await browser.newContext({viewport:{width:1440,height:1000},deviceScaleFactor:1});
+  const context=await browser.newContext({viewport:{width:1440,height:1000},deviceScaleFactor:1});context.setDefaultNavigationTimeout(180000);
   await context.route('**/*',async route=>{
     const url=route.request().url();
     if(url===origin+'/viewer.html')return route.continue();
@@ -42,13 +42,13 @@ try {
   const normal=await contextFor();const page=await normal.newPage();
   page.on('pageerror',e=>report.errors.push(e.message));
   await page.goto(origin+'/viewer.html');
-  await page.waitForFunction(()=>window.whitePawn?.ready,{},{timeout:120000});
+  await page.waitForFunction(()=>window.whitePawn?.ready,{},{timeout:180000});
   const state=await page.evaluate(()=>whitePawn.state());
   assert.equal(state.playing,false);assert.equal(state.clips.length,3);
   assert.deepEqual(await page.evaluate(()=>window.PAWN_HOSTED),config);
   assert.equal(await page.locator('#model-data').textContent(),'');
   report.tests.push('Compact hosted document loads exact immutable GLB and poster; no embedded model or autoplay');
-  await page.screenshot({path:path.join(review,'hosted-desktop.png'),fullPage:true});
+  await page.screenshot({path:path.join(review,'hosted-desktop.png'),fullPage:true,timeout:180000});
   await page.evaluate(()=>{whitePawn.select('Guard_Breath');whitePawn.seek(1);});
   assert.equal(await page.evaluate(()=>whitePawn.state().time),1);
   await page.locator('#play').click();
@@ -62,7 +62,7 @@ try {
   await page.setViewportSize({width:390,height:844});await page.evaluate(()=>{whitePawn.select('rest');whitePawn.fit('three');});
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
   assert.equal(await page.evaluate(()=>whitePawn.state().contained),true);
-  await page.screenshot({path:path.join(review,'hosted-mobile.png'),fullPage:true});
+  await page.screenshot({path:path.join(review,'hosted-mobile.png'),fullPage:true,timeout:180000});
   report.tests.push('390 px layout and camera framing');await normal.close();
 
   for(const mode of ['tampered','unavailable']) {

@@ -5,12 +5,13 @@ import {RoomEnvironment} from 'three/addons/environments/RoomEnvironment.js';
 import {cameraRig,deterministicClip} from './camera-rig.mjs';
 import {installReview} from './review.mjs';
 import {installAppearance,DEFAULT_APPEARANCE} from './appearance.mjs';
+import {createLoadout} from './loadout.mjs';
 
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const stage=$('#stage'),timeInput=$('#timeline'),play=$('#play');
 const hosted=window.PAWN_HOSTED&&typeof window.PAWN_HOSTED==='object'?Object.freeze({...window.PAWN_HOSTED}):null;
 const clean=value=>typeof value==='string'?value.slice(0,160):'';
-const identity={version:clean(hosted?.version)||'0.3.0',modelVersion:clean(hosted?.modelVersion)||'0.2.1',sourceCommit:clean(hosted?.sourceCommit),modelSha256:clean(hosted?.modelSha256).toLowerCase(),modelUrl:clean(hosted?.modelUrl),mode:hosted?'hosted':'standalone'};
+const identity={version:clean(hosted?.version)||'0.4.0',modelVersion:clean(hosted?.modelVersion)||'0.3.0',sourceCommit:clean(hosted?.sourceCommit),modelSha256:clean(hosted?.modelSha256).toLowerCase(),modelUrl:clean(hosted?.modelUrl),mode:hosted?'hosted':'standalone'};
 $('#build-version').textContent=`Стенд ${identity.version} · модель ${identity.modelVersion}${identity.sourceCommit?' · '+identity.sourceCommit.slice(0,8):''}`;
 $('#build-version').title=identity.sourceCommit?`Исходный коммит: ${identity.sourceCommit}`:'Автономная сборка';
 const embeddedPoster=$('#poster').getAttribute('src');
@@ -61,24 +62,19 @@ async function init(){
  const restore=()=>Object.entries(rest).forEach(([n,r])=>{bones[n].position.copy(r.p);bones[n].quaternion.copy(r.q);bones[n].scale.copy(r.s);});
  const skeletons=[...new Set(meshes.filter(m=>m.isSkinnedMesh).map(m=>m.skeleton))];
  const updateModel=()=>{model.updateMatrixWorld(true);skeletons.forEach(s=>s.update());};
- const bounds=new THREE.Box3(),poseBounds={};
- function currentBounds(){updateModel();return new THREE.Box3().setFromObject(model,true);}
- poseBounds.rest=currentBounds();bounds.union(poseBounds.rest);
- // A separate envelope for each study keeps the neutral figure readable while
- // fitting the full movement of the chosen study without camera pumping.
- for(let i=0;i<gltf.animations.length;i++){
-  $('#loading').textContent=`Подготавливаем движения · ${i+1} из ${gltf.animations.length}`;
-  await new Promise(resolve=>requestAnimationFrame(resolve));
-  const sample=deterministicClip(model,gltf.animations,i),envelope=new THREE.Box3();
-  for(let step=0;step<=8;step++){sample.seek(sample.duration*step/8);envelope.union(currentBounds());}
-  poseBounds[gltf.animations[i].name]=envelope;bounds.union(envelope);
-  sample.dispose();restore();
+ const loadout=createLoadout({model,bones});
+ let currentAppearance={...DEFAULT_APPEARANCE};
+ loadout.apply(currentAppearance);loadout.poseAt('rest',0);
+ const bounds=new THREE.Box3(),poseBounds={},rigCache=new Map();
+ const visible=object=>{for(let node=object;node;node=node.parent)if(!node.visible)return false;return true;};
+ function currentBounds(){
+  updateModel();const box=new THREE.Box3(),point=new THREE.Vector3();
+  for(const mesh of meshes){if(!visible(mesh))continue;const positions=mesh.geometry.attributes.position;
+   for(let i=0;i<positions.count;i++){mesh.getVertexPosition(i,point);box.expandByPoint(point.applyMatrix4(mesh.matrixWorld));}}
+  if(box.isEmpty())throw Error('В комплекте нет видимой геометрии');return box;
  }
- updateModel();
- $('#loading').textContent='Готовим первый ракурс…';
- await new Promise(resolve=>requestAnimationFrame(resolve));
- const poseRigs=Object.fromEntries(Object.entries(poseBounds).map(([name,box])=>[name,cameraRig(box,{fov:30,margin:1.08})]));
- const fullRig=poseRigs.rest;
+ poseBounds.rest=currentBounds();bounds.copy(poseBounds.rest);
+ const fullRig=cameraRig(poseBounds.rest,{fov:30,margin:1.08});
  const faceRig=cameraRig(new THREE.Box3(new THREE.Vector3(-.18,1.43,-.2),new THREE.Vector3(.18,1.95,.25)),{fov:30,margin:1.12});
  const handRig=(side)=>{const bone=bones['wrist.'+side]||bones['wrist'+side];const center=bone?bone.getWorldPosition(new THREE.Vector3()):new THREE.Vector3(side==='R'?-.28:.28,1.1,.25);return cameraRig(new THREE.Box3(center.clone().addScalar(-.2),center.clone().addScalar(.2)),{fov:30,margin:1.22});};
 
@@ -86,6 +82,34 @@ async function init(){
  const controls=new OrbitControls(camera,renderer.domElement);controls.enableDamping=false;controls.minDistance=.22;controls.maxDistance=15;controls.maxPolarAngle=Math.PI*.96;
  const directions={front:[0,.03,1],side:[1,.03,0],back:[0,.03,-1],three:[1.8,.48,5],face:[.1,0,1],spear:[-2,.6,3],shield:[2,.4,-3],top:[0,1,0],bottom:[0,-1,0]};
  let selected='rest',sampler=null,playing=false,t=0,last=null,frame=0,onScreen=true,speed=1,pendingPlay=false,reviewLocked=false,cameraPinned=false,display='surface',fps=null,fpsElapsed=0,fpsFrames=0;
+
+ // Each cached envelope comes from visible, actually skinned vertices of this outfit.
+ function poseRig(name){
+  const key=JSON.stringify([currentAppearance.armorType,currentAppearance.shieldType,currentAppearance.weaponType,currentAppearance.bodyBuild,currentAppearance.experience,currentAppearance.helmet,currentAppearance.beard,name]);
+  if(rigCache.has(key))return rigCache.get(key);
+  const envelope=new THREE.Box3(),index=gltf.animations.findIndex(c=>c.name===name);
+  if(index<0){restore();loadout.poseAt('rest',0);envelope.union(currentBounds());}
+  else{const sample=deterministicClip(model,gltf.animations,index);
+   for(let step=0;step<=8;step++){restore();sample.seek(sample.duration*step/8);loadout.poseAt(name,sample.duration*step/8);envelope.union(currentBounds());}
+   sample.dispose();}
+  restore();sampler?.seek(t);loadout.poseAt(selected,t);updateModel();
+  poseBounds[name]=envelope;bounds.union(envelope);
+  const rig=cameraRig(envelope,{fov:30,margin:1.08});
+  if(rigCache.size>=32)rigCache.delete(rigCache.keys().next().value);
+  rigCache.set(key,rig);return rig;
+ }
+ function refreshLoadoutControls(){
+  const available=loadout.availableActions();
+  $$('[data-pose]').forEach(button=>button.disabled=!available.includes(button.dataset.pose));
+  $$('[data-view="shield"]').forEach(button=>button.disabled=loadout.summary().effectiveShield==='none');
+  const weapon=currentAppearance.weaponType;
+  const study=$('[data-pose="Spear_Study"] strong');
+  if(study)study.textContent=weapon==='sword'||weapon==='greatsword'?'Учебный укол мечом':'Учебный выпад';
+  const subtitle=$('[data-pose="Spear_Study"] small');
+  if(subtitle)subtitle.textContent=weapon==='sword'||weapon==='greatsword'?'Остриём вперёд и возврат':'Вынос копья и возврат';
+  const grip=$('[data-view="spear"]');if(grip)grip.textContent=weapon==='sword'||weapon==='greatsword'?'Хват меча':'Хват копья';
+  $('#pose-caption').textContent=loadout.captions()[selected]||captions[selected];
+ }
 
  const skeletonGroup=new THREE.Group();skeletonGroup.visible=false;scene.add(skeletonGroup);
  const jointNames=Object.keys(bones).filter(n=>/^(root|spine0[135]|head|neck01|clavicle|shoulder01|upperarm0[12]|lowerarm0[12]|wrist|pelvis|upperleg0[12]|lowerleg0[12]|foot)/.test(n));
@@ -100,20 +124,22 @@ async function init(){
  }
  function render(){updateSkeleton();renderer.render(scene,camera);}
  function fit(name=view){
-  cameraPinned=false;view=name;updateModel();currentRig=name==='face'?faceRig:name==='spear'?handRig('R'):name==='shield'?handRig('L'):(poseRigs[selected]||fullRig);
+  if(name==='shield'&&loadout.summary().effectiveShield==='none')name='three';
+  cameraPinned=false;view=name;updateModel();currentRig=name==='face'?faceRig:name==='spear'?handRig('R'):name==='shield'?handRig('L'):poseRig(selected);
   const {width,height}=stage.getBoundingClientRect();currentRig.resize(width,height);
   camera=currentRig.pose({direction:directions[name],projection:'perspective',zoom:1});camera.near=.03;camera.far=40;camera.updateProjectionMatrix();controls.object=camera;controls.target.copy(currentRig.center);controls.update();
   $$('[data-view]').forEach(b=>{const active=b.dataset.view===name;b.classList.toggle('active',active);b.setAttribute('aria-pressed',active);});render();
  }
  function resize(){const {width,height}=stage.getBoundingClientRect();renderer.setSize(width,height);if(reviewLocked||cameraPinned){camera.aspect=width/height;camera.updateProjectionMatrix();render();}else fit(view);}
- function seek(value){t=THREE.MathUtils.clamp(Number(value),0,sampler?.duration||3);if(sampler)sampler.seek(t);else restore();timeInput.value=t;$('#time').value=t.toFixed(2)+' с';render();}
+ function seek(value){t=THREE.MathUtils.clamp(Number(value),0,sampler?.duration||3);restore();if(sampler)sampler.seek(t);loadout.poseAt(selected,t);timeInput.value=t;$('#time').value=t.toFixed(2)+' с';render();}
  function pause(){pendingPlay=false;playing=false;play.textContent='▶';play.setAttribute('aria-label','Запустить движение');last=null;cancelAnimationFrame(frame);fps=null;fpsElapsed=0;fpsFrames=0;$('#fps').textContent='FPS · пауза';updateSteps();}
  function updateSteps(){for(const id of ['#step-back','#step-forward'])$(id).disabled=!sampler||playing||reviewLocked;}
  function tick(now){if(!playing)return;if(document.hidden||!onScreen){pause();return;}const dt=last===null?0:(now-last)/1000;last=now;if(dt>0){fpsElapsed+=dt;fpsFrames++;if(fpsElapsed>=1){fps=Math.round(fpsFrames/fpsElapsed);$('#fps').textContent=`≈ ${fps} FPS`;fpsElapsed=0;fpsFrames=0;}}seek((t+dt*speed)%(sampler?.duration||3));frame=requestAnimationFrame(tick);}
  function start(){if(reviewLocked||!sampler||document.hidden)return;const rect=stage.getBoundingClientRect();const visible=Math.max(0,Math.min(innerHeight,rect.bottom)-Math.max(0,rect.top));if(visible<rect.height*.4){pendingPlay=true;stage.scrollIntoView({block:'center',behavior:'instant'});requestAnimationFrame(()=>{if(pendingPlay)start();});return;}onScreen=true;pendingPlay=false;playing=true;updateSteps();$('#fps').textContent='FPS · измеряем';play.textContent='Ⅱ';play.setAttribute('aria-label','Остановить движение');last=null;frame=requestAnimationFrame(tick);}
  function select(name){
+  if(!loadout.availableActions().includes(name))name='rest';
   pause();sampler?.dispose();sampler=null;restore();selected=name;
-  $$('[data-pose]').forEach(b=>{const active=b.dataset.pose===name;b.classList.toggle('active',active);b.setAttribute('aria-pressed',active);});$('#pose-caption').textContent=captions[name];
+  $$('[data-pose]').forEach(b=>{const active=b.dataset.pose===name;b.classList.toggle('active',active);b.setAttribute('aria-pressed',active);});$('#pose-caption').textContent=loadout.captions()[name]||captions[name];
   if(name!=='rest'){const index=gltf.animations.findIndex(c=>c.name===name);if(index<0)throw Error(`Missing clip: ${name}`);sampler=deterministicClip(model,gltf.animations,index);timeInput.max=sampler.duration;}
   play.disabled=timeInput.disabled=name==='rest';updateSteps();seek(0);fit(view);
  }
@@ -139,10 +165,14 @@ async function init(){
  new ResizeObserver(resize).observe(stage);
  renderer.domElement.addEventListener('webglcontextlost',e=>{e.preventDefault();pause();renderer.domElement.hidden=true;fallback('Контекст WebGL потерян');});
  $('#poster').style.display='none';$('#loading').hidden=true;resize();
- const appearance=installAppearance({model,render,beforeChange:pause});
+ const appearance=installAppearance({model,render,beforeChange:pause,onChange:settings=>{
+  currentAppearance={...settings};loadout.apply(settings);refreshLoadoutControls();
+  if(!loadout.availableActions().includes(selected))select('rest');else{seek(t);fit(view);}
+ }});
+ refreshLoadoutControls();
  const body=meshes.filter(m=>m.isSkinnedMesh).sort((a,b)=>b.geometry.attributes.position.count-a.geometry.attributes.position.count)[0]||meshes[0];
- function measure(){updateModel();let minY=Infinity,maxY=-Infinity;const p=new THREE.Vector3();for(const mesh of meshes){const ar=mesh.geometry.attributes.position;for(let i=0;i<ar.count;i++){mesh.getVertexPosition(i,p);p.applyMatrix4(mesh.matrixWorld);minY=Math.min(minY,p.y);maxY=Math.max(maxY,p.y);}}return {minY,maxY,height:maxY-minY,finite:Number.isFinite(minY+maxY)};}
- window.whitePawn={ready:true,select,seek,pause,fit,render,measure,appearance,
+ function measure(){updateModel();let minY=Infinity,maxY=-Infinity;const p=new THREE.Vector3();for(const mesh of meshes){if(!visible(mesh))continue;const ar=mesh.geometry.attributes.position;for(let i=0;i<ar.count;i++){mesh.getVertexPosition(i,p);p.applyMatrix4(mesh.matrixWorld);minY=Math.min(minY,p.y);maxY=Math.max(maxY,p.y);}}return {minY,maxY,height:maxY-minY,finite:Number.isFinite(minY+maxY)};}
+ window.whitePawn={ready:true,select,seek,pause,fit,render,measure,appearance,loadout,
   state:()=>({pose:selected,time:t,playing,speed,view,onScreen,pendingPlay,reviewLocked,fps,display,renderCalls:renderer.info.render.calls,triangles:renderer.info.render.triangles,bones:Object.keys(bones).length,clips:gltf.animations.map(c=>({name:c.name,duration:c.duration})),renderer:renderer.getContext().getParameter(renderer.getContext().RENDERER),reducedMotion:motion.matches,contained:currentRig.containment()}),
   screenshot:()=>renderer.domElement.toDataURL('image/png'),identity:{...identity},
   debug:{model,bones,body,renderer,controls,bounds,poseBounds}

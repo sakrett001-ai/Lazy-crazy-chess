@@ -21,3 +21,9 @@ main{display:grid;grid-template-columns:320px 1fr;min-height:calc(100svh - 76px)
 
 .appearance-back{display:none}
 @media(max-width:800px){.appearance-back{display:flex;align-items:center;justify-content:center;min-height:44px;margin-top:8px;color:var(--accent);font-size:12px;text-underline-offset:3px;border-radius:4px}.appearance-back:hover{background:#e5eeed}}
+
+/* Equipment, body and finish are independent sections of one portable profile. */
+.appearance-group{border-top:1px solid var(--line);margin-top:6px;padding-bottom:6px}.appearance-group>summary{font-size:11px;font-weight:600;min-height:44px;padding:13px 3px}.appearance-group>summary::marker{font-size:9px}.appearance-group .appearance-fields{padding:3px 0 7px}.appearance-group .appearance-file-note{margin-bottom:8px}.appearance-group .appearance-fields>label{grid-column:auto}.appearance-group select:disabled{opacity:.6}.appearance-section .appearance-actions{margin-top:13px}.appearance-section #appearance-summary{max-width:30ch}
+@media(max-width:800px){.appearance-group>summary{font-size:13px}.appearance-group .appearance-fields>label{grid-column:auto}.appearance-group .appearance-fields>label:only-child{grid-column:1/-1}.appearance-group .appearance-fields .appearance-color{grid-column:1/-1;grid-template-columns:1fr 64px}.appearance-group .appearance-color input{width:64px}.appearance-group .appearance-fields label[for="armor-finish"],.appearance-group .appearance-fields label[for="weapon-type"]{grid-column:1/-1}.appearance-section #appearance-summary{max-width:none}.appearance-group .appearance-file-note{font-size:11px;line-height:1.55}}
+
+.pose strong{font:inherit}

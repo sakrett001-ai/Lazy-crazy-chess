@@ -29,7 +29,12 @@ const center=refs=>mean(positions(refs));
 const id=ref=>`${ref.mesh.name}:${ref.index}`;
 let sampler=null;
 function clip(name){sampler?.dispose();const c=gltf.animations.find(x=>x.name===name);if(!c)throw Error(`Missing clip ${name}`);const mixer=new THREE.AnimationMixer(scene),action=mixer.clipAction(c);sampler={duration:c.duration,seek(time){mixer.stopAllAction();action.reset();action.setLoop(THREE.LoopOnce,1);action.clampWhenFinished=true;action.play();mixer.setTime(Math.max(0,Math.min(c.duration,time)));update();},dispose(){mixer.stopAllAction();mixer.uncacheRoot(scene);}};sampler.seek(0);return sampler;}
-function onlyMesh(prefix,material){const matches=meshes.filter(m=>m.name.startsWith(prefix)&&m.material.name===material);if(matches.length!==1)throw Error(`Expected one ${prefix}/${material}, found ${matches.map(m=>m.name).join(',')}`);return matches[0];}
+function inheritedTag(mesh,key){for(let o=mesh;o;o=o.parent)if(o.userData?.[key]!==undefined)return o.userData[key];return undefined;}
+function onlyMesh(prefix,material){
+ const slot=prefix==='SPEAR_'?'weapon':prefix==='SHIELD_'?'shield':null,variant=prefix==='SPEAR_'?'spear':prefix==='SHIELD_'?'tower':null;
+ const matches=meshes.filter(m=>m.material.name===material&&(inheritedTag(m,'equipmentSlot')===slot?inheritedTag(m,'equipmentVariant')===variant:m.name.startsWith(prefix)));
+ if(matches.length!==1)throw Error(`Expected one ${prefix}/${material}, found ${matches.map(m=>m.name).join(',')}`);return matches[0];
+}
 function quaternionState(){return [...bones].map(([name,b])=>({name,value:b.getWorldQuaternion(new THREE.Quaternion()).toArray()}));}
 function quaternionError(a,b){return Math.max(...a.map((x,i)=>{const qa=new THREE.Quaternion().fromArray(x.value).normalize(),qb=new THREE.Quaternion().fromArray(b[i].value).normalize();return qa.angleTo(qb);}));}
 function surfaceError(a,b){return Math.max(...a.map((p,i)=>p.distanceTo(b[i])));}

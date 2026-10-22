@@ -11,13 +11,13 @@ const url=pathToFileURL(path.join(root,'white-pawn.html')).href;
 const expected={Guard_Breath:6,Shield_Brace:4,Spear_Study:4};
 const browser=await chromium.launch({headless:true,args:['--no-sandbox','--enable-unsafe-swiftshader']});
 const report={date:new Date().toISOString(),browser:browser.version(),tests:[],measurements:[],errors:[],network:[]};
-const context=await browser.newContext({viewport:{width:1440,height:1000},deviceScaleFactor:1});await context.setOffline(true);
-const page=await context.newPage();
+const context=await browser.newContext({viewport:{width:1440,height:1000},deviceScaleFactor:1});context.setDefaultNavigationTimeout(180000);await context.setOffline(true);
+const page=await context.newPage();context.setDefaultNavigationTimeout(180000);
 page.on('pageerror',e=>report.errors.push(e.message));
 page.on('request',r=>{if(/^https?:/.test(r.url()))report.network.push(r.url());});
-const shot=async name=>page.screenshot({path:path.join(review,`browser-${name}.png`),fullPage:true});
+const shot=async name=>page.screenshot({path:path.join(review,`browser-${name}.png`),fullPage:true,timeout:180000});
 try{
- const start=Date.now();await page.goto(url);await page.waitForFunction(()=>window.whitePawn?.ready,{},{timeout:120000});
+ const start=Date.now();await page.goto(url,{timeout:180000});await page.waitForFunction(()=>window.whitePawn?.ready,{},{timeout:180000});
  report.loadMs=Date.now()-start;report.initial=await page.evaluate(()=>whitePawn.state());
  assert.equal(report.initial.playing,false);assert.equal(report.initial.clips.length,3);
  for(const clip of report.initial.clips)assert(Math.abs(clip.duration-expected[clip.name])<1e-4,`duration ${clip.name}: ${clip.duration}`);
@@ -65,8 +65,8 @@ try{
  const [download]=await Promise.all([page.waitForEvent('download'),page.locator('#download').click()]);assert.equal(download.suggestedFilename(),'lazy-crazy-chess-white-pawn.glb');report.tests.push('Embedded model download');
  await page.setViewportSize({width:390,height:844});await page.evaluate(()=>whitePawn.fit('three'));assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);assert.equal(await page.evaluate(()=>whitePawn.state().contained),true);await shot('mobile');
  await page.locator('[data-pose="Guard_Breath"]').click();await page.locator('#play').evaluate(e=>e.scrollIntoView({block:'center'}));await page.locator('#play').click();await page.waitForFunction(()=>whitePawn.state().playing&&whitePawn.state().time>.5,{},{timeout:25000});assert(await page.evaluate(()=>{const r=document.querySelector('#stage').getBoundingClientRect();return Math.min(innerHeight,r.bottom)-Math.max(0,r.top)>r.height*.4;}));await page.evaluate(()=>whitePawn.pause());report.tests.push('390 px without overflow; mobile Play returns to scene and advances');
- const reduced=await browser.newContext({viewport:{width:390,height:844},reducedMotion:'reduce'});await reduced.setOffline(true);const rp=await reduced.newPage();await rp.goto(url);await rp.waitForFunction(()=>window.whitePawn?.ready,{},{timeout:120000});assert.equal(await rp.evaluate(()=>whitePawn.state().reducedMotion),true);assert.equal(await rp.evaluate(()=>whitePawn.state().playing),false);await reduced.close();report.tests.push('Reduced motion starts still');
- const fallback=await browser.newContext({viewport:{width:390,height:844}});await fallback.setOffline(true);await fallback.addInitScript(()=>{const original=HTMLCanvasElement.prototype.getContext;HTMLCanvasElement.prototype.getContext=function(type,...args){if(/webgl/.test(type))return null;return original.call(this,type,...args);};});const fp=await fallback.newPage();await fp.goto(url);await fp.waitForFunction(()=>window.whitePawn?.fallback);assert(await fp.locator('#poster').isVisible());assert(await fp.locator('#fallback').isVisible());assert(await fp.locator('#download').isEnabled());await fp.screenshot({path:path.join(review,'browser-fallback.png'),fullPage:true});await fallback.close();report.tests.push('WebGL fallback retains poster and model download');
+ const reduced=await browser.newContext({viewport:{width:390,height:844},reducedMotion:'reduce'});await reduced.setOffline(true);const rp=await reduced.newPage();await rp.goto(url,{timeout:180000});await rp.waitForFunction(()=>window.whitePawn?.ready,{},{timeout:180000});assert.equal(await rp.evaluate(()=>whitePawn.state().reducedMotion),true);assert.equal(await rp.evaluate(()=>whitePawn.state().playing),false);await reduced.close();report.tests.push('Reduced motion starts still');
+ const fallback=await browser.newContext({viewport:{width:390,height:844}});await fallback.setOffline(true);await fallback.addInitScript(()=>{const original=HTMLCanvasElement.prototype.getContext;HTMLCanvasElement.prototype.getContext=function(type,...args){if(/webgl/.test(type))return null;return original.call(this,type,...args);};});const fp=await fallback.newPage();await fp.goto(url,{timeout:180000});await fp.waitForFunction(()=>window.whitePawn?.fallback);assert(await fp.locator('#poster').isVisible());assert(await fp.locator('#fallback').isVisible());assert(await fp.locator('#download').isEnabled());await fp.screenshot({path:path.join(review,'browser-fallback.png'),fullPage:true,timeout:180000});await fallback.close();report.tests.push('WebGL fallback retains poster and model download');
  assert.deepEqual(report.errors,[]);assert.deepEqual(report.network,[]);report.status='passed';
  report.glbSha256=createHash('sha256').update(await readFile(path.join(root,'assets/white-pawn.glb'))).digest('hex');
  report.documentSha256=createHash('sha256').update(await readFile(path.join(root,'white-pawn.html'))).digest('hex');

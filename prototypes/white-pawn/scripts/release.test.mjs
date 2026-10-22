@@ -8,13 +8,14 @@ import {fileURLToPath} from 'node:url';
 import {makeHostedConfig,validateCandidate,makeRelease,sourceCommit,sha256,MAX_DOCUMENT_BYTES} from './release-utils.mjs';
 
 function fixture() {
-  const modelBytes=Buffer.from('verified model fixture'),standaloneHtml=Buffer.from('<html>verified standalone</html>');
-  const config=makeHostedConfig({commit:'a'.repeat(40),version:'0.3.0',modelBytes});
+  const modelBytes=Buffer.from('verified model fixture'),standaloneHtml=Buffer.from('<html>verified standalone</html>'),loadoutSource=Buffer.from('verified equipment runtime');
+  const config=makeHostedConfig({commit:'a'.repeat(40),version:'0.4.0',modelBytes});
   const html=`<!doctype html><html><script id="model-data" type="application/octet-stream"></script><script>window.PAWN_HOSTED=Object.freeze(${JSON.stringify(config)});</script></html>`;
-  return {html,config,modelBytes,standaloneHtml,
+  return {html,config,modelBytes,standaloneHtml,loadoutSource,
     modelReport:{status:'passed',sha256:sha256(modelBytes),glb_bytes:modelBytes.length},
     equipmentReport:{status:'passed',glbSha256:sha256(modelBytes)},
-    geometryReport:{status:'passed',glbSha256:sha256(modelBytes)},
+    geometryReport:{status:'passed',glbSha256:sha256(modelBytes),runtimeSha256:sha256(loadoutSource)},
+    variantReport:{status:'passed',glbSha256:sha256(modelBytes),documentSha256:sha256(standaloneHtml)},
     appearanceReport:{status:'passed',glbSha256:sha256(modelBytes),documentSha256:sha256(standaloneHtml)},
     viewerReport:{status:'passed',glbSha256:sha256(modelBytes),documentSha256:sha256(standaloneHtml)},
     hostedReport:{status:'passed',sourceCommit:config.sourceCommit,documentSha256:sha256(html),glbSha256:sha256(modelBytes),tamperedModelRejected:true},
@@ -23,7 +24,7 @@ function fixture() {
 
 test('release binds the exact verified document to its immutable source and model',()=>{
   const f=fixture(),r=makeRelease(f);
-  assert.deepEqual(r,{schemaVersion:1,repository:'sakrett001-ai/Lazy-crazy-chess',sourceBranch:'main',sourceCommit:'a'.repeat(40),version:'0.3.0',modelVersion:'0.2.1',checks:'passed',builtAt:f.builtAt,document:{path:`chess/releases/${'a'.repeat(40)}/viewer.html`,sha256:sha256(f.html),bytes:Buffer.byteLength(f.html)}});
+  assert.deepEqual(r,{schemaVersion:1,repository:'sakrett001-ai/Lazy-crazy-chess',sourceBranch:'main',sourceCommit:'a'.repeat(40),version:'0.4.0',modelVersion:'0.3.0',checks:'passed',builtAt:f.builtAt,document:{path:`chess/releases/${'a'.repeat(40)}/viewer.html`,sha256:sha256(f.html),bytes:Buffer.byteLength(f.html)}});
   assert.equal(f.config.modelUrl,`https://raw.githubusercontent.com/sakrett001-ai/Lazy-crazy-chess/${'a'.repeat(40)}/prototypes/white-pawn/assets/white-pawn.glb`);
 });
 
@@ -58,6 +59,12 @@ const failureCases=[
   ['missing geometry audit',f=>{delete f.geometryReport;},/Geometry audit did not pass/],
   ['failed geometry audit',f=>{f.geometryReport.status='failed';},/Geometry audit did not pass/],
   ['stale geometry audit',f=>{f.geometryReport.glbSha256='0'.repeat(64);},/Geometry report belongs to different GLB bytes/],
+  ['missing runtime bytes',f=>{delete f.loadoutSource;},/Runtime source is required/],
+  ['stale geometry runtime',f=>{f.loadoutSource=Buffer.from('changed runtime');},/Geometry report is stale for this equipment runtime/],
+  ['missing variants checks',f=>{delete f.variantReport;},/Equipment variants verification did not pass/],
+  ['failed variants checks',f=>{f.variantReport.status='failed';},/Equipment variants verification did not pass/],
+  ['stale variants model',f=>{f.variantReport.glbSha256='0'.repeat(64);},/Variant report belongs to different GLB bytes/],
+  ['stale variants document',f=>{f.variantReport.documentSha256='0'.repeat(64);},/Variant report is stale for this HTML/],
   ['missing appearance checks',f=>{delete f.appearanceReport;},/Appearance verification did not pass/],
   ['failed appearance checks',f=>{f.appearanceReport.status='failed';},/Appearance verification did not pass/],
   ['stale appearance model',f=>{f.appearanceReport.glbSha256='0'.repeat(64);},/Appearance report belongs to different GLB bytes/],

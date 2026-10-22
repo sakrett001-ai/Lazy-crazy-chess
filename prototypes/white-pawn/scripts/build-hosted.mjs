@@ -17,7 +17,7 @@ const packageInfo=JSON.parse(await readFile(path.join(root,'package.json'),'utf8
 const modelBytes=await readFile(path.join(root,'assets/white-pawn.glb'));
 const posterBytes=await readFile(path.join(root,'review/neutral.png'));
 for(const [relative,bytes] of [['assets/white-pawn.glb',modelBytes],['review/neutral.png',posterBytes]]) {
-  const committed=execFileSync('git',['show',`${commit}:prototypes/white-pawn/${relative}`],{cwd:repositoryRoot,maxBuffer:16*1024*1024});
+  const committed=execFileSync('git',['show',`${commit}:prototypes/white-pawn/${relative}`],{cwd:repositoryRoot,maxBuffer:64*1024*1024});
   if(!bytes.equals(committed))throw new Error(`The immutable URL does not match local ${relative}; commit the asset before building`);
 }
 const config=makeHostedConfig({commit,version:packageInfo.version,modelBytes});
@@ -36,6 +36,8 @@ if(!publish) {
     modelReport:await readJson(path.join(root,'assets/model-checks.json')),
     equipmentReport:await readJson(path.join(root,'review/equipment-checks.json')),
     geometryReport:await readJson(path.join(root,'review/geometry-checks.json')),
+    loadoutSource:await readFile(path.join(root,'src/loadout.mjs')),
+    variantReport:await readJson(path.join(root,'review/variant-checks.json')),
     appearanceReport:await readJson(path.join(root,'review/appearance-checks.json')),
     viewerReport:await readJson(path.join(root,'review/viewer-checks.json')),
     hostedReport:await readJson(path.join(dist,'review/hosted-checks.json'))});

@@ -3,7 +3,7 @@ import {createHash} from 'node:crypto';
 
 export const REPOSITORY='sakrett001-ai/Lazy-crazy-chess';
 export const MAX_DOCUMENT_BYTES=2_000_000;
-export const MODEL_VERSION='0.2.1';
+export const MODEL_VERSION='0.3.0';
 export const sha256=data=>createHash('sha256').update(data).digest('hex');
 export function sourceCommit(value) {
   assert.match(value??'',/^[a-f0-9]{40}$/,'A full immutable source commit is required');
@@ -34,13 +34,18 @@ export function assertBaseChecks({modelBytes,standaloneHtml,modelReport,viewerRe
   assert.equal(viewerReport?.glbSha256,hash,'Standalone report belongs to a different model');
   assert.equal(viewerReport?.documentSha256,sha256(standaloneHtml),'Standalone report is stale for this HTML');
 }
-export function makeRelease({html,config,modelBytes,standaloneHtml,modelReport,equipmentReport,geometryReport,appearanceReport,viewerReport,hostedReport,builtAt=new Date().toISOString()}) {
+export function makeRelease({html,config,modelBytes,standaloneHtml,modelReport,equipmentReport,geometryReport,loadoutSource,variantReport,appearanceReport,viewerReport,hostedReport,builtAt=new Date().toISOString()}) {
   const document=validateCandidate({html,config,modelBytes});
   assertBaseChecks({modelBytes,standaloneHtml,modelReport,viewerReport});
   assert.equal(equipmentReport?.status,'passed','Equipment and motion verification did not pass');
   assert.equal(equipmentReport?.glbSha256,sha256(modelBytes),'Equipment report belongs to different GLB bytes');
   assert.equal(geometryReport?.status,'passed','Geometry audit did not pass');
   assert.equal(geometryReport?.glbSha256,sha256(modelBytes),'Geometry report belongs to different GLB bytes');
+  assert(loadoutSource?.byteLength,'Runtime source is required for the geometry audit');
+  assert.equal(geometryReport?.runtimeSha256,sha256(loadoutSource),'Geometry report is stale for this equipment runtime');
+  assert.equal(variantReport?.status,'passed','Equipment variants verification did not pass');
+  assert.equal(variantReport?.glbSha256,sha256(modelBytes),'Variant report belongs to different GLB bytes');
+  assert.equal(variantReport?.documentSha256,sha256(standaloneHtml),'Variant report is stale for this HTML');
   assert.equal(appearanceReport?.status,'passed','Appearance verification did not pass');
   assert.equal(appearanceReport?.glbSha256,sha256(modelBytes),'Appearance report belongs to different GLB bytes');
   assert.equal(appearanceReport?.documentSha256,sha256(standaloneHtml),'Appearance report is stale for this HTML');
