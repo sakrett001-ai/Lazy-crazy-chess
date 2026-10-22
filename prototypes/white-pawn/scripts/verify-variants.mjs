@@ -30,7 +30,7 @@ const scene=()=>page.evaluate(()=>{
  return {appearance:whitePawn.appearance.get(),loadout:whitePawn.loadout.summary(),state:whitePawn.state(),meshes};
 });
 const has=(s,slot,variant)=>s.meshes.some(m=>m.slot===slot&&(variant===undefined||m.variant===variant));
-const footSnapshot=()=>page.evaluate(()=>{whitePawn.debug.model.updateMatrixWorld(true);return Object.fromEntries(Object.entries(whitePawn.debug.bones).filter(([n])=>/^foot\./.test(n)).map(([n,b])=>[n,b.matrixWorld.elements.slice(12,15)]));});
+const footSnapshot=()=>page.evaluate(()=>{whitePawn.debug.model.updateMatrixWorld(true);return Object.fromEntries(Object.entries(whitePawn.debug.bones).filter(([n])=>/^foot[LR]$/i.test(n.replace(/[._\-\s]/g,''))).map(([n,b])=>[n,b.matrixWorld.elements.slice(12,15)]));});
 const difference=(a,b)=>Math.max(...Object.keys(a).flatMap(k=>a[k].map((n,i)=>Math.abs(n-b[k][i]))));
 try{
  await page.goto(pathToFileURL(path.join(root,'white-pawn.html')).href);

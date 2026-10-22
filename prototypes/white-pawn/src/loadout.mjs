@@ -147,7 +147,7 @@ export function createLoadout({model,bones={}}){
  function availableActions(){return['rest','Guard_Breath',...(summary().effectiveShield==='none'?[]:['Shield_Brace']),'Spear_Study'];}
  function captions(){
   const state=summary(),weapon=weaponNames[current.weaponType],shield=shieldNames[state.effectiveShield];
-  return{rest:`Стойка · ${weapon}, ${shield}`,Guard_Breath:'Дыхание в стойке · снаряжение следует за телом',Shield_Brace:'Упор щитом · вынос руки с опорой ногами и корпуса',Spear_Study:`Учебный укол · ${weapon} остриём вперёд${state.twoHanded?', обе руки удерживают оружие':''}`};
+  return{rest:`Стойка · ${weapon}, ${shield}`,Guard_Breath:'Дыхание в стойке · снаряжение следует за телом',Shield_Brace:'Упор щитом · согласованное движение руки, ног и корпуса',Spear_Study:`Учебный укол · ${weapon} остриём вперёд${state.twoHanded?', обе руки удерживают оружие':''}`};
  }
  function measure(){
   update();const frame=frameFor(weapons.get(current.weaponType)),state=summary(),right=handGrip('R'),left=handGrip('L');

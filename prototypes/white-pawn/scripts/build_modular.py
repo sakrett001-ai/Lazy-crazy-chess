@@ -139,11 +139,52 @@ for ob in MODEL:
   for mod in ob.modifiers:
    if mod.type=='SOLIDIFY':mod.thickness=.004;mod.offset=-1
 
+# Sew the neckline to a softly flared collar. Outer vertices reuse the shirt's
+# exact boundary positions and bone weights; a guessed rigid ellipse leaves
+# holes when the shoulders rise. Only the inner standing edge follows the neck.
+for name in ('CLOTH_Padded collar','CLOTH_Collar piping'):
+ old=bpy.data.objects.get(name)
+ if old is not None:MODEL.remove(old);bpy.data.objects.remove(old,do_unlink=True)
+edge_faces={}
+for face in under.data.polygons:
+ ids=list(face.vertices)
+ for a,b in zip(ids,ids[1:]+ids[:1]):edge_faces.setdefault(tuple(sorted((a,b))),[]).append((a,b))
+boundary=[oriented[0] for edge,oriented in edge_faces.items() if len(oriented)==1 and all(under.data.vertices[i].co.z>1.48 and abs(under.data.vertices[i].co.x)<.23 for i in edge)]
+ids=sorted({i for edge in boundary for i in edge});remap={old:i for i,old in enumerate(ids)};verts=[]
+for level in range(3):
+ for i in ids:
+  p=under.data.vertices[i].co.copy();angle=math.atan2(p.x,-(p.y+.025))
+  if level==0:p+=under.data.vertices[i].normal*.001
+  else:p=Vector(((.087 if level==1 else .074)*math.sin(angle),-.025-(.092 if level==1 else .079)*math.cos(angle),1.532 if level==1 else 1.549))
+  verts.append(p)
+n=len(ids);faces=[]
+for level in range(2):
+ for a,b in boundary:
+  a=remap[a]+level*n;b=remap[b]+level*n;faces.append((b,a,a+n,b+n))
+collar=mesh('CLOTH_Sewn padded collar',verts,faces,padding)
+for group in under.vertex_groups:collar.vertex_groups.new(name=group.name)
+neck_index=collar.vertex_groups.find('neck01')
+for level in range(3):
+ blend=(0,.5,1)[level]
+ for j,old in enumerate(ids):
+  weights={g.group:g.weight*(1-blend) for g in under.data.vertices[old].groups};weights[neck_index]=weights.get(neck_index,0)+blend
+  for index,weight in weights.items():
+   if weight>0:collar.vertex_groups[index].add([level*n+j],weight,'REPLACE')
+mod=collar.modifiers.new('Body weights','ARMATURE');mod.object=rig;collar.parent=rig
+mod=collar.modifiers.new('Padded collar thickness','SOLIDIFY');mod.thickness=.004;mod.offset=-1
+physical_uv(collar)
+
 # Shirt/short sleeves and split skirt are separate fitted mail surfaces, weighted
 # exactly like their padding. Their silhouette and hem thickness survive zoom.
 mail_torso=subset(under,'MAIL_Shirt',lambda c:c.z>1.025,mail,.012)
 for mod in mail_torso.modifiers:
  if mod.type=='SOLIDIFY':mod.thickness=.0035;mod.offset=-1
+mail_collar=subset(collar,'MAIL_Sewn collar',lambda c:True,mail,.011)
+# The sewn outer row exactly matches the offset shirt row, including skinning.
+for j,old in enumerate(ids):mail_collar.data.vertices[j].co=under.data.vertices[old].co+under.data.vertices[old].normal*.012
+for mod in mail_collar.modifiers:
+ if mod.type=='SOLIDIFY':mod.thickness=.0035;mod.offset=-1
+mail_collar.data.update();physical_uv(mail_collar)
 skirt=bpy.data.objects['CLOTH_Split padded hip skirt']
 mail_skirt=subset(skirt,'MAIL_Split skirt',lambda c:True,mail,.014)
 for mod in mail_skirt.modifiers:
@@ -160,7 +201,9 @@ hair_ob=subset(body,'HAIR_Cropped',lambda c:c.z>1.733 or (c.z>1.657 and c.y>.012
 for mod in hair_ob.modifiers:
  if mod.type=='SUBSURF':mod.levels=1;mod.render_levels=1
 for kind,offset in [('stubble',.0009),('short',.006)]:
- ob=subset(body,'BEARD_'+kind,lambda c:1.563<c.z<1.66 and c.y<-.069 and abs(c.x)<.077 and not(1.610<c.z<1.636 and abs(c.x)<.033),beard,offset)
+ # A short jaw/cheek beard leaves the central mouth, philtrum and nose open.
+ # The previous upper bound on this opening retained a gray patch on the nose.
+ ob=subset(body,'BEARD_'+kind,lambda c:1.563<c.z<1.66 and c.y<-.069 and abs(c.x)<.077 and not(c.z>1.610 and abs(c.x)<.033),beard,offset)
  ob['beardVariant']=kind
 
 # Weapon geometry is made around the verified right grip in guard, then put back
@@ -202,7 +245,7 @@ for variant in ('round','heater'):
  center=sg-sz*(.05 if variant=='round' else .12)+sx*.04+sf*.105
  def sh(x,z,depth=0):return center+sx*x+sz*z+sf*(depth+.055*(1-(x/.34)**2))
  outline=[(.36*math.sin(i*math.tau/64),.36*math.cos(i*math.tau/64)) for i in range(64)] if variant=='round' else [(-.31,.43),(.31,.43),(.30,.12),(.23,-.18),(0,-.48),(-.23,-.18),(-.30,.12)]
- n=len(outline);vs=[sh(0,0)]+[sh(x,z) for x,z in outline];fs=[(0,i+1,(i+1)%n+1) for i in range(n)]
+ n=len(outline);vs=[sh(0,0)]+[sh(x,z) for x,z in outline];fs=[(0,(i+1)%n+1,i+1) for i in range(n)]
  parts=[]
  front=mesh('SHIELD_'+variant+'_Face',vs,fs,bpy.data.materials['shield.face']);solid=front.modifiers.new('Timber core','SOLIDIFY');solid.thickness=.022;parts.append(front)
  parts.append(tube('SHIELD_'+variant+'_Rim',[sh(x,z,-.006) for x,z in outline]+[sh(*outline[0],-.006)],.012,bpy.data.materials['shield.trim']))
@@ -241,20 +284,26 @@ for ob in MODEL:
  for mod in ob.modifiers:
   if mod.type=='ARMATURE':mod.show_viewport=True;mod.show_render=True
 
+def smoothstep(low,high,value):
+ t=max(0.,min(1.,(value-low)/(high-low)))
+ return t*t*(3-2*t)
+
 def physique_delta(co):
  x,y,z=co;delta=Vector((0,0,0))
  # Torso and thighs, modest trained build rather than uniform scaling.
- if abs(x)<.24 and .80<z<1.53:
-  chest=math.exp(-((z-1.385)/.13)**2);waist=math.exp(-((z-1.14)/.11)**2)
-  delta.x=x*(.105*chest+.025*waist);delta.y=y*(.14*chest+.045*waist)
+ # Continuous support avoids a displacement jump at shoulder/garment borders.
+ torso=(1-smoothstep(.16,.24,abs(x)))*smoothstep(.80,.88,z)*(1-smoothstep(1.44,1.53,z))
+ chest=math.exp(-((z-1.385)/.13)**2);waist=math.exp(-((z-1.14)/.11)**2)
+ delta.x=x*(.105*chest+.025*waist)*torso;delta.y=y*(.14*chest+.045*waist)*torso
  # Arms: radial change around bone segments fades before wrists.
  for side in ('L','R'):
   for first,last,amount in [('upperarm01.','lowerarm01.',.12),('lowerarm01.','wrist.',.10),('upperleg01.','lowerleg01.',.08),('lowerleg01.','foot.',.055)]:
    a=rig.data.bones[first+side].head_local;b=rig.data.bones[last+side].head_local;d=b-a;t=(co-a).dot(d)/d.length_squared
    if .02<t<.98:
     radial=co-(a+d*t)
-    if radial.length<(.12 if 'leg' in first else .095):
-     delta+=radial*amount*math.sin(math.pi*t)**.6
+    limit=.12 if 'leg' in first else .095
+    support=smoothstep(.02,.10,t)*(1-smoothstep(.90,.98,t))*(1-smoothstep(limit*.55,limit,radial.length))
+    delta+=radial*amount*math.sin(math.pi*t)**.6*support
  return delta
 
 for ob in MODEL:
@@ -343,8 +392,9 @@ for channel in clip['channels']:
 jb=json.dumps(doc,separators=(',',':')).encode();jb+=b' '*((-len(jb))%4)
 raw=struct.pack('<III',0x46546c67,2,28+len(jb)+len(binary))+struct.pack('<II',len(jb),0x4e4f534a)+jb+struct.pack('<II',len(binary),0x004e4942)+binary
 (OUT/'white-pawn.glb').write_bytes(raw)
-render('neutral.png');render('modular-mail.png','mail');render('modular-padded.png','padded')
 info.update(version='0.3.0',glb_sha256=hashlib.sha256(raw).hexdigest(),source_commit=SOURCE,modular={'slots':sorted(groups),'bodyTargets':['lean','strong'],'experienceTarget':'veteran','surfaceTileMetres':.04,'mailOuterDiameterMetres':.0112,'quiltDiagonalSpacingMetres':.028284,'catalogueDownload':True,'runtimeWeaponIKBaked':False},limits=['Fantasy infantry equipment, not historical replica','New weapon IK is evaluated in the browser, not baked into the three original GLB clips','Catalogue GLB contains all variants; selected appearance is saved separately in JSON','No cloth simulation or full-board LOD'])
 (OUT/'model-info.json').write_text(json.dumps(info,indent=2,default=list)+'\n')
 report={'status':'built','glbSha256':info['glb_sha256'],'bytes':len(raw),'meshes':len(doc['meshes']),'groups':[{k:ob[k] for k in ('equipmentSlot','equipmentVariant','defaultVisible')} for ob in merged],'sourceCommit':SOURCE}
-(REVIEW/'modular-asset-build.json').write_text(json.dumps(report,indent=2)+'\n');print('MODULAR_ASSET_READY',json.dumps(report))
+(REVIEW/'modular-asset-build.json').write_text(json.dumps(report,indent=2)+'\n');print('MODULAR_GLB_READY',json.dumps(report),flush=True)
+render('neutral.png');render('modular-mail.png','mail');render('modular-padded.png','padded')
+print('MODULAR_ASSET_READY',json.dumps(report),flush=True)

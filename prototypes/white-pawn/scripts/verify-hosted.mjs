@@ -48,7 +48,7 @@ try {
   assert.deepEqual(await page.evaluate(()=>window.PAWN_HOSTED),config);
   assert.equal(await page.locator('#model-data').textContent(),'');
   report.tests.push('Compact hosted document loads exact immutable GLB and poster; no embedded model or autoplay');
-  await page.screenshot({path:path.join(review,'hosted-desktop.png'),fullPage:true,timeout:180000});
+  await page.screenshot({path:path.join(review,'hosted-desktop.png'),fullPage:true,timeout:120000});
   await page.evaluate(()=>{whitePawn.select('Guard_Breath');whitePawn.seek(1);});
   assert.equal(await page.evaluate(()=>whitePawn.state().time),1);
   await page.locator('#play').click();
@@ -62,7 +62,7 @@ try {
   await page.setViewportSize({width:390,height:844});await page.evaluate(()=>{whitePawn.select('rest');whitePawn.fit('three');});
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
   assert.equal(await page.evaluate(()=>whitePawn.state().contained),true);
-  await page.screenshot({path:path.join(review,'hosted-mobile.png'),fullPage:true,timeout:180000});
+  await page.screenshot({path:path.join(review,'hosted-mobile.png'),fullPage:true,timeout:120000});
   report.tests.push('390 px layout and camera framing');await normal.close();
 
   for(const mode of ['tampered','unavailable']) {

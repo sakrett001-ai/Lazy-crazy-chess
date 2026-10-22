@@ -55,20 +55,24 @@ assert set(clips)==set(expected)
 # Independently import the exported result, including skinning and posed default nodes.
 import bpy
 bpy.ops.object.select_all(action='SELECT');bpy.ops.object.delete(use_global=False)
-bpy.ops.import_scene.gltf(filepath=str(p))
+# Bone display helpers are Blender UI objects, not meshes in the delivered GLB.
+# Creating them adds a unit icosphere at the origin and corrupts scene bounds.
+bpy.ops.import_scene.gltf(filepath=str(p),disable_bone_shape=True)
+imported_meshes=[ob for ob in bpy.context.scene.objects if ob.type=='MESH']
+exported_mesh_nodes=[node for node in doc['nodes'] if 'mesh' in node]
+assert len(imported_meshes)==len(exported_mesh_nodes),(len(imported_meshes),len(exported_mesh_nodes))
 deps=bpy.context.evaluated_depsgraph_get();points=[];catalog_points=[]
 def default_visible(ob):
  while ob is not None:
   if ob.get('defaultVisible',True) is False or ob.get('defaultVisible',True)==0:return False
   ob=ob.parent
  return True
-for ob in bpy.context.scene.objects:
- if ob.type=='MESH':
-  ev=ob.evaluated_get(deps);me=ev.to_mesh();vertices=[tuple(ob.matrix_world@v.co) for v in me.vertices];catalog_points.extend(vertices)
-  if default_visible(ob):points.extend(vertices)
-  ev.to_mesh_clear()
+for ob in imported_meshes:
+ ev=ob.evaluated_get(deps);me=ev.to_mesh();vertices=[tuple(ev.matrix_world@v.co) for v in me.vertices];catalog_points.extend(vertices)
+ if default_visible(ob):points.extend(vertices)
+ ev.to_mesh_clear()
 points=np.array(points);lo=points.min(axis=0);hi=points.max(axis=0)
 assert -.012<lo[2]<.04 and 2.35<hi[2]<3.0,(lo,hi)
 catalog_points=np.array(catalog_points)
-report={'status':'passed','sha256':hashlib.sha256(raw).hexdigest(),'glb_bytes':len(raw),'meshes':len(doc['meshes']),'material_primitives':sum(len(m['primitives']) for m in doc['meshes']),'triangles':triangles,'joints':len(skin['joints']),'weight_sum_max_error':weight_error,'morphTargets':sorted(morph_names),'clips':clips,'reimport_bounds_z_up_metres':[lo.tolist(),hi.tolist()],'catalog_bounds_z_up_metres':[catalog_points.min(axis=0).tolist(),catalog_points.max(axis=0).tolist()],'scope':'File integrity; finite dense and sparse accessors; normalized weights; clip lengths, endpoints and default guard; posed Blender reimport with defaultVisible catalog selection. Not full collision, muscle, cloth or combat validation.'}
+report={'status':'passed','sha256':hashlib.sha256(raw).hexdigest(),'glb_bytes':len(raw),'meshes':len(doc['meshes']),'material_primitives':sum(len(m['primitives']) for m in doc['meshes']),'triangles':triangles,'joints':len(skin['joints']),'weight_sum_max_error':weight_error,'morphTargets':sorted(morph_names),'clips':clips,'reimport_mesh_nodes':len(imported_meshes),'reimport_default_mesh_nodes':sum(default_visible(ob) for ob in imported_meshes),'reimport_bone_display_helpers':False,'reimport_bounds_z_up_metres':[lo.tolist(),hi.tolist()],'catalog_bounds_z_up_metres':[catalog_points.min(axis=0).tolist(),catalog_points.max(axis=0).tolist()],'scope':'File integrity; finite dense and sparse accessors; normalized weights; clip lengths, endpoints and default guard; posed Blender reimport with defaultVisible catalog selection and importer bone display helpers disabled. Not full collision, muscle, cloth or combat validation.'}
 (ROOT/'assets/model-checks.json').write_text(json.dumps(report,indent=2)+'\n');print(json.dumps(report))

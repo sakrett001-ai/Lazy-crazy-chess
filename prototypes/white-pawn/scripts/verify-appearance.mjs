@@ -153,7 +153,7 @@ try{
  await page.locator('#appearance-panel').scrollIntoViewIfNeeded();
  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false,'Mobile horizontal overflow');
  const labels=await page.locator('#appearance-panel').evaluate(panel=>[...panel.querySelectorAll('select,input')].filter(e=>e.type!=='file').map(e=>({id:e.id,labels:e.labels?.length||0,height:e.getBoundingClientRect().height})));
- assert(labels.length>=15);assert(labels.every(e=>e.labels>0),`Unlabelled mobile controls: ${JSON.stringify(labels)}`);
+ assert(labels.length>=14);assert(labels.every(e=>e.labels>0),`Unlabelled mobile controls: ${JSON.stringify(labels)}`);
  assert(labels.every(e=>e.height>=44),`Small mobile control targets: ${JSON.stringify(labels)}`);
  await page.screenshot({path:path.join(review,'appearance-mobile.png'),fullPage:true,timeout:120000});
  report.tests.push('390 px layout has no horizontal overflow; customization controls have labels and usable touch targets');

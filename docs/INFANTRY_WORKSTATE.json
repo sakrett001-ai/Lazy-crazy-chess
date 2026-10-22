@@ -1,12 +1,23 @@
 {
   "goal": "Rebuild and publish modular infantry equipment and independent appearance",
   "status": "in_progress",
-  "phase": "Source reconstruction; new asset and browser acceptance pending",
+  "phase": "Final asset repair: continuous physique morph field and beard mask; acceptance and publication pending",
   "baselineSource": "168ac90f50913c020037abe826b08e13ba2910e9",
   "targetViewer": "0.4.0",
   "targetModel": "0.3.0",
-  "completed": ["Recovered baseline", "Customization schema and legacy migration", "Viewer integration", "Release identity gates"],
-  "pending": ["Final modular assets", "Actual geometry and contact checks", "Browser visual and mobile acceptance", "Publish verified main and gh-pages release", "Floot version and SHA readback"],
-  "nextAction": "Finish actual asset and loadout runtime, save sources, then build and verify exact final bytes",
-  "warning": "This branch is a recovery checkpoint, not a verified release. Old report files do not validate new source or assets."
+  "completed": [
+    "Recovered baseline and saved source checkpoints",
+    "Customization schema and legacy migration",
+    "Viewer integration and release identity gates",
+    "Modular equipment and normal-mapped surfaces implemented",
+    "Baseline candidate model and equipment checks passed; final repaired bytes require fresh checks"
+  ],
+  "pending": [
+    "Final asset repair: continuous physique displacement and nose-free beard mask",
+    "Fresh exact-byte model, geometry and browser acceptance",
+    "Publish verified main and gh-pages release",
+    "Floot version and SHA readback"
+  ],
+  "nextAction": "Finish narrow builder repairs, rebuild once, then verify frozen GLB and HTML before publication",
+  "warning": "This branch is a recovery checkpoint, not a verified release. Current stable candidate files have not passed all acceptance gates; reports for earlier bytes do not validate final repaired assets."
 }

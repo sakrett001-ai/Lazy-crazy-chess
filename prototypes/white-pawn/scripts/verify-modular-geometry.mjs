@@ -12,8 +12,8 @@ const input=path.resolve(process.env.PAWN_GLB||path.join(root,'assets/white-pawn
 const output=path.resolve(process.env.PAWN_GEOMETRY_REPORT||path.join(root,'review/geometry-checks.json'));
 const bytes=await readFile(input),runtimeSource=await readFile(path.join(root,'src/loadout.mjs'));
 const hash=value=>createHash('sha256').update(value).digest('hex');
-const limits={layerClearanceM:.0005,bindPairDistanceM:.045,thumbSurfaceDistanceM:.014,minimumRegionProbes:5};
-const report={status:'running',glbSha256:hash(bytes),runtimeSha256:hash(runtimeSource),limits,cases:[],checks:[],failures:[],negativeControls:[],unassessed:[],scope:'Finite selected surface patches of padding against mail/plate, evaluated from actual exported triangles after skinning and morphs, plus nearest thumb-surface distance to actual selected handles. Pairing is fixed in the neutral bind pose independently of the measured clearance sign. This is not whole-body collision freedom, cloth simulation, thumb opposition, penetration volume, dynamic stability or a full animation sweep. Hidden torso skin is absent in this model and is not assessed.'};
+const limits={layerClearanceM:.0005,bindPairDistanceM:.045,thumbSurfaceDistanceM:.014,handFrameErrorM:.01,soleDriftM:.006,soleFloorGapM:.008,minimumRegionProbes:5,minimumAnatomicalWeight:.5,radialNormalAlignment:.3,maximumAxialNormalAlignment:.7};
+const report={status:'running',glbSha256:hash(bytes),runtimeSha256:hash(runtimeSource),auditSha256:hash(await readFile(fileURLToPath(import.meta.url))),limits,cases:[],checks:[],failures:[],negativeControls:[],unassessed:[],scope:'Finite signed separation of selected tracked padding patches against mail/plate, evaluated from actual exported triangles after skinning and morphs, plus nearest thumb-surface distance to actual selected handles. Exported skin weights assign anatomical regions; radial and axial normals identify the facing garment walls and exclude hems/steep folds. Walls and pairing are fixed from undeformed exported POSITION attributes and inverse-bind joint coordinates independently of the measured clearance sign; measurements use actual runtime poses and morphs. Missing or ambiguous patches remain unassessed. A negative tracked gap can also arise from lateral sliding and is not by itself a triangle-intersection proof. This is not whole-body collision freedom, cloth simulation, thumb opposition, penetration volume, dynamic stability or a full animation sweep. Hidden torso skin is absent in this model and is not assessed.'};
 const check=(name,passed,details={})=>{report.checks.push({name,passed:!!passed,...details});if(!passed)report.failures.push(name);};
 const norm=value=>String(value||'').replace(/[._\-\s]/g,'').toLowerCase();
 const loader=new GLTFLoader();
@@ -43,29 +43,61 @@ const V=()=>new THREE.Vector3(),triangle=new THREE.Triangle(),near=V();
 function vertex(mesh,index){return mesh.getVertexPosition(index,V()).applyMatrix4(mesh.matrixWorld);}
 function triangleIndices(mesh){const g=mesh.geometry,count=g.index?g.index.count:g.attributes.position.count;const result=[];for(let i=0;i<count;i+=3)result.push(g.index?[g.index.getX(i),g.index.getX(i+1),g.index.getX(i+2)]:[i,i+1,i+2]);return result;}
 const topology=new Map(meshes.map(mesh=>[mesh,triangleIndices(mesh)]));
-function evaluated(meshList){return meshList.flatMap(mesh=>{
- const positions=Array.from({length:mesh.geometry.attributes.position.count},(_,i)=>vertex(mesh,i));
+function evaluated(meshList,bindSpace=false){return meshList.flatMap(mesh=>{
+ const positions=Array.from({length:mesh.geometry.attributes.position.count},(_,i)=>bindSpace?V().fromBufferAttribute(mesh.geometry.attributes.position,i).applyMatrix4(mesh.matrixWorld):vertex(mesh,i));
  return topology.get(mesh).map((ids,index)=>{
   const p=ids.map(i=>positions[i]),tri=new THREE.Triangle(...p),center=tri.getMidpoint(V()),normal=tri.getNormal(V());
   return{mesh,index,ids,p,center,normal,area:tri.getArea(),radius:Math.max(...p.map(x=>x.distanceTo(center)))};
  });});}
 function bonePoint(name){const b=boneMap.get(norm(name));return b?.getWorldPosition(V());}
-const segments=[['torso','spine05','neck01'],['armL','upperarm01.L','lowerarm01.L'],['armL','lowerarm01.L','wrist.L'],['armR','upperarm01.R','lowerarm01.R'],['armR','lowerarm01.R','wrist.R'],['hipL','upperleg01.L','lowerleg01.L'],['hipR','upperleg01.R','lowerleg01.R']];
-function regionOf(face){
- // Sample fabric-covered torso, upper arms and hip skirt, away from hems,
- // palms and the open collar. Normals select the real outside padding wall.
- const p=face.center;if(p.y<.88||p.y>1.49)return null;
- let best=null;
- for(const [region,start,end]of segments){
-  const a=bonePoint(start),b=bonePoint(end);if(!a||!b)continue;
-  const axis=b.clone().sub(a),t=THREE.MathUtils.clamp(p.clone().sub(a).dot(axis)/axis.lengthSq(),0,1),center=a.addScaledVector(axis,t),radial=p.clone().sub(center),distance=radial.length();
-  if(face.normal.dot(radial.normalize())<.3)continue;
-  if((region.startsWith('hip')&&p.y>1.1)||(region==='torso'&&p.y<1.12))continue;
-  if(!best||distance<best.distance)best={region,distance};
- }
- return best?.region||null;
+function bindBonePoint(name){
+ for(const mesh of meshes.filter(m=>m.isSkinnedMesh)){
+  const i=mesh.skeleton.bones.findIndex(b=>norm(b.name)===norm(name));
+  if(i>=0)return V().setFromMatrixPosition(mesh.skeleton.boneInverses[i].clone().invert()).applyMatrix4(mesh.bindMatrixInverse).applyMatrix4(mesh.matrixWorld);
+ }return null;
 }
+const segments=[['torso','spine05','neck01'],['armL','upperarm01.L','lowerarm01.L'],['armL','lowerarm01.L','wrist.L'],['armR','upperarm01.R','lowerarm01.R'],['armR','lowerarm01.R','wrist.R'],['hipL','upperleg01.L','lowerleg01.L'],['hipR','upperleg01.R','lowerleg01.R']];
+let regionSegments=null;
+function anatomicalPatch(face){
+ // Bent arms can pass nearer a chest surface than the spine does. Classify
+ // anatomy from exported skin weights before choosing a medial axis; nearest
+ // bone alone can mistake the inward torso wall for an outward arm wall.
+ // Use undeformed bind-space geometry: an articulated elbow fold can reverse
+ // a local radial direction, while the authored inner/outer wall identity stays fixed.
+ const p=face.center;if(p.y<.88||p.y>1.49)return{reason:'outside-height-domain'};
+ const weights={torso:0,armL:0,armR:0,hipL:0,hipR:0},g=face.mesh.geometry;let total=0;
+ if(!face.mesh.isSkinnedMesh)return{reason:'no-exported-skin-weights'};
+ for(const i of face.ids)for(let k=0;k<4;k++){
+  const name=norm(face.mesh.skeleton.bones[g.attributes.skinIndex.getComponent(i,k)]?.name),weight=g.attributes.skinWeight.getComponent(i,k);total+=weight;
+  const side=name.endsWith('l')?'L':name.endsWith('r')?'R':null;
+  const group=side&&/^(upperarm|lowerarm|wrist|hand|finger)/.test(name)?'arm'+side:side&&/^(pelvis|upperleg|lowerleg|foot)/.test(name)?'hip'+side:/^(spine|breast|neck|clavicle|head)/.test(name)?'torso':null;
+  if(group)weights[group]+=weight;
+ }
+ const [region,weight]=Object.entries(weights).sort((a,b)=>b[1]-a[1])[0];
+ if(!total||weight/total<=limits.minimumAnatomicalWeight)return{reason:'ambiguous-or-unrecognized-anatomical-weights',weights,total};
+ if((region.startsWith('hip')&&p.y>1.1)||(region==='torso'&&p.y<1.12))return{reason:'outside-region-height-domain',region};
+ regionSegments??=segments.map(([region,start,end])=>[region,bindBonePoint(start),bindBonePoint(end)]);
+ let best=null;
+ for(const [group,a,b]of regionSegments){
+  if(group!==region||!a||!b)continue;
+  const axis=b.clone().sub(a).normalize(),t=p.clone().sub(a).dot(axis),radial=p.clone().sub(a).addScaledVector(axis,-t),distance=radial.length();
+  if(!best||distance<best.distance)best={region,distance,outward:face.normal.dot(radial.normalize()),axial:Math.abs(face.normal.dot(axis)),anatomicalWeight:weight/total};
+ }
+ if(!best)return{reason:'missing-anatomical-axis',region};
+ if(best.axial>=limits.maximumAxialNormalAlignment)return{...best,reason:'axial-hem-or-steep-fold'};
+ return best;
+}
+function classifyWall(face){
+ if(face.anatomical===undefined)face.anatomical=anatomicalPatch(face);
+ const a=face.anatomical;
+ return a.reason?a.reason:a.outward>=limits.radialNormalAlignment?'outward-wall':a.outward<=-limits.radialNormalAlignment?'inward-wall':'tangential-wall';
+}
+function selectionSummary(faces){
+ const result={};for(const face of faces){const reason=classifyWall(face);result[reason]??={faces:0,areaM2:0};result[reason].faces++;result[reason].areaM2+=face.area;}return result;
+}
+function regionOf(face){return classifyWall(face)==='outward-wall'?face.anatomical.region:null;}
 function pairPatches(innerFaces,outerFaces,label){
+ report.selectionDomains??=[];report.selectionDomains.push({layer:label,padding:selectionSummary(innerFaces),outerGarment:selectionSummary(outerFaces),scope:'Wall/region classification is independent of signed clearance. Excluded faces and unmatched attempts carry no separation conclusion.'});
  const byRegion=new Map();
  for(const face of innerFaces){if(face.area<1e-8)continue;const region=regionOf(face);if(region){if(!byRegion.has(region))byRegion.set(region,[]);byRegion.get(region).push(face);}}
  const result=[];
@@ -76,6 +108,7 @@ function pairPatches(innerFaces,outerFaces,label){
    if(chosen.has(inner))continue;chosen.add(inner);
    let best=null;
    for(const outer of outerFaces){
+    if(classifyWall(outer)!=='inward-wall'||outer.anatomical.region!==region)continue;
     // A thick outer garment's inner-facing triangle is the physical boundary.
     if(outer.area<1e-8||outer.normal.dot(inner.normal)>-.15)continue;
     if(outer.center.distanceToSquared(inner.center)>(limits.bindPairDistanceM+outer.radius)**2)continue;
@@ -90,7 +123,7 @@ function pairPatches(innerFaces,outerFaces,label){
    if(!best){missing++;continue;}
    result.push({label,region,inner:{mesh:inner.mesh,index:inner.index,ids:inner.ids},outer:{mesh:best.outer.mesh,index:best.outer.index,ids:best.outer.ids},bary:best.bary,bindDistanceM:best.distance});
   }
-  report.unassessed.push({layer:label,region,unpairedAttemptedPatches:missing,reason:'No interior facing local patch within45mm; no clearance conclusion for this patch.'});
+  report.unassessed.push({layer:label,region,unpairedAttemptedPatches:missing,reason:'No interior facing same-anatomy wall patch within45mm; includes region seams, joint-weight differences, holes and hems. No clearance conclusion for this patch.'});
  }
  return result;
 }
@@ -98,8 +131,10 @@ function posedPatch(pair){
  const p=pair.inner.ids.map(i=>vertex(pair.inner.mesh,i)),q=pair.outer.ids.map(i=>vertex(pair.outer.mesh,i));
  const tri=new THREE.Triangle(...p),center=tri.getMidpoint(V()),normal=tri.getNormal(V());
  const outer=q[0].clone().multiplyScalar(pair.bary[0]).addScaledVector(q[1],pair.bary[1]).addScaledVector(q[2],pair.bary[2]);
- return{clearanceM:outer.clone().sub(center).dot(normal),normal,center,outer};
+ const delta=outer.clone().sub(center),clearanceM=delta.dot(normal);
+ return{clearanceM,lateralDistanceM:delta.clone().addScaledVector(normal,-clearanceM).length(),normal,center,outer};
 }
+function posedDetails(result){return{...patchId(result.pair),paddingWorld:result.center.toArray(),outerWallWorld:result.outer.toArray(),paddingNormal:result.normal.toArray(),lateralDistanceM:result.lateralDistanceM,bindDistanceM:result.pair.bindDistanceM};}
 function patchId(pair){return{layer:pair.label,region:pair.region,innerMesh:pair.inner.mesh.name,innerTriangle:pair.inner.index,outerMesh:pair.outer.mesh.name,outerTriangle:pair.outer.index,barycentric:pair.bary};}
 function thumbRefs(side){
  const result=[];
@@ -111,6 +146,18 @@ function thumbRefs(side){
   }
  }
  return result;
+}
+function soleRefs(side){
+ const refs=[];
+ for(const mesh of meshes.filter(m=>m.isSkinnedMesh&&tag(m,'equipmentSlot')==='base')){
+  const g=mesh.geometry;
+  for(let i=0;i<g.attributes.position.count;i++){
+   let w=0;for(let k=0;k<4;k++){const b=mesh.skeleton.bones[g.attributes.skinIndex.getComponent(i,k)];if(norm(b?.name)===norm('foot.'+side))w+=g.attributes.skinWeight.getComponent(i,k);}
+   if(w>.95)refs.push({mesh,index:i});
+  }
+ }
+ const floor=Math.min(...refs.map(r=>vertex(r.mesh,r.index).y));
+ return refs.filter(r=>vertex(r.mesh,r.index).y<floor+.006);
 }
 function thumbContact(refs,handleMeshes){
  const faces=evaluated(handleMeshes);let min=Infinity,best=null;
@@ -136,28 +183,38 @@ try{
  sample({armorType:'mail',weaponType:'spear',shieldType:'tower',bodyBuild:'regular'},'rest',0);
  const padding=materialMeshes('padding',['padding']),mail=materialMeshes('mail',['mail']),plate=materialMeshes('plate',['armor.main','armor.trim']);
  check('Required physical layer meshes exist',padding.length>0&&mail.length>0&&plate.length>0,{padding:padding.length,mail:mail.length,plate:plate.length});
- const inner=evaluated(padding),pairs={mail:pairPatches(inner,evaluated(mail),'padding/mail'),plate:pairPatches(inner,evaluated(plate),'padding/plate')};
+ const inner=evaluated(padding,true),pairs={mail:pairPatches(inner,evaluated(mail,true),'padding/mail'),plate:pairPatches(inner,evaluated(plate,true),'padding/plate')};
  for(const [layer,list]of Object.entries(pairs)){
   const counts=Object.fromEntries(['torso','armL','armR','hipL','hipR'].map(region=>[region,list.filter(p=>p.region===region).length]));
-  check(layer+': local bind patch coverage',counts.torso>=limits.minimumRegionProbes&&list.length>=20,{count:list.length,regions:counts});
+  check(layer+': local bind patch coverage',Object.values(counts).every(count=>count>=limits.minimumRegionProbes),{count:list.length,regions:counts});
  }
  const thumbs=Object.fromEntries(['L','R'].map(side=>[side,thumbRefs(side)]));
  check('Thumb skin vertices exist on both hands',thumbs.L.length>10&&thumbs.R.length>10,{L:thumbs.L.length,R:thumbs.R.length});
+ const soles=Object.fromEntries(['L','R'].map(side=>[side,soleRefs(side)]));
+ const planted=Object.fromEntries(['L','R'].map(side=>[side,soles[side].map(r=>vertex(r.mesh,r.index))]));
+ check('Actual sole surfaces exist',soles.L.length>10&&soles.R.length>10,{L:soles.L.length,R:soles.R.length});
  for(const bodyBuild of ['lean','regular','strong'])for(const config of configs){
   sample({...config,bodyBuild,experience:'recruit',helmet:'on',beard:'none'},config.action,config.time);
-  const id=bodyBuild+'/'+config.id,caseResult={id,bodyBuild,...config,layers:[],thumbs:[]};
+  const id=bodyBuild+'/'+config.id,caseResult={...config,id,bodyBuild,layers:[],thumbs:[]};
   const active=config.armorType==='mail'?pairs.mail:config.armorType==='plate'?pairs.plate:[];
   if(active.length){
    const results=active.map(pair=>({pair,...posedPatch(pair)}));
    const worst=results.reduce((a,b)=>a.clearanceM<b.clearanceM?a:b);
-   check(id+': sampled physical layer separation',results.every(r=>Number.isFinite(r.clearanceM)&&r.clearanceM>=limits.layerClearanceM),{probes:results.length,minClearanceM:worst.clearanceM,worst:patchId(worst.pair)});
-   caseResult.layers.push({probes:results.length,minClearanceM:worst.clearanceM,worst:patchId(worst.pair)});
+   const failingPatches=results.filter(r=>!Number.isFinite(r.clearanceM)||r.clearanceM<limits.layerClearanceM).map(r=>({clearanceM:r.clearanceM,...posedDetails(r)}));
+   check(id+': tracked garment wall separation',results.every(r=>Number.isFinite(r.clearanceM)&&r.clearanceM>=limits.layerClearanceM),{probes:results.length,minClearanceM:worst.clearanceM,worst:posedDetails(worst)});
+   caseResult.layers.push({probes:results.length,minClearanceM:worst.clearanceM,worst:posedDetails(worst),failingPatches});
   }
   const state=loadout.summary();
+  const frame=loadout.measure();
+  check(id+': hand attachment frames meet targets',frame.rightGripErrorM<=limits.handFrameErrorM&&(!state.twoHanded||frame.leftGripErrorM<=limits.handFrameErrorM),{rightM:frame.rightGripErrorM,leftM:frame.leftGripErrorM,reachErrors:frame.reachErrors});
+  for(const side of ['L','R']){
+   const positions=soles[side].map(r=>vertex(r.mesh,r.index)),drift=Math.max(...positions.map((p,i)=>p.distanceTo(planted[side][i]))),floor=Math.min(...positions.map(p=>p.y));
+   check(id+': '+side+' actual sole stays planted',drift<=limits.soleDriftM&&floor>=-.004&&floor<=limits.soleFloorGapM,{maxDriftM:drift,minYM:floor});
+  }
   for(const side of ['R','L']){
    const weaponHand=side==='R'||state.twoHanded;
    if(!weaponHand&&state.effectiveShield==='none')continue;
-   const handles=weaponHand?selected('weapon',state.weaponType,['weapon.grip','weapon.wood']):selected('shield',state.effectiveShield,['shield.leather','shield.wood']);
+   const handles=weaponHand?selected('weapon',state.weaponType,['weapon.grip','weapon.wood']):selected('shield',state.effectiveShield,['shield.leather']);
    const contact=thumbContact(thumbs[side],handles);
    check(id+': '+side+' thumb reaches actual handle',Number.isFinite(contact.distanceM)&&contact.distanceM<=limits.thumbSurfaceDistanceM,{...contact});
    caseResult.thumbs.push({side,...contact});
