@@ -5,6 +5,12 @@ const $=selector=>document.querySelector(selector);
 const clone=value=>JSON.parse(JSON.stringify(value));
 const saveFile=(blob,name)=>{const url=URL.createObjectURL(blob),link=document.createElement('a');link.href=url;link.download=name;link.click();setTimeout(()=>URL.revokeObjectURL(url),30000);};
 const finiteVector=(value,n)=>Array.isArray(value)&&value.length===n&&value.every(v=>Number.isFinite(v)&&Math.abs(v)<10000);
+const hash=value=>typeof value==='string'&&/^[a-f0-9]{64}$/.test(value);
+
+export function assertReviewMotion(recordIdentity,currentIdentity){
+ if(!hash(recordIdentity?.motionSha256)||!hash(currentIdentity?.motionSha256)||recordIdentity.motionSha256!==currentIdentity.motionSha256)
+  throw Error('Движение в этой версии изменилось. Замечание сохранено, но точную позу можно восстановить только в исходной версии стенда, указанной в JSON.');
+}
 
 export function installReview({identity,snapshot,freeze,release,restore,poses,views}){
  const dialog=$('#review-dialog'),comment=$('#review-comment'),status=$('#review-status'),list=$('#review-list');
@@ -13,6 +19,8 @@ export function installReview({identity,snapshot,freeze,release,restore,poses,vi
  function valid(record){
   const s=record?.state,c=s?.camera;
   if(s?.appearance!==undefined&&!validAppearance(s.appearance))return false;
+  // Legacy records remain in the list/storage; they cannot silently become a new pose.
+  if(record?.identity?.motionSha256!==undefined&&!hash(record.identity.motionSha256))return false;
   if(s?.pose==='Shield_Brace'&&effectiveShield(normalizeAppearance(s.appearance||DEFAULT_APPEARANCE))==='none')return false;
   return record?.schema===SCHEMA&&record.schemaVersion===1&&typeof record.id==='string'&&/^[a-zA-Z0-9-]{1,120}$/.test(record.id)&&typeof record.createdAt==='string'&&Number.isFinite(Date.parse(record.createdAt))&&typeof record.comment==='string'&&record.comment.length<=2000&&record.identity&&['version','modelVersion','sourceCommit'].every(key=>typeof record.identity[key]==='string'&&record.identity[key].length<=160)&&typeof record.identity.modelSha256==='string'&&/^[a-f0-9]{64}$/.test(record.identity.modelSha256)&&s&&poses.includes(s.pose)&&views.includes(s.view)&&Number.isFinite(s.time)&&s.time>=0&&s.time<=60&&[.25,.5,1,1.5].includes(s.speed)&&['surface','wire'].includes(s.display)&&typeof s.skeleton==='boolean'&&c&&finiteVector(c.position,3)&&finiteVector(c.target,3)&&finiteVector(c.up,3)&&Math.hypot(...c.up)>.1&&Math.hypot(...c.position.map((v,i)=>v-c.target[i]))>.001&&Number.isFinite(c.fov)&&c.fov>=10&&c.fov<=100&&Number.isFinite(c.zoom)&&c.zoom>=.1&&c.zoom<=10&&Number.isFinite(c.near)&&c.near>0&&c.near<=1&&Number.isFinite(c.far)&&c.far>c.near&&c.far<=1000;
  }
@@ -42,6 +50,7 @@ export function installReview({identity,snapshot,freeze,release,restore,poses,vi
  function restoreRecord(record){
   if(!valid(record))throw Error('Формат замечания не поддерживается или содержит неверные значения.');
   if(record.identity.modelSha256!==identity.modelSha256)throw Error('SHA модели отличается. Откройте версию модели, указанную в JSON; этот ракурс не восстановлен.');
+  assertReviewMotion(record.identity,identity);
   const limits={rest:0,Guard_Breath:6,Shield_Brace:4,Spear_Study:4};if(record.state.time>(limits[record.state.pose]??60)+1e-5)throw Error('Время замечания находится за пределами движения.');
   const next=clone(record.state);next.appearance=normalizeAppearance(next.appearance||DEFAULT_APPEARANCE);
   restore(next);const image=freeze(),restored=clone(record);restored.state.appearance=next.appearance;restored.state.frame=Math.round(restored.state.time*30);show(restored,image,'Поза и камера восстановлены из замечания. PNG создан заново в текущем размере окна.');return clone(restored);

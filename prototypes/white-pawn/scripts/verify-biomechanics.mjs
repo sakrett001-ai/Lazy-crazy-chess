@@ -23,7 +23,7 @@ if(baseline){
 }else ({createLoadout}=await import(pathToFileURL(path.join(root,'src/loadout.mjs')).href));
 
 // Project operating envelope for the demonstration, not population ROM norms.
-const limits={minimumElbowFlexDeg:-5,maximumElbowFlexDeg:150,hingePlaneErrorDeg:20,wristBendDeg:35,wristAxialTwistDeg:8,forearmPronationDeg:90,linkLengthErrorM:.0005,gripFrameErrorM:.015,frameJointStepM:.06,frameJointTurnDeg:18,finiteQuaternionNormError:1e-5};
+const limits={minimumElbowFlexDeg:-5,maximumElbowFlexDeg:150,hingePlaneErrorDeg:20,hingeFrameErrorDeg:10,wristBendDeg:35,wristAxialTwistDeg:8,forearmPronationDeg:90,linkLengthErrorM:.0005,gripFrameErrorM:.015,frameJointStepM:.06,frameJointTurnDeg:18,finiteQuaternionNormError:1e-5};
 const weapons=['spear','sword','pike','greatsword'],bodyBuilds=['lean','regular','strong'],actions=['rest','Guard_Breath','Shield_Brace','Spear_Study'];
 const report={status:'running',glbSha256:hash(bytes),runtimeSha256:hash(runtimeBytes),auditSha256:hash(await readFile(fileURLToPath(import.meta.url))),baseline,sourceCommit:baseline?baselineCommit:null,limits,coverage:{sampleRateHz:30,caseCount:0,frameCount:0,weapons,bodyBuilds,actions},calibration:{},cases:[],checks:[],negativeControls:[],failures:[],scope:'Sampled imported bone positions and rotations, inverse-bind anatomical frames, and exported rigid handle anchors. Signed elbow flexion uses a hinge normal derived from bind upper-arm and forearm landmark vectors; wrist bending uses the bind forearm axis transported through the wrist, relative to the current forearm. Residual axial wrist twist is swing-twist decomposed relative to the actual distal forearm lowerarm02 and its inverse-bind neutral wrist orientation. Legitimate forearm pronation is therefore excluded from wrist twist. Contact anchors do not establish finger closure, thumb opposition or skin clearance. No shoulder scapular contact, full ROM coupling, muscle force, dynamic balance, continuous collision or garment clearance claim.'};
 const check=(name,passed,details={})=>{report.checks.push({name,passed:!!passed,...details});if(!passed)report.failures.push(name);};
@@ -46,13 +46,13 @@ const arm=Object.fromEntries(['L','R'].map(side=>{
  const a=bindPoint(lower).sub(bindPoint(upper)),f=bindPoint(wrist).sub(bindPoint(lower)),hinge=a.clone().cross(f);
  if(hinge.length()<.0001)throw Error('Bind elbow landmarks cannot define anatomical bend sign: '+side);
  const bindUpperQ=Q().setFromRotationMatrix(bindMatrix(upper)).normalize(),bindLowerQ=Q().setFromRotationMatrix(bindMatrix(lower)).normalize(),bindWristQ=Q().setFromRotationMatrix(bindMatrix(wrist)).normalize(),bindDistalQ=Q().setFromRotationMatrix(bindMatrix(distal)).normalize();
- const hingeLocal=hinge.normalize().applyQuaternion(bindUpperQ.clone().invert());
+ const lowerHingeLocal=hinge.clone().normalize().applyQuaternion(bindLowerQ.clone().invert()),hingeLocal=hinge.normalize().applyQuaternion(bindUpperQ.clone().invert());
  const wristDistalLocal=f.clone().normalize().applyQuaternion(bindWristQ.clone().invert());
  const palmLocal=bindPoint(middle).sub(bindPoint(wrist)).normalize().applyQuaternion(bindWristQ.clone().invert());
  const neutralWristRelative=bindDistalQ.clone().invert().multiply(bindWristQ);
  const neutralDistalRelative=bindLowerQ.clone().invert().multiply(bindDistalQ),distalAxisLocal=f.clone().normalize().applyQuaternion(bindDistalQ.clone().invert());
- const data={side,upper,lower,distal,wrist,hingeLocal,wristDistalLocal,palmLocal,neutralWristRelative,neutralDistalRelative,distalAxisLocal,upperLengthM:a.length(),forearmLengthM:f.length()};
- report.calibration[side]={upperBone:upper.name,lowerBone:lower.name,distalForearmBone:distal.name,wristBone:wrist.name,upperLengthM:a.length(),forearmLengthM:f.length(),hingeNormalUpperLocal:hingeLocal.toArray(),neutralDistalWristLocal:wristDistalLocal.toArray(),neutralWristRelative:neutralWristRelative.toArray(),neutralDistalRelative:neutralDistalRelative.toArray(),distalAxisLocal:distalAxisLocal.toArray(),bindFlexDeg:deg(a.angleTo(f)),source:'Exported inverse-bind joint origins and rotations; no calibration from current animated guard and no assumed local +Y bone axis.'};
+ const data={side,upper,lower,distal,wrist,hingeLocal,lowerHingeLocal,wristDistalLocal,palmLocal,neutralWristRelative,neutralDistalRelative,distalAxisLocal,upperLengthM:a.length(),forearmLengthM:f.length()};
+ report.calibration[side]={upperBone:upper.name,lowerBone:lower.name,distalForearmBone:distal.name,wristBone:wrist.name,upperLengthM:a.length(),forearmLengthM:f.length(),hingeNormalUpperLocal:hingeLocal.toArray(),hingeNormalLowerLocal:lowerHingeLocal.toArray(),neutralDistalWristLocal:wristDistalLocal.toArray(),neutralWristRelative:neutralWristRelative.toArray(),neutralDistalRelative:neutralDistalRelative.toArray(),distalAxisLocal:distalAxisLocal.toArray(),bindFlexDeg:deg(a.angleTo(f)),source:'Exported inverse-bind joint origins and rotations; no calibration from current animated guard and no assumed local +Y bone axis.'};
  return[side,data];
 }));
 function assembly(slot,variant){let result;model.traverse(o=>{if(o.userData?.equipmentSlot===slot&&o.userData?.equipmentVariant===variant)result=o;});if(!result)throw Error('Missing assembly '+slot+'/'+variant);return result;}
@@ -62,7 +62,12 @@ const handAnchors=Object.fromEntries(['L','R'].map(side=>{const object=assembly(
 const loadout=createLoadout({model,bones});
 let mixer=null,activeClip=null,active=null;
 function freshMixer(){mixer?.stopAllAction();mixer?.uncacheRoot(model);mixer=activeClip?new THREE.AnimationMixer(model):null;active=mixer?.clipAction(activeClip)||null;}
-function begin(config,action){mixer?.stopAllAction();mixer?.uncacheRoot(model);mixer=null;restore();loadout.apply(config);activeClip=gltf.animations.find(c=>c.name===action)||null;freshMixer();return activeClip?.duration||0;}
+function begin(config,action){
+ mixer?.stopAllAction();mixer?.uncacheRoot(model);mixer=null;restore();loadout.apply(config);
+ activeClip=action==='rest'?null:gltf.animations.find(c=>c.name===action);
+ if(action!=='rest'&&(!activeClip||!Number.isFinite(activeClip.duration)||activeClip.duration<=0))throw Error('Missing or invalid animation clip '+action);
+ freshMixer();return activeClip?.duration||0;
+}
 function sample(action,time){
  // PropertyMixer caches its previous output. Restoring bones behind an existing
  // mixer can make unchanged tracks skip reapplication and invent discontinuities.
@@ -81,40 +86,45 @@ function axialTwistDeg(delta,axis){
 function measureArm(side){
  const r=arm[side],shoulder=point(r.upper),elbow=point(r.lower),wrist=point(r.wrist),a=elbow.clone().sub(shoulder),f=wrist.clone().sub(elbow);
  const hinge=r.hingeLocal.clone().applyQuaternion(rotation(r.upper)).normalize(),cross=a.clone().normalize().cross(f.clone().normalize());
+ const lowerHinge=r.lowerHingeLocal.clone().applyQuaternion(rotation(r.lower)).normalize();
  const elbowFlexDeg=deg(Math.atan2(hinge.dot(cross),a.clone().normalize().dot(f.clone().normalize())));
  const hingePlaneErrorDeg=deg(Math.asin(THREE.MathUtils.clamp(Math.abs(f.clone().normalize().dot(hinge)),0,1)));
  const neutralDistal=r.wristDistalLocal.clone().applyQuaternion(rotation(r.wrist)).normalize();
  const expected=rotation(r.distal).multiply(r.neutralWristRelative),delta=expected.invert().multiply(rotation(r.wrist)).normalize();
  const expectedDistal=rotation(r.lower).multiply(r.neutralDistalRelative),distalDelta=expectedDistal.invert().multiply(rotation(r.distal)).normalize();
- return{elbowFlexDeg,hingePlaneErrorDeg,wristBendDeg:deg(neutralDistal.angleTo(f)),wristAxialTwistDeg:axialTwistDeg(delta,r.wristDistalLocal),forearmPronationDeg:axialTwistDeg(distalDelta,r.distalAxisLocal),rawPalmForearmDeg:deg(r.palmLocal.clone().applyQuaternion(rotation(r.wrist)).angleTo(f)),upperLengthErrorM:Math.abs(a.length()-r.upperLengthM),forearmLengthErrorM:Math.abs(f.length()-r.forearmLengthM),shoulder:shoulder.toArray(),elbow:elbow.toArray(),wrist:wrist.toArray(),hingeWorld:hinge.toArray()};
+ return{elbowFlexDeg,hingePlaneErrorDeg,hingeFrameErrorDeg:deg(hinge.angleTo(lowerHinge)),wristBendDeg:deg(neutralDistal.angleTo(f)),wristAxialTwistDeg:axialTwistDeg(delta,r.wristDistalLocal),forearmPronationDeg:axialTwistDeg(distalDelta,r.distalAxisLocal),rawPalmForearmDeg:deg(r.palmLocal.clone().applyQuaternion(rotation(r.wrist)).angleTo(f)),upperLengthErrorM:Math.abs(a.length()-r.upperLengthM),forearmLengthErrorM:Math.abs(f.length()-r.forearmLengthM),shoulder:shoulder.toArray(),elbow:elbow.toArray(),wrist:wrist.toArray(),hingeWorld:hinge.toArray()};
 }
 function snapshot(weapon){
  const arms={L:measureArm('L'),R:measureArm('R')},object=assembly('weapon',weapon),two=['pike','greatsword'].includes(weapon);
  const gripR=attachedPoint(object,object.userData.gripBind,'R'),gripL=two?attachedPoint(object,object.userData.secondGripBind,'R'):null;
  const actual=Object.fromEntries(['L','R'].map(side=>[side,arm[side].wrist.localToWorld(handAnchors[side].clone())]));
  const joints=Object.fromEntries(['L','R'].flatMap(side=>['upperarm01.','lowerarm01.','lowerarm02.','wrist.','upperleg01.','lowerleg01.','foot.'].map(prefix=>{const b=bone(prefix+side);return[b.name,{p:point(b).toArray(),q:rotation(b).toArray(),rawNormError:Math.abs(b.getWorldQuaternion(Q()).length()-1)}];})));
- const numeric=Object.values(joints).flatMap(j=>[...j.p,...j.q]),finite=numeric.every(Number.isFinite),quaternionNormError=Math.max(...Object.values(joints).map(j=>j.rawNormError));
- return{arms,joints,finite,quaternionNormError,gripFrameErrorM:{R:actual.R.distanceTo(gripR),L:gripL?actual.L.distanceTo(gripL):null}};
+ const gripFrameErrorM={R:actual.R.distanceTo(gripR),L:gripL?actual.L.distanceTo(gripL):null};
+ const numeric=[...Object.values(joints).flatMap(j=>[...j.p,...j.q,j.rawNormError]),...Object.values(arms).flatMap(a=>Object.values(a).flat()),...Object.values(gripFrameErrorM).filter(v=>v!==null)];
+ const finite=numeric.every(Number.isFinite),quaternionNormError=Math.max(...Object.values(joints).map(j=>j.rawNormError));
+ return{arms,joints,finite,quaternionNormError,gripFrameErrorM};
 }
 function step(a,b){let jointStepM=0,jointTurnDeg=0,joint=null;for(const [name,v]of Object.entries(a.joints)){const distance=V().fromArray(v.p).distanceTo(V().fromArray(b.joints[name].p));if(distance>jointStepM){jointStepM=distance;joint=name;}jointTurnDeg=Math.max(jointTurnDeg,deg(Q().fromArray(v.q).angleTo(Q().fromArray(b.joints[name].q))));}return{jointStepM,jointTurnDeg,joint};}
 function rotateWorld(b,q){const current=rotation(b),parent=rotation(b.parent);b.quaternion.copy(parent.invert().multiply(q).multiply(current)).normalize();update();}
 try{
+ check('Inverse-bind anatomical calibration is finite',Object.values(report.calibration).flatMap(c=>Object.values(c).flat()).filter(v=>typeof v==='number').every(Number.isFinite));
  for(const bodyBuild of bodyBuilds)for(const weaponType of weapons)for(const action of actions){
   if(action==='Shield_Brace'&&['pike','greatsword'].includes(weaponType))continue;
   const config={bodyBuild,weaponType,shieldType:'tower',armorType:'plate',helmet:'on',beard:'none',experience:'recruit'},duration=begin(config,action),id=[bodyBuild,weaponType,action].join('/');
-  const n=Math.round(duration*30),result={id,bodyBuild,weaponType,action,duration,samples:n+1,minimumElbowFlexDeg:Infinity,maximumElbowFlexDeg:-Infinity,maximumHingePlaneErrorDeg:0,maximumWristBendDeg:0,maximumWristAxialTwistDeg:0,maximumForearmPronationDeg:0,maximumLinkLengthErrorM:0,maximumGripFrameErrorM:0,maximumJointStepM:0,maximumJointTurnDeg:0,maximumQuaternionNormError:0,finite:true,worst:{}};
+  const n=Math.ceil(duration*30),result={id,bodyBuild,weaponType,action,duration,samples:n+1,minimumElbowFlexDeg:Infinity,maximumElbowFlexDeg:-Infinity,maximumHingePlaneErrorDeg:0,maximumHingeFrameErrorDeg:0,maximumWristBendDeg:0,maximumWristAxialTwistDeg:0,maximumForearmPronationDeg:0,maximumLinkLengthErrorM:0,maximumGripFrameErrorM:0,maximumJointStepM:0,maximumJointTurnDeg:0,maximumQuaternionNormError:0,finite:true,worst:{}};
   let previous=null;
   for(let i=0;i<=n;i++){
-   const time=n?Math.min(duration,i/30):0;sample(action,time);const s=snapshot(weaponType);report.coverage.frameCount++;result.finite&&=s.finite;result.maximumQuaternionNormError=Math.max(result.maximumQuaternionNormError,s.quaternionNormError);
+   const time=i===n?duration:i/30;sample(action,time);const s=snapshot(weaponType);report.coverage.frameCount++;result.finite&&=s.finite;result.maximumQuaternionNormError=Math.max(result.maximumQuaternionNormError,s.quaternionNormError);
    for(const [side,a]of Object.entries(s.arms)){
     result.minimumElbowFlexDeg=Math.min(result.minimumElbowFlexDeg,a.elbowFlexDeg);result.maximumElbowFlexDeg=Math.max(result.maximumElbowFlexDeg,a.elbowFlexDeg);
-    for(const [key,value]of [['maximumHingePlaneErrorDeg',a.hingePlaneErrorDeg],['maximumWristBendDeg',a.wristBendDeg],['maximumWristAxialTwistDeg',Math.abs(a.wristAxialTwistDeg)],['maximumForearmPronationDeg',Math.abs(a.forearmPronationDeg)],['maximumLinkLengthErrorM',Math.max(a.upperLengthErrorM,a.forearmLengthErrorM)],['maximumGripFrameErrorM',s.gripFrameErrorM[side]||0]])if(value>result[key]){result[key]=value;result.worst[key]={side,time,frame:i,measured:a};}
+    for(const [key,value]of [['maximumHingePlaneErrorDeg',a.hingePlaneErrorDeg],['maximumHingeFrameErrorDeg',a.hingeFrameErrorDeg],['maximumWristBendDeg',a.wristBendDeg],['maximumWristAxialTwistDeg',Math.abs(a.wristAxialTwistDeg)],['maximumForearmPronationDeg',Math.abs(a.forearmPronationDeg)],['maximumLinkLengthErrorM',Math.max(a.upperLengthErrorM,a.forearmLengthErrorM)],['maximumGripFrameErrorM',s.gripFrameErrorM[side]??0]])if(value>result[key]){result[key]=value;result.worst[key]={side,time,frame:i,measured:a};}
    }
    if(previous){const d=step(previous,s);for(const [key,value]of [['maximumJointStepM',d.jointStepM],['maximumJointTurnDeg',d.jointTurnDeg]])if(value>result[key]){result[key]=value;result.worst[key]={time,frame:i,...d};}}previous=s;
   }
   report.cases.push(result);report.coverage.caseCount++;
   check(id+': elbow direction and range',result.minimumElbowFlexDeg>=limits.minimumElbowFlexDeg&&result.maximumElbowFlexDeg<=limits.maximumElbowFlexDeg,{minimumDeg:result.minimumElbowFlexDeg,maximumDeg:result.maximumElbowFlexDeg});
   check(id+': hinge plane',result.maximumHingePlaneErrorDeg<=limits.hingePlaneErrorDeg,{maximumDeg:result.maximumHingePlaneErrorDeg});
+  check(id+': upper and lower elbow hinge frames agree',result.maximumHingeFrameErrorDeg<=limits.hingeFrameErrorDeg,{maximumDeg:result.maximumHingeFrameErrorDeg});
   check(id+': anatomical neutral wrist',result.maximumWristBendDeg<=limits.wristBendDeg,{maximumDeg:result.maximumWristBendDeg});
   check(id+': no residual axial wrist twist',result.maximumWristAxialTwistDeg<=limits.wristAxialTwistDeg,{maximumDeg:result.maximumWristAxialTwistDeg});
   check(id+': forearm pronation range',result.maximumForearmPronationDeg<=limits.forearmPronationDeg,{maximumDeg:result.maximumForearmPronationDeg});
@@ -134,11 +144,15 @@ try{
  report.negativeControls.push({name:'75deg wrist twist about actual forearm is rejected independently of wrist bend',passed:Math.abs(after.arms.R.wristAxialTwistDeg)>limits.wristAxialTwistDeg&&Math.abs(before.arms.R.wristBendDeg-after.arms.R.wristBendDeg)<.0001,before:before.arms.R,after:after.arms.R});
  sample('Guard_Breath',0);before=snapshot('spear');const distalAxis=V().fromArray(before.arms.R.wrist).sub(V().fromArray(before.arms.R.elbow)).normalize();rotateWorld(arm.R.distal,new THREE.Quaternion().setFromAxisAngle(distalAxis,THREE.MathUtils.degToRad(130-before.arms.R.forearmPronationDeg)));after=snapshot('spear');
  report.negativeControls.push({name:'130deg distal forearm pronation is rejected without mislabelling it wrist twist',passed:Math.abs(after.arms.R.forearmPronationDeg)>limits.forearmPronationDeg&&Math.abs(before.arms.R.wristAxialTwistDeg-after.arms.R.wristAxialTwistDeg)<.0001,before:before.arms.R,after:after.arms.R});
+ sample('Guard_Breath',0);before=snapshot('spear');const proximalAxis=V().fromArray(before.arms.R.wrist).sub(V().fromArray(before.arms.R.elbow)).normalize();rotateWorld(arm.R.lower,new THREE.Quaternion().setFromAxisAngle(proximalAxis,THREE.MathUtils.degToRad(120)));after=snapshot('spear');
+ report.negativeControls.push({name:'Static proximal forearm axial twist is rejected by elbow hinge frames',passed:after.arms.R.hingeFrameErrorDeg>limits.hingeFrameErrorDeg&&V().fromArray(before.arms.R.wrist).distanceTo(V().fromArray(after.arms.R.wrist))<1e-6,before:before.arms.R,after:after.arms.R});
  sample('Guard_Breath',0);arm.R.lower.position.addScaledVector(arm.R.lower.position.clone().normalize(),.05);update();after=snapshot('spear');
  report.negativeControls.push({name:'50mm imported arm-segment extension is rejected',passed:after.arms.R.upperLengthErrorM>limits.linkLengthErrorM,observedErrorM:after.arms.R.upperLengthErrorM});
  sample('Guard_Breath',0);before=snapshot('spear');const rootPosition=model.position.clone();model.position.x+=.25;update();after=snapshot('spear');const jump=step(before,after);model.position.copy(rootPosition);update();
  report.negativeControls.push({name:'250mm rigid whole-character teleport is rejected without changing bone lengths',passed:jump.jointStepM>limits.frameJointStepM&&Object.values(after.arms).every(a=>a.upperLengthErrorM<limits.linkLengthErrorM&&a.forearmLengthErrorM<limits.linkLengthErrorM),observed:jump});
  for(const c of report.negativeControls)if(!c.passed)report.failures.push('Negative control: '+c.name);
+ check('Audit source remains unchanged during the run',hash(await readFile(fileURLToPath(import.meta.url)))===report.auditSha256);
+ if(!baseline){check('Runtime source remains unchanged during the run',hash(await runtimeSource(root))===report.runtimeSha256);check('GLB remains unchanged during the run',hash(await readFile(path.resolve(process.env.PAWN_GLB||path.join(root,'assets/white-pawn.glb'))))===report.glbSha256);}
  report.status=report.failures.length?'failed':'passed';
 }catch(error){report.status='error';report.failure=error.stack;}
 finally{mixer?.stopAllAction();await mkdir(path.dirname(output),{recursive:true});await writeFile(output,JSON.stringify(report,null,2)+'\n');console.log(JSON.stringify({status:report.status,baseline,coverage:report.coverage,failures:report.failures,failure:report.failure,report:output},null,2));if(report.status!=='passed'&&!baseline)process.exitCode=1;}

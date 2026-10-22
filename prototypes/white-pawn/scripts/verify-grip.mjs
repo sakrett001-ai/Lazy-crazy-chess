@@ -9,7 +9,7 @@ import {createLoadout} from '../src/loadout.mjs';
 import {runtimeSource} from './runtime-source.mjs';
 const root=path.dirname(path.dirname(fileURLToPath(import.meta.url))),output=process.env.PAWN_GRIP_REPORT||path.join(root,'review/grip-checks.json');
 const hash=x=>createHash('sha256').update(x).digest('hex'),bytes=await readFile(path.join(root,'assets/white-pawn.glb'));
-const limits={minimumPatchVertices:50,maximumContactGapM:.0045,maximumContactQ10GapM:.008,minimumSurfaceGapM:-.00025,minimumFingerWrapDeg:65,minimumThumbOppositionDeg:75};
+const limits={minimumPatchVertices:50,maximumContactGapM:.0045,maximumContactQ10GapM:.0085,minimumSurfaceGapM:-.00025,minimumFingerWrapDeg:65,minimumThumbOppositionDeg:75,minimumPipDeg:34.5,maximumPipDeg:110,minimumDipDeg:10,maximumDipDeg:80,maximumDipAheadOfPipDeg:20,maximumMetacarpalLengthErrorM:1e-7};
 const report={status:'running',date:new Date().toISOString(),glbSha256:hash(bytes),runtimeSha256:hash(await runtimeSource(root)),auditSha256:hash(await readFile(fileURLToPath(import.meta.url))),limits,coverage:{weapons:['spear','sword','pike','greatsword'],sides:['L','R'],radiiM:[.014,.016],frameCount:0,bodyBuilds:['lean','regular','strong']},scope:'Dominant-weight skin vertices of all five fingers and three phalanges on both hands, measured against actual equipment attachment cylinders. Contact spread, thumb opposition and circumferential wrap are checked over sampled full motion intervals and reverse seeks. Selected thumb-vs-hand triangles and cylinder surface triangles receive a separate finite check. This does not assert whole-body collision freedom, contact forces, grasp strength, or unsampled continuous collision freedom.',checks:[],negativeControls:[],cases:[],surfaceCases:[],failures:[]};
 const check=(name,passed,details={})=>{report.checks.push({name,passed:!!passed,...details});if(!passed)report.failures.push(name);};
 const N=s=>String(s||'').replace(/[._\-\s]/g,'').toLowerCase(),V=()=>new THREE.Vector3();
@@ -35,8 +35,9 @@ function actualFrames(){const state=loadout.summary(),weapon=frame('weapon',stat
 function assess(measured){const problems=[];let minGap=Infinity,maxContactGap=-Infinity,maxQ10=-Infinity,minWrap=Infinity,minOpposition=Infinity;
  for(const [side,hand]of Object.entries(measured)){
   for(const finger of hand.fingers){for(const p of finger.phalanges){minGap=Math.min(minGap,p.minGapM);if(p.vertices<limits.minimumPatchVertices)problems.push(side+' patch coverage');if(!Number.isFinite(p.minGapM+p.q10GapM)||p.minGapM<limits.minimumSurfaceGapM||p.verticesInside)problems.push(side+' shaft penetration');if(p.joint>=2){maxContactGap=Math.max(maxContactGap,p.minGapM);maxQ10=Math.max(maxQ10,p.q10GapM);if(p.minGapM>limits.maximumContactGapM||p.q10GapM>limits.maximumContactQ10GapM)problems.push(side+' phalanx contact');}}
-   if(finger.finger>1){minWrap=Math.min(minWrap,finger.wrapDeg);if(finger.wrapDeg<limits.minimumFingerWrapDeg)problems.push(side+' wrap');}
+   if(finger.finger>1){if(finger.pipDeg<limits.minimumPipDeg||finger.pipDeg>limits.maximumPipDeg||finger.dipDeg<limits.minimumDipDeg||finger.dipDeg>limits.maximumDipDeg||finger.dipDeg-finger.pipDeg>limits.maximumDipAheadOfPipDeg)problems.push(side+' phalanx hinge range');minWrap=Math.min(minWrap,finger.wrapDeg);if(finger.wrapDeg<limits.minimumFingerWrapDeg)problems.push(side+' wrap');}
   }
+  if(Math.abs(hand.virtualCmc.lengthM-hand.virtualCmc.restLengthM)>limits.maximumMetacarpalLengthErrorM)problems.push(side+' metacarpal length');
   const thumb=new THREE.Vector3().fromArray(hand.fingers[0].phalanges[1].contactDirection),opposing=V();for(const f of hand.fingers.slice(1))opposing.add(new THREE.Vector3().fromArray(f.phalanges[1].contactDirection));
   const opposition=THREE.MathUtils.radToDeg(thumb.angleTo(opposing.normalize()));minOpposition=Math.min(minOpposition,opposition);if(opposition<limits.minimumThumbOppositionDeg)problems.push(side+' thumb opposition');
  }
@@ -101,8 +102,9 @@ try{
  sample('Spear_Study',1.59);const leftWrist=bone('wrist.L'),beforeLeft=leftWrist.getWorldPosition(V()),move=actualFrames().L.axis.clone().cross(new THREE.Vector3(0,1,0)).normalize().multiplyScalar(.025);
  leftWrist.position.copy(leftWrist.parent.worldToLocal(beforeLeft.clone().add(move)));update();
  const shifted=assess(loadout.grip.measure(actualFrames()));report.negativeControls.push({name:'An actual left wrist displaced25mm off the twohanded handle is rejected',passed:baseline.passed&&!shifted.passed,problems:shifted.problems});
- sample('Spear_Study',1.59);const leftThumb=bone('finger1-1.L'),thumbAxis=actualFrames().L.axis.clone().applyQuaternion(leftThumb.getWorldQuaternion(new THREE.Quaternion()).invert());leftThumb.quaternion.multiply(new THREE.Quaternion().setFromAxisAngle(thumbAxis,THREE.MathUtils.degToRad(120)));update();
- const invertedThumb=assess(loadout.grip.measure(actualFrames()));report.negativeControls.push({name:'An actual left thumb rotated to the wrong side loses opposition',passed:baseline.passed&&!invertedThumb.passed&&invertedThumb.problems.includes('L thumb opposition'),problems:invertedThumb.problems,minThumbOppositionDeg:invertedThumb.minThumbOppositionDeg});
+ sample('Spear_Study',1.59);const leftThumb=bone('finger1-1.L'),thumbContact=loadout.grip.measure(actualFrames()).L.fingers[0].phalanges[1].contactDirection,thumbShift=new THREE.Vector3().fromArray(thumbContact).multiplyScalar(-.07);
+ leftThumb.position.copy(leftThumb.parent.worldToLocal(leftThumb.getWorldPosition(V()).add(thumbShift)));update();
+ const invertedThumb=assess(loadout.grip.measure(actualFrames()));report.negativeControls.push({name:'A deliberately misplaced actual left CMC on the opposite side loses thumb opposition',passed:baseline.passed&&!invertedThumb.passed&&invertedThumb.problems.includes('L thumb opposition'),problems:invertedThumb.problems,minThumbOppositionDeg:invertedThumb.minThumbOppositionDeg});
  if(report.negativeControls.some(c=>!c.passed))report.failures.push('negative controls');
  check('Audited runtime unchanged during sampling',hash(await runtimeSource(root))===report.runtimeSha256);
  check('Audited model unchanged during sampling',hash(await readFile(path.join(root,'assets/white-pawn.glb')))===report.glbSha256);

@@ -3,6 +3,7 @@ import path from 'node:path';
 import {execFileSync} from 'node:child_process';
 import {buildViewer,root,repositoryRoot} from './build-helper.mjs';
 import {makeHostedConfig,validateCandidate,makeRelease,sourceCommit} from './release-utils.mjs';
+import {runtimeSource} from './runtime-source.mjs';
 
 const args=process.argv.slice(2);
 if(args.some(a=>a!=='--release'))throw new Error('Usage: node scripts/build-hosted.mjs [--release]');
@@ -42,7 +43,13 @@ if(!publish) {
     geometryReport:JSON.parse(geometryReportBytes.toString('utf8')),
     geometryReportBytes,geometryAcceptance,
     geometryAuditSource:await readFile(path.join(root,'scripts/verify-modular-geometry.mjs')),
-    loadoutSource:await readFile(path.join(root,'src/loadout.mjs')),
+    loadoutSource:await runtimeSource(root),
+    biomechanicsReport:await readJson(path.join(root,'review/biomechanics-checks.json')),
+    biomechanicsAuditSource:await readFile(path.join(root,'scripts/verify-biomechanics.mjs')),
+    gripReport:await readJson(path.join(root,'review/grip-checks.json')),
+    gripAuditSource:await readFile(path.join(root,'scripts/verify-grip.mjs')),
+    weaponClearanceReport:await readJson(path.join(root,'review/weapon-clearance-checks.json')),
+    weaponClearanceAuditSource:await readFile(path.join(root,'scripts/verify-weapon-clearance.mjs')),
     variantReport:await readJson(path.join(root,'review/variant-checks.json')),
     appearanceReport:await readJson(path.join(root,'review/appearance-checks.json')),
     viewerReport:await readJson(path.join(root,'review/viewer-checks.json')),

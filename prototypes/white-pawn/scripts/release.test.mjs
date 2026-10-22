@@ -1,17 +1,29 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {mkdtemp,writeFile,access,rm} from 'node:fs/promises';
+import {mkdtemp,writeFile,access,rm,mkdir} from 'node:fs/promises';
 import {spawnSync} from 'node:child_process';
 import {tmpdir} from 'node:os';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {makeHostedConfig,validateCandidate,makeRelease,sourceCommit,sha256,MAX_DOCUMENT_BYTES} from './release-utils.mjs';
+import {runtimeFiles,runtimeSource} from './runtime-source.mjs';
+import {assertReviewMotion} from '../src/review.mjs';
 
 function fixture() {
-  const modelBytes=Buffer.from('verified model fixture'),standaloneHtml=Buffer.from('<html>verified standalone</html>'),loadoutSource=Buffer.from('verified equipment runtime');
+  const modelBytes=Buffer.from('verified model fixture'),loadoutSource=Buffer.from('verified equipment runtime');
+  const motionDeclaration=`window.PAWN_MOTION_SHA=${JSON.stringify(sha256(loadoutSource))};`;
+  const standaloneHtml=Buffer.from(`<html><script>${motionDeclaration}</script>verified standalone</html>`);
+  const biomechanicsAuditSource=Buffer.from('biomechanics audit fixture'),gripAuditSource=Buffer.from('grip audit fixture'),weaponClearanceAuditSource=Buffer.from('weapon clearance audit fixture');
+  const motionReport=auditSource=>({status:'passed',glbSha256:sha256(modelBytes),runtimeSha256:sha256(loadoutSource),auditSha256:sha256(auditSource),scope:'Fixture motion audit',failures:[],checks:[{name:'Measured motion stays within limits',passed:true}],negativeControls:[{name:'Deliberately invalid motion rejected',passed:true}]});
+  const weaponClearanceReport={...motionReport(weaponClearanceAuditSource),coverage:{sampleRateHz:10,caseCount:24,frameCount:870,quick:false,weapons:['spear','sword'],shields:['tower','round','heater'],weaponMaterials:['weapon.metal','weapon.wood'],shieldMaterials:['shield.face','shield.wood','shield.trim'],bodyBuilds:['regular'],actions:['rest','Guard_Breath','Shield_Brace','Spear_Study']},cases:[],checks:[],negativeControls:[{name:'Imported sword hand is moved through the actual shield face',passed:true,beforeIntersectionPairs:0,afterIntersectionPairs:1,beforeWristWorld:[0,1,0],afterWristWorld:[.1,1,0],intersections:[{pointsWorld:[[0,1,0]]}]}]};
+  for(const weaponType of ['spear','sword'])for(const shieldType of ['tower','round','heater'])for(const [action,samples]of Object.entries({rest:1,Guard_Breath:61,Shield_Brace:41,Spear_Study:42})){
+    const id=[weaponType,shieldType,action].join('/');weaponClearanceReport.cases.push({id,weaponType,shieldType,action,samples,maximumIntersections:0,intersectingFrames:0,nonfinite:0,weaponTriangles:10,shieldTriangles:100,examples:[]});weaponClearanceReport.checks.push({name:id+': weapon does not cross shield surfaces',passed:true});
+  }
   const config=makeHostedConfig({commit:'a'.repeat(40),version:'0.4.0',modelBytes});
-  const html=`<!doctype html><html><script id="model-data" type="application/octet-stream"></script><script>window.PAWN_HOSTED=Object.freeze(${JSON.stringify(config)});</script></html>`;
-  return {html,config,modelBytes,standaloneHtml,loadoutSource,
+  const html=`<!doctype html><html><script id="model-data" type="application/octet-stream"></script><script>${motionDeclaration}window.PAWN_HOSTED=Object.freeze(${JSON.stringify(config)});</script></html>`;
+  return {html,config,modelBytes,standaloneHtml,loadoutSource,biomechanicsAuditSource,gripAuditSource,weaponClearanceAuditSource,weaponClearanceReport,
+    biomechanicsReport:{...motionReport(biomechanicsAuditSource),coverage:{sampleRateHz:30,caseCount:42,frameCount:1452,weapons:['spear','sword','pike','greatsword'],bodyBuilds:['lean','regular','strong'],actions:['rest','Guard_Breath','Shield_Brace','Spear_Study']}},
+    gripReport:{...motionReport(gripAuditSource),coverage:{frameCount:164,weapons:['spear','sword','pike','greatsword'],bodyBuilds:['lean','regular','strong'],sides:['L','R'],radiiM:[.014,.016]}},
     modelReport:{status:'passed',sha256:sha256(modelBytes),glb_bytes:modelBytes.length},
     equipmentReport:{status:'passed',glbSha256:sha256(modelBytes)},
     geometryReport:{status:'passed',glbSha256:sha256(modelBytes),runtimeSha256:sha256(loadoutSource)},
@@ -24,7 +36,7 @@ function fixture() {
 
 test('release binds the exact verified document to its immutable source and model',()=>{
   const f=fixture(),r=makeRelease(f);
-  assert.deepEqual(r,{schemaVersion:1,repository:'sakrett001-ai/Lazy-crazy-chess',sourceBranch:'main',sourceCommit:'a'.repeat(40),version:'0.4.0',modelVersion:'0.3.0',checks:'passed',geometryStatus:'passed',geometryLimitations:[],builtAt:f.builtAt,document:{path:`chess/releases/${'a'.repeat(40)}/viewer.html`,sha256:sha256(f.html),bytes:Buffer.byteLength(f.html)}});
+  assert.deepEqual(r,{schemaVersion:1,repository:'sakrett001-ai/Lazy-crazy-chess',sourceBranch:'main',sourceCommit:'a'.repeat(40),version:'0.4.0',modelVersion:'0.3.0',checks:'passed',motionSha256:sha256(f.loadoutSource),biomechanicsStatus:'passed',gripStatus:'passed',weaponClearanceStatus:'passed',geometryStatus:'passed',geometryLimitations:[],builtAt:f.builtAt,document:{path:`chess/releases/${'a'.repeat(40)}/viewer.html`,sha256:sha256(f.html),bytes:Buffer.byteLength(f.html)}});
   assert.equal(f.config.modelUrl,`https://raw.githubusercontent.com/sakrett001-ai/Lazy-crazy-chess/${'a'.repeat(40)}/prototypes/white-pawn/assets/white-pawn.glb`);
 });
 
@@ -81,6 +93,72 @@ const failureCases=[
 ];
 for(const [name,mutate,expected] of failureCases)test(`no passed manifest for ${name}`,()=>{const f=fixture();mutate(f);assert.throws(()=>makeRelease(f),expected);});
 
+for(const [key,label] of [['biomechanics','Biomechanics'],['grip','Grip'],['weaponClearance','Weapon clearance']]) {
+  for(const [name,mutate,expected] of [
+    ['missing audit',f=>{delete f[key+'Report'];},/verification did not pass/],
+    ['failed audit',f=>{f[key+'Report'].status='failed';},/verification did not pass/],
+    ['stale model',f=>{f[key+'Report'].glbSha256='0'.repeat(64);},/different GLB bytes/],
+    ['stale runtime module',f=>{f[key+'Report'].runtimeSha256='0'.repeat(64);},/stale for this motion runtime/],
+    ['changed audit code',f=>{f[key+'AuditSource']=Buffer.from('changed audit');},/stale for its audit source/],
+    ['missing audit code',f=>{delete f[key+'AuditSource'];},/audit source is required/],
+    ['failed check under passed status',f=>{f[key+'Report'].checks[0].passed=false;},/cannot waive/],
+    ['failed negative control',f=>{f[key+'Report'].negativeControls[0].passed=false;},/cannot waive/],
+    ['no checks',f=>{f[key+'Report'].checks=[];},/checks are required/],
+    ['no negative controls',f=>{f[key+'Report'].negativeControls=[];},/negativeControls are required/],
+    ['duplicate checks',f=>{f[key+'Report'].checks.push({...f[key+'Report'].checks[0]});},/unique named results/],
+    ['retained failure',f=>{f[key+'Report'].failures=['unresolved'];},/retains failures/],
+    ['missing scope',f=>{delete f[key+'Report'].scope;},/audit scope is required/],
+    ['nonfinite measured value',f=>{f[key+'Report'].checks[0].distanceM=NaN;},/nonfinite/]
+  ])test(`${label} gate refuses ${name}`,()=>{const f=fixture();mutate(f);assert.throws(()=>makeRelease(f),expected);});
+}
+for(const [name,change] of [
+  ['low sample rate',c=>{c.sampleRateHz=1;}],['missing cases',c=>{c.caseCount=1;}],
+  ['missing frames',c=>{c.frameCount=1;}],['untested weapon',c=>{c.weapons.pop();}],
+  ['untested body build',c=>{c.bodyBuilds.pop();}],['untested action',c=>{c.actions.pop();}]
+])test(`Biomechanics coverage refuses ${name}`,()=>{const f=fixture();change(f.biomechanicsReport.coverage);assert.throws(()=>makeRelease(f),/Biomechanics audit/);});
+for(const [name,change] of [
+  ['missing frames',c=>{c.frameCount=1;}],['untested weapon',c=>{c.weapons.pop();}],
+  ['untested body build',c=>{c.bodyBuilds.pop();}],['untested hand',c=>{c.sides.pop();}],
+  ['untested radius',c=>{c.radiiM.pop();}]
+])test(`Grip coverage refuses ${name}`,()=>{const f=fixture();change(f.gripReport.coverage);assert.throws(()=>makeRelease(f),/Grip audit/);});
+for(const [name,change] of [
+  ['quick-only diagnostic',r=>{r.coverage.quick=true;}],['low sample rate',r=>{r.coverage.sampleRateHz=1;}],
+  ['missing cases',r=>{r.coverage.caseCount=1;}],['missing frames',r=>{r.coverage.frameCount=1;}],
+  ['untested shield',r=>{r.coverage.shields.pop();}],['untested weapon',r=>{r.coverage.weapons.pop();}],
+  ['untested shield rim',r=>{r.coverage.shieldMaterials.pop();}],['untested weapon shaft',r=>{r.coverage.weaponMaterials.pop();}],
+  ['untested action',r=>{r.coverage.actions.pop();}],['duplicate actual case',r=>{r.cases[1]={...r.cases[0]};}],
+  ['claimed coverage without samples',r=>{r.cases[1].samples=1;}],['invented frame count',r=>{r.coverage.frameCount++;}],
+  ['retained crossing evidence',r=>{r.cases[0].maximumIntersections=1;}],['missing actual triangles',r=>{r.cases[0].weaponTriangles=0;}],
+  ['retained intersection example',r=>{r.cases[0].examples=[{}];}],['missing case check',r=>{r.checks.pop();}],
+  ['already intersecting control baseline',r=>{r.negativeControls[0].beforeIntersectionPairs=1;}],
+  ['unmoved control wrist',r=>{r.negativeControls[0].afterWristWorld=[...r.negativeControls[0].beforeWristWorld];}],
+  ['control without actual intersection points',r=>{r.negativeControls[0].intersections=[];}]
+])test(`Weapon clearance coverage refuses ${name}`,()=>{const f=fixture();change(f.weaponClearanceReport);assert.throws(()=>makeRelease(f),/Weapon clearance/);});
+test('motion declarations must match audited runtime in both documents',()=>{
+  const f=fixture(),bad=f.html.replace(sha256(f.loadoutSource),'0'.repeat(64));
+  assert.throws(()=>makeRelease({...f,html:bad}),/Hosted document belongs to a different motion runtime/);
+  const stale=Buffer.from(f.standaloneHtml.toString().replace(sha256(f.loadoutSource),'0'.repeat(64)));
+  assert.throws(()=>makeRelease({...f,standaloneHtml:stale,viewerReport:{...f.viewerReport,documentSha256:sha256(stale)}}),/Standalone document belongs to a different motion runtime/);
+});
+test('every articulated module changes runtime identity and missing modules are rejected',async()=>{
+  const dir=await mkdtemp(path.join(tmpdir(),'pawn-motion-'));
+  try {
+    await mkdir(path.join(dir,'src'));
+    for(const file of runtimeFiles)await writeFile(path.join(dir,file),'original '+file);
+    const initial=sha256(await runtimeSource(dir));
+    for(const file of runtimeFiles){await writeFile(path.join(dir,file),'changed '+file);assert.notEqual(sha256(await runtimeSource(dir)),initial);await writeFile(path.join(dir,file),'original '+file);}
+    await rm(path.join(dir,'src/grip.mjs'));
+    await assert.rejects(runtimeSource(dir),{code:'ENOENT'});
+  }finally{await rm(dir,{recursive:true,force:true});}
+});
+test('exact review restoration refuses changed or unknown motion on the same GLB',()=>{
+  const current={modelSha256:'a'.repeat(64),motionSha256:'b'.repeat(64)};
+  assert.doesNotThrow(()=>assertReviewMotion({...current},current));
+  assert.throws(()=>assertReviewMotion({...current,motionSha256:'c'.repeat(64)},current),/Движение в этой версии изменилось/);
+  assert.throws(()=>assertReviewMotion({modelSha256:current.modelSha256},current),/Движение в этой версии изменилось/);
+  assert.throws(()=>assertReviewMotion({},{motionSha256:undefined}),/Движение в этой версии изменилось/);
+});
+
 function prototypeFixture() {
   const f=fixture();f.geometryAuditSource=Buffer.from('bounded intersection audit fixture');
   const report=f.geometryReport={...f.geometryReport,status:'failed',auditSha256:sha256(f.geometryAuditSource),scope:'18 bounded cases; not whole-body collision freedom',unassessed:[],limits:{handFrameErrorM:.01,soleDriftM:.006,soleFloorGapM:.008,thumbSurfaceDistanceM:.014},cases:[],checks:[],failures:[],negativeControls:[]};
@@ -123,6 +201,15 @@ test('exact prototype acceptance retains failed geometry and exposes reviewed li
 
 test('known intersections still reject without explicit acceptance',()=>{
   const f=prototypeFixture();delete f.geometryAcceptance;assert.throws(()=>makeRelease(f),/Geometry audit did not pass/);
+});
+
+test('garment intersection acceptance cannot waive joint, grip or weapon clearance failures',()=>{
+  for(const key of ['biomechanicsReport','gripReport','weaponClearanceReport']) {
+    const f=prototypeFixture();f[key].status='failed';
+    assert.throws(()=>makeRelease(f),/verification did not pass/);
+    f[key].status='passed';f[key].checks[0].passed=false;
+    assert.throws(()=>makeRelease(f),/cannot waive/);
+  }
 });
 
 for(const [name,mutate] of [

@@ -1,6 +1,6 @@
 {
   "name": "lazy-crazy-chess-white-pawn",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "private": true,
   "type": "module",
   "scripts": {
@@ -13,7 +13,10 @@
     "test:release": "node --test scripts/release.test.mjs scripts/floot-helper.test.mjs",
     "verify:appearance": "node scripts/verify-appearance.mjs",
     "verify:variants": "node scripts/verify-variants.mjs",
-    "verify:geometry": "node scripts/verify-modular-geometry.mjs"
+    "verify:geometry": "node scripts/verify-modular-geometry.mjs",
+    "verify:biomechanics": "node scripts/verify-biomechanics.mjs",
+    "verify:grip": "node scripts/verify-grip.mjs",
+    "verify:weapon-clearance": "node scripts/verify-weapon-clearance.mjs"
   },
   "dependencies": {
     "three": "0.180.0"

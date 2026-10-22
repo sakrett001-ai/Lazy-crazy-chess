@@ -143,12 +143,83 @@ function geometryReleaseDecision({geometryReport,geometryReportBytes,geometryAcc
   assertKnownIntersectionReport(geometryReport);
   return {geometryStatus:'failed',geometryDecision:geometryAcceptance.decision,geometryLimitations:[...geometryAcceptance.limitations],geometryReportSha256:geometryAcceptance.geometryReportSha256,geometryReview:{reviewer:geometryAcceptance.reviewer,rationale:geometryAcceptance.rationale}};
 }
-export function makeRelease({html,config,modelBytes,standaloneHtml,modelReport,equipmentReport,geometryReport,geometryReportBytes,geometryAcceptance,geometryAuditSource,loadoutSource,variantReport,appearanceReport,viewerReport,hostedReport,builtAt=new Date().toISOString()}) {
+function assertMotionAudit({name,report,auditSource,modelBytes,loadoutSource}) {
+  assert.equal(report?.status,'passed',`${name} verification did not pass`);
+  assert.equal(report.glbSha256,sha256(modelBytes),`${name} report belongs to different GLB bytes`);
+  assert.equal(report.runtimeSha256,sha256(loadoutSource),`${name} report is stale for this motion runtime`);
+  assert(auditSource?.byteLength,`${name} audit source is required`);
+  assert.equal(report.auditSha256,sha256(auditSource),`${name} report is stale for its audit source`);
+  assert(!report.failure&&Array.isArray(report.failures)&&report.failures.length===0,`${name} report retains failures`);
+  assert(nonempty(report.scope),`${name} audit scope is required`);
+  for(const key of ['checks','negativeControls']) {
+    assert(Array.isArray(report[key])&&report[key].length>0,`${name} ${key} are required`);
+    const names=new Set();
+    for(const check of report[key]) {
+      assert(nonempty(check?.name)&&!names.has(check.name),`${name} ${key} require unique named results`);
+      assert.equal(check.passed,true,`${name} cannot waive ${check.name}`);
+      names.add(check.name);
+    }
+  }
+  assertFiniteNumbers(report);
+}
+function assertBiomechanicsCoverage(coverage) {
+  assert(coverage&&Number.isFinite(coverage.sampleRateHz)&&coverage.sampleRateHz>=30,'Biomechanics audit requires at least 30 Hz sampling');
+  assert(Number.isSafeInteger(coverage.caseCount)&&coverage.caseCount>=42,'Biomechanics audit cases are incomplete');
+  assert(Number.isSafeInteger(coverage.frameCount)&&coverage.frameCount>=1452,'Biomechanics audit frames are incomplete');
+  for(const [key,expected] of Object.entries({weapons:['spear','sword','pike','greatsword'],bodyBuilds:['lean','regular','strong'],actions:['rest','Guard_Breath','Shield_Brace','Spear_Study']})) {
+    assert(Array.isArray(coverage[key]),`Biomechanics audit requires ${key}`);
+    assert.deepEqual([...coverage[key]].sort(),[...expected].sort(),`Biomechanics audit has incomplete ${key}`);
+  }
+}
+function assertGripCoverage(coverage) {
+  assert(coverage&&Number.isSafeInteger(coverage.frameCount)&&coverage.frameCount>=164,'Grip audit frames are incomplete');
+  for(const [key,expected] of Object.entries({weapons:['spear','sword','pike','greatsword'],bodyBuilds:['lean','regular','strong'],sides:['L','R'],radiiM:[.014,.016]})) {
+    assert(Array.isArray(coverage[key]),`Grip audit requires ${key}`);
+    assert.deepEqual([...coverage[key]].sort(),[...expected].sort(),`Grip audit has incomplete ${key}`);
+  }
+}
+function assertWeaponClearanceCoverage(report) {
+  const c=report.coverage;
+  assert(c&&c.quick===false&&Number.isFinite(c.sampleRateHz)&&c.sampleRateHz>=10,'Weapon clearance requires a full audit at10Hz or higher');
+  for(const [key,expected] of Object.entries({weapons:['spear','sword'],shields:['tower','round','heater'],weaponMaterials:['weapon.metal','weapon.wood'],shieldMaterials:['shield.face','shield.wood','shield.trim'],bodyBuilds:['regular'],actions:['rest','Guard_Breath','Shield_Brace','Spear_Study']})) {
+    assert(Array.isArray(c[key]),`Weapon clearance audit requires ${key}`);
+    assert.deepEqual([...c[key]].sort(),[...expected].sort(),`Weapon clearance audit has incomplete ${key}`);
+  }
+  assert(c.caseCount===24&&Array.isArray(report.cases)&&report.cases.length===24,'Weapon clearance requires all24equipment/action cases');
+  assert(Number.isSafeInteger(c.frameCount)&&c.frameCount>=870,'Weapon clearance requires at least870frames');
+  let frames=0;
+  for(const weaponType of ['spear','sword'])for(const shieldType of ['tower','round','heater'])for(const [action,minimum]of Object.entries({rest:1,Guard_Breath:61,Shield_Brace:41,Spear_Study:42})) {
+    const id=[weaponType,shieldType,action].join('/'),matches=report.cases.filter(row=>row?.id===id);
+    assert(matches.length===1,`Weapon clearance requires unique case ${id}`);
+    const row=matches[0];
+    for(const [key,value]of Object.entries({weaponType,shieldType,action}))assert.equal(row[key],value,`Weapon clearance case ${id} has changed ${key}`);
+    assert(Number.isSafeInteger(row.samples)&&row.samples>=minimum,`Weapon clearance case ${id} has incomplete samples`);frames+=row.samples;
+    assert(row.maximumIntersections===0&&row.intersectingFrames===0&&row.nonfinite===0,`Weapon clearance cannot waive intersection or nonfinite evidence in ${id}`);
+    assert(count(row.weaponTriangles)&&row.weaponTriangles>0&&count(row.shieldTriangles)&&row.shieldTriangles>0,`Weapon clearance case ${id} lacks actual triangles`);
+    assert(Array.isArray(row.examples)&&row.examples.length===0,`Weapon clearance case ${id} retains intersection examples`);
+    assert(report.checks.find(check=>check.name===id+': weapon does not cross shield surfaces')?.passed===true,`Weapon clearance lacks passed check for ${id}`);
+  }
+  assert.equal(frames,c.frameCount,'Weapon clearance frame count differs from sampled cases');
+  const moved=report.negativeControls.find(control=>control.name==='Imported sword hand is moved through the actual shield face');
+  assert(moved?.passed===true&&moved.beforeIntersectionPairs===0&&count(moved.afterIntersectionPairs)&&moved.afterIntersectionPairs>0,'Weapon clearance requires a clean-to-intersecting actual sword control');
+  assert(finiteVector(moved.beforeWristWorld)&&finiteVector(moved.afterWristWorld)&&Math.hypot(...moved.afterWristWorld.map((v,i)=>v-moved.beforeWristWorld[i]))>.05,'Weapon clearance control did not move the imported wrist');
+  assert(Array.isArray(moved.intersections)&&moved.intersections.length>0&&moved.intersections.every(hit=>Array.isArray(hit.pointsWorld)&&hit.pointsWorld.length>0&&hit.pointsWorld.every(finiteVector)),'Weapon clearance control lacks actual intersection points');
+}
+export function makeRelease({html,config,modelBytes,standaloneHtml,modelReport,equipmentReport,geometryReport,geometryReportBytes,geometryAcceptance,geometryAuditSource,loadoutSource,biomechanicsReport,biomechanicsAuditSource,gripReport,gripAuditSource,weaponClearanceReport,weaponClearanceAuditSource,variantReport,appearanceReport,viewerReport,hostedReport,builtAt=new Date().toISOString()}) {
   const document=validateCandidate({html,config,modelBytes});
   assertBaseChecks({modelBytes,standaloneHtml,modelReport,viewerReport});
   assert.equal(equipmentReport?.status,'passed','Equipment and motion verification did not pass');
   assert.equal(equipmentReport?.glbSha256,sha256(modelBytes),'Equipment report belongs to different GLB bytes');
   const geometry=geometryReleaseDecision({geometryReport,geometryReportBytes,geometryAcceptance,geometryAuditSource,modelBytes,loadoutSource});
+  const motionSha256=sha256(loadoutSource),motionDeclaration=`window.PAWN_MOTION_SHA=${JSON.stringify(motionSha256)};`;
+  assert(html.includes(motionDeclaration),'Hosted document belongs to a different motion runtime');
+  assert(Buffer.from(standaloneHtml).toString('utf8').includes(motionDeclaration),'Standalone document belongs to a different motion runtime');
+  assertMotionAudit({name:'Biomechanics',report:biomechanicsReport,auditSource:biomechanicsAuditSource,modelBytes,loadoutSource});
+  assertBiomechanicsCoverage(biomechanicsReport.coverage);
+  assertMotionAudit({name:'Grip',report:gripReport,auditSource:gripAuditSource,modelBytes,loadoutSource});
+  assertGripCoverage(gripReport.coverage);
+  assertMotionAudit({name:'Weapon clearance',report:weaponClearanceReport,auditSource:weaponClearanceAuditSource,modelBytes,loadoutSource});
+  assertWeaponClearanceCoverage(weaponClearanceReport);
   assert.equal(variantReport?.status,'passed','Equipment variants verification did not pass');
   assert.equal(variantReport?.glbSha256,sha256(modelBytes),'Variant report belongs to different GLB bytes');
   assert.equal(variantReport?.documentSha256,sha256(standaloneHtml),'Variant report is stale for this HTML');
@@ -161,5 +232,5 @@ export function makeRelease({html,config,modelBytes,standaloneHtml,modelReport,e
   assert.equal(hostedReport?.glbSha256,config.modelSha256,'Hosted report belongs to a different GLB');
   assert.equal(hostedReport?.tamperedModelRejected,true,'The model integrity failure case was not verified');
   assert(Number.isFinite(Date.parse(builtAt)),'Invalid build date');
-  return {schemaVersion:1,repository:REPOSITORY,sourceBranch:'main',sourceCommit:config.sourceCommit,version:config.version,modelVersion:config.modelVersion,checks:'passed',...geometry,builtAt,document};
+  return {schemaVersion:1,repository:REPOSITORY,sourceBranch:'main',sourceCommit:config.sourceCommit,version:config.version,modelVersion:config.modelVersion,checks:'passed',motionSha256,biomechanicsStatus:'passed',gripStatus:'passed',weaponClearanceStatus:'passed',...geometry,builtAt,document};
 }

@@ -39,6 +39,12 @@ jobs:
       - name: Verify exported equipment and motion
         working-directory: prototypes/white-pawn
         run: npm run verify:equipment
+      - name: Verify anatomical joints and visible grips
+        working-directory: prototypes/white-pawn
+        run: |
+          npm run verify:biomechanics
+          npm run verify:grip
+          npm run verify:weapon-clearance
       - name: Verify current modular geometry and runtime
         working-directory: prototypes/white-pawn
         run: npm run verify:geometry
@@ -71,6 +77,9 @@ jobs:
             prototypes/white-pawn/review/viewer-checks.json
             prototypes/white-pawn/review/equipment-checks.json
             prototypes/white-pawn/review/geometry-checks.json
+            prototypes/white-pawn/review/biomechanics-checks.json
+            prototypes/white-pawn/review/grip-checks.json
+            prototypes/white-pawn/review/weapon-clearance-checks.json
             prototypes/white-pawn/review/appearance-checks.json
             prototypes/white-pawn/review/variant-checks.json
             dist/review/

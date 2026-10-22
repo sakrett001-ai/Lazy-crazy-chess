@@ -11,7 +11,7 @@ const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const stage=$('#stage'),timeInput=$('#timeline'),play=$('#play');
 const hosted=window.PAWN_HOSTED&&typeof window.PAWN_HOSTED==='object'?Object.freeze({...window.PAWN_HOSTED}):null;
 const clean=value=>typeof value==='string'?value.slice(0,160):'';
-const identity={version:clean(hosted?.version)||'0.4.0',modelVersion:clean(hosted?.modelVersion)||'0.3.0',sourceCommit:clean(hosted?.sourceCommit),modelSha256:clean(hosted?.modelSha256).toLowerCase(),modelUrl:clean(hosted?.modelUrl),mode:hosted?'hosted':'standalone'};
+const identity={version:clean(hosted?.version)||'0.4.1',modelVersion:clean(hosted?.modelVersion)||'0.3.0',sourceCommit:clean(hosted?.sourceCommit),modelSha256:clean(hosted?.modelSha256).toLowerCase(),motionSha256:clean(window.PAWN_MOTION_SHA).toLowerCase(),modelUrl:clean(hosted?.modelUrl),mode:hosted?'hosted':'standalone'};
 $('#build-version').textContent=`Стенд ${identity.version} · модель ${identity.modelVersion}${identity.sourceCommit?' · '+identity.sourceCommit.slice(0,8):''}`;
 $('#build-version').title=identity.sourceCommit?`Исходный коммит: ${identity.sourceCommit}`:'Автономная сборка';
 const embeddedPoster=$('#poster').getAttribute('src');

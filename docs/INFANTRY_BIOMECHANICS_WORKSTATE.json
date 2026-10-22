@@ -8,7 +8,10 @@
   "evidence": {
     "greatsword159WristDeviationDeg": 94.6,
     "pike159WristDeviationDeg": 110.4,
-    "oldGripPointErrorM": "less than 0.000001 despite invalid wrist"
+    "oldGripPointErrorM": "less than 0.000001 despite invalid wrist",
+    "currentArmAudit": "42 cases /4362 frames passed before final contact changes",
+    "currentWeaponShieldAudit": "24 cases /870 frames passed before final contact changes",
+    "visualReview": "Top/bottom inspection rejects open distal fingers despite nearest-surface contact; new forearm pose intersects old shield enarmes, fix pending"
   },
   "ownership": {
     "arm": "chess_joint_diagnosis: src/loadout.mjs, src/biomechanics.mjs",
@@ -17,11 +20,14 @@
     "release": "biomechanics_release_gate: release files and review identity",
     "root": "visual inspection, garment audit, integration, publication"
   },
-  "next": "Finish arm and grip code; run independent biomechanical gates before browser screenshots and release",
+  "next": "Close distal fingertips visibly around diagonal handle; refit shield enarmes to new forearm pose; freeze runtime then run release gates and publish",
   "constraints": [
     "Donor repository is read-only",
     "Do not replace or waive new anatomy failures with old garment prototype exception",
     "One local software WebGL browser at a time",
-    "No source/GLB changes have been published for this task yet"
-  ]
+    "Only WIP checkpoint branch published; main and Floot still previous2027392"
+  ],
+  "checkpointCommit": "ce3c337532d0a1be425640956a51ca96bf4ece34",
+  "checkpointBranch": "codex/infantry-biomechanics",
+  "phase": "final contact corrections"
 }

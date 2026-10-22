@@ -41,14 +41,16 @@ export function createArmBiomechanics({model,bones,handReference,update}){
   calibration[side]={upper,lower,wrist,a:e.distanceTo(s),b:w.distanceTo(e),
    upperCorrection:upperFrame.clone().invert().multiply(bindQ(upper)),
    lowerCorrection:lowerFrame.clone().invert().multiply(bindQ(lower)),
-   lowerBindQ:bindQ(lower),lowerSplitBindQ:bindQ('lowerarm02.'+side),wristBindQ:bindQ(wrist),
+   lowerBindQ:bindQ(lower),lowerSplitBindQ:bindQ('lowerarm02.'+side),wristBindQ:bindQ(wrist),neutralDistalLocal:f.clone().applyQuaternion(bindQ(wrist).invert()),
    palmCorrection:frame(axisLocal,forwardLocal).invert(),
    hingeLocal:hinge.clone().applyQuaternion(bindQ(upper).invert()),
    lowerHingeLocal:hinge.clone().applyQuaternion(bindQ(lower).invert()),
    lowerSplitBindLocal:bone('lowerarm02.'+side).quaternion.clone(),last:null};
+  const c=calibration[side];c.neutralCorrection=c.lowerCorrection.clone().multiply(c.lowerBindQ.clone().invert()).multiply(c.wristBindQ);
+  c.inverseNeutralCorrection=c.neutralCorrection.clone().invert();
  }
- function worldQ(name,q){const b=bone(name);b.quaternion.copy(b.parent.getWorldQuaternion(Q()).invert().multiply(q)).normalize();update();}
- function twoBone(s,target,a,b,pole,shaft,side,handForward,handQ){
+ function worldQ(name,q){const b=bone(name);b.quaternion.copy(b.parent.getWorldQuaternion(Q()).invert().multiply(q)).normalize();b.updateWorldMatrix(false,true);}
+ function twoBone(s,target,a,b,pole,shaft,side,handForward,handQ,bodyX,bodyUp){
   const d=target.clone().sub(s),requested=d.length();d.normalize();
   // Operational pose range, deliberately inside a locked elbow and a fully
   // folded elbow. These are animation limits, not clinical ROM claims.
@@ -66,25 +68,24 @@ export function createArmBiomechanics({model,bones,handReference,update}){
    const projection=perpendicular(shaft,d),length=projection.length();
    if(length>1e-6){
     const u=projection.multiplyScalar(1/length),v=d.clone().cross(u).normalize(),preferred=bend.clone();
-    const bodyX=point('upperarm01.L').sub(point('upperarm01.R')).normalize();
-    const bodyUp=point('neck01').sub(point('spine05')).normalize();
+    const c=calibration[side],neutralWristForward=handQ?c.neutralDistalLocal.clone().applyQuaternion(handQ):null;
+    const handToNeutral=handQ?handQ.clone().multiply(c.inverseNeutralCorrection):null;
     const cost=angle=>{
      const candidate=u.clone().multiplyScalar(Math.cos(angle)).addScaledVector(v,Math.sin(angle));
      const elbowDelta=d.clone().multiplyScalar(along).addScaledVector(candidate,height);
      const fore=target.clone().sub(s).sub(elbowDelta).normalize();
-     const wrist=handForward?fore.angleTo(handForward):Math.asin(Math.min(1,Math.abs(fore.dot(shaft))));
+     const wrist=neutralWristForward?fore.angleTo(neutralWristForward):(handForward?fore.angleTo(handForward):Math.asin(Math.min(1,Math.abs(fore.dot(shaft)))));
      const elevation=elbowDelta.dot(bodyUp),inward=elbowDelta.dot(bodyX)*(side==='R'?1:-1);
      let twistCost=0;
-     if(handQ){const c=calibration[side],hinge=elbowDelta.clone().normalize().cross(fore).normalize();
-      const neutral=frame(hinge,fore).multiply(c.lowerCorrection).multiply(c.lowerBindQ.clone().invert()).multiply(c.wristBindQ);
-      const twist=signedTwist(handQ.clone().multiply(neutral.invert()),fore);
+     if(handToNeutral){const hinge=elbowDelta.clone().normalize().cross(fore).normalize();
+      const twist=signedTwist(handToNeutral.clone().multiply(frame(hinge,fore).invert()),fore);
       twistCost=40*Math.max(0,Math.abs(twist)-Math.PI*.46)**2;
      }
      return .15*wrist*wrist+6*Math.max(0,wrist-.40)**2 + 500*Math.max(0,elevation+.08)**2 + 300*Math.max(0,inward+.005)**2 + .05*(1-candidate.dot(preferred))+twistCost;
     };
-    let best=0,bestCost=Infinity;const step=2*Math.PI/48;
-    for(let i=0;i<48;i++){const angle=i*step,c=cost(angle);if(c<bestCost){best=angle;bestCost=c;}}
-    let radius=step;for(let i=0;i<9;i++){const lo=best-radius/2,hi=best+radius/2,lc=cost(lo),hc=cost(hi);if(lc<bestCost){best=lo;bestCost=lc;}if(hc<bestCost){best=hi;bestCost=hc;}radius*=.5;}
+    let best=0,bestCost=Infinity;const step=2*Math.PI/24;
+    for(let i=0;i<24;i++){const angle=i*step,c=cost(angle);if(c<bestCost){best=angle;bestCost=c;}}
+    let radius=step;for(let i=0;i<8;i++){const lo=best-radius/2,hi=best+radius/2,lc=cost(lo),hc=cost(hi);if(lc<bestCost){best=lo;bestCost=lc;}if(hc<bestCost){best=hi;bestCost=hc;}radius*=.5;}
     bend=u.multiplyScalar(Math.cos(best)).addScaledVector(v,Math.sin(best));score=bestCost;
    }
   }
@@ -99,7 +100,7 @@ export function createArmBiomechanics({model,bones,handReference,update}){
   // roll. A residual wrist swing remains visible and is audited separately.
   const lowerQ=bone(c.lower).getWorldQuaternion(Q()),neutral=lowerQ.clone().multiply(c.lowerBindQ.clone().invert()).multiply(c.wristBindQ);
   const twist=THREE.MathUtils.clamp(signedTwist(handQ.clone().multiply(neutral.clone().invert()),f),-Math.PI*.48,Math.PI*.48);
-  const split=bone('lowerarm02.'+side);split.quaternion.copy(c.lowerSplitBindLocal);update();
+  const split=bone('lowerarm02.'+side);split.quaternion.copy(c.lowerSplitBindLocal);split.updateWorldMatrix(false,true);
   worldQ(split.name,Q().setFromAxisAngle(f,twist).multiply(split.getWorldQuaternion(Q())));
   worldQ(c.wrist,handQ);
   return twist;
@@ -109,19 +110,20 @@ export function createArmBiomechanics({model,bones,handReference,update}){
   let u=perpendicular(point('neck01').sub(point('spine05')).negate(),shaft).normalize();
   if(u.lengthSq()<.1)u=perpendicular(new THREE.Vector3(0,0,1),shaft).normalize();
   const v=shaft.clone().cross(u).normalize();
+  const correction=toolAxisLocal?frame(toolAxisLocal,reference.forwardLocal).invert():c.palmCorrection;
+  const bodyX=point('upperarm01.L').sub(point('upperarm01.R')).normalize(),bodyUp=point('neck01').sub(point('spine05')).normalize();
   // Solve palm roll and elbow plane together. A sequential fixed-point solve
   // can oscillate between opposite sides of a short, folded arm; evaluating
   // the bounded circle is deterministic under arbitrary seeking.
   const candidate=angle=>{
    const distal=u.clone().multiplyScalar(Math.cos(angle)).addScaledVector(v,Math.sin(angle));
-   const correction=toolAxisLocal?frame(toolAxisLocal,reference.forwardLocal).invert():c.palmCorrection;
    const handQ=frame(shaft,distal).multiply(correction),target=grip.clone().sub(reference.gripLocal.clone().applyQuaternion(handQ));
    const handForward=reference.forwardLocal.clone().applyQuaternion(handQ);
-   const result=twoBone(s,target,c.a,c.b,pole,shaft,side,handForward,handQ);
+   const result=twoBone(s,target,c.a,c.b,pole,shaft,side,handForward,handQ,bodyX,bodyUp);
    return{...result,handQ};
   };
-  let bestAngle=0,result=null;const step=2*Math.PI/32;
-  for(let i=0;i<32;i++){const angle=i*step,next=candidate(angle);if(!result||next.score<result.score){result=next;bestAngle=angle;}}
+  let bestAngle=0,result=null;const step=2*Math.PI/16;
+  for(let i=0;i<16;i++){const angle=i*step,next=candidate(angle);if(!result||next.score<result.score){result=next;bestAngle=angle;}}
   let radius=step;for(let i=0;i<8;i++){for(const angle of [bestAngle-radius/2,bestAngle+radius/2]){const next=candidate(angle);if(next.score<result.score){result=next;bestAngle=angle;}}radius*=.5;}
   const twist=setLinks(side,result.elbow,result.wrist,result.handQ);
   c.last={target:grip.clone(),axis:shaft,forearmTwistDeg:THREE.MathUtils.radToDeg(twist),reachErrorM:result.reachErrorM};
