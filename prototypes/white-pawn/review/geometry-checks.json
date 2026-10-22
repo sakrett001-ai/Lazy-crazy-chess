@@ -1,6 +1,6 @@
 {
   "status": "failed",
-  "glbSha256": "69c5ce23b3885c38359a6a6389084589e38aacfd256cb9b1952c87b7f1f1ceaa",
+  "glbSha256": "52f52e1c1ae832d1a61e1dac9e83dd39ff961fde1a9c402dec8a4a8f6dfce4e6",
   "runtimeSha256": "e6874ec732c839dac84500c50e7b469ec33d821f8605faaa4f3019074cda0c25",
   "auditSha256": "218f93a234b39ff536b269c9e46589f3e68dca5e71e5da13a28aabda44a47f86",
   "limits": {
@@ -119,7 +119,7 @@
       "bodyBuild": "lean",
       "layers": [
         {
-          "probes": 220,
+          "probes": 227,
           "minTrackedGapM": 0.004324321952713284,
           "worstTrackedPatch": {
             "layer": "padding/mail",
@@ -496,7 +496,7 @@
       "bodyBuild": "lean",
       "layers": [
         {
-          "probes": 220,
+          "probes": 227,
           "minTrackedGapM": -0.005033650004390356,
           "worstTrackedPatch": {
             "layer": "padding/mail",
@@ -860,7 +860,7 @@
       "bodyBuild": "lean",
       "layers": [
         {
-          "probes": 220,
+          "probes": 227,
           "minTrackedGapM": -0.005556583459395358,
           "worstTrackedPatch": {
             "layer": "padding/mail",
@@ -1529,7 +1529,7 @@
       "bodyBuild": "regular",
       "layers": [
         {
-          "probes": 220,
+          "probes": 227,
           "minTrackedGapM": 0.0022843454127826346,
           "worstTrackedPatch": {
             "layer": "padding/mail",
@@ -1756,7 +1756,7 @@
       "bodyBuild": "regular",
       "layers": [
         {
-          "probes": 220,
+          "probes": 227,
           "minTrackedGapM": -0.004352754961708057,
           "worstTrackedPatch": {
             "layer": "padding/mail",
@@ -2168,7 +2168,7 @@
       "bodyBuild": "regular",
       "layers": [
         {
-          "probes": 220,
+          "probes": 227,
           "minTrackedGapM": -0.0053408865683309695,
           "worstTrackedPatch": {
             "layer": "padding/mail",
@@ -2940,7 +2940,7 @@
       "bodyBuild": "strong",
       "layers": [
         {
-          "probes": 220,
+          "probes": 227,
           "minTrackedGapM": -0.003307108781078754,
           "worstTrackedPatch": {
             "layer": "padding/mail",
@@ -3238,7 +3238,7 @@
       "bodyBuild": "strong",
       "layers": [
         {
-          "probes": 220,
+          "probes": 227,
           "minTrackedGapM": -0.0035916159879310432,
           "worstTrackedPatch": {
             "layer": "padding/mail",
@@ -3789,7 +3789,7 @@
       "bodyBuild": "strong",
       "layers": [
         {
-          "probes": 220,
+          "probes": 227,
           "minTrackedGapM": -0.005033350310721834,
           "worstTrackedPatch": {
             "layer": "padding/mail",
@@ -5223,13 +5223,13 @@
     {
       "name": "mail: local bind patch coverage",
       "passed": true,
-      "count": 220,
+      "count": 227,
       "regions": {
         "torso": 47,
         "armL": 47,
         "armR": 47,
-        "hipL": 39,
-        "hipR": 40
+        "hipL": 42,
+        "hipR": 44
       }
     },
     {
@@ -5361,7 +5361,7 @@
     {
       "name": "lean/mail-brace: sampled garment triangles do not intersect",
       "passed": false,
-      "probes": 220,
+      "probes": 227,
       "invalidSourcePatches": 0,
       "outerValidation": {
         "nonfiniteTriangles": 0,
@@ -5463,7 +5463,7 @@
     {
       "name": "lean/mail-sword: sampled garment triangles do not intersect",
       "passed": false,
-      "probes": 220,
+      "probes": 227,
       "invalidSourcePatches": 0,
       "outerValidation": {
         "nonfiniteTriangles": 0,
@@ -5624,7 +5624,7 @@
     {
       "name": "lean/mail-pike: sampled garment triangles do not intersect",
       "passed": false,
-      "probes": 220,
+      "probes": 227,
       "invalidSourcePatches": 0,
       "outerValidation": {
         "nonfiniteTriangles": 0,
@@ -5952,7 +5952,7 @@
     {
       "name": "regular/mail-brace: sampled garment triangles do not intersect",
       "passed": false,
-      "probes": 220,
+      "probes": 227,
       "invalidSourcePatches": 0,
       "outerValidation": {
         "nonfiniteTriangles": 0,
@@ -6054,7 +6054,7 @@
     {
       "name": "regular/mail-sword: sampled garment triangles do not intersect",
       "passed": false,
-      "probes": 220,
+      "probes": 227,
       "invalidSourcePatches": 0,
       "outerValidation": {
         "nonfiniteTriangles": 0,
@@ -6215,7 +6215,7 @@
     {
       "name": "regular/mail-pike: sampled garment triangles do not intersect",
       "passed": false,
-      "probes": 220,
+      "probes": 227,
       "invalidSourcePatches": 0,
       "outerValidation": {
         "nonfiniteTriangles": 0,
@@ -6543,7 +6543,7 @@
     {
       "name": "strong/mail-brace: sampled garment triangles do not intersect",
       "passed": false,
-      "probes": 220,
+      "probes": 227,
       "invalidSourcePatches": 0,
       "outerValidation": {
         "nonfiniteTriangles": 0,
@@ -6645,7 +6645,7 @@
     {
       "name": "strong/mail-sword: sampled garment triangles do not intersect",
       "passed": false,
-      "probes": 220,
+      "probes": 227,
       "invalidSourcePatches": 0,
       "outerValidation": {
         "nonfiniteTriangles": 0,
@@ -6806,7 +6806,7 @@
     {
       "name": "strong/mail-pike: sampled garment triangles do not intersect",
       "passed": false,
-      "probes": 220,
+      "probes": 227,
       "invalidSourcePatches": 0,
       "outerValidation": {
         "nonfiniteTriangles": 0,
@@ -7156,7 +7156,7 @@
     {
       "layer": "padding/mail",
       "region": "hipR",
-      "unpairedAttemptedPatches": 8,
+      "unpairedAttemptedPatches": 4,
       "reason": "No interior facing same-anatomy wall patch within45mm; includes region seams, joint-weight differences, holes and hems. No clearance conclusion for this patch."
     },
     {
@@ -7168,7 +7168,7 @@
     {
       "layer": "padding/mail",
       "region": "hipL",
-      "unpairedAttemptedPatches": 9,
+      "unpairedAttemptedPatches": 6,
       "reason": "No interior facing same-anatomy wall patch within45mm; includes region seams, joint-weight differences, holes and hems. No clearance conclusion for this patch."
     },
     {
@@ -7238,28 +7238,28 @@
       },
       "outerGarment": {
         "outside-height-domain": {
-          "faces": 4502,
-          "areaM2": 0.5084283178825548
+          "faces": 5192,
+          "areaM2": 0.5321409014781442
         },
         "outward-wall": {
-          "faces": 15104,
-          "areaM2": 0.818197206560525
+          "faces": 15808,
+          "areaM2": 0.8434535647901513
         },
         "ambiguous-or-unrecognized-anatomical-weights": {
           "faces": 464,
           "areaM2": 0.028525358887902415
         },
         "axial-hem-or-steep-fold": {
-          "faces": 592,
-          "areaM2": 0.015116987765650994
+          "faces": 652,
+          "areaM2": 0.015706268477285724
         },
         "inward-wall": {
-          "faces": 15246,
-          "areaM2": 0.7938059828853824
+          "faces": 16010,
+          "areaM2": 0.8202399175733864
         },
         "tangential-wall": {
-          "faces": 466,
-          "areaM2": 0.02639593880465267
+          "faces": 488,
+          "areaM2": 0.026901613436990993
         },
         "outside-region-height-domain": {
           "faces": 3834,

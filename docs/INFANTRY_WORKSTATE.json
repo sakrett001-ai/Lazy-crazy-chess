@@ -1,24 +1,25 @@
 {
   "goal": "Rebuild and publish modular infantry equipment and independent appearance",
-  "status": "in_progress",
-  "phase": "Final rear overlap panel; browser acceptance pending",
+  "status": "source_verified",
+  "phase": "Source verification complete; publication identity is recorded by gh-pages/chess-release.json and the Floot version line",
   "baselineSource": "168ac90f50913c020037abe826b08e13ba2910e9",
   "targetViewer": "0.4.0",
   "targetModel": "0.3.0",
+  "glbSha256": "52f52e1c1ae832d1a61e1dac9e83dd39ff961fde1a9c402dec8a4a8f6dfce4e6",
+  "standaloneHtmlSha256": "3df1f742eafd22218fecebe06d3901ab266642f709075fbce065f8fcce9c6667",
   "completed": [
-    "Recovered baseline and saved source checkpoints",
-    "Customization schema and legacy migration",
-    "Viewer integration and release identity gates",
-    "Modular equipment and normal-mapped surfaces implemented",
-    "Baseline candidate model and equipment checks passed; final repaired bytes require fresh checks"
+    "Modular plate, mail and padding; tower, round, heater and no-shield variants; four weapons",
+    "Independent body, experience and appearance customization with profile migration",
+    "Rear mail overlap coverage and localized static clipping repairs",
+    "Model and equipment checks passed on exact final GLB",
+    "Variants, appearance and viewer browser suites passed on exact GLB and HTML",
+    "57 release validation tests passed",
+    "Known motion intersections preserved in failed audit and explicit prototype acceptance"
   ],
-  "pending": [
-    "Final rear overlap panel preserving rear coverage",
-    "Fresh exact-byte model, geometry and browser acceptance for repaired asset",
-    "Review any remaining motion intersections explicitly without changing failed audit status",
-    "Publish verified main and gh-pages release",
-    "Floot version and SHA readback"
+  "remainingProductWork": [
+    "Motion collision handling and full finger closure",
+    "Cosmetic rear belt/slit cleanup and face refinement",
+    "Baked additional weapon clips, paired combat, board-scale optimization"
   ],
-  "nextAction": "Replace the open rear vent with an overlapping padded panel, rebuild the frozen candidate, then rerun exact-byte model/geometry/browser checks before publication",
-  "warning": "Candidate checkpoint only. The saved 69c5ce23 geometry report and acceptance record describe the previous candidate, not the pending rear overlap repair. Current binary assets in this branch may belong to an older checkpoint. No report or acceptance can be reused after its bound GLB/runtime/report bytes change; no publication is claimed."
+  "publicationNote": "Hosted verification and publication use this source checkpoint. The gh-pages manifest and live Floot readback are authoritative for deployment; source checks alone do not claim it."
 }

@@ -1,9 +1,9 @@
 {
-  "date": "2026-10-22T21:27:58.633Z",
-  "status": "failed",
+  "date": "2026-10-22T21:59:24.702Z",
+  "status": "passed",
   "browser": "141.0.7390.37",
-  "glbSha256": "8c1743e3c9881f3be30089e56d70138adbe604ebf6a7729fce02b25bf1d7d707",
-  "documentSha256": "2819427e7e93b59283270e47d08eb4ed20a4b6baa7db1e95a3df1d1301509119",
+  "glbSha256": "52f52e1c1ae832d1a61e1dac9e83dd39ff961fde1a9c402dec8a4a8f6dfce4e6",
+  "documentSha256": "3df1f742eafd22218fecebe06d3901ab266642f709075fbce065f8fcce9c6667",
   "tests": [
     "Three genuinely different shields; independent plate/mail/padding geometry; visible textured mail and quilting; actual physique displacement and independent experience",
     "Four visible weapon geometries, deterministic reverse seek and planted feet; twohand weapons suppress shield and brace; singlehand restores choice; invalid review is atomic"
@@ -294,7 +294,7 @@
           "slot": "plate",
           "variant": "plate",
           "vertices": 14448,
-          "checksum": 143.99748015511395,
+          "checksum": 144.06300018247765,
           "materials": [
             {
               "slot": "armor.main",
@@ -318,7 +318,7 @@
           "slot": "plate",
           "variant": "plate",
           "vertices": 13708,
-          "checksum": 158.88743840478284,
+          "checksum": 158.9497184568263,
           "materials": [
             {
               "slot": "armor.trim",
@@ -591,7 +591,7 @@
         "fps": null,
         "display": "surface",
         "renderCalls": 23,
-        "triangles": 189076,
+        "triangles": 191148,
         "bones": 163,
         "clips": [
           {
@@ -800,8 +800,8 @@
           "name": "CLOTH_Underarm_and_leggings001",
           "slot": "mail",
           "variant": "mail",
-          "vertices": 22962,
-          "checksum": 305.8812041147405,
+          "vertices": 23942,
+          "checksum": 313.93010886380193,
           "materials": [
             {
               "slot": "mail",
@@ -1314,7 +1314,7 @@
           "slot": "plate",
           "variant": "plate",
           "vertices": 14448,
-          "checksum": 143.99748015511395,
+          "checksum": 144.06300018247765,
           "materials": [
             {
               "slot": "armor.main",
@@ -1338,7 +1338,7 @@
           "slot": "plate",
           "variant": "plate",
           "vertices": 13708,
-          "checksum": 158.88743840478284,
+          "checksum": 158.9497184568263,
           "materials": [
             {
               "slot": "armor.trim",
@@ -1892,7 +1892,7 @@
           "slot": "plate",
           "variant": "plate",
           "vertices": 14448,
-          "checksum": 143.99748015511395,
+          "checksum": 144.06300018247765,
           "materials": [
             {
               "slot": "armor.main",
@@ -1916,7 +1916,7 @@
           "slot": "plate",
           "variant": "plate",
           "vertices": 13708,
-          "checksum": 158.88743840478284,
+          "checksum": 158.9497184568263,
           "materials": [
             {
               "slot": "armor.trim",
@@ -2452,7 +2452,7 @@
           "slot": "plate",
           "variant": "plate",
           "vertices": 14448,
-          "checksum": 143.99748015511395,
+          "checksum": 144.06300018247765,
           "materials": [
             {
               "slot": "armor.main",
@@ -2476,7 +2476,7 @@
           "slot": "plate",
           "variant": "plate",
           "vertices": 13708,
-          "checksum": 158.88743840478284,
+          "checksum": 158.9497184568263,
           "materials": [
             {
               "slot": "armor.trim",
@@ -2922,7 +2922,7 @@
           "slot": "plate",
           "variant": "plate",
           "vertices": 14448,
-          "checksum": 143.99748015511395,
+          "checksum": 144.06300018247765,
           "materials": [
             {
               "slot": "armor.main",
@@ -2946,7 +2946,7 @@
           "slot": "plate",
           "variant": "plate",
           "vertices": 13708,
-          "checksum": 158.88743840478284,
+          "checksum": 158.9497184568263,
           "materials": [
             {
               "slot": "armor.trim",
@@ -3112,7 +3112,7 @@
   "network": [],
   "morphology": {
     "meshes": 10,
-    "maxDelta": 0.051390910188645
+    "maxDelta": 0.04498396727516039
   },
-  "failure": "Expected values to be strictly equal:\n+ actual - expected\n\n+ '3c5bb2a7391ccb40aeb83ad16e0d01b812d57f57db2e31cfba48091b4c566d3f'\n- '8c1743e3c9881f3be30089e56d70138adbe604ebf6a7729fce02b25bf1d7d707'\n"
+  "scope": "Actual visible equipment meshes and PBR/UV assignment, sampled morphed vertex displacement, deterministic sampled poses and foot support, review/profile compatibility, 390px software browser. Full collision freedom and real-phone performance are not asserted."
 }

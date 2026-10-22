@@ -1,6 +1,6 @@
 {
   "status": "passed",
-  "glbSha256": "69c5ce23b3885c38359a6a6389084589e38aacfd256cb9b1952c87b7f1f1ceaa",
+  "glbSha256": "52f52e1c1ae832d1a61e1dac9e83dd39ff961fde1a9c402dec8a4a8f6dfce4e6",
   "glbPath": "/workspace/scratch/c3dfd1aa64e3/Lazy-crazy-chess/prototypes/white-pawn/assets/white-pawn.glb",
   "limits": {
     "footDriftM": 0.006,

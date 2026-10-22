@@ -1,16 +1,18 @@
 {
-  "date": "2026-10-21T20:21:17.184Z",
+  "date": "2026-10-22T22:06:18.060Z",
   "browser": "141.0.7390.37",
-  "glbSha256": "521c0a51e9f4440c897a079934e876fa153cd3789fad28c43b7d444154d6f036",
-  "documentSha256": "d5f1ac74c63d701f18d7b8e59402df11d67951c1b81b147a9fa52cdae6895555",
+  "glbSha256": "52f52e1c1ae832d1a61e1dac9e83dd39ff961fde1a9c402dec8a4a8f6dfce4e6",
+  "documentSha256": "3df1f742eafd22218fecebe06d3901ab266642f709075fbce065f8fcce9c6667",
   "tests": [
     "Default armor is metallic steel; shield face remains white dielectric; appearance panel starts collapsed",
+    "Material-only finish/paint changes preserve a user-adjusted camera position, target and zoom",
     "Armor, shield face, shield stripe, spear wood and spear metal controls change only their own material slots; crest, backing, leather and body remain unchanged",
     "Appearance and actual shader material values survive a page reload",
     "UI JSON export/import preserves all appearance fields and materials; Reset restores the default steel/white configuration",
+    "Old schema1 JSON and the existing storage key migrate to schema2 while preserving finishes and applying default loadout/body settings",
     "Malformed, incompatible, invalid-enum and oversized JSON imports leave current appearance intact; invalid partial API update is atomic",
     "Review records capture and restore appearance together with pose/time; old records without appearance restore documented defaults",
-    "Base GLB download remains byte-identical to the verified artifact after customization; the UI labels it as the base model and JSON uses a separate filename",
+    "Catalog GLB download remains byte-identical after customization; UI explains the complete catalog and browser-only new weapon poses; selected loadout uses a separate JSON",
     "390 px layout has no horizontal overflow; customization controls have labels and usable touch targets",
     "Corrupt browser storage falls back to defaults with feedback; unavailable storage still allows editing and JSON export with an explicit persistence warning"
   ],
@@ -57,36 +59,24 @@
       {
         "color": [
           0.5,
-          0.57,
-          0.62
+          0.5699999928474426,
+          0.6200000047683716
         ],
         "srgb": "bcc7ce",
         "metalness": 1,
-        "roughness": 0.27
-      }
-    ],
-    "shield.leather": [
-      {
-        "color": [
-          0.075,
-          0.055,
-          0.038
-        ],
-        "srgb": "4d4237",
-        "metalness": 0,
-        "roughness": 0.8
+        "roughness": 0.27000001072883606
       }
     ],
     "shield.wood": [
       {
         "color": [
-          0.24,
-          0.135,
-          0.061
+          0.23999999463558197,
+          0.13500000536441803,
+          0.061000000685453415
         ],
         "srgb": "866746",
         "metalness": 0,
-        "roughness": 0.62
+        "roughness": 0.6200000047683716
       }
     ],
     "shield.emblem": [
@@ -101,40 +91,16 @@
         "roughness": 0.31
       }
     ],
-    "weapon.wood": [
+    "shield.leather": [
       {
         "color": [
-          0.24,
-          0.135,
-          0.061
-        ],
-        "srgb": "866746",
-        "metalness": 0,
-        "roughness": 0.62
-      }
-    ],
-    "weapon.grip": [
-      {
-        "color": [
-          0.075,
-          0.055,
-          0.038
+          0.07500000298023224,
+          0.054999999701976776,
+          0.03799999877810478
         ],
         "srgb": "4d4237",
         "metalness": 0,
-        "roughness": 0.8
-      }
-    ],
-    "weapon.binding": [
-      {
-        "color": [
-          0.018,
-          0.022,
-          0.026
-        ],
-        "srgb": "24292d",
-        "metalness": 0.1,
-        "roughness": 0.65
+        "roughness": 0.800000011920929
       }
     ],
     "weapon.metal": [
@@ -148,12 +114,49 @@
         "metalness": 1,
         "roughness": 0.27
       }
+    ],
+    "weapon.grip": [
+      {
+        "color": [
+          0.07500000298023224,
+          0.054999999701976776,
+          0.03799999877810478
+        ],
+        "srgb": "4d4237",
+        "metalness": 0,
+        "roughness": 0.800000011920929
+      }
+    ],
+    "weapon.binding": [
+      {
+        "color": [
+          0.017999999225139618,
+          0.02199999988079071,
+          0.026000000536441803
+        ],
+        "srgb": "24292d",
+        "metalness": 0.10000000149011612,
+        "roughness": 0.6499999761581421
+      }
+    ],
+    "weapon.wood": [
+      {
+        "color": [
+          0.24,
+          0.135,
+          0.061
+        ],
+        "srgb": "866746",
+        "metalness": 0,
+        "roughness": 0.62
+      }
     ]
   },
   "armorChangedSlots": [
     "armor.main",
-    "armor.trim"
+    "armor.trim",
+    "mail"
   ],
   "status": "passed",
-  "scope": "Appearance material isolation, persistence, profile validation, review reproducibility and mobile controls in software Chromium. No real-device performance or equipment-geometry replacement claim."
+  "scope": "Appearance material isolation, persistence, profile validation, review reproducibility and mobile controls in software Chromium. Includes schema1 migration and independent equipment/body/experience persistence; no real-device performance claim."
 }

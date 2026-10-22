@@ -1,5 +1,5 @@
 {
-  "glbSha256": "69c5ce23b3885c38359a6a6389084589e38aacfd256cb9b1952c87b7f1f1ceaa",
+  "glbSha256": "52f52e1c1ae832d1a61e1dac9e83dd39ff961fde1a9c402dec8a4a8f6dfce4e6",
   "scope": "Localized exact recheck of six previously proven static-defect padding triangles in regular rest, independent of whether bind matching still selects them. Does not extend the primary18-case gate or assert other surfaces are clear.",
   "diagnostics": [
     {
@@ -72,13 +72,13 @@
       ],
       "intersections": [],
       "nearestPaddingCenterToSurface": {
-        "distanceM": 0.038995341717433483,
+        "distanceM": 0.034726345071782655,
         "mesh": "CLOTH_Underarm_and_leggings001",
-        "triangle": 39099,
+        "triangle": 41926,
         "pointWorld": [
-          -0.03135818054649916,
-          0.8607342530854385,
-          -0.11749529432678107
+          -0.01921602066822202,
+          0.8402702164803014,
+          -0.11223619645272197
         ]
       }
     },
@@ -112,13 +112,13 @@
       ],
       "intersections": [],
       "nearestPaddingCenterToSurface": {
-        "distanceM": 0.04847403327576271,
+        "distanceM": 0.04407209334908508,
         "mesh": "CLOTH_Underarm_and_leggings001",
-        "triangle": 39113,
+        "triangle": 42055,
         "pointWorld": [
-          -0.04264186729780226,
-          0.803285397993402,
-          -0.07219517319712815
+          -0.01760733984399312,
+          0.8199826641124702,
+          -0.10082088639987918
         ]
       }
     },
@@ -152,13 +152,13 @@
       ],
       "intersections": [],
       "nearestPaddingCenterToSurface": {
-        "distanceM": 0.042706507487524845,
+        "distanceM": 0.03840096127594663,
         "mesh": "CLOTH_Underarm_and_leggings001",
-        "triangle": 39512,
+        "triangle": 42075,
         "pointWorld": [
-          0.03197313898553693,
-          0.8553270674215954,
-          -0.11371696187174193
+          0.017678917602991666,
+          0.8320149090365818,
+          -0.10789732714642039
         ]
       }
     },

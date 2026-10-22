@@ -7,6 +7,7 @@ The original three authored clips remain; new weapon choreography is runtime IK.
 from pathlib import Path
 import bpy, bmesh, math, json, hashlib, struct, subprocess, sys, time, shutil
 from mathutils import Vector
+from mathutils.bvhtree import BVHTree
 
 ROOT=Path(__file__).resolve().parents[1]
 REPO=ROOT.parents[1]
@@ -206,6 +207,45 @@ def outside_rear_vent(c):
 mail_skirt=subset(skirt,'MAIL_Split skirt',outside_rear_vent,mail,.014)
 for mod in mail_skirt.modifiers:
  if mod.type=='SOLIDIFY':mod.thickness=.0035;mod.offset=-1
+# Cover the rear seat with one exterior panel, independent of the medial-thigh
+# surfaces removed above. Sample the actual padded envelope in bind space and
+# bridge its central crease with a shallow curved overlap, not a crotch offset.
+saved_armatures=[];surface_vertices=[];surface_faces=[]
+for source in (under,skirt):
+ for mod in source.modifiers:
+  if mod.type=='ARMATURE':saved_armatures.append((mod,mod.show_viewport));mod.show_viewport=False
+bpy.context.view_layer.update();deps=bpy.context.evaluated_depsgraph_get()
+for source in (under,skirt):
+ evaluated=source.evaluated_get(deps);surface=evaluated.to_mesh();start=len(surface_vertices)
+ surface_vertices.extend(evaluated.matrix_world@v.co for v in surface.vertices)
+ surface_faces.extend([start+i for i in face.vertices] for face in surface.polygons)
+ evaluated.to_mesh_clear()
+for mod,enabled in saved_armatures:mod.show_viewport=enabled
+bpy.context.view_layer.update()
+padded_envelope=BVHTree.FromPolygons(surface_vertices,surface_faces)
+rear_vertices=[];rear_faces=[];columns=17;rows=9
+for row in range(rows):
+ t=row/(rows-1);z=1.025-.205*t;half_width=.09-.01*t
+ xs=[-half_width+2*half_width*j/(columns-1) for j in range(columns)]
+ hits=[padded_envelope.ray_cast(Vector((x,.5,z)),Vector((0,-1,0)),1)[0] for x in xs]
+ actual=[hit.y for hit in hits if hit is not None];assert actual,('No rear-seat padding surface',z)
+ peak=max(actual)
+ for x,hit in zip(xs,hits):
+  curved=peak-.018*(x/half_width)**2
+  y=max(hit.y if hit is not None else curved,curved)+.018
+  rear_vertices.append((x,y,z))
+for row in range(rows-1):
+ for j in range(columns-1):
+  a=row*columns+j;rear_faces.append((a,a+1,a+columns+1,a+columns))
+rear_panel=mesh('MAIL_Rear seat overlap',rear_vertices,rear_faces,mail)
+left=rear_panel.vertex_groups.new(name='pelvis.L');right=rear_panel.vertex_groups.new(name='pelvis.R')
+for vertex in rear_panel.data.vertices:
+ t=max(0.,min(1.,(vertex.co.x+.10)/.20));weight=t*t*(3-2*t)
+ left.add([vertex.index],weight,'REPLACE');right.add([vertex.index],1-weight,'REPLACE')
+mod=rear_panel.modifiers.new('Pelvis blend','ARMATURE');mod.object=rig;rear_panel.parent=rig
+mod=rear_panel.modifiers.new('Rear panel smoothing','SUBSURF');mod.levels=1;mod.render_levels=1
+mod=rear_panel.modifiers.new('Mail panel thickness','SOLIDIFY');mod.thickness=.0035;mod.offset=-1
+physical_uv(rear_panel)
 # A full leather girdle lies outside mail; the existing underlying belt is hidden
 # by the outer one when mail is enabled.
 mail_belt=duplicate(bpy.data.objects['CLOTH_Waist belt'],'MAIL_Outer belt')
@@ -375,13 +415,16 @@ def configure_render(kind='plate',build='regular',experience='recruit'):
    for k in ob.data.shape_keys.key_blocks:
     if k.name!='Basis':k.value=1 if k.name==build or k.name==experience else 0
 
-def render(name,kind='plate',build='regular'):
+def render(name,kind='plate',build='regular',view='front'):
  configure_render(kind,build);scene.render.resolution_x=720;scene.render.resolution_y=900;scene.cycles.samples=16
  if kind!='plate':
   for ob in merged:
    if ob['equipmentSlot'] in ('weapon','shield','helmet'):ob.hide_render=True
    if ob['equipmentSlot']=='hair':ob.hide_render=False
   cam=scene.camera;cam.location=(2.7,-5,2.3);cam.rotation_euler=(Vector((0,0,.98))-cam.location).to_track_quat('-Z','Y').to_euler();cam.data.ortho_scale=2.12
+  if view!='front':
+   target=Vector((0,.06,.89 if view=='seat' else .98))
+   cam.location=(0,5,.94 if view=='seat' else 2.1);cam.rotation_euler=(target-cam.location).to_track_quat('-Z','Y').to_euler();cam.data.ortho_scale=.52 if view=='seat' else 2.12
  temporary=Path('/tmp')/('infantry-'+name)
  scene.render.filepath=str(temporary);bpy.ops.render.render(write_still=True)
  data=temporary.read_bytes();assert data[-12:]==b'\x00\x00\x00\x00IEND\xaeB`\x82', 'Incomplete PNG: '+name
@@ -413,5 +456,6 @@ info.update(version='0.3.0',glb_sha256=hashlib.sha256(raw).hexdigest(),source_co
 (OUT/'model-info.json').write_text(json.dumps(info,indent=2,default=list)+'\n')
 report={'status':'built','glbSha256':info['glb_sha256'],'bytes':len(raw),'meshes':len(doc['meshes']),'groups':[{k:ob[k] for k in ('equipmentSlot','equipmentVariant','defaultVisible')} for ob in merged],'sourceCommit':SOURCE}
 (REVIEW/'modular-asset-build.json').write_text(json.dumps(report,indent=2)+'\n');print('MODULAR_GLB_READY',json.dumps(report),flush=True)
-render('neutral.png');render('modular-mail.png','mail');render('modular-padded.png','padded')
+if '--mail-review-only' not in sys.argv:render('neutral.png');render('modular-padded.png','padded')
+render('modular-mail.png','mail');render('modular-mail-back.png','mail',view='back');render('modular-mail-seat.png','mail',view='seat')
 print('MODULAR_ASSET_READY',json.dumps(report),flush=True)
