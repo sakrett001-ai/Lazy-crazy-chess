@@ -1,8 +1,10 @@
 import * as THREE from 'three';
+import {createArmBiomechanics} from './biomechanics.mjs';
+import {createGrip} from './grip.mjs';
 
 // Equipment and body shape are independent of material colours. The authored
-// clips continue to drive the planted stance; only the two-handed arm chains
-// are solved here after the viewer restores and samples that clip.
+// clips continue to drive the planted stance. Weapon arms are reconstructed
+// in anatomical frames after sampling, for one- and two-handed equipment.
 const normalize=value=>String(value||'').replace(/[._\-\s]/g,'').toLowerCase();
 const V=values=>new THREE.Vector3().fromArray(values);
 const twoHanded=new Set(['pike','greatsword']);
@@ -64,7 +66,32 @@ export function createLoadout({model,bones={}}){
   return[side,{gripLocal:wrist.worldToLocal(grip.clone()),quaternion:wrist.getWorldQuaternion(new THREE.Quaternion()),axis:frame?.axis||new THREE.Vector3(0,1,0)}];
  }));
  const feet=Object.fromEntries(['L','R'].map(side=>[side,bone('foot.'+side).getWorldPosition(new THREE.Vector3())]));
+ const armBiomechanics=createArmBiomechanics({model,bones,handReference,update});
  let current={...defaults},lastAction='rest',lastTime=0,reachErrors={};
+ const diagonalGripAngle=35*Math.PI/180;
+ const toolAxisLocal=side=>handReference[side].axisLocal.clone().multiplyScalar(Math.cos(diagonalGripAngle)).addScaledVector(handReference[side].forwardLocal,Math.sin(diagonalGripAngle)).normalize();
+ // The catalogue GLB retains its original transverse handles. In the viewer
+ // rigid weapon vertices, normals and attachment metadata share this one
+ // wrist-local rebind, giving the fist a diagonal power grip.
+ for(const object of weapons.values()){
+  if(object.userData.runtimeDiagonalGripDegrees===35)continue;
+  const oldAxis=handReference.R.axisLocal,newAxis=toolAxisLocal('R'),rotation=new THREE.Quaternion().setFromUnitVectors(oldAxis,newAxis);
+  const pivot=handReference.R.gripLocal,local=new THREE.Matrix4().makeRotationFromQuaternion(rotation);
+  local.setPosition(pivot.clone().sub(pivot.clone().applyQuaternion(rotation)));
+  let metadataTransform=null;
+  object.traverse(mesh=>{if(!mesh.isSkinnedMesh)return;
+   const index=mesh.skeleton.bones.indexOf(bone('wrist.R')),toWrist=mesh.skeleton.boneInverses[index].clone().multiply(mesh.bindMatrix);
+   const transform=toWrist.clone().invert().multiply(local).multiply(toWrist);
+   metadataTransform??=transform;mesh.geometry=mesh.geometry.clone();mesh.geometry.applyMatrix4(transform);
+   mesh.geometry.computeBoundingBox();mesh.geometry.computeBoundingSphere();
+  });
+  if(metadataTransform){const data=object.userData,g=V(data.gripBind),axis=V(data.shaftAxisBind).add(g).applyMatrix4(metadataTransform);
+   data.gripBind=g.applyMatrix4(metadataTransform).toArray();data.shaftAxisBind=axis.sub(g).normalize().toArray();
+   for(const key of ['tipBind','secondGripBind'])if(data[key])data[key]=V(data[key]).applyMatrix4(metadataTransform).toArray();
+   data.runtimeDiagonalGripDegrees=35;
+  }
+ }
+ const gripController=createGrip({model,bones,frames:()=>gripFrames()});
  function summary(){return{...current,selectedShield:current.shieldType,effectiveShield:twoHanded.has(current.weaponType)?'none':current.shieldType,twoHanded:twoHanded.has(current.weaponType)};}
  function applyMorphs(){
   for(const mesh of meshes){
@@ -128,20 +155,36 @@ export function createLoadout({model,bones={}}){
  function poseAt(action='rest',time=0){
   lastAction=action;lastTime=Number.isFinite(time)?Math.max(0,time):0;reachErrors={};
   applyMorphs();update();
-  if(twoHanded.has(current.weaponType)){
-   const phase=loadoutPhases(action,lastTime),isPike=current.weaponType==='pike';
-   const guardAxis=new THREE.Vector3(0,isPike?.25:.9,isPike?.9682458366:.4358898944);
-   const axis=guardAxis.lerp(new THREE.Vector3(0,.075,.9971835338),phase.aim).normalize();
-   const grip=new THREE.Vector3(isPike?.015:-.02,isPike?1.15:1.16,isPike?.085:.32).addScaledVector(axis,(isPike?.09:.13)*phase.thrust);
-   if(action==='Guard_Breath')grip.y+=.003*Math.sin(Math.PI*2*Math.min(lastTime,6)/6);
-   placeHand('R',grip,axis);
+  {
+   const phase=loadoutPhases(action,lastTime),isPike=current.weaponType==='pike',isGreatsword=current.weaponType==='greatsword';
+   // Torso-relative anchors and elbow directions follow pelvis/torso motion;
+   // a world-space target used to drag the pike hand through the chest.
+   const left=bone('upperarm01.L').getWorldPosition(new THREE.Vector3()),right=bone('upperarm01.R').getWorldPosition(new THREE.Vector3());
+   const origin=left.clone().add(right).multiplyScalar(.5),x=left.clone().sub(right).normalize();
+   const up=bone('neck01').getWorldPosition(new THREE.Vector3()).sub(bone('spine05').getWorldPosition(new THREE.Vector3()));
+   up.addScaledVector(x,-up.dot(x)).normalize();const forward=x.clone().cross(up).normalize();
+   const direction=v=>x.clone().multiplyScalar(v[0]).addScaledVector(up,v[1]).addScaledVector(forward,v[2]);
+   const guard=isPike?[.35,.12,.929]:isGreatsword?[.12,.9,.42]:[0,1,0];
+   const aimed=isPike?[.35,.075,.934]:isGreatsword?[.12,.075,.99]:[0,.087,.996];
+   const axis=direction(guard).lerp(direction(aimed),phase.aim).normalize();
+   const anchor=isPike?[-.30,-.21,.08]:isGreatsword?[-.05,-.24,.30]:[-.28+.16*phase.aim,-.25+.02*phase.aim,.30-.03*phase.aim];
+   const grip=origin.clone().add(direction(anchor)).addScaledVector(axis,(isPike?.025:isGreatsword?.025:.035)*phase.thrust);
+   if(action==='Guard_Breath')grip.addScaledVector(up,.003*Math.sin(Math.PI*2*Math.min(lastTime,6)/6));
+   reachErrors.R=armBiomechanics.solve('R',grip,axis,direction([-1,-.55,.45]),toolAxisLocal('R'));
+   if(twoHanded.has(current.weaponType)){
    // The second hand follows the actual skinned weapon attachment. It is not
    // advanced independently from the shaft during the thrust.
    const frame=frameFor(weapons.get(current.weaponType));
    const second=frame.second||frame.grip.clone().addScaledVector(frame.axis,isPike?.38:-.13);
-   placeHand('L',second,frame.axis);
+   reachErrors.L=armBiomechanics.solve('L',second,frame.axis,direction([1,-.55,.45]),toolAxisLocal('L'));
+   }else if(summary().effectiveShield!=='none'){
+    const shield=frameFor(shields.get(summary().effectiveShield),'L');
+    reachErrors.L=armBiomechanics.solve('L',shield.grip,shield.axis,direction([1,-.55,.45]));
+   }
    update();
   }
+  gripController.apply({weaponType:current.weaponType,effectiveShield:summary().effectiveShield});
+  update();
   return summary();
  }
  function availableActions(){return['rest','Guard_Breath',...(summary().effectiveShield==='none'?[]:['Shield_Brace']),'Spear_Study'];}
@@ -154,5 +197,6 @@ export function createLoadout({model,bones={}}){
   const second=state.twoHanded?(frame.second||frame.grip.clone().addScaledVector(frame.axis,current.weaponType==='pike'?.38:-.13)):null;
   return{action:lastAction,time:lastTime,weapon:current.weaponType,effectiveShield:state.effectiveShield,handGripWorld:{R:right.toArray(),L:left.toArray()},weaponGripWorld:{R:frame.grip.toArray(),L:second?.toArray()||null},rightGripErrorM:right.distanceTo(frame.grip),leftGripErrorM:second?left.distanceTo(second):null,axis:frame.axis.toArray(),tip:frame.tip.toArray(),footDriftM:Object.fromEntries(['L','R'].map(side=>[side,bone('foot.'+side).getWorldPosition(new THREE.Vector3()).distanceTo(feet[side])])),reachErrors:JSON.parse(JSON.stringify(reachErrors)),scope:'Attachment frames and wrist/foot joints; not a skin collision or anatomical comfort proof.'};
  }
- return{apply,poseAt,summary,availableActions,captions,measure,dispose(){}};
+ function gripFrames(){return Object.fromEntries(['R','L'].map(side=>[side,{gripLocal:handReference[side].gripLocal.toArray(),axisLocal:(side==='R'||summary().twoHanded?toolAxisLocal(side):handReference[side].axisLocal).toArray(),forwardLocal:handReference[side].forwardLocal.toArray(),wristBone:bone('wrist.'+side).name,radiusM:current.weaponType==='pike'?.016:.014,active:side==='R'||summary().twoHanded||summary().effectiveShield!=='none'}]));}
+ return{apply,poseAt,summary,availableActions,captions,measure,gripFrames,grip:gripController,biomechanics:()=>({R:armBiomechanics.measure('R'),L:armBiomechanics.measure('L'),calibration:armBiomechanics.calibration()}),dispose(){}};
 }

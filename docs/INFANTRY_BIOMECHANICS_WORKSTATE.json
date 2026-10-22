@@ -1,0 +1,27 @@
+{
+  "task": "infantry-biomechanics",
+  "status": "active",
+  "baseCommit": "2027392830ac69b765d854de1ba5ae9badf3c2e7",
+  "donorRepository": "sakrett001-ai/Lazy-gym-planer",
+  "donorCommit": "989389b834ff1c16239342cbfbceb8718d0a18bd",
+  "goal": "Replace wrist-target-only poses with anatomical arm frames, explicit bend planes, near-neutral wrists and visibly closed surface grips; preserve model shell",
+  "evidence": {
+    "greatsword159WristDeviationDeg": 94.6,
+    "pike159WristDeviationDeg": 110.4,
+    "oldGripPointErrorM": "less than 0.000001 despite invalid wrist"
+  },
+  "ownership": {
+    "arm": "chess_joint_diagnosis: src/loadout.mjs, src/biomechanics.mjs",
+    "grip": "grip_surface_fix: src/grip.mjs, scripts/verify-grip.mjs",
+    "independentAudit": "gym_biomechanics_reference: scripts/verify-biomechanics.mjs, docs/BIOMECHANICS_REFERENCE.md",
+    "release": "biomechanics_release_gate: release files and review identity",
+    "root": "visual inspection, garment audit, integration, publication"
+  },
+  "next": "Finish arm and grip code; run independent biomechanical gates before browser screenshots and release",
+  "constraints": [
+    "Donor repository is read-only",
+    "Do not replace or waive new anatomy failures with old garment prototype exception",
+    "One local software WebGL browser at a time",
+    "No source/GLB changes have been published for this task yet"
+  ]
+}
