@@ -1,0 +1,19 @@
+{
+  "date": "2026-10-23T06:51:20.242Z",
+  "status": "passed",
+  "sourceCommit": "f7f3fd8787d6bc3f5a13942ef806a720225fdb8d",
+  "documentSha256": "76c774ee62a2c03d8d85f1ac5ec950f5d83f4f5b9775d2e2b841486e959aca71",
+  "glbSha256": "52f52e1c1ae832d1a61e1dac9e83dd39ff961fde1a9c402dec8a4a8f6dfce4e6",
+  "tests": [
+    "Compact hosted document loads exact immutable GLB and poster; no embedded model or autoplay",
+    "Hosted animation plays and pauses; downloaded GLB equals verified bytes",
+    "390 px layout and camera framing",
+    "tampered: no ready model and no unchecked download; visible recovery message",
+    "unavailable: no ready model and no unchecked download; visible recovery message",
+    "WebGL failure keeps the poster and verified model download"
+  ],
+  "errors": [],
+  "unexpectedRequests": [],
+  "tamperedModelRejected": true,
+  "browser": "141.0.7390.37"
+}
