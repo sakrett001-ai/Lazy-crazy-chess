@@ -1,0 +1,86 @@
+{
+  "task": "infantry-motion-042",
+  "status": "completed",
+  "version": "0.4.2",
+  "modelVersion": "0.3.0",
+  "sourceCommit": "1f0df96c641c4d798242a1e82b251b9ac53df80e",
+  "hostingCommit": "23332c7f4536f9a6468d666e911488010a9b48e6",
+  "runtimeSha256": "a1fcdb8db78cfa0f46a5e6a35fd0b848a42c2be313954ee1bae0ff69dfd6838b",
+  "standaloneSha256": "4c5cc5aa277cd89c71ce78cdcffebe47898cb986c8eac1a4272e3f6b214b9deb",
+  "checks": {
+    "bodyContact": {
+      "cases": 18,
+      "frames": 2178,
+      "sampleRateHz": 30,
+      "intersections": 0,
+      "containedVertices": 0,
+      "negativeControls": 2
+    },
+    "wholeBodyContributions": {
+      "cases": 12,
+      "status": "passed"
+    },
+    "biomechanics": {
+      "cases": 45,
+      "frames": 4725,
+      "checks": 499,
+      "status": "passed"
+    },
+    "grip": {
+      "frames": 1278,
+      "checks": 85,
+      "status": "passed"
+    },
+    "weaponShield": {
+      "cases": 72,
+      "frames": 2610,
+      "intersections": 0
+    },
+    "enarmes": {
+      "cases": 36,
+      "frames": 1314,
+      "status": "passed"
+    },
+    "facialHair": {
+      "checks": 14,
+      "vertexSamples": 122400,
+      "status": "passed"
+    },
+    "releaseTests": {
+      "passed": 221,
+      "failed": 0
+    },
+    "browser": {
+      "viewer": "passed",
+      "appearance": "passed",
+      "variants": "passed",
+      "hosted": "passed",
+      "captureCount": 22,
+      "visualAcceptance": "accepted-for-prototype"
+    }
+  },
+  "liveVerification": {
+    "endpoint": "https://lazy-crazy-chess.floot.app/_api/chess-document",
+    "status": 200,
+    "version": "0.4.2",
+    "modelVersion": "0.3.0",
+    "sourceCommit": "1f0df96c641c4d798242a1e82b251b9ac53df80e",
+    "builtAt": "2026-10-23T07:59:50.638Z",
+    "htmlBytes": 721255,
+    "htmlSha256": "ccb3947704c7f74907d9af57451e2eaf5895f5ffe5f157044565860daf41410e",
+    "matchesExpected": true,
+    "model": {
+      "url": "https://raw.githubusercontent.com/sakrett001-ai/Lazy-crazy-chess/1f0df96c641c4d798242a1e82b251b9ac53df80e/prototypes/white-pawn/assets/white-pawn.glb",
+      "status": 200,
+      "bytes": 16251900,
+      "sha256": "52f52e1c1ae832d1a61e1dac9e83dd39ff961fde1a9c402dec8a4a8f6dfce4e6"
+    }
+  },
+  "limitations": [
+    "Short planted training thrust, not a stepping lunge or physical combat simulation.",
+    "Garment audit remains failed in 11 of 18 sampled states; exact report-specific prototype acceptance does not waive hand/weapon body collisions.",
+    "Hand shape remains stylized and partly open-looking; cropped head hair remains angular.",
+    "New motion, strap fitting and facial hair run in viewer; downloadable GLB is unchanged model 0.3.0.",
+    "Live browser in this environment has no WebGL; actual 3D visual checks ran in local Chromium SwiftShader, not a phone performance test."
+  ]
+}

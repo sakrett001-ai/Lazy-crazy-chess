@@ -1,8 +1,8 @@
 {
   "task": "infantry-motion-042",
-  "status": "ready-for-publication",
+  "status": "completed",
   "baseCommit": "086c458d206d7743f6c37edb9024b0094c0968c1",
-  "production": "0.4.1 sourcef7f3fd8",
+  "production": "0.4.2 source1f0df96",
   "userCorrection": [
     "greatsword/rearhand inside torso",
     "thrust driven predominantly by pelvis",
@@ -32,7 +32,7 @@
     "Beard has soft edge and hair appearance across profiles",
     "Final version bound to reports, inspected in motion and published with readback"
   ],
-  "next": "Publish canonical source and hosted release; verify production bytes",
+  "next": null,
   "limits": [
     "No claim of full physical combat simulation or muscle force",
     "Existing garment problems cannot waive weapon or hand penetration",
@@ -53,5 +53,8 @@
     "status": "accepted-for-prototype",
     "captureCount": 22,
     "documentSha256": "4c5cc5aa277cd89c71ce78cdcffebe47898cb986c8eac1a4272e3f6b214b9deb"
-  }
+  },
+  "sourceCommit": "1f0df96c641c4d798242a1e82b251b9ac53df80e",
+  "hostingCommit": "23332c7f4536f9a6468d666e911488010a9b48e6",
+  "receipt": "docs/INFANTRY_MOTION_042_RELEASE.json"
 }
