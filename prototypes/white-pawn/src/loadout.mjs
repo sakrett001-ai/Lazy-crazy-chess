@@ -91,6 +91,68 @@ export function createLoadout({model,bones={}}){
    data.runtimeDiagonalGripDegrees=35;
   }
  }
+ // Only the catalogue's two leather enarmes deform. Their eight shield-side
+ // mount vertices remain wrist-bound; the 17-sample loops route around the
+ // real vambrace envelope instead of inheriting an incompatible wrist bend.
+ function createEnarmeFitter(){
+  const ancestor=(object,key)=>{for(;object;object=object.parent)if(object.userData?.[key]!==undefined)return object.userData[key];};
+  const components=mesh=>{
+   const g=mesh.geometry,n=g.attributes.position.count,parent=Array.from({length:n},(_,i)=>i),find=i=>{while(parent[i]!==i)i=parent[i];return i;},join=(a,b)=>{parent[find(b)]=find(a);},positions=new Map();
+   for(let i=0;i<n;i++){const key=new THREE.Vector3().fromBufferAttribute(g.attributes.position,i).toArray().map(v=>Math.round(v*1e6)).join(',');if(positions.has(key))join(i,positions.get(key));else positions.set(key,i);}
+   for(let i=0;i<g.index.count;i+=3){join(g.index.getX(i),g.index.getX(i+1));join(g.index.getX(i),g.index.getX(i+2));}
+   const groups=new Map();for(let i=0;i<n;i++){const id=find(i);if(!groups.has(id))groups.set(id,[]);groups.get(id).push(i);}return[...groups.values()];
+  };
+  const bands=[];
+  for(const mesh of meshes){
+   if(!mesh.isSkinnedMesh||ancestor(mesh,'equipmentSlot')!=='shield'||mesh.material.name!=='shield.leather')continue;
+   const loops=components(mesh).filter(indices=>indices.length===76);if(loops.length!==2)throw Error('Unexpected shield enarme topology: '+mesh.name);
+   mesh.geometry=mesh.geometry.clone();mesh.geometry.attributes.position.setUsage(THREE.DynamicDrawUsage);mesh.geometry.attributes.normal.setUsage(THREE.DynamicDrawUsage);
+   for(const indices of loops){if(indices.some((id,j)=>id!==indices[0]+j))throw Error('Unordered shield enarme topology: '+mesh.name);
+    bands.push({mesh,variant:ancestor(mesh,'equipmentVariant'),indices,original:indices.map(i=>new THREE.Vector3().fromBufferAttribute(mesh.geometry.attributes.position,i))});
+   }
+  }
+  if(!bands.length)return()=>{};
+  const forearm=bone('lowerarm01.L'),wrist=bone('wrist.L'),origin=forearm.getWorldPosition(new THREE.Vector3()),axis=wrist.getWorldPosition(new THREE.Vector3()).sub(origin).normalize();
+  const across=bone('finger2-1.L').getWorldPosition(new THREE.Vector3()).sub(bone('finger5-1.L').getWorldPosition(new THREE.Vector3()));across.addScaledVector(axis,-across.dot(axis)).normalize();
+  const back=axis.clone().cross(across),initialInverse=forearm.getWorldQuaternion(new THREE.Quaternion()).invert(),localAxis=axis.clone().applyQuaternion(initialInverse),localAcross=across.clone().applyQuaternion(initialInverse),localBack=back.clone().applyQuaternion(initialInverse);
+  const step=.005,start=-.05,profile=Array(80).fill(.055);
+  // Triangle radial bounds are conservative. Include all body morphs once;
+  // the 55 mm minimum continues the open wrist end of the bracer envelope.
+  for(const mesh of meshes){
+   if(!mesh.isSkinnedMesh||ancestor(mesh,'equipmentSlot')!=='plate')continue;
+   const g=mesh.geometry,faces=[];
+   for(let i=0;i<g.index.count;i+=3){const ids=[g.index.getX(i),g.index.getX(i+1),g.index.getX(i+2)];let influence=0;
+    for(const id of ids)for(let k=0;k<4;k++)if(/^lowerarm0[12]l$/.test(normalize(mesh.skeleton.bones[g.attributes.skinIndex.getComponent(id,k)].name)))influence+=g.attributes.skinWeight.getComponent(id,k);
+    if(influence>1.5)faces.push(ids);
+   }
+   if(!faces.length)continue;
+   const saved=mesh.morphTargetInfluences?.slice(),unique=[...new Set(faces.flat())];
+   for(const build of ['regular','lean','strong']){
+    for(const [name,index]of Object.entries(mesh.morphTargetDictionary||{}))if(['lean','strong'].includes(normalize(name)))mesh.morphTargetInfluences[index]=normalize(name)===build?1:0;
+    const points=new Map(unique.map(i=>{const p=mesh.getVertexPosition(i,new THREE.Vector3()).applyMatrix4(mesh.matrixWorld).sub(origin),z=p.dot(axis);return[i,{z,r:p.addScaledVector(axis,-z).length()}];}));
+    for(const face of faces){const p=face.map(i=>points.get(i)),lo=Math.max(0,Math.floor((Math.min(...p.map(v=>v.z))-start)/step)),hi=Math.min(profile.length-1,Math.ceil((Math.max(...p.map(v=>v.z))-start)/step)),radius=Math.max(...p.map(v=>v.r));for(let j=lo;j<=hi;j++)profile[j]=Math.max(profile[j],radius);}
+   }
+   if(saved)mesh.morphTargetInfluences.splice(0,saved.length,...saved);
+  }
+  const envelope=profile.map((r,i)=>Math.max(r,profile[Math.max(0,i-1)],profile[Math.min(profile.length-1,i+1)]));
+  const radiusAt=z=>{const t=THREE.MathUtils.clamp((z-start)/step,0,envelope.length-1.000001),i=Math.floor(t);return THREE.MathUtils.lerp(envelope[i],envelope[i+1],t-i);};
+  const skinMatrix=mesh=>{const index=mesh.skeleton.bones.indexOf(wrist);return mesh.matrixWorld.clone().multiply(mesh.bindMatrixInverse).multiply(wrist.matrixWorld).multiply(mesh.skeleton.boneInverses[index]).multiply(mesh.bindMatrix);};
+  return variant=>{
+   if(variant==='none')return;
+   const rotation=forearm.getWorldQuaternion(new THREE.Quaternion()),a=localAxis.clone().applyQuaternion(rotation),x=localAcross.clone().applyQuaternion(rotation),y=localBack.clone().applyQuaternion(rotation),e=forearm.getWorldPosition(new THREE.Vector3()),changed=new Set();
+   for(const band of bands){if(band.variant!==variant)continue;const {mesh,indices,original}=band,g=mesh.geometry,skin=skinMatrix(mesh),inverse=skin.clone().invert();
+    for(let surface=0;surface<2;surface++)for(let edge=0;edge<2;edge++){
+     const offset=surface*38+edge,m0=original[offset].clone().applyMatrix4(skin).sub(e),m1=original[offset+36].clone().applyMatrix4(skin).sub(e),z0=m0.dot(a),z1=m1.dot(a),angle=Math.atan2(m0.dot(y),m0.dot(x)),end=Math.atan2(m1.dot(y),m1.dot(x)),sweep=(end-angle+2*Math.PI)%(2*Math.PI);
+     for(let j=0;j<17;j++){const u=j/16,z=THREE.MathUtils.lerp(z0,z1,u),theta=angle+sweep*u,radius=radiusAt(z)+.008+surface*.004;
+      const p=e.clone().addScaledVector(a,z).addScaledVector(x,radius*Math.cos(theta)).addScaledVector(y,radius*Math.sin(theta)).applyMatrix4(inverse);g.attributes.position.setXYZ(indices[offset+2*(j+1)],p.x,p.y,p.z);
+     }
+    }
+    changed.add(mesh);
+   }
+   for(const mesh of changed){mesh.geometry.attributes.position.needsUpdate=true;mesh.geometry.computeVertexNormals();mesh.geometry.computeBoundingBox();mesh.geometry.computeBoundingSphere();}
+  };
+ }
+ const fitEnarmes=createEnarmeFitter();
  const gripController=createGrip({model,bones,frames:()=>gripFrames()});
  function summary(){return{...current,selectedShield:current.shieldType,effectiveShield:twoHanded.has(current.weaponType)?'none':current.shieldType,twoHanded:twoHanded.has(current.weaponType)};}
  function applyMorphs(){
@@ -137,6 +199,9 @@ export function createLoadout({model,bones={}}){
    const aimed=isPike?[.35,.075,.934]:isGreatsword?[.12,.075,.99]:[-.15,.087,.985];
    const axis=direction(guard).lerp(direction(aimed),phase.aim).normalize();
    const anchor=isPike?[-.24,-.27,.12]:isGreatsword?[-.05,-.24,.30]:[-.37,-.23,.30];
+   // The round shield's wider rim passes the sword guard during the brace.
+   // Move the weapon hand 15 mm outward, with unchanged clip endpoints.
+   if(action==='Shield_Brace'&&current.weaponType==='sword'&&summary().effectiveShield==='round')anchor[0]-=.015*envelope(lastTime,.4,.9,3.2,3.7);
    const grip=origin.clone().add(direction(anchor)).addScaledVector(axis,(isPike?.025:isGreatsword?.025:.035)*phase.thrust);
    if(action==='Guard_Breath')grip.addScaledVector(up,.003*Math.sin(Math.PI*2*Math.min(lastTime,6)/6));
    reachErrors.R=armBiomechanics.solve('R',grip,axis,direction([-1,-.55,.45]),toolAxisLocal('R'));
@@ -148,10 +213,11 @@ export function createLoadout({model,bones={}}){
    reachErrors.L=armBiomechanics.solve('L',second,frame.axis,direction([1,-.55,.45]),toolAxisLocal('L'));
    }else if(summary().effectiveShield!=='none'){
     const shield=frameFor(shields.get(summary().effectiveShield),'L');
-    reachErrors.L=armBiomechanics.solve('L',shield.grip,shield.axis,direction([1,-.55,.45]));
+    reachErrors.L=armBiomechanics.solve('L',shield.grip,shield.axis,direction([1,-.55,.45]),undefined,bone('wrist.L').getWorldQuaternion(new THREE.Quaternion()));
    }
    update();
   }
+  fitEnarmes(summary().effectiveShield);
   gripController.apply({weaponType:current.weaponType,effectiveShield:summary().effectiveShield});
   update();
   return summary();

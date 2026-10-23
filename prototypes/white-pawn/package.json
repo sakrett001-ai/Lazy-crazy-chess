@@ -16,7 +16,8 @@
     "verify:geometry": "node scripts/verify-modular-geometry.mjs",
     "verify:biomechanics": "node scripts/verify-biomechanics.mjs",
     "verify:grip": "node scripts/verify-grip.mjs",
-    "verify:weapon-clearance": "node scripts/verify-weapon-clearance.mjs"
+    "verify:weapon-clearance": "node scripts/verify-weapon-clearance.mjs",
+    "verify:enarmes": "node scripts/verify-enarmes.mjs"
   },
   "dependencies": {
     "three": "0.180.0"

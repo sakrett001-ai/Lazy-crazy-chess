@@ -1,8 +1,8 @@
 {
-  "date": "2026-10-22T22:06:18.060Z",
+  "date": "2026-10-23T06:43:03.359Z",
   "browser": "141.0.7390.37",
   "glbSha256": "52f52e1c1ae832d1a61e1dac9e83dd39ff961fde1a9c402dec8a4a8f6dfce4e6",
-  "documentSha256": "3df1f742eafd22218fecebe06d3901ab266642f709075fbce065f8fcce9c6667",
+  "documentSha256": "7201023db6ec8e1dee37d98a73aac4ac6a8d0aef57c235bb3db2405d8d91ddb2",
   "tests": [
     "Default armor is metallic steel; shield face remains white dielectric; appearance panel starts collapsed",
     "Material-only finish/paint changes preserve a user-adjusted camera position, target and zoom",

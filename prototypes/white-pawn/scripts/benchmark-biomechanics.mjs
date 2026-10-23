@@ -25,7 +25,7 @@ function prepare(weaponType,action,time){
  if(clip){mixer=new THREE.AnimationMixer(model);const a=mixer.clipAction(clip);a.setLoop(THREE.LoopOnce,1);a.clampWhenFinished=true;a.play();mixer.setTime(time);}
 }
 function quantiles(values){values.sort((a,b)=>a-b);return{medianMs:values[Math.floor(values.length*.5)],p95Ms:values[Math.floor(values.length*.95)],maximumMs:values.at(-1)};}
-const report={node:process.version,glbSha256:hash(bytes),runtimeSha256:hash(source),measuredAt:new Date().toISOString(),warmupPerWeapon:16,samplesPerWeapon:80,cases:[],scope:'Synchronous loadout.poseAt only: arm solve, morph and finger application. Excludes GLB loading, animation sampling/restoration and rendering. Process CPU time excludes scheduler waits; wall time includes shared host contention and garbage collection. This is not mobile-device or end-to-end FPS measurement.'};
+const report={node:process.version,glbSha256:hash(bytes),runtimeSha256:hash(source),measuredAt:new Date().toISOString(),warmupPerWeapon:16,samplesPerWeapon:80,cases:[],scope:'Synchronous loadout.poseAt only: arm solve, morph, enarme surface update and finger application. Excludes GLB loading, animation sampling/restoration and rendering. Process CPU time excludes scheduler waits; wall time includes shared host contention and garbage collection. This is not mobile-device or end-to-end FPS measurement.'};
 for(const weaponType of ['spear','sword','pike','greatsword']){
  const wall=[],cpu=[];
  for(let i=0;i<96;i++){

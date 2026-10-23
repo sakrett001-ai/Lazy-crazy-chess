@@ -205,7 +205,15 @@ function assertWeaponClearanceCoverage(report) {
   assert(finiteVector(moved.beforeWristWorld)&&finiteVector(moved.afterWristWorld)&&Math.hypot(...moved.afterWristWorld.map((v,i)=>v-moved.beforeWristWorld[i]))>.05,'Weapon clearance control did not move the imported wrist');
   assert(Array.isArray(moved.intersections)&&moved.intersections.length>0&&moved.intersections.every(hit=>Array.isArray(hit.pointsWorld)&&hit.pointsWorld.length>0&&hit.pointsWorld.every(finiteVector)),'Weapon clearance control lacks actual intersection points');
 }
-export function makeRelease({html,config,modelBytes,standaloneHtml,modelReport,equipmentReport,geometryReport,geometryReportBytes,geometryAcceptance,geometryAuditSource,loadoutSource,biomechanicsReport,biomechanicsAuditSource,gripReport,gripAuditSource,weaponClearanceReport,weaponClearanceAuditSource,variantReport,appearanceReport,viewerReport,hostedReport,builtAt=new Date().toISOString()}) {
+function assertEnarmeCoverage(coverage) {
+  assert(coverage&&coverage.quick===false&&Number.isFinite(coverage.sampleRateHz)&&coverage.sampleRateHz>=10,'Enarme audit requires a full audit at10Hz or higher');
+  assert(Number.isSafeInteger(coverage.caseCount)&&coverage.caseCount>=36&&Number.isSafeInteger(coverage.frameCount)&&coverage.frameCount>=1314,'Enarme audit coverage is incomplete');
+  for(const [key,expected]of Object.entries({shields:['tower','round','heater'],bodyBuilds:['regular','lean','strong'],actions:['rest','Guard_Breath','Shield_Brace','Spear_Study']})) {
+    assert(Array.isArray(coverage[key]),`Enarme audit requires ${key}`);
+    assert.deepEqual([...coverage[key]].sort(),[...expected].sort(),`Enarme audit has incomplete ${key}`);
+  }
+}
+export function makeRelease({html,config,modelBytes,standaloneHtml,modelReport,equipmentReport,geometryReport,geometryReportBytes,geometryAcceptance,geometryAuditSource,loadoutSource,biomechanicsReport,biomechanicsAuditSource,gripReport,gripAuditSource,weaponClearanceReport,weaponClearanceAuditSource,enarmeReport,enarmeAuditSource,variantReport,appearanceReport,viewerReport,hostedReport,builtAt=new Date().toISOString()}) {
   const document=validateCandidate({html,config,modelBytes});
   assertBaseChecks({modelBytes,standaloneHtml,modelReport,viewerReport});
   assert.equal(equipmentReport?.status,'passed','Equipment and motion verification did not pass');
@@ -220,6 +228,8 @@ export function makeRelease({html,config,modelBytes,standaloneHtml,modelReport,e
   assertGripCoverage(gripReport.coverage);
   assertMotionAudit({name:'Weapon clearance',report:weaponClearanceReport,auditSource:weaponClearanceAuditSource,modelBytes,loadoutSource});
   assertWeaponClearanceCoverage(weaponClearanceReport);
+  assertMotionAudit({name:'Enarme',report:enarmeReport,auditSource:enarmeAuditSource,modelBytes,loadoutSource});
+  assertEnarmeCoverage(enarmeReport.coverage);
   assert.equal(variantReport?.status,'passed','Equipment variants verification did not pass');
   assert.equal(variantReport?.glbSha256,sha256(modelBytes),'Variant report belongs to different GLB bytes');
   assert.equal(variantReport?.documentSha256,sha256(standaloneHtml),'Variant report is stale for this HTML');
@@ -232,5 +242,5 @@ export function makeRelease({html,config,modelBytes,standaloneHtml,modelReport,e
   assert.equal(hostedReport?.glbSha256,config.modelSha256,'Hosted report belongs to a different GLB');
   assert.equal(hostedReport?.tamperedModelRejected,true,'The model integrity failure case was not verified');
   assert(Number.isFinite(Date.parse(builtAt)),'Invalid build date');
-  return {schemaVersion:1,repository:REPOSITORY,sourceBranch:'main',sourceCommit:config.sourceCommit,version:config.version,modelVersion:config.modelVersion,checks:'passed',motionSha256,biomechanicsStatus:'passed',gripStatus:'passed',weaponClearanceStatus:'passed',...geometry,builtAt,document};
+  return {schemaVersion:1,repository:REPOSITORY,sourceBranch:'main',sourceCommit:config.sourceCommit,version:config.version,modelVersion:config.modelVersion,checks:'passed',motionSha256,biomechanicsStatus:'passed',gripStatus:'passed',weaponClearanceStatus:'passed',enarmeStatus:'passed',...geometry,builtAt,document};
 }

@@ -1,0 +1,1403 @@
+{
+  "documentSha256": "7201023db6ec8e1dee37d98a73aac4ac6a8d0aef57c235bb3db2405d8d91ddb2",
+  "errors": [],
+  "records": [
+    {
+      "weapon": "sword",
+      "time": 1.36,
+      "view": "weapon-side",
+      "action": "Spear_Study",
+      "armorType": "plate",
+      "bodyBuild": "regular",
+      "measures": {
+        "shieldGripWorld": [
+          0.0020188960914094833,
+          1.1411017609642014,
+          0.2118502280313372
+        ],
+        "shieldAxis": [
+          2.079606123830525e-7,
+          0.9999999999998388,
+          5.280463131837921e-7
+        ],
+        "weaponGripAngleDeg": 35,
+        "action": "Spear_Study",
+        "time": 1.36,
+        "weapon": "sword",
+        "effectiveShield": "round",
+        "handGripWorld": {
+          "R": [
+            -0.39403882066824314,
+            1.1444855607632967,
+            0.27207309576580996
+          ],
+          "L": [
+            0.0020188960914094833,
+            1.1411017609642014,
+            0.2118502280313372
+          ]
+        },
+        "weaponGripWorld": {
+          "R": [
+            -0.3940388206682429,
+            1.1444855607632967,
+            0.27207309576580996
+          ],
+          "L": null
+        },
+        "rightGripErrorM": 2.220446049250313e-16,
+        "leftGripErrorM": null,
+        "axis": [
+          -0.22035326094450136,
+          0.07563151806756906,
+          0.972483580255173
+        ],
+        "tip": [
+          -0.5835425530451313,
+          1.2095286553431979,
+          1.1084088826287886
+        ],
+        "footDriftM": {
+          "L": 1.2802813148033993e-7,
+          "R": 2.717779503488861e-7
+        },
+        "reachErrors": {
+          "R": {
+            "elbowFlexDeg": 96.78013787772453,
+            "wristBendDeg": 31.23494988503406,
+            "elbowHingeAlignment": 0.9999989871164242,
+            "upperLengthM": 0.2621431078682677,
+            "forearmLengthM": 0.2782350055773297,
+            "referenceLengthsM": [
+              0.2621429885986164,
+              0.27823521532246515
+            ],
+            "forearmTwistDeg": 82.91164620899441,
+            "wristAxialTwistDeg": 0.00001332998598634914,
+            "reachErrorM": 0,
+            "gripErrorM": 5.967855938984252e-7
+          },
+          "L": {
+            "elbowFlexDeg": 98.08930248597244,
+            "wristBendDeg": 24.25034630526772,
+            "elbowHingeAlignment": 0.9999998246351776,
+            "upperLengthM": 0.262142896792205,
+            "forearmLengthM": 0.2782353882743845,
+            "referenceLengthsM": [
+              0.2621429872779313,
+              0.27823518060107694
+            ],
+            "forearmTwistDeg": -41.25705420932933,
+            "wristAxialTwistDeg": -0.000007005291972329815,
+            "reachErrorM": 0,
+            "gripErrorM": 3.5896907907889496e-7
+          }
+        },
+        "scope": "Attachment frames and wrist/foot joints; not a skin collision or anatomical comfort proof."
+      },
+      "image": "sword-Spear_Study-1.36-weapon-side-plate-regular.png"
+    },
+    {
+      "weapon": "sword",
+      "time": 1.36,
+      "view": "spear",
+      "action": "Spear_Study",
+      "armorType": "plate",
+      "bodyBuild": "regular",
+      "measures": {
+        "shieldGripWorld": [
+          0.0020188960914094833,
+          1.1411017609642014,
+          0.2118502280313372
+        ],
+        "shieldAxis": [
+          2.079606123830525e-7,
+          0.9999999999998388,
+          5.280463131837921e-7
+        ],
+        "weaponGripAngleDeg": 35,
+        "action": "Spear_Study",
+        "time": 1.36,
+        "weapon": "sword",
+        "effectiveShield": "round",
+        "handGripWorld": {
+          "R": [
+            -0.39403882066824314,
+            1.1444855607632967,
+            0.27207309576580996
+          ],
+          "L": [
+            0.0020188960914094833,
+            1.1411017609642014,
+            0.2118502280313372
+          ]
+        },
+        "weaponGripWorld": {
+          "R": [
+            -0.3940388206682429,
+            1.1444855607632967,
+            0.27207309576580996
+          ],
+          "L": null
+        },
+        "rightGripErrorM": 2.220446049250313e-16,
+        "leftGripErrorM": null,
+        "axis": [
+          -0.22035326094450136,
+          0.07563151806756906,
+          0.972483580255173
+        ],
+        "tip": [
+          -0.5835425530451313,
+          1.2095286553431979,
+          1.1084088826287886
+        ],
+        "footDriftM": {
+          "L": 1.2802813148033993e-7,
+          "R": 2.717779503488861e-7
+        },
+        "reachErrors": {
+          "R": {
+            "elbowFlexDeg": 96.78013787772453,
+            "wristBendDeg": 31.23494988503406,
+            "elbowHingeAlignment": 0.9999989871164242,
+            "upperLengthM": 0.2621431078682677,
+            "forearmLengthM": 0.2782350055773297,
+            "referenceLengthsM": [
+              0.2621429885986164,
+              0.27823521532246515
+            ],
+            "forearmTwistDeg": 82.91164620899441,
+            "wristAxialTwistDeg": 0.00001332998598634914,
+            "reachErrorM": 0,
+            "gripErrorM": 5.967855938984252e-7
+          },
+          "L": {
+            "elbowFlexDeg": 98.08930248597244,
+            "wristBendDeg": 24.25034630526772,
+            "elbowHingeAlignment": 0.9999998246351776,
+            "upperLengthM": 0.262142896792205,
+            "forearmLengthM": 0.2782353882743845,
+            "referenceLengthsM": [
+              0.2621429872779313,
+              0.27823518060107694
+            ],
+            "forearmTwistDeg": -41.25705420932933,
+            "wristAxialTwistDeg": -0.000007005291972329815,
+            "reachErrorM": 0,
+            "gripErrorM": 3.5896907907889496e-7
+          }
+        },
+        "scope": "Attachment frames and wrist/foot joints; not a skin collision or anatomical comfort proof."
+      },
+      "image": "sword-Spear_Study-1.36-spear-plate-regular.png"
+    },
+    {
+      "weapon": "sword",
+      "time": 2.47,
+      "view": "three",
+      "action": "Shield_Brace",
+      "armorType": "plate",
+      "bodyBuild": "regular",
+      "measures": {
+        "shieldGripWorld": [
+          0.004292702995043432,
+          1.1624407242094956,
+          0.36356303815525876
+        ],
+        "shieldAxis": [
+          5.463570716944524e-7,
+          0.9999999999998446,
+          1.1101744883901956e-7
+        ],
+        "weaponGripAngleDeg": 35,
+        "action": "Shield_Brace",
+        "time": 2.47,
+        "weapon": "sword",
+        "effectiveShield": "round",
+        "handGripWorld": {
+          "R": [
+            -0.3740178355394677,
+            1.1709879128927994,
+            0.39689436833197445
+          ],
+          "L": [
+            0.004292702995043432,
+            1.1624407242094956,
+            0.36356303815525876
+          ]
+        },
+        "weaponGripWorld": {
+          "R": [
+            -0.37401783553946755,
+            1.1709879128927994,
+            0.3968943683319745
+          ],
+          "L": null
+        },
+        "rightGripErrorM": 1.7554167342883506e-16,
+        "leftGripErrorM": null,
+        "axis": [
+          -0.09997654141785554,
+          0.8182573817800712,
+          0.5660914663979192
+        ],
+        "tip": [
+          -0.4599975523727474,
+          1.8746887443274594,
+          0.8837326936495916
+        ],
+        "footDriftM": {
+          "L": 1.9494124555077813e-7,
+          "R": 5.028008700768077e-7
+        },
+        "reachErrors": {
+          "R": {
+            "elbowFlexDeg": 89.1230403556003,
+            "wristBendDeg": 8.433435838117987,
+            "elbowHingeAlignment": 0.9999991524386063,
+            "upperLengthM": 0.2621429060803016,
+            "forearmLengthM": 0.2782350600041089,
+            "referenceLengthsM": [
+              0.2621429885986164,
+              0.27823521532246515
+            ],
+            "forearmTwistDeg": 44.38265380808025,
+            "wristAxialTwistDeg": -0.000028541956309518628,
+            "reachErrorM": 0,
+            "gripErrorM": 4.6106510220598185e-7
+          },
+          "L": {
+            "elbowFlexDeg": 87.26706707845504,
+            "wristBendDeg": 21.024663425785892,
+            "elbowHingeAlignment": 0.9999987622918043,
+            "upperLengthM": 0.26214285685205996,
+            "forearmLengthM": 0.27823538680891924,
+            "referenceLengthsM": [
+              0.2621429872779313,
+              0.27823518060107694
+            ],
+            "forearmTwistDeg": -44.153153532074434,
+            "wristAxialTwistDeg": 0.000038209812831970764,
+            "reachErrorM": 0,
+            "gripErrorM": 2.6633896508992117e-7
+          }
+        },
+        "scope": "Attachment frames and wrist/foot joints; not a skin collision or anatomical comfort proof."
+      },
+      "image": "sword-Shield_Brace-2.47-three-plate-regular.png"
+    },
+    {
+      "weapon": "sword",
+      "time": 2.47,
+      "view": "shield",
+      "action": "Shield_Brace",
+      "armorType": "plate",
+      "bodyBuild": "regular",
+      "measures": {
+        "shieldGripWorld": [
+          0.004292702995043432,
+          1.1624407242094956,
+          0.36356303815525876
+        ],
+        "shieldAxis": [
+          5.463570716944524e-7,
+          0.9999999999998446,
+          1.1101744883901956e-7
+        ],
+        "weaponGripAngleDeg": 35,
+        "action": "Shield_Brace",
+        "time": 2.47,
+        "weapon": "sword",
+        "effectiveShield": "round",
+        "handGripWorld": {
+          "R": [
+            -0.3740178355394677,
+            1.1709879128927994,
+            0.39689436833197445
+          ],
+          "L": [
+            0.004292702995043432,
+            1.1624407242094956,
+            0.36356303815525876
+          ]
+        },
+        "weaponGripWorld": {
+          "R": [
+            -0.37401783553946755,
+            1.1709879128927994,
+            0.3968943683319745
+          ],
+          "L": null
+        },
+        "rightGripErrorM": 1.7554167342883506e-16,
+        "leftGripErrorM": null,
+        "axis": [
+          -0.09997654141785554,
+          0.8182573817800712,
+          0.5660914663979192
+        ],
+        "tip": [
+          -0.4599975523727474,
+          1.8746887443274594,
+          0.8837326936495916
+        ],
+        "footDriftM": {
+          "L": 1.9494124555077813e-7,
+          "R": 5.028008700768077e-7
+        },
+        "reachErrors": {
+          "R": {
+            "elbowFlexDeg": 89.1230403556003,
+            "wristBendDeg": 8.433435838117987,
+            "elbowHingeAlignment": 0.9999991524386063,
+            "upperLengthM": 0.2621429060803016,
+            "forearmLengthM": 0.2782350600041089,
+            "referenceLengthsM": [
+              0.2621429885986164,
+              0.27823521532246515
+            ],
+            "forearmTwistDeg": 44.38265380808025,
+            "wristAxialTwistDeg": -0.000028541956309518628,
+            "reachErrorM": 0,
+            "gripErrorM": 4.6106510220598185e-7
+          },
+          "L": {
+            "elbowFlexDeg": 87.26706707845504,
+            "wristBendDeg": 21.024663425785892,
+            "elbowHingeAlignment": 0.9999987622918043,
+            "upperLengthM": 0.26214285685205996,
+            "forearmLengthM": 0.27823538680891924,
+            "referenceLengthsM": [
+              0.2621429872779313,
+              0.27823518060107694
+            ],
+            "forearmTwistDeg": -44.153153532074434,
+            "wristAxialTwistDeg": 0.000038209812831970764,
+            "reachErrorM": 0,
+            "gripErrorM": 2.6633896508992117e-7
+          }
+        },
+        "scope": "Attachment frames and wrist/foot joints; not a skin collision or anatomical comfort proof."
+      },
+      "image": "sword-Shield_Brace-2.47-shield-plate-regular.png"
+    },
+    {
+      "weapon": "sword",
+      "time": 2.47,
+      "view": "shield-inside",
+      "action": "Shield_Brace",
+      "armorType": "plate",
+      "bodyBuild": "regular",
+      "measures": {
+        "shieldGripWorld": [
+          0.004292702995043432,
+          1.1624407242094956,
+          0.36356303815525876
+        ],
+        "shieldAxis": [
+          5.463570716944524e-7,
+          0.9999999999998446,
+          1.1101744883901956e-7
+        ],
+        "weaponGripAngleDeg": 35,
+        "action": "Shield_Brace",
+        "time": 2.47,
+        "weapon": "sword",
+        "effectiveShield": "round",
+        "handGripWorld": {
+          "R": [
+            -0.3740178355394677,
+            1.1709879128927994,
+            0.39689436833197445
+          ],
+          "L": [
+            0.004292702995043432,
+            1.1624407242094956,
+            0.36356303815525876
+          ]
+        },
+        "weaponGripWorld": {
+          "R": [
+            -0.37401783553946755,
+            1.1709879128927994,
+            0.3968943683319745
+          ],
+          "L": null
+        },
+        "rightGripErrorM": 1.7554167342883506e-16,
+        "leftGripErrorM": null,
+        "axis": [
+          -0.09997654141785554,
+          0.8182573817800712,
+          0.5660914663979192
+        ],
+        "tip": [
+          -0.4599975523727474,
+          1.8746887443274594,
+          0.8837326936495916
+        ],
+        "footDriftM": {
+          "L": 1.9494124555077813e-7,
+          "R": 5.028008700768077e-7
+        },
+        "reachErrors": {
+          "R": {
+            "elbowFlexDeg": 89.1230403556003,
+            "wristBendDeg": 8.433435838117987,
+            "elbowHingeAlignment": 0.9999991524386063,
+            "upperLengthM": 0.2621429060803016,
+            "forearmLengthM": 0.2782350600041089,
+            "referenceLengthsM": [
+              0.2621429885986164,
+              0.27823521532246515
+            ],
+            "forearmTwistDeg": 44.38265380808025,
+            "wristAxialTwistDeg": -0.000028541956309518628,
+            "reachErrorM": 0,
+            "gripErrorM": 4.6106510220598185e-7
+          },
+          "L": {
+            "elbowFlexDeg": 87.26706707845504,
+            "wristBendDeg": 21.024663425785892,
+            "elbowHingeAlignment": 0.9999987622918043,
+            "upperLengthM": 0.26214285685205996,
+            "forearmLengthM": 0.27823538680891924,
+            "referenceLengthsM": [
+              0.2621429872779313,
+              0.27823518060107694
+            ],
+            "forearmTwistDeg": -44.153153532074434,
+            "wristAxialTwistDeg": 0.000038209812831970764,
+            "reachErrorM": 0,
+            "gripErrorM": 2.6633896508992117e-7
+          }
+        },
+        "scope": "Attachment frames and wrist/foot joints; not a skin collision or anatomical comfort proof."
+      },
+      "image": "sword-Shield_Brace-2.47-shield-inside-plate-regular.png"
+    },
+    {
+      "weapon": "greatsword",
+      "time": 1.59,
+      "view": "weapon-side",
+      "action": "Spear_Study",
+      "armorType": "mail",
+      "bodyBuild": "regular",
+      "measures": {
+        "shieldGripWorld": null,
+        "shieldAxis": null,
+        "weaponGripAngleDeg": 35,
+        "action": "Spear_Study",
+        "time": 1.59,
+        "weapon": "greatsword",
+        "effectiveShield": "none",
+        "handGripWorld": {
+          "R": [
+            -0.08304817166565229,
+            1.1526692328733705,
+            0.35470657326011146
+          ],
+          "L": [
+            -0.085929456263746,
+            1.1420940148207168,
+            0.22516904201143553
+          ]
+        },
+        "weaponGripWorld": {
+          "R": [
+            -0.08304817166565213,
+            1.1526692328733705,
+            0.35470657326011146
+          ],
+          "L": [
+            -0.08592913296133331,
+            1.1420935311665612,
+            0.2251694829322039
+          ]
+        },
+        "rightGripErrorM": 1.5265566588595902e-16,
+        "leftGripErrorM": 7.299704900007377e-7,
+        "axis": [
+          0.022161937539696714,
+          0.08135176171305136,
+          0.9964390294396691
+        ],
+        "tip": [
+          -0.05623222651290993,
+          1.2511048805579121,
+          1.5603974843967034
+        ],
+        "footDriftM": {
+          "L": 0.000014806804704161914,
+          "R": 0.00002819724826745214
+        },
+        "reachErrors": {
+          "R": {
+            "elbowFlexDeg": 96.58365544338314,
+            "wristBendDeg": 32.22473184140954,
+            "elbowHingeAlignment": 0.9999991132481689,
+            "upperLengthM": 0.2621427375531965,
+            "forearmLengthM": 0.27823512481489315,
+            "referenceLengthsM": [
+              0.2621429885986164,
+              0.27823521532246515
+            ],
+            "forearmTwistDeg": 83.07641191465385,
+            "wristAxialTwistDeg": 0.0000017594608583615627,
+            "reachErrorM": 0,
+            "gripErrorM": 6.265634429256783e-7
+          },
+          "L": {
+            "elbowFlexDeg": 94.97594736291342,
+            "wristBendDeg": 3.3449818670009384,
+            "elbowHingeAlignment": 0.9999992496589246,
+            "upperLengthM": 0.2621427890531822,
+            "forearmLengthM": 0.2782353889585258,
+            "referenceLengthsM": [
+              0.2621429872779313,
+              0.27823518060107694
+            ],
+            "forearmTwistDeg": -76.56802658714827,
+            "wristAxialTwistDeg": -0.000010502948918769018,
+            "reachErrorM": 0,
+            "gripErrorM": 7.299704900007377e-7
+          }
+        },
+        "scope": "Attachment frames and wrist/foot joints; not a skin collision or anatomical comfort proof."
+      },
+      "image": "greatsword-Spear_Study-1.59-weapon-side-mail-regular.png"
+    },
+    {
+      "weapon": "greatsword",
+      "time": 1.59,
+      "view": "spear",
+      "action": "Spear_Study",
+      "armorType": "mail",
+      "bodyBuild": "regular",
+      "measures": {
+        "shieldGripWorld": null,
+        "shieldAxis": null,
+        "weaponGripAngleDeg": 35,
+        "action": "Spear_Study",
+        "time": 1.59,
+        "weapon": "greatsword",
+        "effectiveShield": "none",
+        "handGripWorld": {
+          "R": [
+            -0.08304817166565229,
+            1.1526692328733705,
+            0.35470657326011146
+          ],
+          "L": [
+            -0.085929456263746,
+            1.1420940148207168,
+            0.22516904201143553
+          ]
+        },
+        "weaponGripWorld": {
+          "R": [
+            -0.08304817166565213,
+            1.1526692328733705,
+            0.35470657326011146
+          ],
+          "L": [
+            -0.08592913296133331,
+            1.1420935311665612,
+            0.2251694829322039
+          ]
+        },
+        "rightGripErrorM": 1.5265566588595902e-16,
+        "leftGripErrorM": 7.299704900007377e-7,
+        "axis": [
+          0.022161937539696714,
+          0.08135176171305136,
+          0.9964390294396691
+        ],
+        "tip": [
+          -0.05623222651290993,
+          1.2511048805579121,
+          1.5603974843967034
+        ],
+        "footDriftM": {
+          "L": 0.000014806804704161914,
+          "R": 0.00002819724826745214
+        },
+        "reachErrors": {
+          "R": {
+            "elbowFlexDeg": 96.58365544338314,
+            "wristBendDeg": 32.22473184140954,
+            "elbowHingeAlignment": 0.9999991132481689,
+            "upperLengthM": 0.2621427375531965,
+            "forearmLengthM": 0.27823512481489315,
+            "referenceLengthsM": [
+              0.2621429885986164,
+              0.27823521532246515
+            ],
+            "forearmTwistDeg": 83.07641191465385,
+            "wristAxialTwistDeg": 0.0000017594608583615627,
+            "reachErrorM": 0,
+            "gripErrorM": 6.265634429256783e-7
+          },
+          "L": {
+            "elbowFlexDeg": 94.97594736291342,
+            "wristBendDeg": 3.3449818670009384,
+            "elbowHingeAlignment": 0.9999992496589246,
+            "upperLengthM": 0.2621427890531822,
+            "forearmLengthM": 0.2782353889585258,
+            "referenceLengthsM": [
+              0.2621429872779313,
+              0.27823518060107694
+            ],
+            "forearmTwistDeg": -76.56802658714827,
+            "wristAxialTwistDeg": -0.000010502948918769018,
+            "reachErrorM": 0,
+            "gripErrorM": 7.299704900007377e-7
+          }
+        },
+        "scope": "Attachment frames and wrist/foot joints; not a skin collision or anatomical comfort proof."
+      },
+      "image": "greatsword-Spear_Study-1.59-spear-mail-regular.png"
+    },
+    {
+      "weapon": "greatsword",
+      "time": 1.59,
+      "view": "grip-top",
+      "action": "Spear_Study",
+      "armorType": "mail",
+      "bodyBuild": "regular",
+      "measures": {
+        "shieldGripWorld": null,
+        "shieldAxis": null,
+        "weaponGripAngleDeg": 35,
+        "action": "Spear_Study",
+        "time": 1.59,
+        "weapon": "greatsword",
+        "effectiveShield": "none",
+        "handGripWorld": {
+          "R": [
+            -0.08304817166565229,
+            1.1526692328733705,
+            0.35470657326011146
+          ],
+          "L": [
+            -0.085929456263746,
+            1.1420940148207168,
+            0.22516904201143553
+          ]
+        },
+        "weaponGripWorld": {
+          "R": [
+            -0.08304817166565213,
+            1.1526692328733705,
+            0.35470657326011146
+          ],
+          "L": [
+            -0.08592913296133331,
+            1.1420935311665612,
+            0.2251694829322039
+          ]
+        },
+        "rightGripErrorM": 1.5265566588595902e-16,
+        "leftGripErrorM": 7.299704900007377e-7,
+        "axis": [
+          0.022161937539696714,
+          0.08135176171305136,
+          0.9964390294396691
+        ],
+        "tip": [
+          -0.05623222651290993,
+          1.2511048805579121,
+          1.5603974843967034
+        ],
+        "footDriftM": {
+          "L": 0.000014806804704161914,
+          "R": 0.00002819724826745214
+        },
+        "reachErrors": {
+          "R": {
+            "elbowFlexDeg": 96.58365544338314,
+            "wristBendDeg": 32.22473184140954,
+            "elbowHingeAlignment": 0.9999991132481689,
+            "upperLengthM": 0.2621427375531965,
+            "forearmLengthM": 0.27823512481489315,
+            "referenceLengthsM": [
+              0.2621429885986164,
+              0.27823521532246515
+            ],
+            "forearmTwistDeg": 83.07641191465385,
+            "wristAxialTwistDeg": 0.0000017594608583615627,
+            "reachErrorM": 0,
+            "gripErrorM": 6.265634429256783e-7
+          },
+          "L": {
+            "elbowFlexDeg": 94.97594736291342,
+            "wristBendDeg": 3.3449818670009384,
+            "elbowHingeAlignment": 0.9999992496589246,
+            "upperLengthM": 0.2621427890531822,
+            "forearmLengthM": 0.2782353889585258,
+            "referenceLengthsM": [
+              0.2621429872779313,
+              0.27823518060107694
+            ],
+            "forearmTwistDeg": -76.56802658714827,
+            "wristAxialTwistDeg": -0.000010502948918769018,
+            "reachErrorM": 0,
+            "gripErrorM": 7.299704900007377e-7
+          }
+        },
+        "scope": "Attachment frames and wrist/foot joints; not a skin collision or anatomical comfort proof."
+      },
+      "image": "greatsword-Spear_Study-1.59-grip-top-mail-regular.png"
+    },
+    {
+      "weapon": "greatsword",
+      "time": 1.59,
+      "view": "grip-under",
+      "action": "Spear_Study",
+      "armorType": "mail",
+      "bodyBuild": "regular",
+      "measures": {
+        "shieldGripWorld": null,
+        "shieldAxis": null,
+        "weaponGripAngleDeg": 35,
+        "action": "Spear_Study",
+        "time": 1.59,
+        "weapon": "greatsword",
+        "effectiveShield": "none",
+        "handGripWorld": {
+          "R": [
+            -0.08304817166565229,
+            1.1526692328733705,
+            0.35470657326011146
+          ],
+          "L": [
+            -0.085929456263746,
+            1.1420940148207168,
+            0.22516904201143553
+          ]
+        },
+        "weaponGripWorld": {
+          "R": [
+            -0.08304817166565213,
+            1.1526692328733705,
+            0.35470657326011146
+          ],
+          "L": [
+            -0.08592913296133331,
+            1.1420935311665612,
+            0.2251694829322039
+          ]
+        },
+        "rightGripErrorM": 1.5265566588595902e-16,
+        "leftGripErrorM": 7.299704900007377e-7,
+        "axis": [
+          0.022161937539696714,
+          0.08135176171305136,
+          0.9964390294396691
+        ],
+        "tip": [
+          -0.05623222651290993,
+          1.2511048805579121,
+          1.5603974843967034
+        ],
+        "footDriftM": {
+          "L": 0.000014806804704161914,
+          "R": 0.00002819724826745214
+        },
+        "reachErrors": {
+          "R": {
+            "elbowFlexDeg": 96.58365544338314,
+            "wristBendDeg": 32.22473184140954,
+            "elbowHingeAlignment": 0.9999991132481689,
+            "upperLengthM": 0.2621427375531965,
+            "forearmLengthM": 0.27823512481489315,
+            "referenceLengthsM": [
+              0.2621429885986164,
+              0.27823521532246515
+            ],
+            "forearmTwistDeg": 83.07641191465385,
+            "wristAxialTwistDeg": 0.0000017594608583615627,
+            "reachErrorM": 0,
+            "gripErrorM": 6.265634429256783e-7
+          },
+          "L": {
+            "elbowFlexDeg": 94.97594736291342,
+            "wristBendDeg": 3.3449818670009384,
+            "elbowHingeAlignment": 0.9999992496589246,
+            "upperLengthM": 0.2621427890531822,
+            "forearmLengthM": 0.2782353889585258,
+            "referenceLengthsM": [
+              0.2621429872779313,
+              0.27823518060107694
+            ],
+            "forearmTwistDeg": -76.56802658714827,
+            "wristAxialTwistDeg": -0.000010502948918769018,
+            "reachErrorM": 0,
+            "gripErrorM": 7.299704900007377e-7
+          }
+        },
+        "scope": "Attachment frames and wrist/foot joints; not a skin collision or anatomical comfort proof."
+      },
+      "image": "greatsword-Spear_Study-1.59-grip-under-mail-regular.png"
+    },
+    {
+      "weapon": "pike",
+      "time": 1.59,
+      "view": "weapon-side",
+      "action": "Spear_Study",
+      "armorType": "mail",
+      "bodyBuild": "regular",
+      "measures": {
+        "shieldGripWorld": null,
+        "shieldAxis": null,
+        "weaponGripAngleDeg": 35,
+        "action": "Spear_Study",
+        "time": 1.59,
+        "weapon": "pike",
+        "effectiveShield": "none",
+        "handGripWorld": {
+          "R": [
+            -0.25122841030469345,
+            1.1210232726240943,
+            0.1566855300885308
+          ],
+          "L": [
+            -0.1537645988852443,
+            1.1520598236497437,
+            0.5226599685575692
+          ]
+        },
+        "weaponGripWorld": {
+          "R": [
+            -0.2512284103046933,
+            1.1210232726240943,
+            0.15668553008853073
+          ],
+          "L": [
+            -0.15376413596231656,
+            1.1520596153704459,
+            0.5226600483709618
+          ]
+        },
+        "rightGripErrorM": 1.8619006149354548e-16,
+        "leftGripErrorM": 5.138560893441262e-7,
+        "axis": [
+          0.256484931181522,
+          0.08167460450929502,
+          0.9630912412928798
+        ],
+        "tip": [
+          0.3386869897952098,
+          1.3088748395423253,
+          2.3717949929475464
+        ],
+        "footDriftM": {
+          "L": 0.000014806804704161914,
+          "R": 0.00002819724826745214
+        },
+        "reachErrors": {
+          "R": {
+            "elbowFlexDeg": 120.36228283697666,
+            "wristBendDeg": 21.21046033204482,
+            "elbowHingeAlignment": 0.9999992610347719,
+            "upperLengthM": 0.26214311172414634,
+            "forearmLengthM": 0.2782349492777029,
+            "referenceLengthsM": [
+              0.2621429885986164,
+              0.27823521532246515
+            ],
+            "forearmTwistDeg": 56.55959686082689,
+            "wristAxialTwistDeg": 0.000007952160306365404,
+            "reachErrorM": 0,
+            "gripErrorM": 6.656035035654636e-7
+          },
+          "L": {
+            "elbowFlexDeg": 29.21208331239977,
+            "wristBendDeg": 26.946045615229156,
+            "elbowHingeAlignment": 0.9999996240055253,
+            "upperLengthM": 0.2621429092925545,
+            "forearmLengthM": 0.27823542358932224,
+            "referenceLengthsM": [
+              0.2621429872779313,
+              0.27823518060107694
+            ],
+            "forearmTwistDeg": -84.36369582610912,
+            "wristAxialTwistDeg": 0.0000014188083426567898,
+            "reachErrorM": 0,
+            "gripErrorM": 5.138560893441262e-7
+          }
+        },
+        "scope": "Attachment frames and wrist/foot joints; not a skin collision or anatomical comfort proof."
+      },
+      "image": "pike-Spear_Study-1.59-weapon-side-mail-regular.png"
+    },
+    {
+      "weapon": "pike",
+      "time": 1.59,
+      "view": "spear",
+      "action": "Spear_Study",
+      "armorType": "mail",
+      "bodyBuild": "regular",
+      "measures": {
+        "shieldGripWorld": null,
+        "shieldAxis": null,
+        "weaponGripAngleDeg": 35,
+        "action": "Spear_Study",
+        "time": 1.59,
+        "weapon": "pike",
+        "effectiveShield": "none",
+        "handGripWorld": {
+          "R": [
+            -0.25122841030469345,
+            1.1210232726240943,
+            0.1566855300885308
+          ],
+          "L": [
+            -0.1537645988852443,
+            1.1520598236497437,
+            0.5226599685575692
+          ]
+        },
+        "weaponGripWorld": {
+          "R": [
+            -0.2512284103046933,
+            1.1210232726240943,
+            0.15668553008853073
+          ],
+          "L": [
+            -0.15376413596231656,
+            1.1520596153704459,
+            0.5226600483709618
+          ]
+        },
+        "rightGripErrorM": 1.8619006149354548e-16,
+        "leftGripErrorM": 5.138560893441262e-7,
+        "axis": [
+          0.256484931181522,
+          0.08167460450929502,
+          0.9630912412928798
+        ],
+        "tip": [
+          0.3386869897952098,
+          1.3088748395423253,
+          2.3717949929475464
+        ],
+        "footDriftM": {
+          "L": 0.000014806804704161914,
+          "R": 0.00002819724826745214
+        },
+        "reachErrors": {
+          "R": {
+            "elbowFlexDeg": 120.36228283697666,
+            "wristBendDeg": 21.21046033204482,
+            "elbowHingeAlignment": 0.9999992610347719,
+            "upperLengthM": 0.26214311172414634,
+            "forearmLengthM": 0.2782349492777029,
+            "referenceLengthsM": [
+              0.2621429885986164,
+              0.27823521532246515
+            ],
+            "forearmTwistDeg": 56.55959686082689,
+            "wristAxialTwistDeg": 0.000007952160306365404,
+            "reachErrorM": 0,
+            "gripErrorM": 6.656035035654636e-7
+          },
+          "L": {
+            "elbowFlexDeg": 29.21208331239977,
+            "wristBendDeg": 26.946045615229156,
+            "elbowHingeAlignment": 0.9999996240055253,
+            "upperLengthM": 0.2621429092925545,
+            "forearmLengthM": 0.27823542358932224,
+            "referenceLengthsM": [
+              0.2621429872779313,
+              0.27823518060107694
+            ],
+            "forearmTwistDeg": -84.36369582610912,
+            "wristAxialTwistDeg": 0.0000014188083426567898,
+            "reachErrorM": 0,
+            "gripErrorM": 5.138560893441262e-7
+          }
+        },
+        "scope": "Attachment frames and wrist/foot joints; not a skin collision or anatomical comfort proof."
+      },
+      "image": "pike-Spear_Study-1.59-spear-mail-regular.png"
+    },
+    {
+      "weapon": "spear",
+      "time": 1.9,
+      "view": "weapon-side",
+      "action": "Spear_Study",
+      "armorType": "mail",
+      "bodyBuild": "regular",
+      "measures": {
+        "shieldGripWorld": [
+          -0.0013444989614820047,
+          1.1648235822706139,
+          0.30765078593090106
+        ],
+        "shieldAxis": [
+          5.814490086760527e-7,
+          0.9999999999995416,
+          7.606922178709547e-7
+        ],
+        "weaponGripAngleDeg": 35,
+        "action": "Spear_Study",
+        "time": 1.9,
+        "weapon": "spear",
+        "effectiveShield": "round",
+        "handGripWorld": {
+          "R": [
+            -0.4182376646613809,
+            1.1785128532338376,
+            0.37821065683165683
+          ],
+          "L": [
+            -0.0013444989614820047,
+            1.1648235822706139,
+            0.30765078593090106
+          ]
+        },
+        "weaponGripWorld": {
+          "R": [
+            -0.4182376646613807,
+            1.1785128532338376,
+            0.37821065683165683
+          ],
+          "L": null
+        },
+        "rightGripErrorM": 2.220446049250313e-16,
+        "leftGripErrorM": null,
+        "axis": [
+          -0.26914075254965214,
+          0.10747100633832826,
+          0.9570858049901451
+        ],
+        "tip": [
+          -0.8394428440231816,
+          1.3467049042454557,
+          1.8760497667765483
+        ],
+        "footDriftM": {
+          "L": 2.500866612277431e-7,
+          "R": 1.50150591559758e-7
+        },
+        "reachErrors": {
+          "R": {
+            "elbowFlexDeg": 90.164287995597,
+            "wristBendDeg": 33.43937660374041,
+            "elbowHingeAlignment": 0.9999991061906668,
+            "upperLengthM": 0.2621430950549728,
+            "forearmLengthM": 0.2782350274698387,
+            "referenceLengthsM": [
+              0.2621429885986164,
+              0.27823521532246515
+            ],
+            "forearmTwistDeg": 83.10526411554046,
+            "wristAxialTwistDeg": 0.000019875664530799707,
+            "reachErrorM": 0,
+            "gripErrorM": 6.238751498837113e-7
+          },
+          "L": {
+            "elbowFlexDeg": 98.08931219693775,
+            "wristBendDeg": 24.23566237322594,
+            "elbowHingeAlignment": 0.9999998233582295,
+            "upperLengthM": 0.26214289984069694,
+            "forearmLengthM": 0.27823538303387035,
+            "referenceLengthsM": [
+              0.2621429872779313,
+              0.27823518060107694
+            ],
+            "forearmTwistDeg": -41.28587278105674,
+            "wristAxialTwistDeg": -0.000004582349799245716,
+            "reachErrorM": 0,
+            "gripErrorM": 3.6000656586374823e-7
+          }
+        },
+        "scope": "Attachment frames and wrist/foot joints; not a skin collision or anatomical comfort proof."
+      },
+      "image": "spear-Spear_Study-1.9-weapon-side-mail-regular.png"
+    },
+    {
+      "weapon": "sword",
+      "time": 1,
+      "view": "three",
+      "action": "Shield_Brace",
+      "armorType": "plate",
+      "bodyBuild": "regular",
+      "measures": {
+        "shieldGripWorld": [
+          0.0044009039553518925,
+          1.1411900353881068,
+          0.23438416479829974
+        ],
+        "shieldAxis": [
+          7.787085227113554e-7,
+          0.9999999999996203,
+          3.9066779417774466e-7
+        ],
+        "weaponGripAngleDeg": 35,
+        "action": "Shield_Brace",
+        "time": 1,
+        "weapon": "sword",
+        "effectiveShield": "round",
+        "handGripWorld": {
+          "R": [
+            -0.38217763600174764,
+            1.1449416192404516,
+            0.3162866261690725
+          ],
+          "L": [
+            0.0044009039553518925,
+            1.1411900353881068,
+            0.23438416479829974
+          ]
+        },
+        "weaponGripWorld": {
+          "R": [
+            -0.3821776360017475,
+            1.1449416192404516,
+            0.31628662616907255
+          ],
+          "L": null
+        },
+        "rightGripErrorM": 1.7554167342883506e-16,
+        "leftGripErrorM": null,
+        "axis": [
+          -0.09997653559973299,
+          0.7975625390509452,
+          0.5948938465239697
+        ],
+        "tip": [
+          -0.46815735215355647,
+          1.8308449327031437,
+          0.8278950059046692
+        ],
+        "footDriftM": {
+          "L": 7.837292941435341e-8,
+          "R": 1.501137519690972e-7
+        },
+        "reachErrors": {
+          "R": {
+            "elbowFlexDeg": 89.12303916583566,
+            "wristBendDeg": 8.433434818012223,
+            "elbowHingeAlignment": 0.9999991989576342,
+            "upperLengthM": 0.2621429124109117,
+            "forearmLengthM": 0.27823505109916075,
+            "referenceLengthsM": [
+              0.2621429885986164,
+              0.27823521532246515
+            ],
+            "forearmTwistDeg": 44.38265458769422,
+            "wristAxialTwistDeg": -0.0000286858475217463,
+            "reachErrorM": 0,
+            "gripErrorM": 4.5834701551810967e-7
+          },
+          "L": {
+            "elbowFlexDeg": 95.41020813164762,
+            "wristBendDeg": 23.408860802928732,
+            "elbowHingeAlignment": 0.9999998026420678,
+            "upperLengthM": 0.26214288152471577,
+            "forearmLengthM": 0.2782353942744787,
+            "referenceLengthsM": [
+              0.2621429872779313,
+              0.27823518060107694
+            ],
+            "forearmTwistDeg": -42.18325752143245,
+            "wristAxialTwistDeg": -0.0000043957438733711575,
+            "reachErrorM": 0,
+            "gripErrorM": 3.852988886964114e-7
+          }
+        },
+        "scope": "Attachment frames and wrist/foot joints; not a skin collision or anatomical comfort proof."
+      },
+      "image": "sword-Shield_Brace-1-three-plate-regular.png"
+    },
+    {
+      "weapon": "greatsword",
+      "time": 1.59,
+      "view": "weapon-side",
+      "action": "Spear_Study",
+      "armorType": "plate",
+      "bodyBuild": "regular",
+      "measures": {
+        "shieldGripWorld": null,
+        "shieldAxis": null,
+        "weaponGripAngleDeg": 35,
+        "action": "Spear_Study",
+        "time": 1.59,
+        "weapon": "greatsword",
+        "effectiveShield": "none",
+        "handGripWorld": {
+          "R": [
+            -0.08304817166565229,
+            1.1526692328733705,
+            0.35470657326011146
+          ],
+          "L": [
+            -0.085929456263746,
+            1.1420940148207168,
+            0.22516904201143553
+          ]
+        },
+        "weaponGripWorld": {
+          "R": [
+            -0.08304817166565213,
+            1.1526692328733705,
+            0.35470657326011146
+          ],
+          "L": [
+            -0.08592913296133331,
+            1.1420935311665612,
+            0.2251694829322039
+          ]
+        },
+        "rightGripErrorM": 1.5265566588595902e-16,
+        "leftGripErrorM": 7.299704900007377e-7,
+        "axis": [
+          0.022161937539696714,
+          0.08135176171305136,
+          0.9964390294396691
+        ],
+        "tip": [
+          -0.05623222651290993,
+          1.2511048805579121,
+          1.5603974843967034
+        ],
+        "footDriftM": {
+          "L": 0.000014806804704161914,
+          "R": 0.00002819724826745214
+        },
+        "reachErrors": {
+          "R": {
+            "elbowFlexDeg": 96.58365544338314,
+            "wristBendDeg": 32.22473184140954,
+            "elbowHingeAlignment": 0.9999991132481689,
+            "upperLengthM": 0.2621427375531965,
+            "forearmLengthM": 0.27823512481489315,
+            "referenceLengthsM": [
+              0.2621429885986164,
+              0.27823521532246515
+            ],
+            "forearmTwistDeg": 83.07641191465385,
+            "wristAxialTwistDeg": 0.0000017594608583615627,
+            "reachErrorM": 0,
+            "gripErrorM": 6.265634429256783e-7
+          },
+          "L": {
+            "elbowFlexDeg": 94.97594736291342,
+            "wristBendDeg": 3.3449818670009384,
+            "elbowHingeAlignment": 0.9999992496589246,
+            "upperLengthM": 0.2621427890531822,
+            "forearmLengthM": 0.2782353889585258,
+            "referenceLengthsM": [
+              0.2621429872779313,
+              0.27823518060107694
+            ],
+            "forearmTwistDeg": -76.56802658714827,
+            "wristAxialTwistDeg": -0.000010502948918769018,
+            "reachErrorM": 0,
+            "gripErrorM": 7.299704900007377e-7
+          }
+        },
+        "scope": "Attachment frames and wrist/foot joints; not a skin collision or anatomical comfort proof."
+      },
+      "image": "greatsword-Spear_Study-1.59-weapon-side-plate-regular.png"
+    },
+    {
+      "weapon": "spear",
+      "time": 0,
+      "view": "three",
+      "action": "rest",
+      "armorType": "plate",
+      "bodyBuild": "lean",
+      "measures": {
+        "shieldGripWorld": [
+          0.005980545059487516,
+          1.1586180972617972,
+          0.2102833927099667
+        ],
+        "shieldAxis": [
+          8.801049535062159e-7,
+          0.9999999999994655,
+          5.428382405965482e-7
+        ],
+        "weaponGripAngleDeg": 35,
+        "action": "rest",
+        "time": 0,
+        "weapon": "spear",
+        "effectiveShield": "round",
+        "handGripWorld": {
+          "R": [
+            -0.3699996575899846,
+            1.1647637732098395,
+            0.31253127234780975
+          ],
+          "L": [
+            0.005980545059487516,
+            1.1586180972617972,
+            0.2102833927099667
+          ]
+        },
+        "weaponGripWorld": {
+          "R": [
+            -0.36999965758998443,
+            1.1647637732098395,
+            0.3125312723478098
+          ],
+          "L": null
+        },
+        "rightGripErrorM": 1.7554167342883506e-16,
+        "leftGripErrorM": null,
+        "axis": [
+          -0.09997655202570552,
+          0.7982679022070075,
+          0.5939470055072883
+        ],
+        "tip": [
+          -0.5264628233753996,
+          2.4140521524869234,
+          1.2420577544084828
+        ],
+        "footDriftM": {
+          "L": 0,
+          "R": 0
+        },
+        "reachErrors": {
+          "R": {
+            "elbowFlexDeg": 90.78669092465358,
+            "wristBendDeg": 8.229904502555854,
+            "elbowHingeAlignment": 0.9999991957475358,
+            "upperLengthM": 0.2621429062498382,
+            "forearmLengthM": 0.2782350497177801,
+            "referenceLengthsM": [
+              0.2621429885986164,
+              0.27823521532246515
+            ],
+            "forearmTwistDeg": 44.69283834705779,
+            "wristAxialTwistDeg": -0.000030842315255052065,
+            "reachErrorM": 0,
+            "gripErrorM": 4.79099072491609e-7
+          },
+          "L": {
+            "elbowFlexDeg": 98.08927692640381,
+            "wristBendDeg": 24.265101405563993,
+            "elbowHingeAlignment": 0.999999823403973,
+            "upperLengthM": 0.26214289285651743,
+            "forearmLengthM": 0.2782353963729329,
+            "referenceLengthsM": [
+              0.2621429872779313,
+              0.27823518060107694
+            ],
+            "forearmTwistDeg": -41.228257613028184,
+            "wristAxialTwistDeg": -0.000010086419605298664,
+            "reachErrorM": 0,
+            "gripErrorM": 3.64814623215583e-7
+          }
+        },
+        "scope": "Attachment frames and wrist/foot joints; not a skin collision or anatomical comfort proof."
+      },
+      "image": "spear-rest-0-three-plate-lean.png"
+    }
+  ]
+}

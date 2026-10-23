@@ -108,10 +108,13 @@ function step(a,b){let jointStepM=0,jointTurnDeg=0,joint=null;for(const [name,v]
 function rotateWorld(b,q){const current=rotation(b),parent=rotation(b.parent);b.quaternion.copy(parent.invert().multiply(q).multiply(current)).normalize();update();}
 try{
  check('Inverse-bind anatomical calibration is finite',Object.values(report.calibration).flatMap(c=>Object.values(c).flat()).filter(v=>typeof v==='number').every(Number.isFinite));
- for(const bodyBuild of bodyBuilds)for(const weaponType of weapons)for(const action of actions){
-  if(action==='Shield_Brace'&&['pike','greatsword'].includes(weaponType))continue;
-  const config={bodyBuild,weaponType,shieldType:'tower',armorType:'plate',helmet:'on',beard:'none',experience:'recruit'},duration=begin(config,action),id=[bodyBuild,weaponType,action].join('/');
-  const n=Math.ceil(duration*30),result={id,bodyBuild,weaponType,action,duration,samples:n+1,minimumElbowFlexDeg:Infinity,maximumElbowFlexDeg:-Infinity,maximumHingePlaneErrorDeg:0,maximumHingeFrameErrorDeg:0,maximumWristBendDeg:0,maximumWristAxialTwistDeg:0,maximumForearmPronationDeg:0,maximumLinkLengthErrorM:0,maximumGripFrameErrorM:0,maximumJointStepM:0,maximumJointTurnDeg:0,maximumQuaternionNormError:0,finite:true,worst:{}};
+ const fixtures=bodyBuilds.flatMap(bodyBuild=>weapons.flatMap(weaponType=>actions.filter(action=>action!=='Shield_Brace'||!['pike','greatsword'].includes(weaponType)).map(action=>({bodyBuild,weaponType,action,shieldType:'tower'}))));
+ // The round-shield brace has a separate outward sword offset. Exercise its
+ // complete trajectory for every body build, not only the default tower shield.
+ if(!baseline)for(const bodyBuild of bodyBuilds)fixtures.push({bodyBuild,weaponType:'sword',action:'Shield_Brace',shieldType:'round'});
+ for(const {bodyBuild,weaponType,action,shieldType} of fixtures){
+  const config={bodyBuild,weaponType,shieldType,armorType:'plate',helmet:'on',beard:'none',experience:'recruit'},duration=begin(config,action),id=[bodyBuild,weaponType,action,...(shieldType==='tower'?[]:[shieldType])].join('/');
+  const n=Math.ceil(duration*30),result={id,bodyBuild,weaponType,shieldType,action,duration,samples:n+1,minimumElbowFlexDeg:Infinity,maximumElbowFlexDeg:-Infinity,maximumHingePlaneErrorDeg:0,maximumHingeFrameErrorDeg:0,maximumWristBendDeg:0,maximumWristAxialTwistDeg:0,maximumForearmPronationDeg:0,maximumLinkLengthErrorM:0,maximumGripFrameErrorM:0,maximumJointStepM:0,maximumJointTurnDeg:0,maximumQuaternionNormError:0,finite:true,worst:{}};
   let previous=null;
   for(let i=0;i<=n;i++){
    const time=i===n?duration:i/30;sample(action,time);const s=snapshot(weaponType);report.coverage.frameCount++;result.finite&&=s.finite;result.maximumQuaternionNormError=Math.max(result.maximumQuaternionNormError,s.quaternionNormError);

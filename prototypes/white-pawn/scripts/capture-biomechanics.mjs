@@ -16,11 +16,12 @@ try{
  if(!await page.evaluate(()=>whitePawn.ready))throw Error('WebGL did not start');
  const cases=label==='before'?[['sword',1.36,'side'],['greatsword',1.59,'spear']]:[
   ['sword',1.36,'weapon-side'],['sword',1.36,'spear'],['sword',2.47,'three','Shield_Brace'],['sword',2.47,'shield','Shield_Brace'],['sword',2.47,'shield-inside','Shield_Brace'],
-  ['greatsword',1.59,'weapon-side'],['greatsword',1.59,'spear'],['greatsword',1.59,'grip-top'],['greatsword',1.59,'grip-under'],['pike',1.59,'weapon-side'],['pike',1.59,'spear'],['spear',1.9,'weapon-side']
+  ['greatsword',1.59,'weapon-side'],['greatsword',1.59,'spear'],['greatsword',1.59,'grip-top'],['greatsword',1.59,'grip-under'],['pike',1.59,'weapon-side'],['pike',1.59,'spear'],['spear',1.9,'weapon-side'],
+  ['sword',1.0,'three','Shield_Brace'],['greatsword',1.59,'weapon-side','Spear_Study','plate'],['spear',0,'three','rest','plate','lean']
  ];
- for(const [weapon,time,view,action='Spear_Study']of cases.filter(c=>mode==='shield'?c[2]==='shield-inside':mode!=='grip'||c[2]==='shield-inside'||(c[0]==='greatsword'&&c[2]!=='weapon-side')||(c[0]==='pike'&&c[2]==='spear'))){
-  const record=await page.evaluate(({weapon,time,view,action})=>{
-   whitePawn.appearance.set({weaponType:weapon,armorType:weapon==='sword'?'plate':'mail',shieldType:'round'});
+ for(const [weapon,time,view,action='Spear_Study',armorType=weapon==='sword'?'plate':'mail',bodyBuild='regular']of cases.filter(c=>mode==='fingers'?c[0]==='greatsword'&&['grip-top','grip-under'].includes(c[2]):mode==='shield'?c[2]==='shield-inside':mode!=='grip'||c[2]==='shield-inside'||(c[0]==='greatsword'&&c[2]!=='weapon-side')||(c[0]==='pike'&&c[2]==='spear'))){
+  const record=await page.evaluate(({weapon,time,view,action,armorType,bodyBuild})=>{
+   whitePawn.appearance.set({weaponType:weapon,armorType,bodyBuild,shieldType:'round'});
    whitePawn.select(action);whitePawn.seek(time);whitePawn.fit(view==='weapon-side'?'side':view==='shield-inside'?'shield':view.startsWith('grip-')?'spear':view);
    if(view==='weapon-side'||view.startsWith('grip-')||view==='shield-inside'){
     const controls=whitePawn.debug.controls,camera=controls.object,offset=camera.position.clone().sub(controls.target);
@@ -36,9 +37,9 @@ try{
     camera.position.copy(controls.target).add(offset);controls.update();
    }
    whitePawn.render();
-   return{weapon,time,view,action,measures:whitePawn.loadout.measure()};
-  },{weapon,time,view,action});
-  const name=`${weapon}-${action}-${time}-${view}`;
+   return{weapon,time,view,action,armorType,bodyBuild,measures:whitePawn.loadout.measure()};
+  },{weapon,time,view,action,armorType,bodyBuild});
+  const name=`${weapon}-${action}-${time}-${view}-${armorType}-${bodyBuild}`;
   await page.locator('#stage').screenshot({path:path.join(out,name+'.png'),timeout:120000});records.push({...record,image:name+'.png'});
   console.log('CAPTURE '+name);
  }

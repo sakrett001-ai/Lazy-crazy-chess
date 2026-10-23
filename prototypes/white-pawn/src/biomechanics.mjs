@@ -105,7 +105,7 @@ export function createArmBiomechanics({model,bones,handReference,update}){
   worldQ(c.wrist,handQ);
   return twist;
  }
- function solve(side,grip,axis,pole,toolAxisLocal){
+ function solve(side,grip,axis,pole,toolAxisLocal,fixedHandQ){
   const c=calibration[side],reference=handReference[side],shaft=axis.clone().normalize(),s=point(c.upper);
   let u=perpendicular(point('neck01').sub(point('spine05')).negate(),shaft).normalize();
   if(u.lengthSq()<.1)u=perpendicular(new THREE.Vector3(0,0,1),shaft).normalize();
@@ -117,14 +117,18 @@ export function createArmBiomechanics({model,bones,handReference,update}){
   // the bounded circle is deterministic under arbitrary seeking.
   const candidate=angle=>{
    const distal=u.clone().multiplyScalar(Math.cos(angle)).addScaledVector(v,Math.sin(angle));
-   const handQ=frame(shaft,distal).multiply(correction),target=grip.clone().sub(reference.gripLocal.clone().applyQuaternion(handQ));
+   const handQ=fixedHandQ?fixedHandQ.clone():frame(shaft,distal).multiply(correction),target=grip.clone().sub(reference.gripLocal.clone().applyQuaternion(handQ));
    const handForward=reference.forwardLocal.clone().applyQuaternion(handQ);
    const result=twoBone(s,target,c.a,c.b,pole,shaft,side,handForward,handQ,bodyX,bodyUp);
    return{...result,handQ};
   };
-  let bestAngle=0,result=null;const step=2*Math.PI/16;
-  for(let i=0;i<16;i++){const angle=i*step,next=candidate(angle);if(!result||next.score<result.score){result=next;bestAngle=angle;}}
-  let radius=step;for(let i=0;i<8;i++){for(const angle of [bestAngle-radius/2,bestAngle+radius/2]){const next=candidate(angle);if(next.score<result.score){result=next;bestAngle=angle;}}radius*=.5;}
+  // Shield orientation is authored as a full frame. Free rotation around its
+  // handle would turn the board through its own forearm and leather loops.
+  let bestAngle=0,result=fixedHandQ?candidate(0):null;const step=2*Math.PI/16;
+  if(!fixedHandQ){
+   for(let i=0;i<16;i++){const angle=i*step,next=candidate(angle);if(!result||next.score<result.score){result=next;bestAngle=angle;}}
+   let radius=step;for(let i=0;i<8;i++){for(const angle of [bestAngle-radius/2,bestAngle+radius/2]){const next=candidate(angle);if(next.score<result.score){result=next;bestAngle=angle;}}radius*=.5;}
+  }
   const twist=setLinks(side,result.elbow,result.wrist,result.handQ);
   c.last={target:grip.clone(),axis:shaft,forearmTwistDeg:THREE.MathUtils.radToDeg(twist),reachErrorM:result.reachErrorM};
   return measure(side);

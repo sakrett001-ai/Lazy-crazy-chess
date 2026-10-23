@@ -50,6 +50,8 @@ if(!publish) {
     gripAuditSource:await readFile(path.join(root,'scripts/verify-grip.mjs')),
     weaponClearanceReport:await readJson(path.join(root,'review/weapon-clearance-checks.json')),
     weaponClearanceAuditSource:await readFile(path.join(root,'scripts/verify-weapon-clearance.mjs')),
+    enarmeReport:await readJson(path.join(root,'review/enarme-checks.json')),
+    enarmeAuditSource:await readFile(path.join(root,'scripts/verify-enarmes.mjs')),
     variantReport:await readJson(path.join(root,'review/variant-checks.json')),
     appearanceReport:await readJson(path.join(root,'review/appearance-checks.json')),
     viewerReport:await readJson(path.join(root,'review/viewer-checks.json')),

@@ -1,8 +1,8 @@
 {
-  "date": "2026-10-22T22:10:05.397Z",
+  "date": "2026-10-23T06:41:44.393Z",
   "browser": "141.0.7390.37",
   "glbSha256": "52f52e1c1ae832d1a61e1dac9e83dd39ff961fde1a9c402dec8a4a8f6dfce4e6",
-  "documentSha256": "3df1f742eafd22218fecebe06d3901ab266642f709075fbce065f8fcce9c6667",
+  "documentSha256": "7201023db6ec8e1dee37d98a73aac4ac6a8d0aef57c235bb3db2405d8d91ddb2",
   "tests": [
     "Offline load; expected clips and durations; no autoplay or HTTP requests",
     "Default GLB pose matches equipped guard at Guard_Breath t=0",
@@ -21,40 +21,40 @@
       "clip": "Guard_Breath",
       "time": 0,
       "minY": 0.0010001154276175525,
-      "maxY": 2.713617232868445,
-      "height": 2.7126171174408276,
+      "maxY": 2.414052036132092,
+      "height": 2.4130519207044743,
       "finite": true
     },
     {
       "clip": "Guard_Breath",
       "time": 1.5,
       "minY": 0.0010001154276175525,
-      "maxY": 2.715615873608293,
-      "height": 2.7146157581806754,
+      "maxY": 2.4207172296138175,
+      "height": 2.4197171141862,
       "finite": true
     },
     {
       "clip": "Guard_Breath",
       "time": 3,
       "minY": 0.0010001154276175525,
-      "maxY": 2.713617232868445,
-      "height": 2.7126171174408276,
+      "maxY": 2.414052036132092,
+      "height": 2.4130519207044743,
       "finite": true
     },
     {
       "clip": "Guard_Breath",
       "time": 4.5,
       "minY": 0.0010001154276175525,
-      "maxY": 2.711618405446658,
-      "height": 2.7106182900190405,
+      "maxY": 2.407376373898524,
+      "height": 2.4063762584709063,
       "finite": true
     },
     {
       "clip": "Guard_Breath",
       "time": 6,
       "minY": 0.0010001154276175525,
-      "maxY": 2.713617232868445,
-      "height": 2.7126171174408276,
+      "maxY": 2.414052036132092,
+      "height": 2.4130519207044743,
       "finite": true
     },
     {
@@ -66,40 +66,40 @@
       "clip": "Shield_Brace",
       "time": 0,
       "minY": 0.0010001154276175525,
-      "maxY": 2.713617232868445,
-      "height": 2.7126171174408276,
+      "maxY": 2.414052036132092,
+      "height": 2.4130519207044743,
       "finite": true
     },
     {
       "clip": "Shield_Brace",
       "time": 1,
       "minY": 0.0010000994474504076,
-      "maxY": 2.713617334510193,
-      "height": 2.7126172350627424,
+      "maxY": 2.3931260031244532,
+      "height": 2.3921259036770026,
       "finite": true
     },
     {
       "clip": "Shield_Brace",
       "time": 2,
       "minY": 0.0010001186580301882,
-      "maxY": 2.71361757123558,
-      "height": 2.7126174525775495,
+      "maxY": 2.4549360167762098,
+      "height": 2.4539358981181794,
       "finite": true
     },
     {
       "clip": "Shield_Brace",
       "time": 3,
       "minY": 0.001000068630751094,
-      "maxY": 2.7136174179329897,
-      "height": 2.7126173493022385,
+      "maxY": 2.430034297874613,
+      "height": 2.429034229243862,
       "finite": true
     },
     {
       "clip": "Shield_Brace",
       "time": 4,
       "minY": 0.0010001154276175525,
-      "maxY": 2.713617232868445,
-      "height": 2.7126171174408276,
+      "maxY": 2.414052036132092,
+      "height": 2.4130519207044743,
       "finite": true
     },
     {
@@ -111,8 +111,8 @@
       "clip": "Spear_Study",
       "time": 0,
       "minY": 0.0010001154276175525,
-      "maxY": 2.713617232868445,
-      "height": 2.7126171174408276,
+      "maxY": 2.414052036132092,
+      "height": 2.4130519207044743,
       "finite": true
     },
     {
@@ -143,8 +143,8 @@
       "clip": "Spear_Study",
       "time": 4,
       "minY": 0.0010001154276175525,
-      "maxY": 2.713617232868445,
-      "height": 2.7126171174408276,
+      "maxY": 2.414052036132092,
+      "height": 2.4130519207044743,
       "finite": true
     },
     {
@@ -155,7 +155,7 @@
   ],
   "errors": [],
   "network": [],
-  "loadMs": 16492,
+  "loadMs": 6053,
   "initial": {
     "pose": "rest",
     "time": 0,
@@ -204,8 +204,8 @@
     ],
     "drawCalls": 25,
     "triangles": 224036,
-    "p50ReadbackMs": 1008,
-    "p95ReadbackMs": 1205.0999999940395,
+    "p50ReadbackMs": 396.5,
+    "p95ReadbackMs": 416.90000000037253,
     "note": "Headless Chromium with software rendering; synchronous render and readback, not sustained real-device FPS."
   },
   "status": "passed",

@@ -1,0 +1,64 @@
+{
+  "node": "v24.19.0",
+  "glbSha256": "52f52e1c1ae832d1a61e1dac9e83dd39ff961fde1a9c402dec8a4a8f6dfce4e6",
+  "runtimeSha256": "237127a68aab84808a63c7e07b135bac1432527ed438fd313649c2d1862b55b8",
+  "measuredAt": "2026-10-23T06:43:39.239Z",
+  "warmupPerWeapon": 16,
+  "samplesPerWeapon": 80,
+  "cases": [
+    {
+      "weaponType": "spear",
+      "wall": {
+        "medianMs": 1.5229159999998956,
+        "p95Ms": 3.1714809999999716,
+        "maximumMs": 11.972158000000036
+      },
+      "cpu": {
+        "medianMs": 1.562,
+        "p95Ms": 3.828,
+        "maximumMs": 5.876
+      }
+    },
+    {
+      "weaponType": "sword",
+      "wall": {
+        "medianMs": 1.3989440000000286,
+        "p95Ms": 3.2365530000001854,
+        "maximumMs": 9.98453100000006
+      },
+      "cpu": {
+        "medianMs": 1.414,
+        "p95Ms": 3.409,
+        "maximumMs": 4.787
+      }
+    },
+    {
+      "weaponType": "pike",
+      "wall": {
+        "medianMs": 2.124804999999924,
+        "p95Ms": 3.392449999999826,
+        "maximumMs": 12.752578999999969
+      },
+      "cpu": {
+        "medianMs": 2.142,
+        "p95Ms": 3.749,
+        "maximumMs": 3.896
+      }
+    },
+    {
+      "weaponType": "greatsword",
+      "wall": {
+        "medianMs": 1.9479369999999108,
+        "p95Ms": 2.674199000000044,
+        "maximumMs": 2.872201000000132
+      },
+      "cpu": {
+        "medianMs": 1.976,
+        "p95Ms": 3.301,
+        "maximumMs": 6.256
+      }
+    }
+  ],
+  "scope": "Synchronous loadout.poseAt only: arm solve, morph, enarme surface update and finger application. Excludes GLB loading, animation sampling/restoration and rendering. Process CPU time excludes scheduler waits; wall time includes shared host contention and garbage collection. This is not mobile-device or end-to-end FPS measurement.",
+  "runtimeUnchanged": true
+}
