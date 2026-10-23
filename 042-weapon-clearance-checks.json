@@ -1,0 +1,1884 @@
+{
+  "status": "passed",
+  "glbSha256": "52f52e1c1ae832d1a61e1dac9e83dd39ff961fde1a9c402dec8a4a8f6dfce4e6",
+  "runtimeSha256": "a1fcdb8db78cfa0f46a5e6a35fd0b848a42c2be313954ee1bae0ff69dfd6838b",
+  "auditSha256": "e94554e66fdd4a791e99ab0bd71bfeb61e225e69d188027b6a07bd678d4c6758",
+  "coverage": {
+    "sampleRateHz": 10,
+    "weapons": [
+      "spear",
+      "sword"
+    ],
+    "shields": [
+      "tower",
+      "round",
+      "heater"
+    ],
+    "weaponMaterials": [
+      "weapon.metal",
+      "weapon.wood"
+    ],
+    "shieldMaterials": [
+      "shield.face",
+      "shield.wood",
+      "shield.trim"
+    ],
+    "bodyBuilds": [
+      "lean",
+      "regular",
+      "strong"
+    ],
+    "actions": [
+      "rest",
+      "Guard_Breath",
+      "Shield_Brace",
+      "Spear_Study"
+    ],
+    "frameCount": 2610,
+    "caseCount": 72,
+    "quick": false
+  },
+  "checks": [
+    {
+      "name": "spear/tower/lean/rest: weapon does not cross shield surfaces",
+      "passed": true,
+      "samples": 1,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0
+    },
+    {
+      "name": "spear/tower/lean/Guard_Breath: weapon does not cross shield surfaces",
+      "passed": true,
+      "samples": 61,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0
+    },
+    {
+      "name": "spear/tower/lean/Shield_Brace: weapon does not cross shield surfaces",
+      "passed": true,
+      "samples": 41,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0
+    },
+    {
+      "name": "spear/tower/lean/Spear_Study: weapon does not cross shield surfaces",
+      "passed": true,
+      "samples": 42,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0
+    },
+    {
+      "name": "spear/tower/regular/rest: weapon does not cross shield surfaces",
+      "passed": true,
+      "samples": 1,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0
+    },
+    {
+      "name": "spear/tower/regular/Guard_Breath: weapon does not cross shield surfaces",
+      "passed": true,
+      "samples": 61,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0
+    },
+    {
+      "name": "spear/tower/regular/Shield_Brace: weapon does not cross shield surfaces",
+      "passed": true,
+      "samples": 41,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0
+    },
+    {
+      "name": "spear/tower/regular/Spear_Study: weapon does not cross shield surfaces",
+      "passed": true,
+      "samples": 42,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0
+    },
+    {
+      "name": "spear/tower/strong/rest: weapon does not cross shield surfaces",
+      "passed": true,
+      "samples": 1,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0
+    },
+    {
+      "name": "spear/tower/strong/Guard_Breath: weapon does not cross shield surfaces",
+      "passed": true,
+      "samples": 61,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0
+    },
+    {
+      "name": "spear/tower/strong/Shield_Brace: weapon does not cross shield surfaces",
+      "passed": true,
+      "samples": 41,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0
+    },
+    {
+      "name": "spear/tower/strong/Spear_Study: weapon does not cross shield surfaces",
+      "passed": true,
+      "samples": 42,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0
+    },
+    {
+      "name": "spear/round/lean/rest: weapon does not cross shield surfaces",
+      "passed": true,
+      "samples": 1,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0
+    },
+    {
+      "name": "spear/round/lean/Guard_Breath: weapon does not cross shield surfaces",
+      "passed": true,
+      "samples": 61,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0
+    },
+    {
+      "name": "spear/round/lean/Shield_Brace: weapon does not cross shield surfaces",
+      "passed": true,
+      "samples": 41,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0
+    },
+    {
+      "name": "spear/round/lean/Spear_Study: weapon does not cross shield surfaces",
+      "passed": true,
+      "samples": 42,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0
+    },
+    {
+      "name": "spear/round/regular/rest: weapon does not cross shield surfaces",
+      "passed": true,
+      "samples": 1,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0
+    },
+    {
+      "name": "spear/round/regular/Guard_Breath: weapon does not cross shield surfaces",
+      "passed": true,
+      "samples": 61,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0
+    },
+    {
+      "name": "spear/round/regular/Shield_Brace: weapon does not cross shield surfaces",
+      "passed": true,
+      "samples": 41,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0
+    },
+    {
+      "name": "spear/round/regular/Spear_Study: weapon does not cross shield surfaces",
+      "passed": true,
+      "samples": 42,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0
+    },
+    {
+      "name": "spear/round/strong/rest: weapon does not cross shield surfaces",
+      "passed": true,
+      "samples": 1,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0
+    },
+    {
+      "name": "spear/round/strong/Guard_Breath: weapon does not cross shield surfaces",
+      "passed": true,
+      "samples": 61,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0
+    },
+    {
+      "name": "spear/round/strong/Shield_Brace: weapon does not cross shield surfaces",
+      "passed": true,
+      "samples": 41,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0
+    },
+    {
+      "name": "spear/round/strong/Spear_Study: weapon does not cross shield surfaces",
+      "passed": true,
+      "samples": 42,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0
+    },
+    {
+      "name": "spear/heater/lean/rest: weapon does not cross shield surfaces",
+      "passed": true,
+      "samples": 1,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0
+    },
+    {
+      "name": "spear/heater/lean/Guard_Breath: weapon does not cross shield surfaces",
+      "passed": true,
+      "samples": 61,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0
+    },
+    {
+      "name": "spear/heater/lean/Shield_Brace: weapon does not cross shield surfaces",
+      "passed": true,
+      "samples": 41,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0
+    },
+    {
+      "name": "spear/heater/lean/Spear_Study: weapon does not cross shield surfaces",
+      "passed": true,
+      "samples": 42,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0
+    },
+    {
+      "name": "spear/heater/regular/rest: weapon does not cross shield surfaces",
+      "passed": true,
+      "samples": 1,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0
+    },
+    {
+      "name": "spear/heater/regular/Guard_Breath: weapon does not cross shield surfaces",
+      "passed": true,
+      "samples": 61,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0
+    },
+    {
+      "name": "spear/heater/regular/Shield_Brace: weapon does not cross shield surfaces",
+      "passed": true,
+      "samples": 41,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0
+    },
+    {
+      "name": "spear/heater/regular/Spear_Study: weapon does not cross shield surfaces",
+      "passed": true,
+      "samples": 42,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0
+    },
+    {
+      "name": "spear/heater/strong/rest: weapon does not cross shield surfaces",
+      "passed": true,
+      "samples": 1,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0
+    },
+    {
+      "name": "spear/heater/strong/Guard_Breath: weapon does not cross shield surfaces",
+      "passed": true,
+      "samples": 61,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0
+    },
+    {
+      "name": "spear/heater/strong/Shield_Brace: weapon does not cross shield surfaces",
+      "passed": true,
+      "samples": 41,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0
+    },
+    {
+      "name": "spear/heater/strong/Spear_Study: weapon does not cross shield surfaces",
+      "passed": true,
+      "samples": 42,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0
+    },
+    {
+      "name": "sword/tower/lean/rest: weapon does not cross shield surfaces",
+      "passed": true,
+      "samples": 1,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0
+    },
+    {
+      "name": "sword/tower/lean/Guard_Breath: weapon does not cross shield surfaces",
+      "passed": true,
+      "samples": 61,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0
+    },
+    {
+      "name": "sword/tower/lean/Shield_Brace: weapon does not cross shield surfaces",
+      "passed": true,
+      "samples": 41,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0
+    },
+    {
+      "name": "sword/tower/lean/Spear_Study: weapon does not cross shield surfaces",
+      "passed": true,
+      "samples": 42,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0
+    },
+    {
+      "name": "sword/tower/regular/rest: weapon does not cross shield surfaces",
+      "passed": true,
+      "samples": 1,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0
+    },
+    {
+      "name": "sword/tower/regular/Guard_Breath: weapon does not cross shield surfaces",
+      "passed": true,
+      "samples": 61,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0
+    },
+    {
+      "name": "sword/tower/regular/Shield_Brace: weapon does not cross shield surfaces",
+      "passed": true,
+      "samples": 41,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0
+    },
+    {
+      "name": "sword/tower/regular/Spear_Study: weapon does not cross shield surfaces",
+      "passed": true,
+      "samples": 42,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0
+    },
+    {
+      "name": "sword/tower/strong/rest: weapon does not cross shield surfaces",
+      "passed": true,
+      "samples": 1,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0
+    },
+    {
+      "name": "sword/tower/strong/Guard_Breath: weapon does not cross shield surfaces",
+      "passed": true,
+      "samples": 61,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0
+    },
+    {
+      "name": "sword/tower/strong/Shield_Brace: weapon does not cross shield surfaces",
+      "passed": true,
+      "samples": 41,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0
+    },
+    {
+      "name": "sword/tower/strong/Spear_Study: weapon does not cross shield surfaces",
+      "passed": true,
+      "samples": 42,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0
+    },
+    {
+      "name": "sword/round/lean/rest: weapon does not cross shield surfaces",
+      "passed": true,
+      "samples": 1,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0
+    },
+    {
+      "name": "sword/round/lean/Guard_Breath: weapon does not cross shield surfaces",
+      "passed": true,
+      "samples": 61,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0
+    },
+    {
+      "name": "sword/round/lean/Shield_Brace: weapon does not cross shield surfaces",
+      "passed": true,
+      "samples": 41,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0
+    },
+    {
+      "name": "sword/round/lean/Spear_Study: weapon does not cross shield surfaces",
+      "passed": true,
+      "samples": 42,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0
+    },
+    {
+      "name": "sword/round/regular/rest: weapon does not cross shield surfaces",
+      "passed": true,
+      "samples": 1,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0
+    },
+    {
+      "name": "sword/round/regular/Guard_Breath: weapon does not cross shield surfaces",
+      "passed": true,
+      "samples": 61,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0
+    },
+    {
+      "name": "sword/round/regular/Shield_Brace: weapon does not cross shield surfaces",
+      "passed": true,
+      "samples": 41,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0
+    },
+    {
+      "name": "sword/round/regular/Spear_Study: weapon does not cross shield surfaces",
+      "passed": true,
+      "samples": 42,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0
+    },
+    {
+      "name": "sword/round/strong/rest: weapon does not cross shield surfaces",
+      "passed": true,
+      "samples": 1,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0
+    },
+    {
+      "name": "sword/round/strong/Guard_Breath: weapon does not cross shield surfaces",
+      "passed": true,
+      "samples": 61,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0
+    },
+    {
+      "name": "sword/round/strong/Shield_Brace: weapon does not cross shield surfaces",
+      "passed": true,
+      "samples": 41,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0
+    },
+    {
+      "name": "sword/round/strong/Spear_Study: weapon does not cross shield surfaces",
+      "passed": true,
+      "samples": 42,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0
+    },
+    {
+      "name": "sword/heater/lean/rest: weapon does not cross shield surfaces",
+      "passed": true,
+      "samples": 1,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0
+    },
+    {
+      "name": "sword/heater/lean/Guard_Breath: weapon does not cross shield surfaces",
+      "passed": true,
+      "samples": 61,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0
+    },
+    {
+      "name": "sword/heater/lean/Shield_Brace: weapon does not cross shield surfaces",
+      "passed": true,
+      "samples": 41,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0
+    },
+    {
+      "name": "sword/heater/lean/Spear_Study: weapon does not cross shield surfaces",
+      "passed": true,
+      "samples": 42,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0
+    },
+    {
+      "name": "sword/heater/regular/rest: weapon does not cross shield surfaces",
+      "passed": true,
+      "samples": 1,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0
+    },
+    {
+      "name": "sword/heater/regular/Guard_Breath: weapon does not cross shield surfaces",
+      "passed": true,
+      "samples": 61,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0
+    },
+    {
+      "name": "sword/heater/regular/Shield_Brace: weapon does not cross shield surfaces",
+      "passed": true,
+      "samples": 41,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0
+    },
+    {
+      "name": "sword/heater/regular/Spear_Study: weapon does not cross shield surfaces",
+      "passed": true,
+      "samples": 42,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0
+    },
+    {
+      "name": "sword/heater/strong/rest: weapon does not cross shield surfaces",
+      "passed": true,
+      "samples": 1,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0
+    },
+    {
+      "name": "sword/heater/strong/Guard_Breath: weapon does not cross shield surfaces",
+      "passed": true,
+      "samples": 61,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0
+    },
+    {
+      "name": "sword/heater/strong/Shield_Brace: weapon does not cross shield surfaces",
+      "passed": true,
+      "samples": 41,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0
+    },
+    {
+      "name": "sword/heater/strong/Spear_Study: weapon does not cross shield surfaces",
+      "passed": true,
+      "samples": 42,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0
+    },
+    {
+      "name": "Audit source remains unchanged during the run",
+      "passed": true
+    },
+    {
+      "name": "Runtime source remains unchanged during the run",
+      "passed": true
+    },
+    {
+      "name": "GLB remains unchanged during the run",
+      "passed": true
+    }
+  ],
+  "cases": [
+    {
+      "id": "spear/tower/lean/rest",
+      "weaponType": "spear",
+      "shieldType": "tower",
+      "bodyBuild": "lean",
+      "action": "rest",
+      "samples": 1,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0,
+      "nonfinite": 0,
+      "candidates": 370,
+      "examples": [],
+      "weaponTriangles": 190,
+      "shieldTriangles": 10232
+    },
+    {
+      "id": "spear/tower/lean/Guard_Breath",
+      "weaponType": "spear",
+      "shieldType": "tower",
+      "bodyBuild": "lean",
+      "action": "Guard_Breath",
+      "samples": 61,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0,
+      "nonfinite": 0,
+      "candidates": 22720,
+      "examples": [],
+      "weaponTriangles": 190,
+      "shieldTriangles": 10232
+    },
+    {
+      "id": "spear/tower/lean/Shield_Brace",
+      "weaponType": "spear",
+      "shieldType": "tower",
+      "bodyBuild": "lean",
+      "action": "Shield_Brace",
+      "samples": 41,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0,
+      "nonfinite": 0,
+      "candidates": 6844,
+      "examples": [],
+      "weaponTriangles": 190,
+      "shieldTriangles": 10232
+    },
+    {
+      "id": "spear/tower/lean/Spear_Study",
+      "weaponType": "spear",
+      "shieldType": "tower",
+      "bodyBuild": "lean",
+      "action": "Spear_Study",
+      "samples": 42,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0,
+      "nonfinite": 0,
+      "candidates": 268990,
+      "examples": [],
+      "weaponTriangles": 190,
+      "shieldTriangles": 10232
+    },
+    {
+      "id": "spear/tower/regular/rest",
+      "weaponType": "spear",
+      "shieldType": "tower",
+      "bodyBuild": "regular",
+      "action": "rest",
+      "samples": 1,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0,
+      "nonfinite": 0,
+      "candidates": 370,
+      "examples": [],
+      "weaponTriangles": 190,
+      "shieldTriangles": 10232
+    },
+    {
+      "id": "spear/tower/regular/Guard_Breath",
+      "weaponType": "spear",
+      "shieldType": "tower",
+      "bodyBuild": "regular",
+      "action": "Guard_Breath",
+      "samples": 61,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0,
+      "nonfinite": 0,
+      "candidates": 22720,
+      "examples": [],
+      "weaponTriangles": 190,
+      "shieldTriangles": 10232
+    },
+    {
+      "id": "spear/tower/regular/Shield_Brace",
+      "weaponType": "spear",
+      "shieldType": "tower",
+      "bodyBuild": "regular",
+      "action": "Shield_Brace",
+      "samples": 41,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0,
+      "nonfinite": 0,
+      "candidates": 6844,
+      "examples": [],
+      "weaponTriangles": 190,
+      "shieldTriangles": 10232
+    },
+    {
+      "id": "spear/tower/regular/Spear_Study",
+      "weaponType": "spear",
+      "shieldType": "tower",
+      "bodyBuild": "regular",
+      "action": "Spear_Study",
+      "samples": 42,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0,
+      "nonfinite": 0,
+      "candidates": 268990,
+      "examples": [],
+      "weaponTriangles": 190,
+      "shieldTriangles": 10232
+    },
+    {
+      "id": "spear/tower/strong/rest",
+      "weaponType": "spear",
+      "shieldType": "tower",
+      "bodyBuild": "strong",
+      "action": "rest",
+      "samples": 1,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0,
+      "nonfinite": 0,
+      "candidates": 370,
+      "examples": [],
+      "weaponTriangles": 190,
+      "shieldTriangles": 10232
+    },
+    {
+      "id": "spear/tower/strong/Guard_Breath",
+      "weaponType": "spear",
+      "shieldType": "tower",
+      "bodyBuild": "strong",
+      "action": "Guard_Breath",
+      "samples": 61,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0,
+      "nonfinite": 0,
+      "candidates": 22720,
+      "examples": [],
+      "weaponTriangles": 190,
+      "shieldTriangles": 10232
+    },
+    {
+      "id": "spear/tower/strong/Shield_Brace",
+      "weaponType": "spear",
+      "shieldType": "tower",
+      "bodyBuild": "strong",
+      "action": "Shield_Brace",
+      "samples": 41,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0,
+      "nonfinite": 0,
+      "candidates": 6844,
+      "examples": [],
+      "weaponTriangles": 190,
+      "shieldTriangles": 10232
+    },
+    {
+      "id": "spear/tower/strong/Spear_Study",
+      "weaponType": "spear",
+      "shieldType": "tower",
+      "bodyBuild": "strong",
+      "action": "Spear_Study",
+      "samples": 42,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0,
+      "nonfinite": 0,
+      "candidates": 274567,
+      "examples": [],
+      "weaponTriangles": 190,
+      "shieldTriangles": 10232
+    },
+    {
+      "id": "spear/round/lean/rest",
+      "weaponType": "spear",
+      "shieldType": "round",
+      "bodyBuild": "lean",
+      "action": "rest",
+      "samples": 1,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0,
+      "nonfinite": 0,
+      "candidates": 8534,
+      "examples": [],
+      "weaponTriangles": 190,
+      "shieldTriangles": 4104
+    },
+    {
+      "id": "spear/round/lean/Guard_Breath",
+      "weaponType": "spear",
+      "shieldType": "round",
+      "bodyBuild": "lean",
+      "action": "Guard_Breath",
+      "samples": 61,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0,
+      "nonfinite": 0,
+      "candidates": 520260,
+      "examples": [],
+      "weaponTriangles": 190,
+      "shieldTriangles": 4104
+    },
+    {
+      "id": "spear/round/lean/Shield_Brace",
+      "weaponType": "spear",
+      "shieldType": "round",
+      "bodyBuild": "lean",
+      "action": "Shield_Brace",
+      "samples": 41,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0,
+      "nonfinite": 0,
+      "candidates": 292775,
+      "examples": [],
+      "weaponTriangles": 190,
+      "shieldTriangles": 4104
+    },
+    {
+      "id": "spear/round/lean/Spear_Study",
+      "weaponType": "spear",
+      "shieldType": "round",
+      "bodyBuild": "lean",
+      "action": "Spear_Study",
+      "samples": 42,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0,
+      "nonfinite": 0,
+      "candidates": 327440,
+      "examples": [],
+      "weaponTriangles": 190,
+      "shieldTriangles": 4104
+    },
+    {
+      "id": "spear/round/regular/rest",
+      "weaponType": "spear",
+      "shieldType": "round",
+      "bodyBuild": "regular",
+      "action": "rest",
+      "samples": 1,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0,
+      "nonfinite": 0,
+      "candidates": 8534,
+      "examples": [],
+      "weaponTriangles": 190,
+      "shieldTriangles": 4104
+    },
+    {
+      "id": "spear/round/regular/Guard_Breath",
+      "weaponType": "spear",
+      "shieldType": "round",
+      "bodyBuild": "regular",
+      "action": "Guard_Breath",
+      "samples": 61,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0,
+      "nonfinite": 0,
+      "candidates": 520260,
+      "examples": [],
+      "weaponTriangles": 190,
+      "shieldTriangles": 4104
+    },
+    {
+      "id": "spear/round/regular/Shield_Brace",
+      "weaponType": "spear",
+      "shieldType": "round",
+      "bodyBuild": "regular",
+      "action": "Shield_Brace",
+      "samples": 41,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0,
+      "nonfinite": 0,
+      "candidates": 292775,
+      "examples": [],
+      "weaponTriangles": 190,
+      "shieldTriangles": 4104
+    },
+    {
+      "id": "spear/round/regular/Spear_Study",
+      "weaponType": "spear",
+      "shieldType": "round",
+      "bodyBuild": "regular",
+      "action": "Spear_Study",
+      "samples": 42,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0,
+      "nonfinite": 0,
+      "candidates": 327440,
+      "examples": [],
+      "weaponTriangles": 190,
+      "shieldTriangles": 4104
+    },
+    {
+      "id": "spear/round/strong/rest",
+      "weaponType": "spear",
+      "shieldType": "round",
+      "bodyBuild": "strong",
+      "action": "rest",
+      "samples": 1,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0,
+      "nonfinite": 0,
+      "candidates": 8534,
+      "examples": [],
+      "weaponTriangles": 190,
+      "shieldTriangles": 4104
+    },
+    {
+      "id": "spear/round/strong/Guard_Breath",
+      "weaponType": "spear",
+      "shieldType": "round",
+      "bodyBuild": "strong",
+      "action": "Guard_Breath",
+      "samples": 61,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0,
+      "nonfinite": 0,
+      "candidates": 520260,
+      "examples": [],
+      "weaponTriangles": 190,
+      "shieldTriangles": 4104
+    },
+    {
+      "id": "spear/round/strong/Shield_Brace",
+      "weaponType": "spear",
+      "shieldType": "round",
+      "bodyBuild": "strong",
+      "action": "Shield_Brace",
+      "samples": 41,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0,
+      "nonfinite": 0,
+      "candidates": 292775,
+      "examples": [],
+      "weaponTriangles": 190,
+      "shieldTriangles": 4104
+    },
+    {
+      "id": "spear/round/strong/Spear_Study",
+      "weaponType": "spear",
+      "shieldType": "round",
+      "bodyBuild": "strong",
+      "action": "Spear_Study",
+      "samples": 42,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0,
+      "nonfinite": 0,
+      "candidates": 328319,
+      "examples": [],
+      "weaponTriangles": 190,
+      "shieldTriangles": 4104
+    },
+    {
+      "id": "spear/heater/lean/rest",
+      "weaponType": "spear",
+      "shieldType": "heater",
+      "bodyBuild": "lean",
+      "action": "rest",
+      "samples": 1,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0,
+      "nonfinite": 0,
+      "candidates": 68,
+      "examples": [],
+      "weaponTriangles": 190,
+      "shieldTriangles": 2451
+    },
+    {
+      "id": "spear/heater/lean/Guard_Breath",
+      "weaponType": "spear",
+      "shieldType": "heater",
+      "bodyBuild": "lean",
+      "action": "Guard_Breath",
+      "samples": 61,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0,
+      "nonfinite": 0,
+      "candidates": 4148,
+      "examples": [],
+      "weaponTriangles": 190,
+      "shieldTriangles": 2451
+    },
+    {
+      "id": "spear/heater/lean/Shield_Brace",
+      "weaponType": "spear",
+      "shieldType": "heater",
+      "bodyBuild": "lean",
+      "action": "Shield_Brace",
+      "samples": 41,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0,
+      "nonfinite": 0,
+      "candidates": 1134,
+      "examples": [],
+      "weaponTriangles": 190,
+      "shieldTriangles": 2451
+    },
+    {
+      "id": "spear/heater/lean/Spear_Study",
+      "weaponType": "spear",
+      "shieldType": "heater",
+      "bodyBuild": "lean",
+      "action": "Spear_Study",
+      "samples": 42,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0,
+      "nonfinite": 0,
+      "candidates": 55346,
+      "examples": [],
+      "weaponTriangles": 190,
+      "shieldTriangles": 2451
+    },
+    {
+      "id": "spear/heater/regular/rest",
+      "weaponType": "spear",
+      "shieldType": "heater",
+      "bodyBuild": "regular",
+      "action": "rest",
+      "samples": 1,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0,
+      "nonfinite": 0,
+      "candidates": 68,
+      "examples": [],
+      "weaponTriangles": 190,
+      "shieldTriangles": 2451
+    },
+    {
+      "id": "spear/heater/regular/Guard_Breath",
+      "weaponType": "spear",
+      "shieldType": "heater",
+      "bodyBuild": "regular",
+      "action": "Guard_Breath",
+      "samples": 61,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0,
+      "nonfinite": 0,
+      "candidates": 4148,
+      "examples": [],
+      "weaponTriangles": 190,
+      "shieldTriangles": 2451
+    },
+    {
+      "id": "spear/heater/regular/Shield_Brace",
+      "weaponType": "spear",
+      "shieldType": "heater",
+      "bodyBuild": "regular",
+      "action": "Shield_Brace",
+      "samples": 41,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0,
+      "nonfinite": 0,
+      "candidates": 1134,
+      "examples": [],
+      "weaponTriangles": 190,
+      "shieldTriangles": 2451
+    },
+    {
+      "id": "spear/heater/regular/Spear_Study",
+      "weaponType": "spear",
+      "shieldType": "heater",
+      "bodyBuild": "regular",
+      "action": "Spear_Study",
+      "samples": 42,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0,
+      "nonfinite": 0,
+      "candidates": 55346,
+      "examples": [],
+      "weaponTriangles": 190,
+      "shieldTriangles": 2451
+    },
+    {
+      "id": "spear/heater/strong/rest",
+      "weaponType": "spear",
+      "shieldType": "heater",
+      "bodyBuild": "strong",
+      "action": "rest",
+      "samples": 1,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0,
+      "nonfinite": 0,
+      "candidates": 68,
+      "examples": [],
+      "weaponTriangles": 190,
+      "shieldTriangles": 2451
+    },
+    {
+      "id": "spear/heater/strong/Guard_Breath",
+      "weaponType": "spear",
+      "shieldType": "heater",
+      "bodyBuild": "strong",
+      "action": "Guard_Breath",
+      "samples": 61,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0,
+      "nonfinite": 0,
+      "candidates": 4148,
+      "examples": [],
+      "weaponTriangles": 190,
+      "shieldTriangles": 2451
+    },
+    {
+      "id": "spear/heater/strong/Shield_Brace",
+      "weaponType": "spear",
+      "shieldType": "heater",
+      "bodyBuild": "strong",
+      "action": "Shield_Brace",
+      "samples": 41,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0,
+      "nonfinite": 0,
+      "candidates": 1134,
+      "examples": [],
+      "weaponTriangles": 190,
+      "shieldTriangles": 2451
+    },
+    {
+      "id": "spear/heater/strong/Spear_Study",
+      "weaponType": "spear",
+      "shieldType": "heater",
+      "bodyBuild": "strong",
+      "action": "Spear_Study",
+      "samples": 42,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0,
+      "nonfinite": 0,
+      "candidates": 55659,
+      "examples": [],
+      "weaponTriangles": 190,
+      "shieldTriangles": 2451
+    },
+    {
+      "id": "sword/tower/lean/rest",
+      "weaponType": "sword",
+      "shieldType": "tower",
+      "bodyBuild": "lean",
+      "action": "rest",
+      "samples": 1,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0,
+      "nonfinite": 0,
+      "candidates": 0,
+      "examples": [],
+      "weaponTriangles": 118,
+      "shieldTriangles": 10232
+    },
+    {
+      "id": "sword/tower/lean/Guard_Breath",
+      "weaponType": "sword",
+      "shieldType": "tower",
+      "bodyBuild": "lean",
+      "action": "Guard_Breath",
+      "samples": 61,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0,
+      "nonfinite": 0,
+      "candidates": 0,
+      "examples": [],
+      "weaponTriangles": 118,
+      "shieldTriangles": 10232
+    },
+    {
+      "id": "sword/tower/lean/Shield_Brace",
+      "weaponType": "sword",
+      "shieldType": "tower",
+      "bodyBuild": "lean",
+      "action": "Shield_Brace",
+      "samples": 41,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0,
+      "nonfinite": 0,
+      "candidates": 0,
+      "examples": [],
+      "weaponTriangles": 118,
+      "shieldTriangles": 10232
+    },
+    {
+      "id": "sword/tower/lean/Spear_Study",
+      "weaponType": "sword",
+      "shieldType": "tower",
+      "bodyBuild": "lean",
+      "action": "Spear_Study",
+      "samples": 42,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0,
+      "nonfinite": 0,
+      "candidates": 0,
+      "examples": [],
+      "weaponTriangles": 118,
+      "shieldTriangles": 10232
+    },
+    {
+      "id": "sword/tower/regular/rest",
+      "weaponType": "sword",
+      "shieldType": "tower",
+      "bodyBuild": "regular",
+      "action": "rest",
+      "samples": 1,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0,
+      "nonfinite": 0,
+      "candidates": 0,
+      "examples": [],
+      "weaponTriangles": 118,
+      "shieldTriangles": 10232
+    },
+    {
+      "id": "sword/tower/regular/Guard_Breath",
+      "weaponType": "sword",
+      "shieldType": "tower",
+      "bodyBuild": "regular",
+      "action": "Guard_Breath",
+      "samples": 61,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0,
+      "nonfinite": 0,
+      "candidates": 0,
+      "examples": [],
+      "weaponTriangles": 118,
+      "shieldTriangles": 10232
+    },
+    {
+      "id": "sword/tower/regular/Shield_Brace",
+      "weaponType": "sword",
+      "shieldType": "tower",
+      "bodyBuild": "regular",
+      "action": "Shield_Brace",
+      "samples": 41,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0,
+      "nonfinite": 0,
+      "candidates": 0,
+      "examples": [],
+      "weaponTriangles": 118,
+      "shieldTriangles": 10232
+    },
+    {
+      "id": "sword/tower/regular/Spear_Study",
+      "weaponType": "sword",
+      "shieldType": "tower",
+      "bodyBuild": "regular",
+      "action": "Spear_Study",
+      "samples": 42,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0,
+      "nonfinite": 0,
+      "candidates": 0,
+      "examples": [],
+      "weaponTriangles": 118,
+      "shieldTriangles": 10232
+    },
+    {
+      "id": "sword/tower/strong/rest",
+      "weaponType": "sword",
+      "shieldType": "tower",
+      "bodyBuild": "strong",
+      "action": "rest",
+      "samples": 1,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0,
+      "nonfinite": 0,
+      "candidates": 0,
+      "examples": [],
+      "weaponTriangles": 118,
+      "shieldTriangles": 10232
+    },
+    {
+      "id": "sword/tower/strong/Guard_Breath",
+      "weaponType": "sword",
+      "shieldType": "tower",
+      "bodyBuild": "strong",
+      "action": "Guard_Breath",
+      "samples": 61,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0,
+      "nonfinite": 0,
+      "candidates": 0,
+      "examples": [],
+      "weaponTriangles": 118,
+      "shieldTriangles": 10232
+    },
+    {
+      "id": "sword/tower/strong/Shield_Brace",
+      "weaponType": "sword",
+      "shieldType": "tower",
+      "bodyBuild": "strong",
+      "action": "Shield_Brace",
+      "samples": 41,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0,
+      "nonfinite": 0,
+      "candidates": 0,
+      "examples": [],
+      "weaponTriangles": 118,
+      "shieldTriangles": 10232
+    },
+    {
+      "id": "sword/tower/strong/Spear_Study",
+      "weaponType": "sword",
+      "shieldType": "tower",
+      "bodyBuild": "strong",
+      "action": "Spear_Study",
+      "samples": 42,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0,
+      "nonfinite": 0,
+      "candidates": 0,
+      "examples": [],
+      "weaponTriangles": 118,
+      "shieldTriangles": 10232
+    },
+    {
+      "id": "sword/round/lean/rest",
+      "weaponType": "sword",
+      "shieldType": "round",
+      "bodyBuild": "lean",
+      "action": "rest",
+      "samples": 1,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0,
+      "nonfinite": 0,
+      "candidates": 34,
+      "examples": [],
+      "weaponTriangles": 118,
+      "shieldTriangles": 4104
+    },
+    {
+      "id": "sword/round/lean/Guard_Breath",
+      "weaponType": "sword",
+      "shieldType": "round",
+      "bodyBuild": "lean",
+      "action": "Guard_Breath",
+      "samples": 61,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0,
+      "nonfinite": 0,
+      "candidates": 2027,
+      "examples": [],
+      "weaponTriangles": 118,
+      "shieldTriangles": 4104
+    },
+    {
+      "id": "sword/round/lean/Shield_Brace",
+      "weaponType": "sword",
+      "shieldType": "round",
+      "bodyBuild": "lean",
+      "action": "Shield_Brace",
+      "samples": 41,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0,
+      "nonfinite": 0,
+      "candidates": 527,
+      "examples": [],
+      "weaponTriangles": 118,
+      "shieldTriangles": 4104
+    },
+    {
+      "id": "sword/round/lean/Spear_Study",
+      "weaponType": "sword",
+      "shieldType": "round",
+      "bodyBuild": "lean",
+      "action": "Spear_Study",
+      "samples": 42,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0,
+      "nonfinite": 0,
+      "candidates": 453,
+      "examples": [],
+      "weaponTriangles": 118,
+      "shieldTriangles": 4104
+    },
+    {
+      "id": "sword/round/regular/rest",
+      "weaponType": "sword",
+      "shieldType": "round",
+      "bodyBuild": "regular",
+      "action": "rest",
+      "samples": 1,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0,
+      "nonfinite": 0,
+      "candidates": 34,
+      "examples": [],
+      "weaponTriangles": 118,
+      "shieldTriangles": 4104
+    },
+    {
+      "id": "sword/round/regular/Guard_Breath",
+      "weaponType": "sword",
+      "shieldType": "round",
+      "bodyBuild": "regular",
+      "action": "Guard_Breath",
+      "samples": 61,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0,
+      "nonfinite": 0,
+      "candidates": 2027,
+      "examples": [],
+      "weaponTriangles": 118,
+      "shieldTriangles": 4104
+    },
+    {
+      "id": "sword/round/regular/Shield_Brace",
+      "weaponType": "sword",
+      "shieldType": "round",
+      "bodyBuild": "regular",
+      "action": "Shield_Brace",
+      "samples": 41,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0,
+      "nonfinite": 0,
+      "candidates": 527,
+      "examples": [],
+      "weaponTriangles": 118,
+      "shieldTriangles": 4104
+    },
+    {
+      "id": "sword/round/regular/Spear_Study",
+      "weaponType": "sword",
+      "shieldType": "round",
+      "bodyBuild": "regular",
+      "action": "Spear_Study",
+      "samples": 42,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0,
+      "nonfinite": 0,
+      "candidates": 453,
+      "examples": [],
+      "weaponTriangles": 118,
+      "shieldTriangles": 4104
+    },
+    {
+      "id": "sword/round/strong/rest",
+      "weaponType": "sword",
+      "shieldType": "round",
+      "bodyBuild": "strong",
+      "action": "rest",
+      "samples": 1,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0,
+      "nonfinite": 0,
+      "candidates": 343,
+      "examples": [],
+      "weaponTriangles": 118,
+      "shieldTriangles": 4104
+    },
+    {
+      "id": "sword/round/strong/Guard_Breath",
+      "weaponType": "sword",
+      "shieldType": "round",
+      "bodyBuild": "strong",
+      "action": "Guard_Breath",
+      "samples": 61,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0,
+      "nonfinite": 0,
+      "candidates": 20794,
+      "examples": [],
+      "weaponTriangles": 118,
+      "shieldTriangles": 4104
+    },
+    {
+      "id": "sword/round/strong/Shield_Brace",
+      "weaponType": "sword",
+      "shieldType": "round",
+      "bodyBuild": "strong",
+      "action": "Shield_Brace",
+      "samples": 41,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0,
+      "nonfinite": 0,
+      "candidates": 4387,
+      "examples": [],
+      "weaponTriangles": 118,
+      "shieldTriangles": 4104
+    },
+    {
+      "id": "sword/round/strong/Spear_Study",
+      "weaponType": "sword",
+      "shieldType": "round",
+      "bodyBuild": "strong",
+      "action": "Spear_Study",
+      "samples": 42,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0,
+      "nonfinite": 0,
+      "candidates": 6415,
+      "examples": [],
+      "weaponTriangles": 118,
+      "shieldTriangles": 4104
+    },
+    {
+      "id": "sword/heater/lean/rest",
+      "weaponType": "sword",
+      "shieldType": "heater",
+      "bodyBuild": "lean",
+      "action": "rest",
+      "samples": 1,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0,
+      "nonfinite": 0,
+      "candidates": 0,
+      "examples": [],
+      "weaponTriangles": 118,
+      "shieldTriangles": 2451
+    },
+    {
+      "id": "sword/heater/lean/Guard_Breath",
+      "weaponType": "sword",
+      "shieldType": "heater",
+      "bodyBuild": "lean",
+      "action": "Guard_Breath",
+      "samples": 61,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0,
+      "nonfinite": 0,
+      "candidates": 0,
+      "examples": [],
+      "weaponTriangles": 118,
+      "shieldTriangles": 2451
+    },
+    {
+      "id": "sword/heater/lean/Shield_Brace",
+      "weaponType": "sword",
+      "shieldType": "heater",
+      "bodyBuild": "lean",
+      "action": "Shield_Brace",
+      "samples": 41,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0,
+      "nonfinite": 0,
+      "candidates": 0,
+      "examples": [],
+      "weaponTriangles": 118,
+      "shieldTriangles": 2451
+    },
+    {
+      "id": "sword/heater/lean/Spear_Study",
+      "weaponType": "sword",
+      "shieldType": "heater",
+      "bodyBuild": "lean",
+      "action": "Spear_Study",
+      "samples": 42,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0,
+      "nonfinite": 0,
+      "candidates": 0,
+      "examples": [],
+      "weaponTriangles": 118,
+      "shieldTriangles": 2451
+    },
+    {
+      "id": "sword/heater/regular/rest",
+      "weaponType": "sword",
+      "shieldType": "heater",
+      "bodyBuild": "regular",
+      "action": "rest",
+      "samples": 1,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0,
+      "nonfinite": 0,
+      "candidates": 0,
+      "examples": [],
+      "weaponTriangles": 118,
+      "shieldTriangles": 2451
+    },
+    {
+      "id": "sword/heater/regular/Guard_Breath",
+      "weaponType": "sword",
+      "shieldType": "heater",
+      "bodyBuild": "regular",
+      "action": "Guard_Breath",
+      "samples": 61,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0,
+      "nonfinite": 0,
+      "candidates": 0,
+      "examples": [],
+      "weaponTriangles": 118,
+      "shieldTriangles": 2451
+    },
+    {
+      "id": "sword/heater/regular/Shield_Brace",
+      "weaponType": "sword",
+      "shieldType": "heater",
+      "bodyBuild": "regular",
+      "action": "Shield_Brace",
+      "samples": 41,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0,
+      "nonfinite": 0,
+      "candidates": 0,
+      "examples": [],
+      "weaponTriangles": 118,
+      "shieldTriangles": 2451
+    },
+    {
+      "id": "sword/heater/regular/Spear_Study",
+      "weaponType": "sword",
+      "shieldType": "heater",
+      "bodyBuild": "regular",
+      "action": "Spear_Study",
+      "samples": 42,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0,
+      "nonfinite": 0,
+      "candidates": 0,
+      "examples": [],
+      "weaponTriangles": 118,
+      "shieldTriangles": 2451
+    },
+    {
+      "id": "sword/heater/strong/rest",
+      "weaponType": "sword",
+      "shieldType": "heater",
+      "bodyBuild": "strong",
+      "action": "rest",
+      "samples": 1,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0,
+      "nonfinite": 0,
+      "candidates": 0,
+      "examples": [],
+      "weaponTriangles": 118,
+      "shieldTriangles": 2451
+    },
+    {
+      "id": "sword/heater/strong/Guard_Breath",
+      "weaponType": "sword",
+      "shieldType": "heater",
+      "bodyBuild": "strong",
+      "action": "Guard_Breath",
+      "samples": 61,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0,
+      "nonfinite": 0,
+      "candidates": 0,
+      "examples": [],
+      "weaponTriangles": 118,
+      "shieldTriangles": 2451
+    },
+    {
+      "id": "sword/heater/strong/Shield_Brace",
+      "weaponType": "sword",
+      "shieldType": "heater",
+      "bodyBuild": "strong",
+      "action": "Shield_Brace",
+      "samples": 41,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0,
+      "nonfinite": 0,
+      "candidates": 0,
+      "examples": [],
+      "weaponTriangles": 118,
+      "shieldTriangles": 2451
+    },
+    {
+      "id": "sword/heater/strong/Spear_Study",
+      "weaponType": "sword",
+      "shieldType": "heater",
+      "bodyBuild": "strong",
+      "action": "Spear_Study",
+      "samples": 42,
+      "maximumIntersections": 0,
+      "intersectingFrames": 0,
+      "nonfinite": 0,
+      "candidates": 0,
+      "examples": [],
+      "weaponTriangles": 118,
+      "shieldTriangles": 2451
+    }
+  ],
+  "negativeControls": [
+    {
+      "name": "Imported sword hand is moved through the actual shield face",
+      "passed": true,
+      "beforeIntersectionPairs": 0,
+      "afterIntersectionPairs": 36,
+      "beforeWristWorld": [
+        -0.39735511114087846,
+        1.1484433082090977,
+        0.21737540327187505
+      ],
+      "afterWristWorld": [
+        0.11843383578073363,
+        1.344342202025809,
+        -0.02131210895075543
+      ],
+      "faceCenterWorld": [
+        0.25255734592173934,
+        1.2514136915764764,
+        0.31563137471444574
+      ],
+      "intersections": [
+        {
+          "weaponMesh": "WEAPON_sword_Blade",
+          "weaponTriangle": 0,
+          "shieldMesh": "SHIELD_round_Face",
+          "shieldTriangle": 10,
+          "pointsWorld": [
+            [
+              0.27440507010373333,
+              1.2470321032006564,
+              0.3085442262348195
+            ],
+            [
+              0.2684319540127895,
+              1.2468611351794816,
+              0.31038670891010883
+            ]
+          ]
+        },
+        {
+          "weaponMesh": "WEAPON_sword_Blade",
+          "weaponTriangle": 0,
+          "shieldMesh": "SHIELD_round_Face",
+          "shieldTriangle": 74,
+          "pointsWorld": [
+            [
+              0.2682085750569205,
+              1.2483834587094165,
+              0.28760153904638425
+            ],
+            [
+              0.26294324400127345,
+              1.2482323676016607,
+              0.28923140678828935
+            ]
+          ]
+        },
+        {
+          "weaponMesh": "WEAPON_sword_Blade",
+          "weaponTriangle": 1,
+          "shieldMesh": "SHIELD_round_Face",
+          "shieldTriangle": 9,
+          "pointsWorld": [
+            [
+              0.25163358726690543,
+              1.246841966543181,
+              0.31560969055504495
+            ],
+            [
+              0.2664647341562178,
+              1.2468589648033976,
+              0.31099712568659027
+            ]
+          ]
+        },
+        {
+          "weaponMesh": "WEAPON_sword_Blade",
+          "weaponTriangle": 1,
+          "shieldMesh": "SHIELD_round_Face",
+          "shieldTriangle": 10,
+          "pointsWorld": [
+            [
+              0.2684319540127895,
+              1.2468611351794816,
+              0.3103867089101089
+            ],
+            [
+              0.26646473415621785,
+              1.2468589648033976,
+              0.31099712568659027
+            ]
+          ]
+        },
+        {
+          "weaponMesh": "WEAPON_sword_Blade",
+          "weaponTriangle": 1,
+          "shieldMesh": "SHIELD_round_Face",
+          "shieldTriangle": 73,
+          "pointsWorld": [
+            [
+              0.2451470454932766,
+              1.2482109364868994,
+              0.2947832884823637
+            ],
+            [
+              0.26173869758797663,
+              1.2482309611433744,
+              0.2896064570046753
+            ]
+          ]
+        },
+        {
+          "weaponMesh": "WEAPON_sword_Blade",
+          "weaponTriangle": 1,
+          "shieldMesh": "SHIELD_round_Face",
+          "shieldTriangle": 74,
+          "pointsWorld": [
+            [
+              0.26294324400127345,
+              1.2482323676016607,
+              0.28923140678828946
+            ],
+            [
+              0.2617386975879767,
+              1.2482309611433744,
+              0.28960645700467524
+            ]
+          ]
+        },
+        {
+          "weaponMesh": "WEAPON_sword_Blade",
+          "weaponTriangle": 2,
+          "shieldMesh": "SHIELD_round_Face",
+          "shieldTriangle": 9,
+          "pointsWorld": [
+            [
+              0.25163358726690543,
+              1.246841966543181,
+              0.31560969055504495
+            ],
+            [
+              0.2461934627452129,
+              1.2493020255771763,
+              0.3174683199403652
+            ]
+          ]
+        },
+        {
+          "weaponMesh": "WEAPON_sword_Blade",
+          "weaponTriangle": 2,
+          "shieldMesh": "SHIELD_round_Face",
+          "shieldTriangle": 73,
+          "pointsWorld": [
+            [
+              0.2451470454932766,
+              1.2482109364868994,
+              0.2947832884823637
+            ],
+            [
+              0.2403504584642662,
+              1.250380207880416,
+              0.29642535339881404
+            ]
+          ]
+        },
+        {
+          "weaponMesh": "WEAPON_sword_Blade",
+          "weaponTriangle": 3,
+          "shieldMesh": "SHIELD_round_Face",
+          "shieldTriangle": 8,
+          "pointsWorld": [
+            [
+              0.23070529902302123,
+              1.25579683556612,
+              0.32270410686126266
+            ],
+            [
+              0.2367511284924121,
+              1.2532623555897695,
+              0.32067338635655623
+            ]
+          ]
+        },
+        {
+          "weaponMesh": "WEAPON_sword_Blade",
+          "weaponTriangle": 3,
+          "shieldMesh": "SHIELD_round_Face",
+          "shieldTriangle": 9,
+          "pointsWorld": [
+            [
+              0.24619346274521292,
+              1.2493020255771763,
+              0.3174683199403652
+            ],
+            [
+              0.2367511284924121,
+              1.2532623555897695,
+              0.32067338635655623
+            ]
+          ]
+        },
+        {
+          "weaponMesh": "WEAPON_sword_Blade",
+          "weaponTriangle": 3,
+          "shieldMesh": "SHIELD_round_Face",
+          "shieldTriangle": 72,
+          "pointsWorld": [
+            [
+              0.22394014013312274,
+              1.25726208883801,
+              0.3019791575761907
+            ],
+            [
+              0.23158882350889864,
+              1.2540554087902582,
+              0.2994056017669059
+            ]
+          ]
+        },
+        {
+          "weaponMesh": "WEAPON_sword_Blade",
+          "weaponTriangle": 3,
+          "shieldMesh": "SHIELD_round_Face",
+          "shieldTriangle": 73,
+          "pointsWorld": [
+            [
+              0.24035045846426623,
+              1.250380207880416,
+              0.296425353398814
+            ],
+            [
+              0.23158882350889867,
+              1.2540554087902582,
+              0.2994056017669059
+            ]
+          ]
+        }
+      ]
+    }
+  ],
+  "failures": [],
+  "scope": "Actual skinned triangle intersections between weapon.metal/weapon.wood surfaces and shield.face/shield.wood/shield.trim surfaces. Includes the physical rim and wooden rear bracing, excludes shield grip, leather enarmes and painted emblem. AABB broad phase followed by finite edge/triangle intersections; positive crossings are recorded in world coordinates. Tests lean, regular and strong physiques at10Hz plus the reported1.36s sword frame. This is not continuous collision detection, minimum-clearance certification, coplanar contact classification, inside-volume testing, whole-body collision or a physical combat simulation."
+}

@@ -1,0 +1,993 @@
+{
+  "status": "failed",
+  "baseline": true,
+  "sourceCommit": "f7f3fd8787d6bc3f5a13942ef806a720225fdb8d",
+  "glbSha256": "52f52e1c1ae832d1a61e1dac9e83dd39ff961fde1a9c402dec8a4a8f6dfce4e6",
+  "runtimeSha256": "237127a68aab84808a63c7e07b135bac1432527ed438fd313649c2d1862b55b8",
+  "auditSha256": "1ae2bc3717a0e370b0781bafd2e86283a616ecf1c8deb140ead88c31cf056cfd",
+  "limits": {
+    "containmentToleranceM": 0.001,
+    "minimumRightHandAdvanceRelativeChestM": 0.06,
+    "minimumRightElbowExtensionDeg": 10,
+    "minimumCombinedElbowExtensionDeg": 10,
+    "minimumTwoHandElbowExtensionDeg": 0,
+    "minimumRearKneeExtensionDeg": 2,
+    "minimumFrontKneeFlexChangeDeg": 2,
+    "minimumTorsoPitchChangeDeg": 2,
+    "maximumFootDriftM": 0.006
+  },
+  "coverage": {
+    "quick": true,
+    "sampleRateHz": 30,
+    "weapons": [
+      "spear",
+      "sword",
+      "pike",
+      "greatsword"
+    ],
+    "bodyBuilds": [
+      "lean",
+      "regular",
+      "strong"
+    ],
+    "armorTypes": [
+      "plate",
+      "mail",
+      "padded"
+    ],
+    "actions": [
+      "Spear_Study"
+    ],
+    "shields": [
+      "tower"
+    ],
+    "caseCount": 1,
+    "frameCount": 5
+  },
+  "bodyClearancePassed": false,
+  "wholeBodyContributionPassed": false,
+  "checks": [
+    {
+      "name": "greatsword/regular/plate/Spear_Study: no torso contact",
+      "passed": false
+    },
+    {
+      "name": "greatsword/regular/plate/Spear_Study: arms torso and legs contribute",
+      "passed": false,
+      "readyTime": 1.25,
+      "peakTime": 1.9,
+      "rightHandAdvanceRelativeChestM": 0.026022750088534895,
+      "rightHandAdvanceRelativeHipM": 0.010777017541775968,
+      "rightElbowExtensionDeg": 4.9008303538525695,
+      "leftElbowExtensionDeg": 1.8710541926591446,
+      "totalElbowExtensionDeg": 6.771884546511714,
+      "frontKneeFlexChangeDeg": -4.425256303300834,
+      "rearKneeExtensionDeg": 15.692765871944513,
+      "torsoPitchChangeDeg": -2.0342772127883726,
+      "maximumFootDriftM": 0.00003453747757523307
+    },
+    {
+      "name": "Physical negative controls detect torso contact and pelvis-only movement",
+      "passed": true
+    },
+    {
+      "name": "Audit source remains unchanged during run",
+      "passed": true
+    }
+  ],
+  "cases": [
+    {
+      "id": "greatsword/regular/plate/Spear_Study",
+      "weaponType": "greatsword",
+      "bodyBuild": "regular",
+      "armorType": "plate",
+      "action": "Spear_Study",
+      "duration": 4,
+      "samples": 5,
+      "maximumIntersectionPairs": 1418,
+      "intersectingFrames": 5,
+      "maximumContainedVertices": 399,
+      "containedFrames": 5,
+      "maximumContainmentDepthM": 0.0998093144265152,
+      "nonfinite": 0,
+      "examples": [
+        {
+          "time": 0,
+          "intersectionPairs": 1418,
+          "containedVertices": 180,
+          "maximumContainmentDepthM": 0.08556036060932273,
+          "candidates": 7544,
+          "nonfinite": 0,
+          "intersections": [
+            {
+              "object": "weapon",
+              "mesh": "WEAPON_greatsword_Blade_1",
+              "triangle": 0,
+              "torsoMesh": "PADDING_padded",
+              "torsoTriangle": 7963,
+              "pointWorld": [
+                -0.08719795505568767,
+                1.0994722235069807,
+                0.12695635844159375
+              ]
+            },
+            {
+              "object": "weapon",
+              "mesh": "WEAPON_greatsword_Blade_1",
+              "triangle": 0,
+              "torsoMesh": "PADDING_padded",
+              "torsoTriangle": 7964,
+              "pointWorld": [
+                -0.08500068206621672,
+                1.104481264321664,
+                0.12817804240998426
+              ]
+            },
+            {
+              "object": "weapon",
+              "mesh": "WEAPON_greatsword_Blade_1",
+              "triangle": 0,
+              "torsoMesh": "PADDING_padded",
+              "torsoTriangle": 36570,
+              "pointWorld": [
+                -0.0855527323145066,
+                1.103105231964967,
+                0.12355101071013491
+              ]
+            },
+            {
+              "object": "weapon",
+              "mesh": "WEAPON_greatsword_Blade_1",
+              "triangle": 0,
+              "torsoMesh": "PADDING_padded",
+              "torsoTriangle": 36571,
+              "pointWorld": [
+                -0.08668354211247012,
+                1.1005255756690568,
+                0.12285643321094636
+              ]
+            },
+            {
+              "object": "weapon",
+              "mesh": "WEAPON_greatsword_Blade_1",
+              "triangle": 0,
+              "torsoMesh": "PADDING_padded",
+              "torsoTriangle": 36792,
+              "pointWorld": [
+                -0.08779176510458593,
+                1.097999910133907,
+                0.12226631347986704
+              ]
+            },
+            {
+              "object": "weapon",
+              "mesh": "WEAPON_greatsword_Blade_1",
+              "triangle": 0,
+              "torsoMesh": "ARMOR_Breastplate",
+              "torsoTriangle": 11361,
+              "pointWorld": [
+                -0.08159314220717516,
+                1.1133689922224133,
+                0.17122442751580177
+              ]
+            },
+            {
+              "object": "weapon",
+              "mesh": "WEAPON_greatsword_Blade_1",
+              "triangle": 0,
+              "torsoMesh": "ARMOR_Breastplate",
+              "torsoTriangle": 11624,
+              "pointWorld": [
+                -0.08214367346691845,
+                1.1120039857906108,
+                0.16687620813854026
+              ]
+            },
+            {
+              "object": "weapon",
+              "mesh": "WEAPON_greatsword_Blade_1",
+              "triangle": 1,
+              "torsoMesh": "PADDING_padded",
+              "torsoTriangle": 7964,
+              "pointWorld": [
+                -0.0850006820662167,
+                1.104481264321664,
+                0.12817804240998426
+              ]
+            }
+          ],
+          "contained": [
+            {
+              "object": "weapon",
+              "mesh": "WEAPON_greatsword_Blade",
+              "pointWorld": [
+                -0.10292657703981156,
+                1.08860317648828,
+                0.054926730601477736
+              ],
+              "rayBackZ": -0.04354411364809241,
+              "rayFrontZ": 0.11973986500210052,
+              "depthM": 0.06481313440062278
+            },
+            {
+              "object": "weapon",
+              "mesh": "WEAPON_greatsword_Blade",
+              "pointWorld": [
+                -0.10669064287485452,
+                1.080164527418901,
+                0.05805238301854854
+              ],
+              "rayBackZ": -0.040634631564183066,
+              "rayFrontZ": 0.11847294769746372,
+              "depthM": 0.060420564678915184
+            },
+            {
+              "object": "weapon",
+              "mesh": "WEAPON_greatsword_Blade",
+              "pointWorld": [
+                -0.10054834237289734,
+                1.0901169900653258,
+                0.09110112737139375
+              ],
+              "rayBackZ": -0.04512202532807391,
+              "rayFrontZ": 0.12082313872564879,
+              "depthM": 0.029722011354255035
+            },
+            {
+              "object": "weapon",
+              "mesh": "WEAPON_greatsword_Blade",
+              "pointWorld": [
+                -0.09708542243537066,
+                1.0978805874652076,
+                0.08822551147646529
+              ],
+              "rayBackZ": -0.04818083580746535,
+              "rayFrontZ": 0.12253780513552473,
+              "depthM": 0.03431229365905944
+            },
+            {
+              "object": "weapon",
+              "mesh": "WEAPON_greatsword_Blade",
+              "pointWorld": [
+                -0.10675374186995157,
+                1.0708602601139756,
+                0.06098119301928462
+              ],
+              "rayBackZ": -0.04075676921953561,
+              "rayFrontZ": 0.11910668901130053,
+              "depthM": 0.05812549599201591
+            },
+            {
+              "object": "weapon",
+              "mesh": "WEAPON_greatsword_Blade",
+              "pointWorld": [
+                -0.10060649695788293,
+                1.0815570894547617,
+                0.09379566401151318
+              ],
+              "rayBackZ": -0.044570423975074464,
+              "rayFrontZ": 0.12113963274660569,
+              "depthM": 0.02734396873509251
+            },
+            {
+              "object": "weapon",
+              "mesh": "WEAPON_greatsword_Blade",
+              "pointWorld": [
+                -0.10310614217379455,
+                1.0621070534012262,
+                0.06326721076335318
+              ],
+              "rayBackZ": -0.04353291672090481,
+              "rayFrontZ": 0.12158088852668228,
+              "depthM": 0.0583136777633291
+            },
+            {
+              "object": "weapon",
+              "mesh": "WEAPON_greatsword_Blade",
+              "pointWorld": [
+                -0.09725067335301929,
+                1.0735040593716856,
+                0.09589877755137072
+              ],
+              "rayBackZ": -0.04620709042066368,
+              "rayFrontZ": 0.12309262843360894,
+              "depthM": 0.02719385088223822
+            }
+          ],
+          "weaponTriangles": 486,
+          "handTriangles": {
+            "L": 11174,
+            "R": 11174
+          },
+          "torsoTriangles": 49084
+        },
+        {
+          "time": 1.25,
+          "intersectionPairs": 1312,
+          "containedVertices": 399,
+          "maximumContainmentDepthM": 0.0998093144265152,
+          "candidates": 8587,
+          "nonfinite": 0,
+          "intersections": [
+            {
+              "object": "weapon",
+              "mesh": "WEAPON_greatsword_Blade_1",
+              "triangle": 0,
+              "torsoMesh": "PADDING_padded",
+              "torsoTriangle": 7922,
+              "pointWorld": [
+                -0.09699797951265185,
+                1.1242010029745106,
+                0.10653456347962068
+              ]
+            },
+            {
+              "object": "weapon",
+              "mesh": "WEAPON_greatsword_Blade_1",
+              "triangle": 0,
+              "torsoMesh": "PADDING_padded",
+              "torsoTriangle": 7923,
+              "pointWorld": [
+                -0.09523058829425826,
+                1.128591360379741,
+                0.10791097326803967
+              ]
+            },
+            {
+              "object": "weapon",
+              "mesh": "WEAPON_greatsword_Blade_1",
+              "triangle": 0,
+              "torsoMesh": "PADDING_padded",
+              "torsoTriangle": 36530,
+              "pointWorld": [
+                -0.0954378830351245,
+                1.1283720321592978,
+                0.10327495182571816
+              ]
+            },
+            {
+              "object": "weapon",
+              "mesh": "WEAPON_greatsword_Blade_1",
+              "triangle": 0,
+              "torsoMesh": "PADDING_padded",
+              "torsoTriangle": 36531,
+              "pointWorld": [
+                -0.09723335301742647,
+                1.1239107495032363,
+                0.10189446201033418
+              ]
+            },
+            {
+              "object": "weapon",
+              "mesh": "WEAPON_greatsword_Blade_1",
+              "triangle": 0,
+              "torsoMesh": "ARMOR_Breastplate",
+              "torsoTriangle": 24,
+              "pointWorld": [
+                -0.09570817207018115,
+                1.125791543455314,
+                0.13196154352410605
+              ]
+            },
+            {
+              "object": "weapon",
+              "mesh": "WEAPON_greatsword_Blade_1",
+              "triangle": 0,
+              "torsoMesh": "ARMOR_Breastplate",
+              "torsoTriangle": 27,
+              "pointWorld": [
+                -0.09410624786235361,
+                1.129780968881489,
+                0.13305616667235454
+              ]
+            },
+            {
+              "object": "weapon",
+              "mesh": "WEAPON_greatsword_Blade_1",
+              "triangle": 0,
+              "torsoMesh": "ARMOR_Breastplate",
+              "torsoTriangle": 709,
+              "pointWorld": [
+                -0.09593953873743631,
+                1.125506231060564,
+                0.12740043196780493
+              ]
+            },
+            {
+              "object": "weapon",
+              "mesh": "WEAPON_greatsword_Blade_1",
+              "triangle": 1,
+              "torsoMesh": "PADDING_padded",
+              "torsoTriangle": 7923,
+              "pointWorld": [
+                -0.09523058829425826,
+                1.128591360379741,
+                0.10791097326803963
+              ]
+            }
+          ],
+          "contained": [
+            {
+              "object": "weapon",
+              "mesh": "WEAPON_greatsword_Blade",
+              "pointWorld": [
+                -0.10857613764153096,
+                1.1298992889436388,
+                0.021147731465245012
+              ],
+              "rayBackZ": -0.07530490106518758,
+              "rayFrontZ": 0.10021553719214588,
+              "depthM": 0.07906780572690086
+            },
+            {
+              "object": "weapon",
+              "mesh": "WEAPON_greatsword_Blade",
+              "pointWorld": [
+                -0.11212766481611836,
+                1.1208451154516368,
+                0.021894242769737754
+              ],
+              "rayBackZ": -0.0691966246189174,
+              "rayFrontZ": 0.0965166775677403,
+              "depthM": 0.07462243479800254
+            },
+            {
+              "object": "weapon",
+              "mesh": "WEAPON_greatsword_Blade",
+              "pointWorld": [
+                -0.1083916647301364,
+                1.1226701260418344,
+                0.05670387304252805
+              ],
+              "rayBackZ": -0.07289247793070533,
+              "rayFrontZ": 0.09955910938152163,
+              "depthM": 0.042855236338993574
+            },
+            {
+              "object": "weapon",
+              "mesh": "WEAPON_greatsword_Blade",
+              "pointWorld": [
+                -0.10512428122311768,
+                1.1310000078677969,
+                0.05601707572689088
+              ],
+              "rayBackZ": -0.07808791245499827,
+              "rayFrontZ": 0.1025552872386572,
+              "depthM": 0.04653821151176632
+            },
+            {
+              "object": "weapon",
+              "mesh": "WEAPON_greatsword_Blade",
+              "pointWorld": [
+                -0.11193740323893964,
+                1.111110845910122,
+                0.022493492290470388
+              ],
+              "rayBackZ": -0.066024150725806,
+              "rayFrontZ": 0.09561305723948077,
+              "depthM": 0.07311956494901038
+            },
+            {
+              "object": "weapon",
+              "mesh": "WEAPON_greatsword_Blade",
+              "pointWorld": [
+                -0.10821673029906798,
+                1.113714611865019,
+                0.057255212099020014
+              ],
+              "rayBackZ": -0.0699575579237697,
+              "rayFrontZ": 0.09865877992925526,
+              "depthM": 0.041403567830235244
+            },
+            {
+              "object": "weapon",
+              "mesh": "WEAPON_greatsword_Blade",
+              "pointWorld": [
+                -0.10803419804837999,
+                1.1021786369393896,
+                0.02285424045769864
+              ],
+              "rayBackZ": -0.06638152098829819,
+              "rayFrontZ": 0.09763321988610058,
+              "depthM": 0.07477897942840193
+            },
+            {
+              "object": "weapon",
+              "mesh": "WEAPON_greatsword_Blade",
+              "pointWorld": [
+                -0.10462574474602071,
+                1.105496908609664,
+                0.057587061335764606
+              ],
+              "rayBackZ": -0.0699924161393832,
+              "rayFrontZ": 0.10004478578244402,
+              "depthM": 0.04245772444667942
+            }
+          ],
+          "weaponTriangles": 486,
+          "handTriangles": {
+            "L": 11174,
+            "R": 11174
+          },
+          "torsoTriangles": 49084
+        },
+        {
+          "time": 1.59,
+          "intersectionPairs": 923,
+          "containedVertices": 150,
+          "maximumContainmentDepthM": 0.08972710101254533,
+          "candidates": 5038,
+          "nonfinite": 0,
+          "intersections": [
+            {
+              "object": "weapon",
+              "mesh": "WEAPON_greatsword_Blade_1",
+              "triangle": 0,
+              "torsoMesh": "PADDING_padded",
+              "torsoTriangle": 7922,
+              "pointWorld": [
+                -0.10079105796103145,
+                1.1401607096802522,
+                0.16026269306071797
+              ]
+            },
+            {
+              "object": "weapon",
+              "mesh": "WEAPON_greatsword_Blade_1",
+              "triangle": 0,
+              "torsoMesh": "PADDING_padded",
+              "torsoTriangle": 7923,
+              "pointWorld": [
+                -0.09941792089848676,
+                1.1437489971686903,
+                0.16124183796550484
+              ]
+            },
+            {
+              "object": "weapon",
+              "mesh": "WEAPON_greatsword_Blade_1",
+              "triangle": 0,
+              "torsoMesh": "PADDING_padded",
+              "torsoTriangle": 7999,
+              "pointWorld": [
+                -0.10117544200315604,
+                1.1391549395966105,
+                0.15993437305119687
+              ]
+            },
+            {
+              "object": "weapon",
+              "mesh": "WEAPON_greatsword_Blade_1",
+              "triangle": 0,
+              "torsoMesh": "PADDING_padded",
+              "torsoTriangle": 36606,
+              "pointWorld": [
+                -0.10128237246766399,
+                1.1387624161146093,
+                0.1551265416187685
+              ]
+            },
+            {
+              "object": "weapon",
+              "mesh": "WEAPON_greatsword_Blade_1",
+              "triangle": 0,
+              "torsoMesh": "ARMOR_Breastplate",
+              "torsoTriangle": 24,
+              "pointWorld": [
+                -0.10062691511045853,
+                1.141168488185254,
+                0.18459736173621383
+              ]
+            },
+            {
+              "object": "weapon",
+              "mesh": "WEAPON_greatsword_Blade_1",
+              "triangle": 0,
+              "torsoMesh": "ARMOR_Breastplate",
+              "torsoTriangle": 27,
+              "pointWorld": [
+                -0.0990191985655194,
+                1.1453671607099687,
+                0.18563420246039697
+              ]
+            },
+            {
+              "object": "weapon",
+              "mesh": "WEAPON_greatsword_Blade_1",
+              "triangle": 0,
+              "torsoMesh": "ARMOR_Breastplate",
+              "torsoTriangle": 709,
+              "pointWorld": [
+                -0.10072821415164976,
+                1.140796636696955,
+                0.1800427316169568
+              ]
+            },
+            {
+              "object": "weapon",
+              "mesh": "WEAPON_greatsword_Blade_1",
+              "triangle": 1,
+              "torsoMesh": "PADDING_padded",
+              "torsoTriangle": 7923,
+              "pointWorld": [
+                -0.09941792089848676,
+                1.1437489971686903,
+                0.16124183796550481
+              ]
+            }
+          ],
+          "contained": [
+            {
+              "object": "weapon",
+              "mesh": "WEAPON_greatsword_Blade",
+              "pointWorld": [
+                -0.11016160037217892,
+                1.1440515102447855,
+                0.08504831647247478
+              ],
+              "rayBackZ": -0.020943679067775445,
+              "rayFrontZ": 0.15457172973891692,
+              "depthM": 0.06952341326644214
+            },
+            {
+              "object": "weapon",
+              "mesh": "WEAPON_greatsword_Blade",
+              "pointWorld": [
+                -0.1136620069953983,
+                1.1349836307406074,
+                0.08586648241487681
+              ],
+              "rayBackZ": -0.014238498267928529,
+              "rayFrontZ": 0.15105891534101878,
+              "depthM": 0.06519243292614198
+            },
+            {
+              "object": "weapon",
+              "mesh": "WEAPON_greatsword_Blade",
+              "pointWorld": [
+                -0.11091590656669725,
+                1.1374886297921665,
+                0.12072595220174787
+              ],
+              "rayBackZ": -0.017679078841869783,
+              "rayFrontZ": 0.15342578558749004,
+              "depthM": 0.03269983338574217
+            },
+            {
+              "object": "weapon",
+              "mesh": "WEAPON_greatsword_Blade",
+              "pointWorld": [
+                -0.10769555409309439,
+                1.1458311208328826,
+                0.11997323122800901
+              ],
+              "rayBackZ": -0.02347241199703423,
+              "rayFrontZ": 0.15636057126980224,
+              "depthM": 0.036387340041793226
+            },
+            {
+              "object": "weapon",
+              "mesh": "WEAPON_greatsword_Blade",
+              "pointWorld": [
+                -0.11341278633122232,
+                1.1252641506222043,
+                0.08665445342360611
+              ],
+              "rayBackZ": -0.010520949050017908,
+              "rayFrontZ": 0.1504905450832077,
+              "depthM": 0.06383609165960158
+            },
+            {
+              "object": "weapon",
+              "mesh": "WEAPON_greatsword_Blade",
+              "pointWorld": [
+                -0.11068673066370671,
+                1.128546721549096,
+                0.1214509117935641
+              ],
+              "rayBackZ": -0.014308228594062361,
+              "rayFrontZ": 0.1527864680689412,
+              "depthM": 0.0313355562753771
+            },
+            {
+              "object": "weapon",
+              "mesh": "WEAPON_greatsword_Blade",
+              "pointWorld": [
+                -0.1094517608718597,
+                1.1163729757405423,
+                0.08729225833167331
+              ],
+              "rayBackZ": -0.010707532658976698,
+              "rayFrontZ": 0.15286877883668742,
+              "depthM": 0.06557652050501411
+            },
+            {
+              "object": "weapon",
+              "mesh": "WEAPON_greatsword_Blade",
+              "pointWorld": [
+                -0.10704254883239539,
+                1.120366769247258,
+                0.12203765561800572
+              ],
+              "rayBackZ": -0.014011013936267164,
+              "rayFrontZ": 0.15474047585322565,
+              "depthM": 0.03270282023521992
+            }
+          ],
+          "weaponTriangles": 486,
+          "handTriangles": {
+            "L": 11174,
+            "R": 11174
+          },
+          "torsoTriangles": 49084
+        }
+      ],
+      "weaponTriangles": 486,
+      "handTriangles": {
+        "L": 11174,
+        "R": 11174
+      },
+      "torsoTriangles": 49084
+    }
+  ],
+  "contributionCases": [
+    {
+      "id": "greatsword/regular/plate/Spear_Study",
+      "weaponType": "greatsword",
+      "bodyBuild": "regular",
+      "armorType": "plate",
+      "readyTime": 1.25,
+      "peakTime": 1.9,
+      "rightHandAdvanceRelativeChestM": 0.026022750088534895,
+      "rightHandAdvanceRelativeHipM": 0.010777017541775968,
+      "rightElbowExtensionDeg": 4.9008303538525695,
+      "leftElbowExtensionDeg": 1.8710541926591446,
+      "totalElbowExtensionDeg": 6.771884546511714,
+      "frontKneeFlexChangeDeg": -4.425256303300834,
+      "rearKneeExtensionDeg": 15.692765871944513,
+      "torsoPitchChangeDeg": -2.0342772127883726,
+      "maximumFootDriftM": 0.00003453747757523307,
+      "passed": false
+    }
+  ],
+  "negativeControls": [
+    {
+      "name": "Moved imported weapon and hand enter torso",
+      "passed": true,
+      "movementM": 0.30042520732849765,
+      "beforeIntersectionPairs": 732,
+      "beforeContainedVertices": 101,
+      "afterIntersectionPairs": 1737,
+      "afterContainedVertices": 4837,
+      "beforeWristWorld": [
+        -0.16596060613857938,
+        1.1620890052041801,
+        0.34219657379056123
+      ],
+      "afterWristWorld": [
+        -1.3577472479653352e-12,
+        1.150498966095044,
+        0.09204051569404928
+      ],
+      "intersections": [
+        {
+          "object": "weapon",
+          "mesh": "WEAPON_greatsword_Blade_1",
+          "triangle": 0,
+          "torsoMesh": "ARMOR_Breastplate",
+          "torsoTriangle": 4980,
+          "pointWorld": [
+            0.0627892387052379,
+            1.1480364876186577,
+            -0.005348920823998682
+          ]
+        },
+        {
+          "object": "weapon",
+          "mesh": "WEAPON_greatsword_Blade_1",
+          "triangle": 0,
+          "torsoMesh": "ARMOR_Breastplate",
+          "torsoTriangle": 7259,
+          "pointWorld": [
+            0.061242490862428924,
+            1.1440769298610471,
+            -0.004543822409543943
+          ]
+        },
+        {
+          "object": "weapon",
+          "mesh": "WEAPON_greatsword_Blade_1",
+          "triangle": 0,
+          "torsoMesh": "ARMOR_Breastplate",
+          "torsoTriangle": 7630,
+          "pointWorld": [
+            0.061235238267802854,
+            1.144478233925303,
+            -0.00043963440551039734
+          ]
+        },
+        {
+          "object": "weapon",
+          "mesh": "WEAPON_greatsword_Blade_1",
+          "triangle": 0,
+          "torsoMesh": "PADDING_padded",
+          "torsoTriangle": 21207,
+          "pointWorld": [
+            0.06264127163508443,
+            1.1496335232798538,
+            0.014023773976598986
+          ]
+        },
+        {
+          "object": "weapon",
+          "mesh": "WEAPON_greatsword_Blade_1",
+          "triangle": 0,
+          "torsoMesh": "PADDING_padded",
+          "torsoTriangle": 21304,
+          "pointWorld": [
+            0.06120879147712853,
+            1.145941600503932,
+            0.014526402802832364
+          ]
+        },
+        {
+          "object": "weapon",
+          "mesh": "WEAPON_greatsword_Blade_1",
+          "triangle": 0,
+          "torsoMesh": "PADDING_padded",
+          "torsoTriangle": 49814,
+          "pointWorld": [
+            0.06261003461412407,
+            1.1499706701624104,
+            0.01811350335299028
+          ]
+        },
+        {
+          "object": "weapon",
+          "mesh": "WEAPON_greatsword_Blade_1",
+          "triangle": 0,
+          "torsoMesh": "PADDING_padded",
+          "torsoTriangle": 49913,
+          "pointWorld": [
+            0.06120159860745882,
+            1.1463395998380932,
+            0.018596792909413948
+          ]
+        },
+        {
+          "object": "weapon",
+          "mesh": "WEAPON_greatsword_Blade_1",
+          "triangle": 0,
+          "torsoMesh": "PADDING_padded",
+          "torsoTriangle": 21843,
+          "pointWorld": [
+            0.06083781060767035,
+            1.1664688929214149,
+            0.2244616484160089
+          ]
+        }
+      ],
+      "contained": [
+        {
+          "object": "weapon",
+          "mesh": "WEAPON_greatsword_Blade_2",
+          "pointWorld": [
+            0.062780005437578,
+            1.1541002558984492,
+            0.04338013117963274
+          ],
+          "rayBackZ": 0.013025891546102175,
+          "rayFrontZ": 0.22321604363550535,
+          "depthM": 0.030354239633530566
+        },
+        {
+          "object": "weapon",
+          "mesh": "WEAPON_greatsword_Blade_2",
+          "pointWorld": [
+            0.06056456269073385,
+            1.1470165193185604,
+            0.04406885221014448
+          ],
+          "rayBackZ": 0.014163237978571941,
+          "rayFrontZ": 0.2233420683052587,
+          "depthM": 0.029905614231572536
+        },
+        {
+          "object": "weapon",
+          "mesh": "WEAPON_greatsword_Blade_2",
+          "pointWorld": [
+            0.06055922130317737,
+            1.1473084335874737,
+            0.047054615387208704
+          ],
+          "rayBackZ": 0.014096792623066595,
+          "rayFrontZ": 0.22336251161661475,
+          "depthM": 0.03295782276414211
+        },
+        {
+          "object": "weapon",
+          "mesh": "WEAPON_greatsword_Blade_2",
+          "pointWorld": [
+            0.06277466405002141,
+            1.154392170167362,
+            0.04636589435669705
+          ],
+          "rayBackZ": 0.012956333990551516,
+          "rayFrontZ": 0.22323954739126828,
+          "depthM": 0.033409560366145535
+        },
+        {
+          "object": "weapon",
+          "mesh": "WEAPON_greatsword_Blade_2",
+          "pointWorld": [
+            0.06220438903354841,
+            1.1397799492097116,
+            0.04477933758908348
+          ],
+          "rayBackZ": 0.015975657243100405,
+          "rayFrontZ": 0.2224595321107986,
+          "depthM": 0.028803680345983074
+        },
+        {
+          "object": "weapon",
+          "mesh": "WEAPON_greatsword_Blade_2",
+          "pointWorld": [
+            0.06219916503407985,
+            1.1400718809592056,
+            0.04776508212736
+          ],
+          "rayBackZ": 0.015917384413033808,
+          "rayFrontZ": 0.22248066942880929,
+          "depthM": 0.03184769771432619
+        },
+        {
+          "object": "weapon",
+          "mesh": "WEAPON_greatsword_Blade_2",
+          "pointWorld": [
+            0.06726027822763236,
+            1.134329558513868,
+            0.045321166532445833
+          ],
+          "rayBackZ": 0.018228761869190535,
+          "rayFrontZ": 0.22064682684843345,
+          "depthM": 0.0270924046632553
+        },
+        {
+          "object": "weapon",
+          "mesh": "WEAPON_greatsword_Blade_2",
+          "pointWorld": [
+            0.06725505448478197,
+            1.134621491654464,
+            0.048306925904584214
+          ],
+          "rayBackZ": 0.018170615378546723,
+          "rayFrontZ": 0.22067184831206227,
+          "depthM": 0.03013631052603749
+        }
+      ]
+    },
+    {
+      "name": "Pelvis-only translated ready pose is rejected",
+      "translationM": 0.15,
+      "movementM": 0.15,
+      "readyTime": 1.25,
+      "peakTime": 1.9,
+      "rightHandAdvanceRelativeChestM": 5.537138327078115e-17,
+      "rightHandAdvanceRelativeHipM": 5.537138327078115e-17,
+      "rightElbowExtensionDeg": 0,
+      "leftElbowExtensionDeg": 0,
+      "totalElbowExtensionDeg": 0,
+      "frontKneeFlexChangeDeg": 0,
+      "rearKneeExtensionDeg": 7.105427357601002e-15,
+      "torsoPitchChangeDeg": -1.3322676295501878e-15,
+      "maximumFootDriftM": 0.15000000000000002,
+      "passed": true,
+      "contributionPassed": false
+    }
+  ],
+  "failures": [
+    "greatsword/regular/plate/Spear_Study: no torso contact",
+    "greatsword/regular/plate/Spear_Study: arms torso and legs contribute"
+  ],
+  "scope": "Actual CPU-skinned finite weapon triangles (all materials, including grip, bindings and pommel) and left/right hand skin triangles versus weight-classified actual torso skin, padding and active armor triangles. AABB/grid is broad phase only; failures require finite edge/triangle crossings or vertices inside the padding torso envelope derived by ray intersections with actual triangles. Hidden torso skin is absent below clothing, so the volume between the front/back padding walls is the conservative body envelope. Intended hand/handle contact is excluded by testing only torso targets. Sampling is 30 Hz, not continuous collision detection. Motion criteria are avatar regression limits, not population biomechanics norms or force/balance validation. The action is a compact standing thrust with fixed foot contacts, not a stepping lunge."
+}

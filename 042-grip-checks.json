@@ -1,0 +1,1288 @@
+{
+  "status": "passed",
+  "date": "2026-10-23T07:47:25.091Z",
+  "glbSha256": "52f52e1c1ae832d1a61e1dac9e83dd39ff961fde1a9c402dec8a4a8f6dfce4e6",
+  "runtimeSha256": "a1fcdb8db78cfa0f46a5e6a35fd0b848a42c2be313954ee1bae0ff69dfd6838b",
+  "auditSha256": "d8a99b5654cd841e266146ddd21662197b83c9f2e5a5867c5c4692ea96098759",
+  "limits": {
+    "minimumPatchVertices": 50,
+    "maximumContactGapM": 0.0045,
+    "maximumContactQ10GapM": 0.0085,
+    "minimumSurfaceGapM": -0.00025,
+    "minimumFingerWrapDeg": 65,
+    "minimumThumbOppositionDeg": 75,
+    "minimumPipDeg": 34.5,
+    "maximumPipDeg": 110,
+    "minimumDipDeg": 10,
+    "maximumDipDeg": 80,
+    "maximumDipAheadOfPipDeg": 5,
+    "maximumMetacarpalLengthErrorM": 1e-7,
+    "minimumPadVertices": 20,
+    "maximumPadGapM": 0.002,
+    "maximumPadQ10GapM": 0.003,
+    "maximumPadMedianGapM": 0.0045,
+    "maximumTipGapM": 0.0055,
+    "maximumTipQ10GapM": 0.009,
+    "maximumTipOutward": -0.1
+  },
+  "coverage": {
+    "weapons": [
+      "spear",
+      "sword",
+      "pike",
+      "greatsword"
+    ],
+    "sides": [
+      "L",
+      "R"
+    ],
+    "shields": [
+      "tower",
+      "round",
+      "heater"
+    ],
+    "radiiM": [
+      0.014,
+      0.016
+    ],
+    "frameCount": 1278,
+    "bodyBuilds": [
+      "lean",
+      "regular",
+      "strong"
+    ]
+  },
+  "scope": "Dominant-weight skin vertices of all five fingers and three phalanges on both hands, measured against actual equipment attachment cylinders. Fixed source-local distal palmar pads, terminal caps, inward terminal direction, metacarpal lengths, contact spread, thumb opposition and circumferential wrap are checked over sampled full motion intervals and reverse seeks. Selected thumb-vs-hand triangles and cylinder surface triangles receive a separate finite check. This does not assert whole-body collision freedom, contact forces, grasp strength, or unsampled continuous collision freedom.",
+  "checks": [
+    {
+      "name": "lean/spear/rest",
+      "passed": true
+    },
+    {
+      "name": "lean/spear/Guard_Breath",
+      "passed": true
+    },
+    {
+      "name": "lean/spear/Spear_Study",
+      "passed": true
+    },
+    {
+      "name": "lean/spear/Shield_Brace",
+      "passed": true
+    },
+    {
+      "name": "lean/sword/rest",
+      "passed": true
+    },
+    {
+      "name": "lean/sword/Guard_Breath",
+      "passed": true
+    },
+    {
+      "name": "lean/sword/Spear_Study",
+      "passed": true
+    },
+    {
+      "name": "lean/sword/Shield_Brace",
+      "passed": true
+    },
+    {
+      "name": "lean/pike/rest",
+      "passed": true
+    },
+    {
+      "name": "lean/pike/Guard_Breath",
+      "passed": true
+    },
+    {
+      "name": "lean/pike/Spear_Study",
+      "passed": true
+    },
+    {
+      "name": "lean/greatsword/rest",
+      "passed": true
+    },
+    {
+      "name": "lean/greatsword/Guard_Breath",
+      "passed": true
+    },
+    {
+      "name": "lean/greatsword/Spear_Study",
+      "passed": true
+    },
+    {
+      "name": "regular/spear/rest",
+      "passed": true
+    },
+    {
+      "name": "regular/spear/Guard_Breath",
+      "passed": true
+    },
+    {
+      "name": "regular/spear/Spear_Study",
+      "passed": true
+    },
+    {
+      "name": "regular/spear/Shield_Brace",
+      "passed": true
+    },
+    {
+      "name": "regular/sword/rest",
+      "passed": true
+    },
+    {
+      "name": "regular/sword/Guard_Breath",
+      "passed": true
+    },
+    {
+      "name": "regular/sword/Spear_Study",
+      "passed": true
+    },
+    {
+      "name": "regular/sword/Shield_Brace",
+      "passed": true
+    },
+    {
+      "name": "regular/pike/rest",
+      "passed": true
+    },
+    {
+      "name": "regular/pike/Guard_Breath",
+      "passed": true
+    },
+    {
+      "name": "regular/pike/Spear_Study",
+      "passed": true
+    },
+    {
+      "name": "regular/greatsword/rest",
+      "passed": true
+    },
+    {
+      "name": "regular/greatsword/Guard_Breath",
+      "passed": true
+    },
+    {
+      "name": "regular/greatsword/Spear_Study",
+      "passed": true
+    },
+    {
+      "name": "strong/spear/rest",
+      "passed": true
+    },
+    {
+      "name": "strong/spear/Guard_Breath",
+      "passed": true
+    },
+    {
+      "name": "strong/spear/Spear_Study",
+      "passed": true
+    },
+    {
+      "name": "strong/spear/Shield_Brace",
+      "passed": true
+    },
+    {
+      "name": "strong/sword/rest",
+      "passed": true
+    },
+    {
+      "name": "strong/sword/Guard_Breath",
+      "passed": true
+    },
+    {
+      "name": "strong/sword/Spear_Study",
+      "passed": true
+    },
+    {
+      "name": "strong/sword/Shield_Brace",
+      "passed": true
+    },
+    {
+      "name": "strong/pike/rest",
+      "passed": true
+    },
+    {
+      "name": "strong/pike/Guard_Breath",
+      "passed": true
+    },
+    {
+      "name": "strong/pike/Spear_Study",
+      "passed": true
+    },
+    {
+      "name": "strong/greatsword/rest",
+      "passed": true
+    },
+    {
+      "name": "strong/greatsword/Guard_Breath",
+      "passed": true
+    },
+    {
+      "name": "strong/greatsword/Spear_Study",
+      "passed": true
+    },
+    {
+      "name": "actual shield attachment/tower/spear/rest/0",
+      "passed": true,
+      "problems": [],
+      "minGapM": 0.00023055856004517393,
+      "maxContactGapM": 0.004481700924541013,
+      "maxContactQ10GapM": 0.006523263527353091,
+      "minWrapDeg": 65.28664212576517,
+      "minThumbOppositionDeg": 149.1804474721593
+    },
+    {
+      "name": "actual shield attachment/tower/spear/rest/0.5",
+      "passed": true,
+      "problems": [],
+      "minGapM": 0.00023055856004517393,
+      "maxContactGapM": 0.004481700924541013,
+      "maxContactQ10GapM": 0.006523263527353091,
+      "minWrapDeg": 65.28664212576517,
+      "minThumbOppositionDeg": 149.1804474721593
+    },
+    {
+      "name": "actual shield attachment/tower/spear/rest/1",
+      "passed": true,
+      "problems": [],
+      "minGapM": 0.00023055856004517393,
+      "maxContactGapM": 0.004481700924541013,
+      "maxContactQ10GapM": 0.006523263527353091,
+      "minWrapDeg": 65.28664212576517,
+      "minThumbOppositionDeg": 149.1804474721593
+    },
+    {
+      "name": "actual shield attachment/tower/spear/Shield_Brace/0",
+      "passed": true,
+      "problems": [],
+      "minGapM": 0.00023055856004517393,
+      "maxContactGapM": 0.004481700924541013,
+      "maxContactQ10GapM": 0.006523263527353091,
+      "minWrapDeg": 65.28664212576517,
+      "minThumbOppositionDeg": 149.1804474721593
+    },
+    {
+      "name": "actual shield attachment/tower/spear/Shield_Brace/0.5",
+      "passed": true,
+      "problems": [],
+      "minGapM": 0.00023055804140549585,
+      "maxContactGapM": 0.0044816985021558665,
+      "maxContactQ10GapM": 0.006523262861021379,
+      "minWrapDeg": 65.28665171685978,
+      "minThumbOppositionDeg": 149.1804511664125
+    },
+    {
+      "name": "actual shield attachment/tower/spear/Shield_Brace/1",
+      "passed": true,
+      "problems": [],
+      "minGapM": 0.00023055856004517393,
+      "maxContactGapM": 0.004481700924541013,
+      "maxContactQ10GapM": 0.006523263527353091,
+      "minWrapDeg": 65.28664212576517,
+      "minThumbOppositionDeg": 149.1804474721593
+    },
+    {
+      "name": "actual shield attachment/tower/sword/rest/0",
+      "passed": true,
+      "problems": [],
+      "minGapM": 0.00023055856004517393,
+      "maxContactGapM": 0.004481700924541013,
+      "maxContactQ10GapM": 0.006523263527353091,
+      "minWrapDeg": 65.28664212576517,
+      "minThumbOppositionDeg": 149.1804474721593
+    },
+    {
+      "name": "actual shield attachment/tower/sword/rest/0.5",
+      "passed": true,
+      "problems": [],
+      "minGapM": 0.00023055856004517393,
+      "maxContactGapM": 0.004481700924541013,
+      "maxContactQ10GapM": 0.006523263527353091,
+      "minWrapDeg": 65.28664212576517,
+      "minThumbOppositionDeg": 149.1804474721593
+    },
+    {
+      "name": "actual shield attachment/tower/sword/rest/1",
+      "passed": true,
+      "problems": [],
+      "minGapM": 0.00023055856004517393,
+      "maxContactGapM": 0.004481700924541013,
+      "maxContactQ10GapM": 0.006523263527353091,
+      "minWrapDeg": 65.28664212576517,
+      "minThumbOppositionDeg": 149.1804474721593
+    },
+    {
+      "name": "actual shield attachment/tower/sword/Shield_Brace/0",
+      "passed": true,
+      "problems": [],
+      "minGapM": 0.00023055856004517393,
+      "maxContactGapM": 0.004481700924541013,
+      "maxContactQ10GapM": 0.006523263527353091,
+      "minWrapDeg": 65.28664212576517,
+      "minThumbOppositionDeg": 149.1804474721593
+    },
+    {
+      "name": "actual shield attachment/tower/sword/Shield_Brace/0.5",
+      "passed": true,
+      "problems": [],
+      "minGapM": 0.00023055804140549585,
+      "maxContactGapM": 0.0044816985021558665,
+      "maxContactQ10GapM": 0.006523262861021379,
+      "minWrapDeg": 65.28665171685978,
+      "minThumbOppositionDeg": 149.1804511664125
+    },
+    {
+      "name": "actual shield attachment/tower/sword/Shield_Brace/1",
+      "passed": true,
+      "problems": [],
+      "minGapM": 0.00023055856004517393,
+      "maxContactGapM": 0.004481700924541013,
+      "maxContactQ10GapM": 0.006523263527353091,
+      "minWrapDeg": 65.28664212576517,
+      "minThumbOppositionDeg": 149.1804474721593
+    },
+    {
+      "name": "actual shield attachment/round/spear/rest/0",
+      "passed": true,
+      "problems": [],
+      "minGapM": 0.00023055856004517393,
+      "maxContactGapM": 0.004481700924541013,
+      "maxContactQ10GapM": 0.006523263527353091,
+      "minWrapDeg": 65.28664212576517,
+      "minThumbOppositionDeg": 149.1804474721593
+    },
+    {
+      "name": "actual shield attachment/round/spear/rest/0.5",
+      "passed": true,
+      "problems": [],
+      "minGapM": 0.00023055856004517393,
+      "maxContactGapM": 0.004481700924541013,
+      "maxContactQ10GapM": 0.006523263527353091,
+      "minWrapDeg": 65.28664212576517,
+      "minThumbOppositionDeg": 149.1804474721593
+    },
+    {
+      "name": "actual shield attachment/round/spear/rest/1",
+      "passed": true,
+      "problems": [],
+      "minGapM": 0.00023055856004517393,
+      "maxContactGapM": 0.004481700924541013,
+      "maxContactQ10GapM": 0.006523263527353091,
+      "minWrapDeg": 65.28664212576517,
+      "minThumbOppositionDeg": 149.1804474721593
+    },
+    {
+      "name": "actual shield attachment/round/spear/Shield_Brace/0",
+      "passed": true,
+      "problems": [],
+      "minGapM": 0.00023055856004517393,
+      "maxContactGapM": 0.004481700924541013,
+      "maxContactQ10GapM": 0.006523263527353091,
+      "minWrapDeg": 65.28664212576517,
+      "minThumbOppositionDeg": 149.1804474721593
+    },
+    {
+      "name": "actual shield attachment/round/spear/Shield_Brace/0.5",
+      "passed": true,
+      "problems": [],
+      "minGapM": 0.00023055804140549585,
+      "maxContactGapM": 0.0044816985021558665,
+      "maxContactQ10GapM": 0.006523262861021379,
+      "minWrapDeg": 65.28665171685978,
+      "minThumbOppositionDeg": 149.1804511664125
+    },
+    {
+      "name": "actual shield attachment/round/spear/Shield_Brace/1",
+      "passed": true,
+      "problems": [],
+      "minGapM": 0.00023055856004517393,
+      "maxContactGapM": 0.004481700924541013,
+      "maxContactQ10GapM": 0.006523263527353091,
+      "minWrapDeg": 65.28664212576517,
+      "minThumbOppositionDeg": 149.1804474721593
+    },
+    {
+      "name": "actual shield attachment/round/sword/rest/0",
+      "passed": true,
+      "problems": [],
+      "minGapM": 0.00023055856004517393,
+      "maxContactGapM": 0.004481700924541013,
+      "maxContactQ10GapM": 0.006523263527353091,
+      "minWrapDeg": 65.28664212576517,
+      "minThumbOppositionDeg": 149.1804474721593
+    },
+    {
+      "name": "actual shield attachment/round/sword/rest/0.5",
+      "passed": true,
+      "problems": [],
+      "minGapM": 0.00023055856004517393,
+      "maxContactGapM": 0.004481700924541013,
+      "maxContactQ10GapM": 0.006523263527353091,
+      "minWrapDeg": 65.28664212576517,
+      "minThumbOppositionDeg": 149.1804474721593
+    },
+    {
+      "name": "actual shield attachment/round/sword/rest/1",
+      "passed": true,
+      "problems": [],
+      "minGapM": 0.00023055856004517393,
+      "maxContactGapM": 0.004481700924541013,
+      "maxContactQ10GapM": 0.006523263527353091,
+      "minWrapDeg": 65.28664212576517,
+      "minThumbOppositionDeg": 149.1804474721593
+    },
+    {
+      "name": "actual shield attachment/round/sword/Shield_Brace/0",
+      "passed": true,
+      "problems": [],
+      "minGapM": 0.00023055856004517393,
+      "maxContactGapM": 0.004481700924541013,
+      "maxContactQ10GapM": 0.006523263527353091,
+      "minWrapDeg": 65.28664212576517,
+      "minThumbOppositionDeg": 149.1804474721593
+    },
+    {
+      "name": "actual shield attachment/round/sword/Shield_Brace/0.5",
+      "passed": true,
+      "problems": [],
+      "minGapM": 0.00023055804140549585,
+      "maxContactGapM": 0.004481697825847323,
+      "maxContactQ10GapM": 0.006523262861021379,
+      "minWrapDeg": 65.28665171685978,
+      "minThumbOppositionDeg": 149.18045023440794
+    },
+    {
+      "name": "actual shield attachment/round/sword/Shield_Brace/1",
+      "passed": true,
+      "problems": [],
+      "minGapM": 0.00023055856004517393,
+      "maxContactGapM": 0.004481700924541013,
+      "maxContactQ10GapM": 0.006523263527353091,
+      "minWrapDeg": 65.28664212576517,
+      "minThumbOppositionDeg": 149.1804474721593
+    },
+    {
+      "name": "actual shield attachment/heater/spear/rest/0",
+      "passed": true,
+      "problems": [],
+      "minGapM": 0.00023055856004517393,
+      "maxContactGapM": 0.004481700924541013,
+      "maxContactQ10GapM": 0.006523263527353091,
+      "minWrapDeg": 65.28664212576517,
+      "minThumbOppositionDeg": 149.1804474721593
+    },
+    {
+      "name": "actual shield attachment/heater/spear/rest/0.5",
+      "passed": true,
+      "problems": [],
+      "minGapM": 0.00023055856004517393,
+      "maxContactGapM": 0.004481700924541013,
+      "maxContactQ10GapM": 0.006523263527353091,
+      "minWrapDeg": 65.28664212576517,
+      "minThumbOppositionDeg": 149.1804474721593
+    },
+    {
+      "name": "actual shield attachment/heater/spear/rest/1",
+      "passed": true,
+      "problems": [],
+      "minGapM": 0.00023055856004517393,
+      "maxContactGapM": 0.004481700924541013,
+      "maxContactQ10GapM": 0.006523263527353091,
+      "minWrapDeg": 65.28664212576517,
+      "minThumbOppositionDeg": 149.1804474721593
+    },
+    {
+      "name": "actual shield attachment/heater/spear/Shield_Brace/0",
+      "passed": true,
+      "problems": [],
+      "minGapM": 0.00023055856004517393,
+      "maxContactGapM": 0.004481700924541013,
+      "maxContactQ10GapM": 0.006523263527353091,
+      "minWrapDeg": 65.28664212576517,
+      "minThumbOppositionDeg": 149.1804474721593
+    },
+    {
+      "name": "actual shield attachment/heater/spear/Shield_Brace/0.5",
+      "passed": true,
+      "problems": [],
+      "minGapM": 0.00023055804140549585,
+      "maxContactGapM": 0.0044816985021558665,
+      "maxContactQ10GapM": 0.006523262861021379,
+      "minWrapDeg": 65.28665171685978,
+      "minThumbOppositionDeg": 149.1804511664125
+    },
+    {
+      "name": "actual shield attachment/heater/spear/Shield_Brace/1",
+      "passed": true,
+      "problems": [],
+      "minGapM": 0.00023055856004517393,
+      "maxContactGapM": 0.004481700924541013,
+      "maxContactQ10GapM": 0.006523263527353091,
+      "minWrapDeg": 65.28664212576517,
+      "minThumbOppositionDeg": 149.1804474721593
+    },
+    {
+      "name": "actual shield attachment/heater/sword/rest/0",
+      "passed": true,
+      "problems": [],
+      "minGapM": 0.00023055856004517393,
+      "maxContactGapM": 0.004481700924541013,
+      "maxContactQ10GapM": 0.006523263527353091,
+      "minWrapDeg": 65.28664212576517,
+      "minThumbOppositionDeg": 149.1804474721593
+    },
+    {
+      "name": "actual shield attachment/heater/sword/rest/0.5",
+      "passed": true,
+      "problems": [],
+      "minGapM": 0.00023055856004517393,
+      "maxContactGapM": 0.004481700924541013,
+      "maxContactQ10GapM": 0.006523263527353091,
+      "minWrapDeg": 65.28664212576517,
+      "minThumbOppositionDeg": 149.1804474721593
+    },
+    {
+      "name": "actual shield attachment/heater/sword/rest/1",
+      "passed": true,
+      "problems": [],
+      "minGapM": 0.00023055856004517393,
+      "maxContactGapM": 0.004481700924541013,
+      "maxContactQ10GapM": 0.006523263527353091,
+      "minWrapDeg": 65.28664212576517,
+      "minThumbOppositionDeg": 149.1804474721593
+    },
+    {
+      "name": "actual shield attachment/heater/sword/Shield_Brace/0",
+      "passed": true,
+      "problems": [],
+      "minGapM": 0.00023055856004517393,
+      "maxContactGapM": 0.004481700924541013,
+      "maxContactQ10GapM": 0.006523263527353091,
+      "minWrapDeg": 65.28664212576517,
+      "minThumbOppositionDeg": 149.1804474721593
+    },
+    {
+      "name": "actual shield attachment/heater/sword/Shield_Brace/0.5",
+      "passed": true,
+      "problems": [],
+      "minGapM": 0.00023055804140549585,
+      "maxContactGapM": 0.0044816985021558665,
+      "maxContactQ10GapM": 0.006523262861021379,
+      "minWrapDeg": 65.28665171685978,
+      "minThumbOppositionDeg": 149.1804511664125
+    },
+    {
+      "name": "actual shield attachment/heater/sword/Shield_Brace/1",
+      "passed": true,
+      "problems": [],
+      "minGapM": 0.00023055856004517393,
+      "maxContactGapM": 0.004481700924541013,
+      "maxContactQ10GapM": 0.006523263527353091,
+      "minWrapDeg": 65.28664212576517,
+      "minThumbOppositionDeg": 149.1804474721593
+    },
+    {
+      "name": "finite skin surfaces/sword/R",
+      "passed": true,
+      "side": "R",
+      "radiusM": 0.014,
+      "thumbTriangles": 1667,
+      "opposingHandTriangles": 11084,
+      "fingerTriangles": 10848,
+      "minimumCylinderGapM": 0.0002743206063025045,
+      "candidates": 0,
+      "intersectionPairs": 0,
+      "intersectingThumbTriangles": 0
+    },
+    {
+      "name": "finite skin surfaces/sword/L",
+      "passed": true,
+      "side": "L",
+      "radiusM": 0.014,
+      "thumbTriangles": 1667,
+      "opposingHandTriangles": 11084,
+      "fingerTriangles": 10848,
+      "minimumCylinderGapM": 0.00013201563611164,
+      "candidates": 0,
+      "intersectionPairs": 0,
+      "intersectingThumbTriangles": 0
+    },
+    {
+      "name": "finite skin surfaces/pike/R",
+      "passed": true,
+      "side": "R",
+      "radiusM": 0.016,
+      "thumbTriangles": 1667,
+      "opposingHandTriangles": 11084,
+      "fingerTriangles": 10848,
+      "minimumCylinderGapM": 0.0002568665320810057,
+      "candidates": 0,
+      "intersectionPairs": 0,
+      "intersectingThumbTriangles": 0
+    },
+    {
+      "name": "finite skin surfaces/pike/L",
+      "passed": true,
+      "side": "L",
+      "radiusM": 0.016,
+      "thumbTriangles": 1667,
+      "opposingHandTriangles": 11084,
+      "fingerTriangles": 10848,
+      "minimumCylinderGapM": 0.0002569864528452377,
+      "candidates": 0,
+      "intersectionPairs": 0,
+      "intersectingThumbTriangles": 0
+    },
+    {
+      "name": "Audited runtime unchanged during sampling",
+      "passed": true
+    },
+    {
+      "name": "Audited model unchanged during sampling",
+      "passed": true
+    },
+    {
+      "name": "Audit source unchanged during sampling",
+      "passed": true
+    }
+  ],
+  "negativeControls": [
+    {
+      "name": "Deliberately opened right fingers lose shaft contact",
+      "passed": true,
+      "problems": [
+        "R phalanx contact",
+        "R distal palmar pad contact",
+        "R terminal closure",
+        "R phalanx hinge range",
+        "R wrap"
+      ],
+      "maxContactGapM": 0.05549939446461527
+    },
+    {
+      "name": "An opened distal joint is rejected by fixed palmar pad or terminal closure",
+      "passed": true,
+      "problems": [
+        "R distal palmar pad contact",
+        "R terminal closure"
+      ]
+    },
+    {
+      "name": "An actual left wrist displaced25mm off the twohanded handle is rejected",
+      "passed": true,
+      "problems": [
+        "L shaft penetration",
+        "L phalanx contact",
+        "L distal palmar pad contact",
+        "L terminal closure",
+        "L wrap"
+      ]
+    },
+    {
+      "name": "A deliberately misplaced actual left CMC on the opposite side loses thumb opposition",
+      "passed": true,
+      "problems": [
+        "L phalanx contact",
+        "L distal palmar pad contact",
+        "L thumb opposition"
+      ],
+      "minThumbOppositionDeg": 45.62477241319288
+    }
+  ],
+  "cases": [
+    {
+      "bodyBuild": "lean",
+      "weaponType": "spear",
+      "action": "rest",
+      "samples": 1,
+      "passed": true,
+      "minGapM": 0.00023055856004517393,
+      "maxContactGapM": 0.004481700924541013,
+      "maxContactQ10GapM": 0.006523263527353091,
+      "minWrapDeg": 65.28664212576517,
+      "minThumbOppositionDeg": 149.1804474721593,
+      "reverseSeekErrorM": 0
+    },
+    {
+      "bodyBuild": "lean",
+      "weaponType": "spear",
+      "action": "Guard_Breath",
+      "samples": 41,
+      "passed": true,
+      "minGapM": 0.0002305585583936079,
+      "maxContactGapM": 0.0044817011721286545,
+      "maxContactQ10GapM": 0.0065232635458784185,
+      "minWrapDeg": 65.28664207259834,
+      "minThumbOppositionDeg": 149.18044724613335,
+      "reverseSeekErrorM": 0
+    },
+    {
+      "bodyBuild": "lean",
+      "weaponType": "spear",
+      "action": "Spear_Study",
+      "samples": 41,
+      "passed": true,
+      "minGapM": 0.00023055856004517393,
+      "maxContactGapM": 0.00448171607034367,
+      "maxContactQ10GapM": 0.006523263970032221,
+      "minWrapDeg": 65.28664212576517,
+      "minThumbOppositionDeg": 149.18043961317244,
+      "reverseSeekErrorM": 0
+    },
+    {
+      "bodyBuild": "lean",
+      "weaponType": "spear",
+      "action": "Shield_Brace",
+      "samples": 41,
+      "passed": true,
+      "minGapM": 0.00023055804075926278,
+      "maxContactGapM": 0.0044817011147665325,
+      "maxContactQ10GapM": 0.00652326354370005,
+      "minWrapDeg": 65.28664211154566,
+      "minThumbOppositionDeg": 149.18044681381096,
+      "reverseSeekErrorM": 0
+    },
+    {
+      "bodyBuild": "lean",
+      "weaponType": "sword",
+      "action": "rest",
+      "samples": 1,
+      "passed": true,
+      "minGapM": 0.00023055856004517393,
+      "maxContactGapM": 0.004481700924541013,
+      "maxContactQ10GapM": 0.006523263527353091,
+      "minWrapDeg": 65.28664212576517,
+      "minThumbOppositionDeg": 149.1804474721593,
+      "reverseSeekErrorM": 0
+    },
+    {
+      "bodyBuild": "lean",
+      "weaponType": "sword",
+      "action": "Guard_Breath",
+      "samples": 41,
+      "passed": true,
+      "minGapM": 0.0002305585583936079,
+      "maxContactGapM": 0.0044817011721286545,
+      "maxContactQ10GapM": 0.0065232635458784185,
+      "minWrapDeg": 65.28664207259834,
+      "minThumbOppositionDeg": 149.18044724613335,
+      "reverseSeekErrorM": 0
+    },
+    {
+      "bodyBuild": "lean",
+      "weaponType": "sword",
+      "action": "Spear_Study",
+      "samples": 41,
+      "passed": true,
+      "minGapM": 0.00023055856004517393,
+      "maxContactGapM": 0.00448171607034367,
+      "maxContactQ10GapM": 0.006523263970032221,
+      "minWrapDeg": 65.28664212576517,
+      "minThumbOppositionDeg": 149.18043961317244,
+      "reverseSeekErrorM": 0
+    },
+    {
+      "bodyBuild": "lean",
+      "weaponType": "sword",
+      "action": "Shield_Brace",
+      "samples": 41,
+      "passed": true,
+      "minGapM": 0.00023055804075926278,
+      "maxContactGapM": 0.0044817011147665325,
+      "maxContactQ10GapM": 0.00652326354370005,
+      "minWrapDeg": 65.28664211154566,
+      "minThumbOppositionDeg": 149.18044681381096,
+      "reverseSeekErrorM": 0
+    },
+    {
+      "bodyBuild": "lean",
+      "weaponType": "pike",
+      "action": "rest",
+      "samples": 1,
+      "passed": true,
+      "minGapM": 0.0002568619952037568,
+      "maxContactGapM": 0.004110902849492379,
+      "maxContactQ10GapM": 0.006160112562300712,
+      "minWrapDeg": 66.61382284014172,
+      "minThumbOppositionDeg": 147.03460284017123,
+      "reverseSeekErrorM": 0
+    },
+    {
+      "bodyBuild": "lean",
+      "weaponType": "pike",
+      "action": "Guard_Breath",
+      "samples": 41,
+      "passed": true,
+      "minGapM": 0.00025686189208901436,
+      "maxContactGapM": 0.004110906153785721,
+      "maxContactQ10GapM": 0.006160114768093996,
+      "minWrapDeg": 66.61381081879516,
+      "minThumbOppositionDeg": 147.03458174150995,
+      "reverseSeekErrorM": 0
+    },
+    {
+      "bodyBuild": "lean",
+      "weaponType": "pike",
+      "action": "Spear_Study",
+      "samples": 41,
+      "passed": true,
+      "minGapM": 0.00025686199225906023,
+      "maxContactGapM": 0.004110906459046389,
+      "maxContactQ10GapM": 0.006160172323877073,
+      "minWrapDeg": 66.61382145665101,
+      "minThumbOppositionDeg": 147.03396499691624,
+      "reverseSeekErrorM": 0
+    },
+    {
+      "bodyBuild": "lean",
+      "weaponType": "greatsword",
+      "action": "rest",
+      "samples": 1,
+      "passed": true,
+      "minGapM": 0.0002743443880313199,
+      "maxContactGapM": 0.004482228894124989,
+      "maxContactQ10GapM": 0.006266068787220689,
+      "minWrapDeg": 67.59940659571221,
+      "minThumbOppositionDeg": 149.17670014972057,
+      "reverseSeekErrorM": 0
+    },
+    {
+      "bodyBuild": "lean",
+      "weaponType": "greatsword",
+      "action": "Guard_Breath",
+      "samples": 41,
+      "passed": true,
+      "minGapM": 0.0002743441911330635,
+      "maxContactGapM": 0.0044822295074814725,
+      "maxContactQ10GapM": 0.006266070293921523,
+      "minWrapDeg": 67.59939574146978,
+      "minThumbOppositionDeg": 149.1766767657009,
+      "reverseSeekErrorM": 0
+    },
+    {
+      "bodyBuild": "lean",
+      "weaponType": "greatsword",
+      "action": "Spear_Study",
+      "samples": 41,
+      "passed": true,
+      "minGapM": 0.00027434135047899565,
+      "maxContactGapM": 0.004482382959135884,
+      "maxContactQ10GapM": 0.00626611104397847,
+      "minWrapDeg": 67.59884494427281,
+      "minThumbOppositionDeg": 149.17667100848408,
+      "reverseSeekErrorM": 0
+    },
+    {
+      "bodyBuild": "regular",
+      "weaponType": "spear",
+      "action": "rest",
+      "samples": 1,
+      "passed": true,
+      "minGapM": 0.00023055856004517393,
+      "maxContactGapM": 0.004481700924541013,
+      "maxContactQ10GapM": 0.006523263527353091,
+      "minWrapDeg": 65.28664212576517,
+      "minThumbOppositionDeg": 149.1804474721593,
+      "reverseSeekErrorM": 0
+    },
+    {
+      "bodyBuild": "regular",
+      "weaponType": "spear",
+      "action": "Guard_Breath",
+      "samples": 41,
+      "passed": true,
+      "minGapM": 0.0002305585583936079,
+      "maxContactGapM": 0.0044817011721286545,
+      "maxContactQ10GapM": 0.0065232635458784185,
+      "minWrapDeg": 65.28664207259834,
+      "minThumbOppositionDeg": 149.18044724613335,
+      "reverseSeekErrorM": 0
+    },
+    {
+      "bodyBuild": "regular",
+      "weaponType": "spear",
+      "action": "Spear_Study",
+      "samples": 41,
+      "passed": true,
+      "minGapM": 0.00023055856004517393,
+      "maxContactGapM": 0.00448171607034367,
+      "maxContactQ10GapM": 0.006523263970032221,
+      "minWrapDeg": 65.28664212576517,
+      "minThumbOppositionDeg": 149.18043961317244,
+      "reverseSeekErrorM": 0
+    },
+    {
+      "bodyBuild": "regular",
+      "weaponType": "spear",
+      "action": "Shield_Brace",
+      "samples": 41,
+      "passed": true,
+      "minGapM": 0.00023055804075926278,
+      "maxContactGapM": 0.0044817011147665325,
+      "maxContactQ10GapM": 0.00652326354370005,
+      "minWrapDeg": 65.28664211154566,
+      "minThumbOppositionDeg": 149.18044681381096,
+      "reverseSeekErrorM": 0
+    },
+    {
+      "bodyBuild": "regular",
+      "weaponType": "sword",
+      "action": "rest",
+      "samples": 1,
+      "passed": true,
+      "minGapM": 0.00023055856004517393,
+      "maxContactGapM": 0.004481700924541013,
+      "maxContactQ10GapM": 0.006523263527353091,
+      "minWrapDeg": 65.28664212576517,
+      "minThumbOppositionDeg": 149.1804474721593,
+      "reverseSeekErrorM": 0
+    },
+    {
+      "bodyBuild": "regular",
+      "weaponType": "sword",
+      "action": "Guard_Breath",
+      "samples": 41,
+      "passed": true,
+      "minGapM": 0.0002305585583936079,
+      "maxContactGapM": 0.0044817011721286545,
+      "maxContactQ10GapM": 0.0065232635458784185,
+      "minWrapDeg": 65.28664207259834,
+      "minThumbOppositionDeg": 149.18044724613335,
+      "reverseSeekErrorM": 0
+    },
+    {
+      "bodyBuild": "regular",
+      "weaponType": "sword",
+      "action": "Spear_Study",
+      "samples": 41,
+      "passed": true,
+      "minGapM": 0.00023055856004517393,
+      "maxContactGapM": 0.00448171607034367,
+      "maxContactQ10GapM": 0.006523263970032221,
+      "minWrapDeg": 65.28664212576517,
+      "minThumbOppositionDeg": 149.18043961317244,
+      "reverseSeekErrorM": 0
+    },
+    {
+      "bodyBuild": "regular",
+      "weaponType": "sword",
+      "action": "Shield_Brace",
+      "samples": 41,
+      "passed": true,
+      "minGapM": 0.00023055804075926278,
+      "maxContactGapM": 0.0044817011147665325,
+      "maxContactQ10GapM": 0.00652326354370005,
+      "minWrapDeg": 65.28664211154566,
+      "minThumbOppositionDeg": 149.18044681381096,
+      "reverseSeekErrorM": 0
+    },
+    {
+      "bodyBuild": "regular",
+      "weaponType": "pike",
+      "action": "rest",
+      "samples": 1,
+      "passed": true,
+      "minGapM": 0.0002568619952037568,
+      "maxContactGapM": 0.004110902849492379,
+      "maxContactQ10GapM": 0.006160112562300712,
+      "minWrapDeg": 66.61382284014172,
+      "minThumbOppositionDeg": 147.03460284017123,
+      "reverseSeekErrorM": 0
+    },
+    {
+      "bodyBuild": "regular",
+      "weaponType": "pike",
+      "action": "Guard_Breath",
+      "samples": 41,
+      "passed": true,
+      "minGapM": 0.00025686189208901436,
+      "maxContactGapM": 0.004110906153785721,
+      "maxContactQ10GapM": 0.006160114768093996,
+      "minWrapDeg": 66.61381081879516,
+      "minThumbOppositionDeg": 147.03458174150995,
+      "reverseSeekErrorM": 0
+    },
+    {
+      "bodyBuild": "regular",
+      "weaponType": "pike",
+      "action": "Spear_Study",
+      "samples": 41,
+      "passed": true,
+      "minGapM": 0.00025686199225906023,
+      "maxContactGapM": 0.004110906459046389,
+      "maxContactQ10GapM": 0.006160172323877073,
+      "minWrapDeg": 66.61382145665101,
+      "minThumbOppositionDeg": 147.03396499691624,
+      "reverseSeekErrorM": 0
+    },
+    {
+      "bodyBuild": "regular",
+      "weaponType": "greatsword",
+      "action": "rest",
+      "samples": 1,
+      "passed": true,
+      "minGapM": 0.0002743443880313199,
+      "maxContactGapM": 0.004482228894124989,
+      "maxContactQ10GapM": 0.006266068787220689,
+      "minWrapDeg": 67.59940659571221,
+      "minThumbOppositionDeg": 149.17670014972057,
+      "reverseSeekErrorM": 0
+    },
+    {
+      "bodyBuild": "regular",
+      "weaponType": "greatsword",
+      "action": "Guard_Breath",
+      "samples": 41,
+      "passed": true,
+      "minGapM": 0.0002743441911330635,
+      "maxContactGapM": 0.0044822295074814725,
+      "maxContactQ10GapM": 0.006266070293921523,
+      "minWrapDeg": 67.59939574146978,
+      "minThumbOppositionDeg": 149.1766767657009,
+      "reverseSeekErrorM": 0
+    },
+    {
+      "bodyBuild": "regular",
+      "weaponType": "greatsword",
+      "action": "Spear_Study",
+      "samples": 41,
+      "passed": true,
+      "minGapM": 0.00027434135047899565,
+      "maxContactGapM": 0.004482382959135884,
+      "maxContactQ10GapM": 0.00626611104397847,
+      "minWrapDeg": 67.59884494427281,
+      "minThumbOppositionDeg": 149.17667100848408,
+      "reverseSeekErrorM": 0
+    },
+    {
+      "bodyBuild": "strong",
+      "weaponType": "spear",
+      "action": "rest",
+      "samples": 1,
+      "passed": true,
+      "minGapM": 0.00023055826037210458,
+      "maxContactGapM": 0.004481700924541013,
+      "maxContactQ10GapM": 0.006523263184174314,
+      "minWrapDeg": 65.28664236350784,
+      "minThumbOppositionDeg": 149.1804474721593,
+      "reverseSeekErrorM": 0
+    },
+    {
+      "bodyBuild": "strong",
+      "weaponType": "spear",
+      "action": "Guard_Breath",
+      "samples": 41,
+      "passed": true,
+      "minGapM": 0.00023055825894986032,
+      "maxContactGapM": 0.0044817011721286545,
+      "maxContactQ10GapM": 0.00652326320167519,
+      "minWrapDeg": 65.28664231072818,
+      "minThumbOppositionDeg": 149.18044724613335,
+      "reverseSeekErrorM": 0
+    },
+    {
+      "bodyBuild": "strong",
+      "weaponType": "spear",
+      "action": "Spear_Study",
+      "samples": 41,
+      "passed": true,
+      "minGapM": 0.00023055826037210458,
+      "maxContactGapM": 0.00448171607034367,
+      "maxContactQ10GapM": 0.006523263609120497,
+      "minWrapDeg": 65.28664236350784,
+      "minThumbOppositionDeg": 149.18043961317244,
+      "reverseSeekErrorM": 0
+    },
+    {
+      "bodyBuild": "strong",
+      "weaponType": "spear",
+      "action": "Shield_Brace",
+      "samples": 41,
+      "passed": true,
+      "minGapM": 0.00023055775065020968,
+      "maxContactGapM": 0.0044817011147665325,
+      "maxContactQ10GapM": 0.006523263196607709,
+      "minWrapDeg": 65.28664234927832,
+      "minThumbOppositionDeg": 149.18044681381096,
+      "reverseSeekErrorM": 0
+    },
+    {
+      "bodyBuild": "strong",
+      "weaponType": "sword",
+      "action": "rest",
+      "samples": 1,
+      "passed": true,
+      "minGapM": 0.00023055826037210458,
+      "maxContactGapM": 0.004481700924541013,
+      "maxContactQ10GapM": 0.006523263184174314,
+      "minWrapDeg": 65.28664236350784,
+      "minThumbOppositionDeg": 149.1804474721593,
+      "reverseSeekErrorM": 0
+    },
+    {
+      "bodyBuild": "strong",
+      "weaponType": "sword",
+      "action": "Guard_Breath",
+      "samples": 41,
+      "passed": true,
+      "minGapM": 0.00023055825894986032,
+      "maxContactGapM": 0.0044817011721286545,
+      "maxContactQ10GapM": 0.00652326320167519,
+      "minWrapDeg": 65.28664231072818,
+      "minThumbOppositionDeg": 149.18044724613335,
+      "reverseSeekErrorM": 0
+    },
+    {
+      "bodyBuild": "strong",
+      "weaponType": "sword",
+      "action": "Spear_Study",
+      "samples": 41,
+      "passed": true,
+      "minGapM": 0.00023055826037210458,
+      "maxContactGapM": 0.00448171607034367,
+      "maxContactQ10GapM": 0.006523263609120497,
+      "minWrapDeg": 65.28664236350784,
+      "minThumbOppositionDeg": 149.18043961317244,
+      "reverseSeekErrorM": 0
+    },
+    {
+      "bodyBuild": "strong",
+      "weaponType": "sword",
+      "action": "Shield_Brace",
+      "samples": 41,
+      "passed": true,
+      "minGapM": 0.00023055775065020968,
+      "maxContactGapM": 0.0044817011147665325,
+      "maxContactQ10GapM": 0.006523263196607709,
+      "minWrapDeg": 65.28664234927832,
+      "minThumbOppositionDeg": 149.18044681381096,
+      "reverseSeekErrorM": 0
+    },
+    {
+      "bodyBuild": "strong",
+      "weaponType": "pike",
+      "action": "rest",
+      "samples": 1,
+      "passed": true,
+      "minGapM": 0.0002568619952037568,
+      "maxContactGapM": 0.004110902849492379,
+      "maxContactQ10GapM": 0.006160112562300712,
+      "minWrapDeg": 66.61382284014172,
+      "minThumbOppositionDeg": 147.03460284017123,
+      "reverseSeekErrorM": 0
+    },
+    {
+      "bodyBuild": "strong",
+      "weaponType": "pike",
+      "action": "Guard_Breath",
+      "samples": 41,
+      "passed": true,
+      "minGapM": 0.00025686189208901436,
+      "maxContactGapM": 0.004110906153785721,
+      "maxContactQ10GapM": 0.006160114768093996,
+      "minWrapDeg": 66.61381081879516,
+      "minThumbOppositionDeg": 147.03458174150995,
+      "reverseSeekErrorM": 0
+    },
+    {
+      "bodyBuild": "strong",
+      "weaponType": "pike",
+      "action": "Spear_Study",
+      "samples": 41,
+      "passed": true,
+      "minGapM": 0.00025686199225906023,
+      "maxContactGapM": 0.004110906459046389,
+      "maxContactQ10GapM": 0.006160172323877073,
+      "minWrapDeg": 66.61382145665101,
+      "minThumbOppositionDeg": 147.03396499691624,
+      "reverseSeekErrorM": 0
+    },
+    {
+      "bodyBuild": "strong",
+      "weaponType": "greatsword",
+      "action": "rest",
+      "samples": 1,
+      "passed": true,
+      "minGapM": 0.000274342019588732,
+      "maxContactGapM": 0.004482170577388306,
+      "maxContactQ10GapM": 0.006265930800222275,
+      "minWrapDeg": 67.59930902186487,
+      "minThumbOppositionDeg": 149.17777897068748,
+      "reverseSeekErrorM": 0
+    },
+    {
+      "bodyBuild": "strong",
+      "weaponType": "greatsword",
+      "action": "Guard_Breath",
+      "samples": 41,
+      "passed": true,
+      "minGapM": 0.00027434187213485305,
+      "maxContactGapM": 0.004482172499069513,
+      "maxContactQ10GapM": 0.006265931275045928,
+      "minWrapDeg": 67.59929975170996,
+      "minThumbOppositionDeg": 149.17777164088164,
+      "reverseSeekErrorM": 0
+    },
+    {
+      "bodyBuild": "strong",
+      "weaponType": "greatsword",
+      "action": "Spear_Study",
+      "samples": 41,
+      "passed": true,
+      "minGapM": 0.00027434135047899565,
+      "maxContactGapM": 0.004482382959135884,
+      "maxContactQ10GapM": 0.00626611104397847,
+      "minWrapDeg": 67.59884494427281,
+      "minThumbOppositionDeg": 149.1770938592339,
+      "reverseSeekErrorM": 0
+    }
+  ],
+  "surfaceCases": [
+    {
+      "side": "R",
+      "radiusM": 0.014,
+      "thumbTriangles": 1667,
+      "opposingHandTriangles": 11084,
+      "fingerTriangles": 10848,
+      "minimumCylinderGapM": 0.0002743206063025045,
+      "candidates": 0,
+      "intersectionPairs": 0,
+      "intersectingThumbTriangles": 0
+    },
+    {
+      "side": "L",
+      "radiusM": 0.014,
+      "thumbTriangles": 1667,
+      "opposingHandTriangles": 11084,
+      "fingerTriangles": 10848,
+      "minimumCylinderGapM": 0.00013201563611164,
+      "candidates": 0,
+      "intersectionPairs": 0,
+      "intersectingThumbTriangles": 0
+    },
+    {
+      "side": "R",
+      "radiusM": 0.016,
+      "thumbTriangles": 1667,
+      "opposingHandTriangles": 11084,
+      "fingerTriangles": 10848,
+      "minimumCylinderGapM": 0.0002568665320810057,
+      "candidates": 0,
+      "intersectionPairs": 0,
+      "intersectingThumbTriangles": 0
+    },
+    {
+      "side": "L",
+      "radiusM": 0.016,
+      "thumbTriangles": 1667,
+      "opposingHandTriangles": 11084,
+      "fingerTriangles": 10848,
+      "minimumCylinderGapM": 0.0002569864528452377,
+      "candidates": 0,
+      "intersectionPairs": 0,
+      "intersectingThumbTriangles": 0
+    }
+  ],
+  "failures": []
+}

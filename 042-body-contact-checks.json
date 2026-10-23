@@ -1,0 +1,1172 @@
+{
+  "status": "passed",
+  "baseline": false,
+  "sourceCommit": null,
+  "glbSha256": "52f52e1c1ae832d1a61e1dac9e83dd39ff961fde1a9c402dec8a4a8f6dfce4e6",
+  "runtimeSha256": "a1fcdb8db78cfa0f46a5e6a35fd0b848a42c2be313954ee1bae0ff69dfd6838b",
+  "auditSha256": "1ae2bc3717a0e370b0781bafd2e86283a616ecf1c8deb140ead88c31cf056cfd",
+  "limits": {
+    "containmentToleranceM": 0.001,
+    "minimumRightHandAdvanceRelativeChestM": 0.06,
+    "minimumRightElbowExtensionDeg": 10,
+    "minimumCombinedElbowExtensionDeg": 10,
+    "minimumTwoHandElbowExtensionDeg": 0,
+    "minimumRearKneeExtensionDeg": 2,
+    "minimumFrontKneeFlexChangeDeg": 2,
+    "minimumTorsoPitchChangeDeg": 2,
+    "maximumFootDriftM": 0.006
+  },
+  "coverage": {
+    "quick": false,
+    "sampleRateHz": 30,
+    "weapons": [
+      "spear",
+      "sword",
+      "pike",
+      "greatsword"
+    ],
+    "bodyBuilds": [
+      "lean",
+      "regular",
+      "strong"
+    ],
+    "armorTypes": [
+      "plate",
+      "mail",
+      "padded"
+    ],
+    "actions": [
+      "Spear_Study"
+    ],
+    "shields": [
+      "tower"
+    ],
+    "caseCount": 18,
+    "frameCount": 2178
+  },
+  "bodyClearancePassed": true,
+  "wholeBodyContributionPassed": true,
+  "checks": [
+    {
+      "name": "spear/lean/plate/Spear_Study: no torso contact",
+      "passed": true
+    },
+    {
+      "name": "spear/lean/plate/Spear_Study: arms torso and legs contribute",
+      "passed": true,
+      "readyTime": 1.25,
+      "peakTime": 1.9,
+      "rightHandAdvanceRelativeChestM": 0.10516812389244032,
+      "rightHandAdvanceRelativeHipM": 0.13917947939975156,
+      "rightElbowExtensionDeg": 26.00007794832402,
+      "leftElbowExtensionDeg": -0.0000386091435018443,
+      "totalElbowExtensionDeg": 26.000039339180518,
+      "frontKneeFlexChangeDeg": 7.243144765027495,
+      "rearKneeExtensionDeg": 5.867118329454264,
+      "torsoPitchChangeDeg": 5.077428023292356,
+      "maximumFootDriftM": 0.000025622294002314508
+    },
+    {
+      "name": "spear/regular/plate/Spear_Study: no torso contact",
+      "passed": true
+    },
+    {
+      "name": "spear/regular/plate/Spear_Study: arms torso and legs contribute",
+      "passed": true,
+      "readyTime": 1.25,
+      "peakTime": 1.9,
+      "rightHandAdvanceRelativeChestM": 0.10516812389244032,
+      "rightHandAdvanceRelativeHipM": 0.13917947939975156,
+      "rightElbowExtensionDeg": 26.00007794832402,
+      "leftElbowExtensionDeg": -0.0000386091435018443,
+      "totalElbowExtensionDeg": 26.000039339180518,
+      "frontKneeFlexChangeDeg": 7.243144765027495,
+      "rearKneeExtensionDeg": 5.867118329454264,
+      "torsoPitchChangeDeg": 5.077428023292356,
+      "maximumFootDriftM": 0.000025622294002314508
+    },
+    {
+      "name": "spear/strong/plate/Spear_Study: no torso contact",
+      "passed": true
+    },
+    {
+      "name": "spear/strong/plate/Spear_Study: arms torso and legs contribute",
+      "passed": true,
+      "readyTime": 1.25,
+      "peakTime": 1.9,
+      "rightHandAdvanceRelativeChestM": 0.10516812389244032,
+      "rightHandAdvanceRelativeHipM": 0.13917947939975156,
+      "rightElbowExtensionDeg": 26.00007794832402,
+      "leftElbowExtensionDeg": -0.5485098316353572,
+      "totalElbowExtensionDeg": 25.451568116688662,
+      "frontKneeFlexChangeDeg": 7.243144765027495,
+      "rearKneeExtensionDeg": 5.867118329454264,
+      "torsoPitchChangeDeg": 5.077428023292356,
+      "maximumFootDriftM": 0.000025622294002314508
+    },
+    {
+      "name": "sword/lean/plate/Spear_Study: no torso contact",
+      "passed": true
+    },
+    {
+      "name": "sword/lean/plate/Spear_Study: arms torso and legs contribute",
+      "passed": true,
+      "readyTime": 1.25,
+      "peakTime": 1.9,
+      "rightHandAdvanceRelativeChestM": 0.10516812389244032,
+      "rightHandAdvanceRelativeHipM": 0.13917947939975156,
+      "rightElbowExtensionDeg": 26.00007794832402,
+      "leftElbowExtensionDeg": -0.0000386091435018443,
+      "totalElbowExtensionDeg": 26.000039339180518,
+      "frontKneeFlexChangeDeg": 7.243144765027495,
+      "rearKneeExtensionDeg": 5.867118329454264,
+      "torsoPitchChangeDeg": 5.077428023292356,
+      "maximumFootDriftM": 0.000025622294002314508
+    },
+    {
+      "name": "sword/regular/plate/Spear_Study: no torso contact",
+      "passed": true
+    },
+    {
+      "name": "sword/regular/plate/Spear_Study: arms torso and legs contribute",
+      "passed": true,
+      "readyTime": 1.25,
+      "peakTime": 1.9,
+      "rightHandAdvanceRelativeChestM": 0.10516812389244032,
+      "rightHandAdvanceRelativeHipM": 0.13917947939975156,
+      "rightElbowExtensionDeg": 26.00007794832402,
+      "leftElbowExtensionDeg": -0.0000386091435018443,
+      "totalElbowExtensionDeg": 26.000039339180518,
+      "frontKneeFlexChangeDeg": 7.243144765027495,
+      "rearKneeExtensionDeg": 5.867118329454264,
+      "torsoPitchChangeDeg": 5.077428023292356,
+      "maximumFootDriftM": 0.000025622294002314508
+    },
+    {
+      "name": "sword/strong/plate/Spear_Study: no torso contact",
+      "passed": true
+    },
+    {
+      "name": "sword/strong/plate/Spear_Study: arms torso and legs contribute",
+      "passed": true,
+      "readyTime": 1.25,
+      "peakTime": 1.9,
+      "rightHandAdvanceRelativeChestM": 0.10516812389244032,
+      "rightHandAdvanceRelativeHipM": 0.13917947939975156,
+      "rightElbowExtensionDeg": 26.00007794832402,
+      "leftElbowExtensionDeg": -0.5485098316353572,
+      "totalElbowExtensionDeg": 25.451568116688662,
+      "frontKneeFlexChangeDeg": 7.243144765027495,
+      "rearKneeExtensionDeg": 5.867118329454264,
+      "torsoPitchChangeDeg": 5.077428023292356,
+      "maximumFootDriftM": 0.000025622294002314508
+    },
+    {
+      "name": "pike/lean/plate/Spear_Study: no torso contact",
+      "passed": true
+    },
+    {
+      "name": "pike/lean/plate/Spear_Study: arms torso and legs contribute",
+      "passed": true,
+      "readyTime": 1.25,
+      "peakTime": 1.9,
+      "rightHandAdvanceRelativeChestM": 0.06503542688434331,
+      "rightHandAdvanceRelativeHipM": 0.09904678239165456,
+      "rightElbowExtensionDeg": 7.014353050140514,
+      "leftElbowExtensionDeg": 23.400691653723477,
+      "totalElbowExtensionDeg": 30.41504470386399,
+      "frontKneeFlexChangeDeg": 7.243144765027495,
+      "rearKneeExtensionDeg": 5.867118329454264,
+      "torsoPitchChangeDeg": 5.077428023292356,
+      "maximumFootDriftM": 0.000025622294002314508
+    },
+    {
+      "name": "pike/regular/plate/Spear_Study: no torso contact",
+      "passed": true
+    },
+    {
+      "name": "pike/regular/plate/Spear_Study: arms torso and legs contribute",
+      "passed": true,
+      "readyTime": 1.25,
+      "peakTime": 1.9,
+      "rightHandAdvanceRelativeChestM": 0.06503542688434331,
+      "rightHandAdvanceRelativeHipM": 0.09904678239165456,
+      "rightElbowExtensionDeg": 7.014353050140514,
+      "leftElbowExtensionDeg": 23.400691653723477,
+      "totalElbowExtensionDeg": 30.41504470386399,
+      "frontKneeFlexChangeDeg": 7.243144765027495,
+      "rearKneeExtensionDeg": 5.867118329454264,
+      "torsoPitchChangeDeg": 5.077428023292356,
+      "maximumFootDriftM": 0.000025622294002314508
+    },
+    {
+      "name": "pike/strong/plate/Spear_Study: no torso contact",
+      "passed": true
+    },
+    {
+      "name": "pike/strong/plate/Spear_Study: arms torso and legs contribute",
+      "passed": true,
+      "readyTime": 1.25,
+      "peakTime": 1.9,
+      "rightHandAdvanceRelativeChestM": 0.06503542688434331,
+      "rightHandAdvanceRelativeHipM": 0.09904678239165456,
+      "rightElbowExtensionDeg": 7.014353050140514,
+      "leftElbowExtensionDeg": 23.400691653723477,
+      "totalElbowExtensionDeg": 30.41504470386399,
+      "frontKneeFlexChangeDeg": 7.243144765027495,
+      "rearKneeExtensionDeg": 5.867118329454264,
+      "torsoPitchChangeDeg": 5.077428023292356,
+      "maximumFootDriftM": 0.000025622294002314508
+    },
+    {
+      "name": "greatsword/lean/plate/Spear_Study: no torso contact",
+      "passed": true
+    },
+    {
+      "name": "greatsword/lean/plate/Spear_Study: arms torso and legs contribute",
+      "passed": true,
+      "readyTime": 1.25,
+      "peakTime": 1.9,
+      "rightHandAdvanceRelativeChestM": 0.10754128023961662,
+      "rightHandAdvanceRelativeHipM": 0.14155263574692786,
+      "rightElbowExtensionDeg": 47.67433019257024,
+      "leftElbowExtensionDeg": 14.18733349193262,
+      "totalElbowExtensionDeg": 61.86166368450286,
+      "frontKneeFlexChangeDeg": 7.243144765027495,
+      "rearKneeExtensionDeg": 5.867118329454264,
+      "torsoPitchChangeDeg": 5.077428023292356,
+      "maximumFootDriftM": 0.000025622294002314508
+    },
+    {
+      "name": "greatsword/regular/plate/Spear_Study: no torso contact",
+      "passed": true
+    },
+    {
+      "name": "greatsword/regular/plate/Spear_Study: arms torso and legs contribute",
+      "passed": true,
+      "readyTime": 1.25,
+      "peakTime": 1.9,
+      "rightHandAdvanceRelativeChestM": 0.10754128023961662,
+      "rightHandAdvanceRelativeHipM": 0.14155263574692786,
+      "rightElbowExtensionDeg": 47.67433019257024,
+      "leftElbowExtensionDeg": 14.18733349193262,
+      "totalElbowExtensionDeg": 61.86166368450286,
+      "frontKneeFlexChangeDeg": 7.243144765027495,
+      "rearKneeExtensionDeg": 5.867118329454264,
+      "torsoPitchChangeDeg": 5.077428023292356,
+      "maximumFootDriftM": 0.000025622294002314508
+    },
+    {
+      "name": "greatsword/strong/plate/Spear_Study: no torso contact",
+      "passed": true
+    },
+    {
+      "name": "greatsword/strong/plate/Spear_Study: arms torso and legs contribute",
+      "passed": true,
+      "readyTime": 1.25,
+      "peakTime": 1.9,
+      "rightHandAdvanceRelativeChestM": 0.07792290287839308,
+      "rightHandAdvanceRelativeHipM": 0.11193425838570431,
+      "rightElbowExtensionDeg": 38.210965051516254,
+      "leftElbowExtensionDeg": 9.720053906427722,
+      "totalElbowExtensionDeg": 47.93101895794398,
+      "frontKneeFlexChangeDeg": 7.243144765027495,
+      "rearKneeExtensionDeg": 5.867118329454264,
+      "torsoPitchChangeDeg": 5.077428023292356,
+      "maximumFootDriftM": 0.000025622294002314508
+    },
+    {
+      "name": "greatsword/lean/mail/Spear_Study: no torso contact",
+      "passed": true
+    },
+    {
+      "name": "greatsword/regular/mail/Spear_Study: no torso contact",
+      "passed": true
+    },
+    {
+      "name": "greatsword/strong/mail/Spear_Study: no torso contact",
+      "passed": true
+    },
+    {
+      "name": "greatsword/lean/padded/Spear_Study: no torso contact",
+      "passed": true
+    },
+    {
+      "name": "greatsword/regular/padded/Spear_Study: no torso contact",
+      "passed": true
+    },
+    {
+      "name": "greatsword/strong/padded/Spear_Study: no torso contact",
+      "passed": true
+    },
+    {
+      "name": "Physical negative controls detect torso contact and pelvis-only movement",
+      "passed": true
+    },
+    {
+      "name": "Audit source remains unchanged during run",
+      "passed": true
+    },
+    {
+      "name": "Runtime source remains unchanged during run",
+      "passed": true
+    },
+    {
+      "name": "GLB remains unchanged during run",
+      "passed": true
+    }
+  ],
+  "cases": [
+    {
+      "id": "spear/lean/plate/Spear_Study",
+      "weaponType": "spear",
+      "bodyBuild": "lean",
+      "armorType": "plate",
+      "action": "Spear_Study",
+      "duration": 4,
+      "samples": 121,
+      "maximumIntersectionPairs": 0,
+      "intersectingFrames": 0,
+      "maximumContainedVertices": 0,
+      "containedFrames": 0,
+      "maximumContainmentDepthM": 0,
+      "nonfinite": 0,
+      "examples": [],
+      "weaponTriangles": 850,
+      "handTriangles": {
+        "L": 11174,
+        "R": 11174
+      },
+      "torsoTriangles": 49084
+    },
+    {
+      "id": "spear/regular/plate/Spear_Study",
+      "weaponType": "spear",
+      "bodyBuild": "regular",
+      "armorType": "plate",
+      "action": "Spear_Study",
+      "duration": 4,
+      "samples": 121,
+      "maximumIntersectionPairs": 0,
+      "intersectingFrames": 0,
+      "maximumContainedVertices": 0,
+      "containedFrames": 0,
+      "maximumContainmentDepthM": 0,
+      "nonfinite": 0,
+      "examples": [],
+      "weaponTriangles": 850,
+      "handTriangles": {
+        "L": 11174,
+        "R": 11174
+      },
+      "torsoTriangles": 49084
+    },
+    {
+      "id": "spear/strong/plate/Spear_Study",
+      "weaponType": "spear",
+      "bodyBuild": "strong",
+      "armorType": "plate",
+      "action": "Spear_Study",
+      "duration": 4,
+      "samples": 121,
+      "maximumIntersectionPairs": 0,
+      "intersectingFrames": 0,
+      "maximumContainedVertices": 0,
+      "containedFrames": 0,
+      "maximumContainmentDepthM": 0,
+      "nonfinite": 0,
+      "examples": [],
+      "weaponTriangles": 850,
+      "handTriangles": {
+        "L": 11174,
+        "R": 11174
+      },
+      "torsoTriangles": 49084
+    },
+    {
+      "id": "sword/lean/plate/Spear_Study",
+      "weaponType": "sword",
+      "bodyBuild": "lean",
+      "armorType": "plate",
+      "action": "Spear_Study",
+      "duration": 4,
+      "samples": 121,
+      "maximumIntersectionPairs": 0,
+      "intersectingFrames": 0,
+      "maximumContainedVertices": 0,
+      "containedFrames": 0,
+      "maximumContainmentDepthM": 0,
+      "nonfinite": 0,
+      "examples": [],
+      "weaponTriangles": 354,
+      "handTriangles": {
+        "L": 11174,
+        "R": 11174
+      },
+      "torsoTriangles": 49084
+    },
+    {
+      "id": "sword/regular/plate/Spear_Study",
+      "weaponType": "sword",
+      "bodyBuild": "regular",
+      "armorType": "plate",
+      "action": "Spear_Study",
+      "duration": 4,
+      "samples": 121,
+      "maximumIntersectionPairs": 0,
+      "intersectingFrames": 0,
+      "maximumContainedVertices": 0,
+      "containedFrames": 0,
+      "maximumContainmentDepthM": 0,
+      "nonfinite": 0,
+      "examples": [],
+      "weaponTriangles": 354,
+      "handTriangles": {
+        "L": 11174,
+        "R": 11174
+      },
+      "torsoTriangles": 49084
+    },
+    {
+      "id": "sword/strong/plate/Spear_Study",
+      "weaponType": "sword",
+      "bodyBuild": "strong",
+      "armorType": "plate",
+      "action": "Spear_Study",
+      "duration": 4,
+      "samples": 121,
+      "maximumIntersectionPairs": 0,
+      "intersectingFrames": 0,
+      "maximumContainedVertices": 0,
+      "containedFrames": 0,
+      "maximumContainmentDepthM": 0,
+      "nonfinite": 0,
+      "examples": [],
+      "weaponTriangles": 354,
+      "handTriangles": {
+        "L": 11174,
+        "R": 11174
+      },
+      "torsoTriangles": 49084
+    },
+    {
+      "id": "pike/lean/plate/Spear_Study",
+      "weaponType": "pike",
+      "bodyBuild": "lean",
+      "armorType": "plate",
+      "action": "Spear_Study",
+      "duration": 4,
+      "samples": 121,
+      "maximumIntersectionPairs": 0,
+      "intersectingFrames": 0,
+      "maximumContainedVertices": 0,
+      "containedFrames": 0,
+      "maximumContainmentDepthM": 0,
+      "nonfinite": 0,
+      "examples": [],
+      "weaponTriangles": 254,
+      "handTriangles": {
+        "L": 11174,
+        "R": 11174
+      },
+      "torsoTriangles": 49084
+    },
+    {
+      "id": "pike/regular/plate/Spear_Study",
+      "weaponType": "pike",
+      "bodyBuild": "regular",
+      "armorType": "plate",
+      "action": "Spear_Study",
+      "duration": 4,
+      "samples": 121,
+      "maximumIntersectionPairs": 0,
+      "intersectingFrames": 0,
+      "maximumContainedVertices": 0,
+      "containedFrames": 0,
+      "maximumContainmentDepthM": 0,
+      "nonfinite": 0,
+      "examples": [],
+      "weaponTriangles": 254,
+      "handTriangles": {
+        "L": 11174,
+        "R": 11174
+      },
+      "torsoTriangles": 49084
+    },
+    {
+      "id": "pike/strong/plate/Spear_Study",
+      "weaponType": "pike",
+      "bodyBuild": "strong",
+      "armorType": "plate",
+      "action": "Spear_Study",
+      "duration": 4,
+      "samples": 121,
+      "maximumIntersectionPairs": 0,
+      "intersectingFrames": 0,
+      "maximumContainedVertices": 0,
+      "containedFrames": 0,
+      "maximumContainmentDepthM": 0,
+      "nonfinite": 0,
+      "examples": [],
+      "weaponTriangles": 254,
+      "handTriangles": {
+        "L": 11174,
+        "R": 11174
+      },
+      "torsoTriangles": 49084
+    },
+    {
+      "id": "greatsword/lean/plate/Spear_Study",
+      "weaponType": "greatsword",
+      "bodyBuild": "lean",
+      "armorType": "plate",
+      "action": "Spear_Study",
+      "duration": 4,
+      "samples": 121,
+      "maximumIntersectionPairs": 0,
+      "intersectingFrames": 0,
+      "maximumContainedVertices": 0,
+      "containedFrames": 0,
+      "maximumContainmentDepthM": 0,
+      "nonfinite": 0,
+      "examples": [],
+      "weaponTriangles": 486,
+      "handTriangles": {
+        "L": 11174,
+        "R": 11174
+      },
+      "torsoTriangles": 49084
+    },
+    {
+      "id": "greatsword/regular/plate/Spear_Study",
+      "weaponType": "greatsword",
+      "bodyBuild": "regular",
+      "armorType": "plate",
+      "action": "Spear_Study",
+      "duration": 4,
+      "samples": 121,
+      "maximumIntersectionPairs": 0,
+      "intersectingFrames": 0,
+      "maximumContainedVertices": 0,
+      "containedFrames": 0,
+      "maximumContainmentDepthM": 0,
+      "nonfinite": 0,
+      "examples": [],
+      "weaponTriangles": 486,
+      "handTriangles": {
+        "L": 11174,
+        "R": 11174
+      },
+      "torsoTriangles": 49084
+    },
+    {
+      "id": "greatsword/strong/plate/Spear_Study",
+      "weaponType": "greatsword",
+      "bodyBuild": "strong",
+      "armorType": "plate",
+      "action": "Spear_Study",
+      "duration": 4,
+      "samples": 121,
+      "maximumIntersectionPairs": 0,
+      "intersectingFrames": 0,
+      "maximumContainedVertices": 0,
+      "containedFrames": 0,
+      "maximumContainmentDepthM": 0,
+      "nonfinite": 0,
+      "examples": [],
+      "weaponTriangles": 486,
+      "handTriangles": {
+        "L": 11174,
+        "R": 11174
+      },
+      "torsoTriangles": 49084
+    },
+    {
+      "id": "greatsword/lean/mail/Spear_Study",
+      "weaponType": "greatsword",
+      "bodyBuild": "lean",
+      "armorType": "mail",
+      "action": "Spear_Study",
+      "duration": 4,
+      "samples": 121,
+      "maximumIntersectionPairs": 0,
+      "intersectingFrames": 0,
+      "maximumContainedVertices": 0,
+      "containedFrames": 0,
+      "maximumContainmentDepthM": 0,
+      "nonfinite": 0,
+      "examples": [],
+      "weaponTriangles": 486,
+      "handTriangles": {
+        "L": 11174,
+        "R": 11174
+      },
+      "torsoTriangles": 38924
+    },
+    {
+      "id": "greatsword/regular/mail/Spear_Study",
+      "weaponType": "greatsword",
+      "bodyBuild": "regular",
+      "armorType": "mail",
+      "action": "Spear_Study",
+      "duration": 4,
+      "samples": 121,
+      "maximumIntersectionPairs": 0,
+      "intersectingFrames": 0,
+      "maximumContainedVertices": 0,
+      "containedFrames": 0,
+      "maximumContainmentDepthM": 0,
+      "nonfinite": 0,
+      "examples": [],
+      "weaponTriangles": 486,
+      "handTriangles": {
+        "L": 11174,
+        "R": 11174
+      },
+      "torsoTriangles": 38924
+    },
+    {
+      "id": "greatsword/strong/mail/Spear_Study",
+      "weaponType": "greatsword",
+      "bodyBuild": "strong",
+      "armorType": "mail",
+      "action": "Spear_Study",
+      "duration": 4,
+      "samples": 121,
+      "maximumIntersectionPairs": 0,
+      "intersectingFrames": 0,
+      "maximumContainedVertices": 0,
+      "containedFrames": 0,
+      "maximumContainmentDepthM": 0,
+      "nonfinite": 0,
+      "examples": [],
+      "weaponTriangles": 486,
+      "handTriangles": {
+        "L": 11174,
+        "R": 11174
+      },
+      "torsoTriangles": 38924
+    },
+    {
+      "id": "greatsword/lean/padded/Spear_Study",
+      "weaponType": "greatsword",
+      "bodyBuild": "lean",
+      "armorType": "padded",
+      "action": "Spear_Study",
+      "duration": 4,
+      "samples": 121,
+      "maximumIntersectionPairs": 0,
+      "intersectingFrames": 0,
+      "maximumContainedVertices": 0,
+      "containedFrames": 0,
+      "maximumContainmentDepthM": 0,
+      "nonfinite": 0,
+      "examples": [],
+      "weaponTriangles": 486,
+      "handTriangles": {
+        "L": 11174,
+        "R": 11174
+      },
+      "torsoTriangles": 18884
+    },
+    {
+      "id": "greatsword/regular/padded/Spear_Study",
+      "weaponType": "greatsword",
+      "bodyBuild": "regular",
+      "armorType": "padded",
+      "action": "Spear_Study",
+      "duration": 4,
+      "samples": 121,
+      "maximumIntersectionPairs": 0,
+      "intersectingFrames": 0,
+      "maximumContainedVertices": 0,
+      "containedFrames": 0,
+      "maximumContainmentDepthM": 0,
+      "nonfinite": 0,
+      "examples": [],
+      "weaponTriangles": 486,
+      "handTriangles": {
+        "L": 11174,
+        "R": 11174
+      },
+      "torsoTriangles": 18884
+    },
+    {
+      "id": "greatsword/strong/padded/Spear_Study",
+      "weaponType": "greatsword",
+      "bodyBuild": "strong",
+      "armorType": "padded",
+      "action": "Spear_Study",
+      "duration": 4,
+      "samples": 121,
+      "maximumIntersectionPairs": 0,
+      "intersectingFrames": 0,
+      "maximumContainedVertices": 0,
+      "containedFrames": 0,
+      "maximumContainmentDepthM": 0,
+      "nonfinite": 0,
+      "examples": [],
+      "weaponTriangles": 486,
+      "handTriangles": {
+        "L": 11174,
+        "R": 11174
+      },
+      "torsoTriangles": 18884
+    }
+  ],
+  "contributionCases": [
+    {
+      "id": "spear/lean/plate/Spear_Study",
+      "weaponType": "spear",
+      "bodyBuild": "lean",
+      "armorType": "plate",
+      "readyTime": 1.25,
+      "peakTime": 1.9,
+      "rightHandAdvanceRelativeChestM": 0.10516812389244032,
+      "rightHandAdvanceRelativeHipM": 0.13917947939975156,
+      "rightElbowExtensionDeg": 26.00007794832402,
+      "leftElbowExtensionDeg": -0.0000386091435018443,
+      "totalElbowExtensionDeg": 26.000039339180518,
+      "frontKneeFlexChangeDeg": 7.243144765027495,
+      "rearKneeExtensionDeg": 5.867118329454264,
+      "torsoPitchChangeDeg": 5.077428023292356,
+      "maximumFootDriftM": 0.000025622294002314508,
+      "passed": true
+    },
+    {
+      "id": "spear/regular/plate/Spear_Study",
+      "weaponType": "spear",
+      "bodyBuild": "regular",
+      "armorType": "plate",
+      "readyTime": 1.25,
+      "peakTime": 1.9,
+      "rightHandAdvanceRelativeChestM": 0.10516812389244032,
+      "rightHandAdvanceRelativeHipM": 0.13917947939975156,
+      "rightElbowExtensionDeg": 26.00007794832402,
+      "leftElbowExtensionDeg": -0.0000386091435018443,
+      "totalElbowExtensionDeg": 26.000039339180518,
+      "frontKneeFlexChangeDeg": 7.243144765027495,
+      "rearKneeExtensionDeg": 5.867118329454264,
+      "torsoPitchChangeDeg": 5.077428023292356,
+      "maximumFootDriftM": 0.000025622294002314508,
+      "passed": true
+    },
+    {
+      "id": "spear/strong/plate/Spear_Study",
+      "weaponType": "spear",
+      "bodyBuild": "strong",
+      "armorType": "plate",
+      "readyTime": 1.25,
+      "peakTime": 1.9,
+      "rightHandAdvanceRelativeChestM": 0.10516812389244032,
+      "rightHandAdvanceRelativeHipM": 0.13917947939975156,
+      "rightElbowExtensionDeg": 26.00007794832402,
+      "leftElbowExtensionDeg": -0.5485098316353572,
+      "totalElbowExtensionDeg": 25.451568116688662,
+      "frontKneeFlexChangeDeg": 7.243144765027495,
+      "rearKneeExtensionDeg": 5.867118329454264,
+      "torsoPitchChangeDeg": 5.077428023292356,
+      "maximumFootDriftM": 0.000025622294002314508,
+      "passed": true
+    },
+    {
+      "id": "sword/lean/plate/Spear_Study",
+      "weaponType": "sword",
+      "bodyBuild": "lean",
+      "armorType": "plate",
+      "readyTime": 1.25,
+      "peakTime": 1.9,
+      "rightHandAdvanceRelativeChestM": 0.10516812389244032,
+      "rightHandAdvanceRelativeHipM": 0.13917947939975156,
+      "rightElbowExtensionDeg": 26.00007794832402,
+      "leftElbowExtensionDeg": -0.0000386091435018443,
+      "totalElbowExtensionDeg": 26.000039339180518,
+      "frontKneeFlexChangeDeg": 7.243144765027495,
+      "rearKneeExtensionDeg": 5.867118329454264,
+      "torsoPitchChangeDeg": 5.077428023292356,
+      "maximumFootDriftM": 0.000025622294002314508,
+      "passed": true
+    },
+    {
+      "id": "sword/regular/plate/Spear_Study",
+      "weaponType": "sword",
+      "bodyBuild": "regular",
+      "armorType": "plate",
+      "readyTime": 1.25,
+      "peakTime": 1.9,
+      "rightHandAdvanceRelativeChestM": 0.10516812389244032,
+      "rightHandAdvanceRelativeHipM": 0.13917947939975156,
+      "rightElbowExtensionDeg": 26.00007794832402,
+      "leftElbowExtensionDeg": -0.0000386091435018443,
+      "totalElbowExtensionDeg": 26.000039339180518,
+      "frontKneeFlexChangeDeg": 7.243144765027495,
+      "rearKneeExtensionDeg": 5.867118329454264,
+      "torsoPitchChangeDeg": 5.077428023292356,
+      "maximumFootDriftM": 0.000025622294002314508,
+      "passed": true
+    },
+    {
+      "id": "sword/strong/plate/Spear_Study",
+      "weaponType": "sword",
+      "bodyBuild": "strong",
+      "armorType": "plate",
+      "readyTime": 1.25,
+      "peakTime": 1.9,
+      "rightHandAdvanceRelativeChestM": 0.10516812389244032,
+      "rightHandAdvanceRelativeHipM": 0.13917947939975156,
+      "rightElbowExtensionDeg": 26.00007794832402,
+      "leftElbowExtensionDeg": -0.5485098316353572,
+      "totalElbowExtensionDeg": 25.451568116688662,
+      "frontKneeFlexChangeDeg": 7.243144765027495,
+      "rearKneeExtensionDeg": 5.867118329454264,
+      "torsoPitchChangeDeg": 5.077428023292356,
+      "maximumFootDriftM": 0.000025622294002314508,
+      "passed": true
+    },
+    {
+      "id": "pike/lean/plate/Spear_Study",
+      "weaponType": "pike",
+      "bodyBuild": "lean",
+      "armorType": "plate",
+      "readyTime": 1.25,
+      "peakTime": 1.9,
+      "rightHandAdvanceRelativeChestM": 0.06503542688434331,
+      "rightHandAdvanceRelativeHipM": 0.09904678239165456,
+      "rightElbowExtensionDeg": 7.014353050140514,
+      "leftElbowExtensionDeg": 23.400691653723477,
+      "totalElbowExtensionDeg": 30.41504470386399,
+      "frontKneeFlexChangeDeg": 7.243144765027495,
+      "rearKneeExtensionDeg": 5.867118329454264,
+      "torsoPitchChangeDeg": 5.077428023292356,
+      "maximumFootDriftM": 0.000025622294002314508,
+      "passed": true
+    },
+    {
+      "id": "pike/regular/plate/Spear_Study",
+      "weaponType": "pike",
+      "bodyBuild": "regular",
+      "armorType": "plate",
+      "readyTime": 1.25,
+      "peakTime": 1.9,
+      "rightHandAdvanceRelativeChestM": 0.06503542688434331,
+      "rightHandAdvanceRelativeHipM": 0.09904678239165456,
+      "rightElbowExtensionDeg": 7.014353050140514,
+      "leftElbowExtensionDeg": 23.400691653723477,
+      "totalElbowExtensionDeg": 30.41504470386399,
+      "frontKneeFlexChangeDeg": 7.243144765027495,
+      "rearKneeExtensionDeg": 5.867118329454264,
+      "torsoPitchChangeDeg": 5.077428023292356,
+      "maximumFootDriftM": 0.000025622294002314508,
+      "passed": true
+    },
+    {
+      "id": "pike/strong/plate/Spear_Study",
+      "weaponType": "pike",
+      "bodyBuild": "strong",
+      "armorType": "plate",
+      "readyTime": 1.25,
+      "peakTime": 1.9,
+      "rightHandAdvanceRelativeChestM": 0.06503542688434331,
+      "rightHandAdvanceRelativeHipM": 0.09904678239165456,
+      "rightElbowExtensionDeg": 7.014353050140514,
+      "leftElbowExtensionDeg": 23.400691653723477,
+      "totalElbowExtensionDeg": 30.41504470386399,
+      "frontKneeFlexChangeDeg": 7.243144765027495,
+      "rearKneeExtensionDeg": 5.867118329454264,
+      "torsoPitchChangeDeg": 5.077428023292356,
+      "maximumFootDriftM": 0.000025622294002314508,
+      "passed": true
+    },
+    {
+      "id": "greatsword/lean/plate/Spear_Study",
+      "weaponType": "greatsword",
+      "bodyBuild": "lean",
+      "armorType": "plate",
+      "readyTime": 1.25,
+      "peakTime": 1.9,
+      "rightHandAdvanceRelativeChestM": 0.10754128023961662,
+      "rightHandAdvanceRelativeHipM": 0.14155263574692786,
+      "rightElbowExtensionDeg": 47.67433019257024,
+      "leftElbowExtensionDeg": 14.18733349193262,
+      "totalElbowExtensionDeg": 61.86166368450286,
+      "frontKneeFlexChangeDeg": 7.243144765027495,
+      "rearKneeExtensionDeg": 5.867118329454264,
+      "torsoPitchChangeDeg": 5.077428023292356,
+      "maximumFootDriftM": 0.000025622294002314508,
+      "passed": true
+    },
+    {
+      "id": "greatsword/regular/plate/Spear_Study",
+      "weaponType": "greatsword",
+      "bodyBuild": "regular",
+      "armorType": "plate",
+      "readyTime": 1.25,
+      "peakTime": 1.9,
+      "rightHandAdvanceRelativeChestM": 0.10754128023961662,
+      "rightHandAdvanceRelativeHipM": 0.14155263574692786,
+      "rightElbowExtensionDeg": 47.67433019257024,
+      "leftElbowExtensionDeg": 14.18733349193262,
+      "totalElbowExtensionDeg": 61.86166368450286,
+      "frontKneeFlexChangeDeg": 7.243144765027495,
+      "rearKneeExtensionDeg": 5.867118329454264,
+      "torsoPitchChangeDeg": 5.077428023292356,
+      "maximumFootDriftM": 0.000025622294002314508,
+      "passed": true
+    },
+    {
+      "id": "greatsword/strong/plate/Spear_Study",
+      "weaponType": "greatsword",
+      "bodyBuild": "strong",
+      "armorType": "plate",
+      "readyTime": 1.25,
+      "peakTime": 1.9,
+      "rightHandAdvanceRelativeChestM": 0.07792290287839308,
+      "rightHandAdvanceRelativeHipM": 0.11193425838570431,
+      "rightElbowExtensionDeg": 38.210965051516254,
+      "leftElbowExtensionDeg": 9.720053906427722,
+      "totalElbowExtensionDeg": 47.93101895794398,
+      "frontKneeFlexChangeDeg": 7.243144765027495,
+      "rearKneeExtensionDeg": 5.867118329454264,
+      "torsoPitchChangeDeg": 5.077428023292356,
+      "maximumFootDriftM": 0.000025622294002314508,
+      "passed": true
+    }
+  ],
+  "negativeControls": [
+    {
+      "name": "Moved imported weapon and hand enter torso",
+      "passed": true,
+      "movementM": 0.5499180370532657,
+      "beforeIntersectionPairs": 0,
+      "beforeContainedVertices": 0,
+      "afterIntersectionPairs": 1802,
+      "afterContainedVertices": 4725,
+      "beforeWristWorld": [
+        -0.1893048624695397,
+        1.1817040410953703,
+        0.6570851048716869
+      ],
+      "afterWristWorld": [
+        -0.006142288417259167,
+        1.121324969693806,
+        0.14209414700956624
+      ],
+      "intersections": [
+        {
+          "object": "weapon",
+          "mesh": "WEAPON_greatsword_Blade",
+          "triangle": 76,
+          "torsoMesh": "ARMOR_Breastplate_1",
+          "torsoTriangle": 11684,
+          "pointWorld": [
+            -0.03454860257995601,
+            1.014532253652738,
+            0.3115491395984282
+          ]
+        },
+        {
+          "object": "weapon",
+          "mesh": "WEAPON_greatsword_Blade",
+          "triangle": 77,
+          "torsoMesh": "ARMOR_Breastplate_1",
+          "torsoTriangle": 11684,
+          "pointWorld": [
+            -0.034560963069015044,
+            1.014528040661668,
+            0.31155420496130853
+          ]
+        },
+        {
+          "object": "weapon",
+          "mesh": "WEAPON_greatsword_Blade",
+          "triangle": 77,
+          "torsoMesh": "ARMOR_Breastplate_1",
+          "torsoTriangle": 11687,
+          "pointWorld": [
+            -0.034872556915148026,
+            1.0143707509245283,
+            0.31164169029819544
+          ]
+        },
+        {
+          "object": "weapon",
+          "mesh": "WEAPON_greatsword_Blade",
+          "triangle": 78,
+          "torsoMesh": "ARMOR_Breastplate_1",
+          "torsoTriangle": 11682,
+          "pointWorld": [
+            -0.025005258717456263,
+            1.0157235708933983,
+            0.31012085565962455
+          ]
+        },
+        {
+          "object": "weapon",
+          "mesh": "WEAPON_greatsword_Blade",
+          "triangle": 79,
+          "torsoMesh": "ARMOR_Breastplate_1",
+          "torsoTriangle": 11682,
+          "pointWorld": [
+            -0.025263751441068988,
+            1.0157192791790381,
+            0.31016591100641466
+          ]
+        },
+        {
+          "object": "weapon",
+          "mesh": "WEAPON_greatsword_Blade",
+          "triangle": 79,
+          "torsoMesh": "ARMOR_Breastplate_1",
+          "torsoTriangle": 11684,
+          "pointWorld": [
+            -0.03454860257995601,
+            1.014532253652738,
+            0.3115491395984282
+          ]
+        },
+        {
+          "object": "weapon",
+          "mesh": "WEAPON_greatsword_Blade",
+          "triangle": 79,
+          "torsoMesh": "ARMOR_Breastplate_1",
+          "torsoTriangle": 11685,
+          "pointWorld": [
+            -0.03089540115162824,
+            1.0150274359697056,
+            0.31101130095779
+          ]
+        },
+        {
+          "object": "weapon",
+          "mesh": "WEAPON_greatsword_Blade",
+          "triangle": 80,
+          "torsoMesh": "ARMOR_Breastplate_1",
+          "torsoTriangle": 11690,
+          "pointWorld": [
+            -0.02196807042928517,
+            1.0110254083145354,
+            0.3114744301502646
+          ]
+        }
+      ],
+      "contained": [
+        {
+          "object": "weapon",
+          "mesh": "WEAPON_greatsword_Blade_2",
+          "pointWorld": [
+            0.056504224309100515,
+            1.1134247659890482,
+            0.09377093445871676
+          ],
+          "rayBackZ": 0.06498051591471579,
+          "rayFrontZ": 0.2720569854622944,
+          "depthM": 0.028790418544000967
+        },
+        {
+          "object": "weapon",
+          "mesh": "WEAPON_greatsword_Blade_2",
+          "pointWorld": [
+            0.05242262500448658,
+            1.107189968004757,
+            0.09359851285181067
+          ],
+          "rayBackZ": 0.06455200890757021,
+          "rayFrontZ": 0.2718972621145954,
+          "depthM": 0.029046503944240465
+        },
+        {
+          "object": "weapon",
+          "mesh": "WEAPON_greatsword_Blade_2",
+          "pointWorld": [
+            0.05241805435469793,
+            1.1071099706859686,
+            0.0965974465343625
+          ],
+          "rayBackZ": 0.06455736699676942,
+          "rayFrontZ": 0.27188452719098977,
+          "depthM": 0.03204007953759308
+        },
+        {
+          "object": "weapon",
+          "mesh": "WEAPON_greatsword_Blade_2",
+          "pointWorld": [
+            0.05649965365931209,
+            1.1133447686702596,
+            0.09676986814126862
+          ],
+          "rayBackZ": 0.06498614506317832,
+          "rayFrontZ": 0.27204379369301657,
+          "depthM": 0.0317837230780903
+        },
+        {
+          "object": "weapon",
+          "mesh": "WEAPON_greatsword_Blade_2",
+          "pointWorld": [
+            0.052006332947814204,
+            1.0997502878882959,
+            0.09339946201536128
+          ],
+          "rayBackZ": 0.06534748894088752,
+          "rayFrontZ": 0.2707400859784016,
+          "depthM": 0.02805197307447377
+        },
+        {
+          "object": "weapon",
+          "mesh": "WEAPON_greatsword_Blade_2",
+          "pointWorld": [
+            0.05200188045250265,
+            1.099670277328495,
+            0.09639837846031787
+          ],
+          "rayBackZ": 0.06535722798588489,
+          "rayFrontZ": 0.2707293282403721,
+          "depthM": 0.031041150474432982
+        },
+        {
+          "object": "weapon",
+          "mesh": "WEAPON_greatsword_Blade_2",
+          "pointWorld": [
+            0.055367065855394415,
+            1.093099117917547,
+            0.09322706712973944
+          ],
+          "rayBackZ": 0.06691570330855959,
+          "rayFrontZ": 0.26893565972755407,
+          "depthM": 0.02631136382117985
+        },
+        {
+          "object": "weapon",
+          "mesh": "WEAPON_greatsword_Blade_2",
+          "pointWorld": [
+            0.05536261359353434,
+            1.0930191068262411,
+            0.09622599846454039
+          ],
+          "rayBackZ": 0.06692464887654834,
+          "rayFrontZ": 0.2689236319669268,
+          "depthM": 0.029301349587992048
+        }
+      ]
+    },
+    {
+      "name": "Pelvis-only translated ready pose is rejected",
+      "translationM": 0.15,
+      "movementM": 0.15,
+      "readyTime": 1.25,
+      "peakTime": 1.9,
+      "rightHandAdvanceRelativeChestM": 5.537138327078115e-17,
+      "rightHandAdvanceRelativeHipM": 5.537138327078115e-17,
+      "rightElbowExtensionDeg": 0,
+      "leftElbowExtensionDeg": 0,
+      "totalElbowExtensionDeg": 0,
+      "frontKneeFlexChangeDeg": 0,
+      "rearKneeExtensionDeg": 7.105427357601002e-15,
+      "torsoPitchChangeDeg": -1.3322676295501878e-15,
+      "maximumFootDriftM": 0.15000000000000002,
+      "passed": true,
+      "contributionPassed": false
+    }
+  ],
+  "failures": [],
+  "scope": "Actual CPU-skinned finite weapon triangles (all materials, including grip, bindings and pommel) and left/right hand skin triangles versus weight-classified actual torso skin, padding and active armor triangles. AABB/grid is broad phase only; failures require finite edge/triangle crossings or vertices inside the padding torso envelope derived by ray intersections with actual triangles. Hidden torso skin is absent below clothing, so the volume between the front/back padding walls is the conservative body envelope. Intended hand/handle contact is excluded by testing only torso targets. Sampling is 30 Hz, not continuous collision detection. Motion criteria are avatar regression limits, not population biomechanics norms or force/balance validation. The action is a compact standing thrust with fixed foot contacts, not a stepping lunge."
+}
