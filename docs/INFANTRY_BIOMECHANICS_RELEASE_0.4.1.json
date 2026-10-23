@@ -1,0 +1,187 @@
+{
+  "status": "published-and-verified",
+  "checkedAt": "2026-10-23T06:55:41.607293+00:00",
+  "appUrl": "https://lazy-crazy-chess.floot.app/",
+  "sourceCommit": "f7f3fd8787d6bc3f5a13942ef806a720225fdb8d",
+  "deploymentCommit": "b7a256b36b33e642204230044cc8949e737ff42a",
+  "version": "0.4.1",
+  "modelVersion": "0.3.0",
+  "motionSha256": "237127a68aab84808a63c7e07b135bac1432527ed438fd313649c2d1862b55b8",
+  "liveDocument": {
+    "status": 200,
+    "bytes": 713940,
+    "sha256": "76c774ee62a2c03d8d85f1ac5ec950f5d83f4f5b9775d2e2b841486e959aca71"
+  },
+  "liveModel": {
+    "status": 200,
+    "bytes": 16251900,
+    "sha256": "52f52e1c1ae832d1a61e1dac9e83dd39ff961fde1a9c402dec8a4a8f6dfce4e6"
+  },
+  "checks": {
+    "biomechanics": {
+      "status": "passed",
+      "reportSha256": "0309c195dc930b3a6613539a7c145255e0216be0b63df69bd7a1b6d4f7f38460",
+      "coverage": {
+        "sampleRateHz": 30,
+        "caseCount": 45,
+        "frameCount": 4725,
+        "weapons": [
+          "spear",
+          "sword",
+          "pike",
+          "greatsword"
+        ],
+        "bodyBuilds": [
+          "lean",
+          "regular",
+          "strong"
+        ],
+        "actions": [
+          "rest",
+          "Guard_Breath",
+          "Shield_Brace",
+          "Spear_Study"
+        ]
+      },
+      "checks": 499
+    },
+    "grip": {
+      "status": "passed",
+      "reportSha256": "309a17cccd97637daf2ae0c504c295868bb0c7036dc5047a1775cfc0ee7d2931",
+      "coverage": {
+        "weapons": [
+          "spear",
+          "sword",
+          "pike",
+          "greatsword"
+        ],
+        "sides": [
+          "L",
+          "R"
+        ],
+        "shields": [
+          "tower",
+          "round",
+          "heater"
+        ],
+        "radiiM": [
+          0.014,
+          0.016
+        ],
+        "frameCount": 1278,
+        "bodyBuilds": [
+          "lean",
+          "regular",
+          "strong"
+        ]
+      },
+      "checks": 85
+    },
+    "weapon-clearance": {
+      "status": "passed",
+      "reportSha256": "8202add99b5f0782d66e3d86b90b08dbb0e86718c7339a430c8cf1eec35f2b96",
+      "coverage": {
+        "sampleRateHz": 10,
+        "weapons": [
+          "spear",
+          "sword"
+        ],
+        "shields": [
+          "tower",
+          "round",
+          "heater"
+        ],
+        "weaponMaterials": [
+          "weapon.metal",
+          "weapon.wood"
+        ],
+        "shieldMaterials": [
+          "shield.face",
+          "shield.wood",
+          "shield.trim"
+        ],
+        "bodyBuilds": [
+          "regular"
+        ],
+        "actions": [
+          "rest",
+          "Guard_Breath",
+          "Shield_Brace",
+          "Spear_Study"
+        ],
+        "frameCount": 870,
+        "caseCount": 24,
+        "quick": false
+      },
+      "checks": 27
+    },
+    "enarme": {
+      "status": "passed",
+      "reportSha256": "86171008b93e1ff6319d0fe242ebb3c016f173bf7c0a689f1b6077b5f08c7e72",
+      "coverage": {
+        "shields": [
+          "tower",
+          "round",
+          "heater"
+        ],
+        "bodyBuilds": [
+          "regular",
+          "lean",
+          "strong"
+        ],
+        "actions": [
+          "rest",
+          "Guard_Breath",
+          "Shield_Brace",
+          "Spear_Study"
+        ],
+        "frameCount": 1314,
+        "caseCount": 36,
+        "quick": false,
+        "sampleRateHz": 10
+      },
+      "checks": 44
+    },
+    "geometry": {
+      "status": "failed",
+      "reportSha256": "ce01def453bbdf32a931df26dc65709179138879fe81494d57fa620a9a4cff11",
+      "coverage": null,
+      "checks": 113
+    },
+    "viewer": {
+      "status": "passed",
+      "reportSha256": "d34222346018bc1228359f7386c0cb0848fe28cb794f4283e47bae8c8937b3e3",
+      "coverage": null,
+      "checks": 11
+    },
+    "appearance": {
+      "status": "passed",
+      "reportSha256": "cf197d908fa3c7dbed61c9f7030016beddcdd5f7921e1e11dc817cd2e295467b",
+      "coverage": null,
+      "checks": 11
+    },
+    "variant": {
+      "status": "passed",
+      "reportSha256": "b0bcb8850e6839c5423feb00037cabaa1b3fe4912fb2229fb58416122e06d5fd",
+      "coverage": null,
+      "checks": 2
+    },
+    "release-unit": {
+      "passed": 137,
+      "failed": 0
+    },
+    "hosted": {
+      "status": "passed",
+      "groups": 6
+    }
+  },
+  "limitations": [
+    "В 14 из 18 выбранных состояний остаются пересечения одежды: кольчужные сгибы и рука с корпусом; подстёжка у левой подмышки в стойке худого и обычного тела; предплечье с кирасой при уколе двуручным мечом. Исходные 10/18 и новые 14/18 не объявляются одинаковым результатом.",
+    "Проверка использует выбранные треугольники и моменты времени; непрерывная проверка всей поверхности, силовое равновесие, лопаточный ритм и мышечная симуляция не реализованы.",
+    "Фиксированные зоны ладоней и кончиков пальцев, большой палец, длины костей и суставные рамки проверены. Форма кистей остаётся стилизованной; это не полная модель силового хвата или всех контактов кожи.",
+    "Ремни щита обходят наруч и сохраняют крепления, но их форма местами угловатая; натяжение кожи и динамика ткани не моделируются.",
+    "Лицо, волосы, борода, задняя панель кольчуги и края её разреза остаются упрощёнными. Новая биомеханика и ремни вычисляются в браузере; экспортируемый GLB сохраняет исходные каталожные движения."
+  ],
+  "ci": "Manual recorded checks completed; GitHub Actions not used as evidence",
+  "scope": "Arm and grip runtime adapted from Lazy Gym Planner principles. Full muscle simulation and dynamic balance are not implemented; catalog GLB keeps original clips."
+}

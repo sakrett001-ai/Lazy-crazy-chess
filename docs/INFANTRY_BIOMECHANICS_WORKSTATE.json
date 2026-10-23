@@ -1,6 +1,6 @@
 {
   "task": "infantry-biomechanics",
-  "status": "verified-local",
+  "status": "complete-with-documented-prototype-limitations",
   "baseCommit": "2027392830ac69b765d854de1ba5ae9badf3c2e7",
   "donorRepository": "sakrett001-ai/Lazy-gym-planer",
   "donorCommit": "989389b834ff1c16239342cbfbceb8718d0a18bd",
@@ -23,7 +23,7 @@
     "release": "biomechanics_release_gate: release files and review identity",
     "root": "visual inspection, garment audit, integration, publication"
   },
-  "next": "Publish verified source and hosted release, then record live endpoint readback",
+  "next": "User review of0.4.1; remaining garment fit, hand styling, hair and facial work tracked as limitations",
   "constraints": [
     "Donor repository is read-only",
     "Do not replace or waive new anatomy failures with old garment prototype exception",
@@ -32,7 +32,10 @@
   ],
   "checkpointCommit": "e695e342ae65b00e6437224b10fdcc6aef8292ae",
   "checkpointBranch": "codex/infantry-biomechanics",
-  "phase": "publication",
+  "phase": "published-and-verified",
   "checkpointTree": "24e985a1880da07800ccb10f7ec9d74654d7457a",
-  "runtimeSha256": "237127a68aab84808a63c7e07b135bac1432527ed438fd313649c2d1862b55b8"
+  "runtimeSha256": "237127a68aab84808a63c7e07b135bac1432527ed438fd313649c2d1862b55b8",
+  "releaseReceipt": "docs/INFANTRY_BIOMECHANICS_RELEASE_0.4.1.json",
+  "publishedSourceCommit": "f7f3fd8787d6bc3f5a13942ef806a720225fdb8d",
+  "deploymentCommit": "b7a256b36b33e642204230044cc8949e737ff42a"
 }

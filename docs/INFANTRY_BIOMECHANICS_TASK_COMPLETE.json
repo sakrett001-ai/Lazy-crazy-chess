@@ -1,0 +1,97 @@
+{
+  "schema_version": 2,
+  "task_id": "infantry-biomechanics",
+  "revision": 4,
+  "updated_at": "2026-10-23T06:55:41+00:00",
+  "goal": "Transfer verified skeleton and grip principles from Lazy Gym Planner to infantry while retaining the existing shell",
+  "status": "done",
+  "phase": "Published and verified",
+  "next_action": "User review; garment and cosmetic limitations documented",
+  "blocker": null,
+  "acceptance": [
+    {
+      "criterion": "Read actual donor source and document revision and applicable constraints",
+      "evidence": "docs/BIOMECHANICS_REFERENCE.md; donor989389b and35tests"
+    },
+    {
+      "criterion": "All four weapons have bounded joint motion and verified surface grips across sampled intervals with negative controls",
+      "evidence": "biomechanics45cases/4725frames and grip1278frames on runtime237127a6; allnegativecontrols passed"
+    },
+    {
+      "criterion": "Targeted multiview screenshots and deterministic reverse seek pass",
+      "evidence": "review/biomechanics-final-041/captures.json and all3browser reports with HTML7201023d"
+    },
+    {
+      "criterion": "Verified GitHub source and Floot release read back without replacing unrelated changes",
+      "evidence": "Live Floot200 version0.4.1 sourcef7f3fd8; exactHTML76c774ee andGLB52f52e1c hashes; gh-pagesb7a256b; docs/INFANTRY_BIOMECHANICS_RELEASE_0.4.1.json"
+    }
+  ],
+  "constraints": [],
+  "facts": [
+    {
+      "claim": "Donor source989389b read with35passing mannequin tests",
+      "source": "docs/BIOMECHANICS_REFERENCE.md"
+    },
+    {
+      "claim": "Old point-contact checks permitted wrist bend above90 degrees",
+      "source": "review/biomechanics-baseline-2027392.json"
+    },
+    {
+      "claim": "Intermediate work persisted to a separate GitHub branch; production not advanced",
+      "source": "https://github.com/sakrett001-ai/Lazy-crazy-chess/commit/ce3c337532d0a1be425640956a51ca96bf4ece34"
+    }
+  ],
+  "decisions": [
+    {
+      "choice": "Re-seat weapon diagonally in the hand and refit fingers",
+      "reason": "Anatomical forearm/wrist constraints conflict with the old perpendicular handle frame"
+    },
+    {
+      "choice": "Block release on joint, grip and weapon-shield failures",
+      "reason": "Independent review caught axial wrist twist and actual blade/shield intersections missed by earlier point tests"
+    }
+  ],
+  "questions": [],
+  "artifacts": [],
+  "operations": [],
+  "verification": {
+    "requirements_hash": "05f40e6933db5c73aed48f34b696c618c24fbc6618b2bdde772bbb4357fbd516",
+    "checked_at": "2026-10-23T06:55:41+00:00",
+    "files": [
+      {
+        "path": "/workspace/scratch/c3dfd1aa64e3/Lazy-crazy-chess/docs/INFANTRY_BIOMECHANICS_RELEASE_0.4.1.json",
+        "sha256": "c23109a13e68d208c72eb14fa8217c421a3321b0c2f6ffb27ebd95b7cfaa9a9c"
+      },
+      {
+        "path": "/workspace/scratch/c3dfd1aa64e3/Lazy-crazy-chess/prototypes/white-pawn/review/biomechanics-checks.json",
+        "sha256": "0309c195dc930b3a6613539a7c145255e0216be0b63df69bd7a1b6d4f7f38460"
+      },
+      {
+        "path": "/workspace/scratch/c3dfd1aa64e3/Lazy-crazy-chess/prototypes/white-pawn/review/grip-checks.json",
+        "sha256": "309a17cccd97637daf2ae0c504c295868bb0c7036dc5047a1775cfc0ee7d2931"
+      },
+      {
+        "path": "/workspace/scratch/c3dfd1aa64e3/Lazy-crazy-chess/prototypes/white-pawn/review/weapon-clearance-checks.json",
+        "sha256": "8202add99b5f0782d66e3d86b90b08dbb0e86718c7339a430c8cf1eec35f2b96"
+      },
+      {
+        "path": "/workspace/scratch/c3dfd1aa64e3/Lazy-crazy-chess/prototypes/white-pawn/review/enarme-checks.json",
+        "sha256": "86171008b93e1ff6319d0fe242ebb3c016f173bf7c0a689f1b6077b5f08c7e72"
+      },
+      {
+        "path": "/workspace/scratch/c3dfd1aa64e3/Lazy-crazy-chess/prototypes/white-pawn/review/biomechanics-final-041/captures.json",
+        "sha256": "6d59829c5ebd1844524a595ca7354003685760568847dabf745ab3642060fef2"
+      }
+    ],
+    "receipt": "docs/INFANTRY_BIOMECHANICS_RELEASE_0.4.1.json"
+  },
+  "observations": [
+    {
+      "action": "verify",
+      "signature": "08b1233a456d8a6c135ccf6149a260e37681c54d90dfbd79ad95bd2b23bf9672",
+      "kind": "progress",
+      "evidence": "docs/INFANTRY_BIOMECHANICS_RELEASE_0.4.1.json",
+      "observed_at": "2026-10-23T06:55:41+00:00"
+    }
+  ]
+}
