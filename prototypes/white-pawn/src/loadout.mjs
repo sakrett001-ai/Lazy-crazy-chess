@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import {createArmBiomechanics} from './biomechanics.mjs';
 import {createGrip} from './grip.mjs';
+import {createFullBodyMotion} from './full-body.mjs';
 
 // Equipment and body shape are independent of material colours. The authored
 // clips continue to drive the planted stance. Weapon arms are reconstructed
@@ -67,6 +68,7 @@ export function createLoadout({model,bones={}}){
  }));
  const feet=Object.fromEntries(['L','R'].map(side=>[side,bone('foot.'+side).getWorldPosition(new THREE.Vector3())]));
  const armBiomechanics=createArmBiomechanics({model,bones,handReference,update});
+ const fullBodyMotion=createFullBodyMotion({model,bones,update});
  let current={...defaults},lastAction='rest',lastTime=0,reachErrors={};
  const diagonalGripAngle=35*Math.PI/180;
  const toolAxisLocal=side=>handReference[side].axisLocal.clone().multiplyScalar(Math.cos(diagonalGripAngle)).addScaledVector(handReference[side].forwardLocal,Math.sin(diagonalGripAngle)).normalize();
@@ -188,6 +190,7 @@ export function createLoadout({model,bones={}}){
   applyMorphs();update();
   {
    const phase=loadoutPhases(action,lastTime),isPike=current.weaponType==='pike',isGreatsword=current.weaponType==='greatsword';
+   fullBodyMotion.apply(action,phase);
    // Torso-relative anchors and elbow directions follow pelvis/torso motion;
    // a world-space target used to drag the pike hand through the chest.
    const left=bone('upperarm01.L').getWorldPosition(new THREE.Vector3()),right=bone('upperarm01.R').getWorldPosition(new THREE.Vector3());
@@ -195,14 +198,15 @@ export function createLoadout({model,bones={}}){
    const up=bone('neck01').getWorldPosition(new THREE.Vector3()).sub(bone('spine05').getWorldPosition(new THREE.Vector3()));
    up.addScaledVector(x,-up.dot(x)).normalize();const forward=x.clone().cross(up).normalize();
    const direction=v=>x.clone().multiplyScalar(v[0]).addScaledVector(up,v[1]).addScaledVector(forward,v[2]);
-   const guard=isPike?[.35,.12,.929]:isGreatsword?[.12,.3,.947]:[-.10,.8,.592];
-   const aimed=isPike?[.35,.075,.934]:isGreatsword?[.12,.075,.99]:[-.15,.087,.985];
+   const guard=isPike?[.55,.12,.826]:isGreatsword?[.12,.3,.947]:[-.10,.8,.592];
+   const aimed=isPike?[.55,.075,.832]:isGreatsword?[.12,.075,.99]:[-.15,.087,.985];
    const axis=direction(guard).lerp(direction(aimed),phase.aim).normalize();
-   const anchor=isPike?[-.24,-.27,.12]:isGreatsword?[-.05,-.24,.30]:[-.37,-.23,.30];
+   const anchor=isPike?[-.25,-.29,.16]:isGreatsword?[-.05,-.22,.44]:[-.37,-.23,.30];
+   anchor[1]+=(isPike?.03:.07)*phase.thrust;
    // The round shield's wider rim passes the sword guard during the brace.
    // Move the weapon hand 15 mm outward, with unchanged clip endpoints.
    if(action==='Shield_Brace'&&current.weaponType==='sword'&&summary().effectiveShield==='round')anchor[0]-=.015*envelope(lastTime,.4,.9,3.2,3.7);
-   const grip=origin.clone().add(direction(anchor)).addScaledVector(axis,(isPike?.025:isGreatsword?.025:.035)*phase.thrust);
+   const grip=origin.clone().add(direction(anchor)).addScaledVector(axis,(isPike?.10:isGreatsword?.13:.14)*phase.thrust);
    if(action==='Guard_Breath')grip.addScaledVector(up,.003*Math.sin(Math.PI*2*Math.min(lastTime,6)/6));
    reachErrors.R=armBiomechanics.solve('R',grip,axis,direction([-1,-.55,.45]),toolAxisLocal('R'));
    if(twoHanded.has(current.weaponType)){

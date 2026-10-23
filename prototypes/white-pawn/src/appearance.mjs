@@ -1,3 +1,4 @@
+import {installFacialHair} from './facial-hair.mjs';
 // Profiles keep equipment, physique and experience independent.
 export const APPEARANCE_KEY='lazy-crazy-chess.appearance.v1';
 export const DEFAULT_APPEARANCE=Object.freeze({schemaVersion:2,armorFinish:'steel',shieldColor:'#eaeae5',accentColor:'#2c676f',weaponWood:'ash',weaponMetal:'steel',armorType:'plate',shieldType:'tower',weaponType:'spear',bodyBuild:'regular',experience:'recruit',skinTone:'medium',hairColor:'brown',beard:'none',helmet:'on'});
@@ -29,6 +30,7 @@ export function normalizeAppearance(value){
 export function validAppearance(value){try{normalizeAppearance(value);return true;}catch{return false;}}
 export function effectiveShield(value){return ['pike','greatsword'].includes(value.weaponType)?'none':value.shieldType;}
 export function installAppearance({model,render,beforeChange=()=>{},onChange=()=>{}}){
+ installFacialHair({model});
  const $=s=>document.querySelector(s),status=$('#appearance-status');
  const ids={armorFinish:'armor-finish',shieldColor:'shield-color',accentColor:'accent-color',weaponWood:'weapon-wood',weaponMetal:'weapon-metal',armorType:'armor-type',shieldType:'shield-type',weaponType:'weapon-type',bodyBuild:'body-build',experience:'experience',skinTone:'skin-tone',hairColor:'hair-color',beard:'beard',helmet:'helmet'};
  const controls=Object.fromEntries(Object.entries(ids).map(([key,id])=>[key,$('#'+id)]));

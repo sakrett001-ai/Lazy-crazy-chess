@@ -81,7 +81,9 @@ export function createArmBiomechanics({model,bones,handReference,update}){
       const twist=signedTwist(handToNeutral.clone().multiply(frame(hinge,fore).invert()),fore);
       twistCost=40*Math.max(0,Math.abs(twist)-Math.PI*.46)**2;
      }
-     return .15*wrist*wrist+6*Math.max(0,wrist-.40)**2 + 500*Math.max(0,elevation+.08)**2 + 300*Math.max(0,inward+.005)**2 + .05*(1-candidate.dot(preferred))+twistCost;
+     // A higher strike line may lift the elbow slightly; do not pay for the
+     // low-elbow preference with an excessive bend at the wrist.
+     return .15*wrist*wrist+6*Math.max(0,wrist-.40)**2+200*Math.max(0,wrist-.53)**2 + 500*Math.max(0,elevation+.08)**2 + 300*Math.max(0,inward+.005)**2 + .05*(1-candidate.dot(preferred))+twistCost;
     };
     let best=0,bestCost=Infinity;const step=2*Math.PI/24;
     for(let i=0;i<24;i++){const angle=i*step,c=cost(angle);if(c<bestCost){best=angle;bestCost=c;}}
