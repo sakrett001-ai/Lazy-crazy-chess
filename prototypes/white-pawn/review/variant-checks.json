@@ -1,9 +1,9 @@
 {
-  "date": "2026-10-23T06:44:31.958Z",
+  "date": "2026-10-23T07:50:14.147Z",
   "status": "passed",
   "browser": "141.0.7390.37",
   "glbSha256": "52f52e1c1ae832d1a61e1dac9e83dd39ff961fde1a9c402dec8a4a8f6dfce4e6",
-  "documentSha256": "7201023db6ec8e1dee37d98a73aac4ac6a8d0aef57c235bb3db2405d8d91ddb2",
+  "documentSha256": "4c5cc5aa277cd89c71ce78cdcffebe47898cb986c8eac1a4272e3f6b214b9deb",
   "tests": [
     "Three genuinely different shields; independent plate/mail/padding geometry; visible textured mail and quilting; actual physique displacement and independent experience",
     "Four visible weapon geometries, deterministic reverse seek and planted feet; twohand weapons suppress shield and brace; singlehand restores choice; invalid review is atomic"
@@ -1470,7 +1470,7 @@
           "slot": "shield",
           "variant": "heater",
           "vertices": 184,
-          "checksum": 4.114043732210994,
+          "checksum": 4.114055895134807,
           "materials": [
             {
               "slot": "shield.leather",
@@ -1560,17 +1560,17 @@
         }
       ],
       "reverseSeekError": 0,
-      "feetDelta": 1.0511471859597776e-7,
+      "feetDelta": 3.369974873324022e-7,
       "runtimeMeasures": {
         "shieldGripWorld": [
-          0.00021153227845419065,
-          1.1542405246268117,
-          0.26504692314817146
+          -0.0021107352060491247,
+          1.1065906009486568,
+          0.28921952311599897
         ],
         "shieldAxis": [
-          7.457933721405783e-7,
-          0.9999999999995044,
-          6.594621976189991e-7
+          -0.011869502104474447,
+          0.9928368367578783,
+          0.11888704932162365
         ],
         "weaponGripAngleDeg": 35,
         "action": "Spear_Study",
@@ -1579,75 +1579,75 @@
         "effectiveShield": "heater",
         "handGripWorld": {
           "R": [
-            -0.4072315455440786,
-            1.163397817711829,
-            0.3312463130657158
+            -0.42608746639873185,
+            1.1586675712984025,
+            0.4288775675893768
           ],
           "L": [
-            0.00021153227845419065,
-            1.1542405246268117,
-            0.26504692314817146
+            -0.0021107352060491247,
+            1.1065906009486568,
+            0.28921952311599897
           ]
         },
         "weaponGripWorld": {
           "R": [
-            -0.4072315455440784,
-            1.163397817711829,
-            0.3312463130657158
+            -0.4260874663987317,
+            1.1586675712984025,
+            0.42887756758937673
           ],
           "L": null
         },
-        "rightGripErrorM": 1.6653345369377348e-16,
+        "rightGripErrorM": 1.7554167342883506e-16,
         "leftGripErrorM": null,
         "axis": [
-          -0.24749357802160005,
-          0.09346796754410229,
-          0.9643706071222
+          -0.24769155973691243,
+          0.022903713193514297,
+          0.9685681757920013
         ],
         "tip": [
-          -0.7945589006480811,
-          1.309675115924637,
-          1.8404861359358162
+          -0.8137246538438172,
+          1.194511821113736,
+          1.9446865339940413
         ],
         "footDriftM": {
-          "L": 9.84820701753257e-8,
-          "R": 1.1560376862660782e-7
+          "L": 2.2603987149659857e-7,
+          "R": 3.9717761209517705e-7
         },
         "reachErrors": {
           "R": {
-            "elbowFlexDeg": 93.1406256141782,
-            "wristBendDeg": 32.60111374050508,
-            "elbowHingeAlignment": 0.9999990501923208,
-            "upperLengthM": 0.26214309960402754,
-            "forearmLengthM": 0.2782350188805728,
+            "elbowFlexDeg": 85.37181035689646,
+            "wristBendDeg": 39.421740274856425,
+            "elbowHingeAlignment": 0.9999991831278402,
+            "upperLengthM": 0.26214311511757343,
+            "forearmLengthM": 0.27823503020206725,
             "referenceLengthsM": [
               0.2621429885986164,
               0.27823521532246515
             ],
-            "forearmTwistDeg": 83.03724590189506,
-            "wristAxialTwistDeg": 0.000017650373107773097,
+            "forearmTwistDeg": 86.39999999999999,
+            "wristAxialTwistDeg": 0.5875849107696232,
             "reachErrorM": 0,
-            "gripErrorM": 5.853861155488209e-7
+            "gripErrorM": 5.692989547243282e-7
           },
           "L": {
-            "elbowFlexDeg": 98.08931530505569,
-            "wristBendDeg": 24.250343879074595,
-            "elbowHingeAlignment": 0.9999998237691916,
-            "upperLengthM": 0.26214289829548343,
-            "forearmLengthM": 0.27823538528769154,
+            "elbowFlexDeg": 98.08932310102499,
+            "wristBendDeg": 24.23569336781159,
+            "elbowHingeAlignment": 0.9999998200516598,
+            "upperLengthM": 0.2621428861778378,
+            "forearmLengthM": 0.2782353706434072,
             "referenceLengthsM": [
               0.2621429872779313,
               0.27823518060107694
             ],
-            "forearmTwistDeg": -41.25705879920846,
-            "wristAxialTwistDeg": -0.000005609745197656789,
+            "forearmTwistDeg": -41.28584993835022,
+            "wristAxialTwistDeg": -0.000014640066366123353,
             "reachErrorM": 0,
-            "gripErrorM": 3.596045710110801e-7
+            "gripErrorM": 3.9290465382740817e-7
           }
         },
         "scope": "Attachment frames and wrist/foot joints; not a skin collision or anatomical comfort proof."
       },
-      "thrustAdvanceM": 0.11924733540712393
+      "thrustAdvanceM": 0.29667885044261305
     },
     {
       "name": "sword-thrust",
@@ -2090,7 +2090,7 @@
           "slot": "shield",
           "variant": "heater",
           "vertices": 184,
-          "checksum": 4.114043732210994,
+          "checksum": 4.114055895134807,
           "materials": [
             {
               "slot": "shield.leather",
@@ -2162,17 +2162,17 @@
         }
       ],
       "reverseSeekError": 0,
-      "feetDelta": 1.0511471859597776e-7,
+      "feetDelta": 3.369974873324022e-7,
       "runtimeMeasures": {
         "shieldGripWorld": [
-          0.00021153227845419065,
-          1.1542405246268117,
-          0.26504692314817146
+          -0.0021107352060491247,
+          1.1065906009486568,
+          0.28921952311599897
         ],
         "shieldAxis": [
-          7.457933721405783e-7,
-          0.9999999999995044,
-          6.594621976189991e-7
+          -0.011869502104474447,
+          0.9928368367578783,
+          0.11888704932162365
         ],
         "weaponGripAngleDeg": 35,
         "action": "Spear_Study",
@@ -2181,75 +2181,75 @@
         "effectiveShield": "heater",
         "handGripWorld": {
           "R": [
-            -0.4072315455440786,
-            1.163397817711829,
-            0.3312463130657158
+            -0.42608746639873185,
+            1.1586675712984025,
+            0.4288775675893768
           ],
           "L": [
-            0.00021153227845419065,
-            1.1542405246268117,
-            0.26504692314817146
+            -0.0021107352060491247,
+            1.1065906009486568,
+            0.28921952311599897
           ]
         },
         "weaponGripWorld": {
           "R": [
-            -0.4072315455440784,
-            1.163397817711829,
-            0.3312463130657158
+            -0.4260874663987317,
+            1.1586675712984025,
+            0.42887756758937673
           ],
           "L": null
         },
-        "rightGripErrorM": 1.6653345369377348e-16,
+        "rightGripErrorM": 1.7554167342883506e-16,
         "leftGripErrorM": null,
         "axis": [
-          -0.24749357802160005,
-          0.09346796754410229,
-          0.9643706071222
+          -0.24769155973691243,
+          0.022903713193514297,
+          0.9685681757920013
         ],
         "tip": [
-          -0.6200759473680343,
-          1.2437802570059246,
-          1.1606049426449718
+          -0.6391021262610312,
+          1.1783647554267311,
+          1.261846080219669
         ],
         "footDriftM": {
-          "L": 9.84820701753257e-8,
-          "R": 1.1560376862660782e-7
+          "L": 2.2603987149659857e-7,
+          "R": 3.9717761209517705e-7
         },
         "reachErrors": {
           "R": {
-            "elbowFlexDeg": 93.1406256141782,
-            "wristBendDeg": 32.60111374050508,
-            "elbowHingeAlignment": 0.9999990501923208,
-            "upperLengthM": 0.26214309960402754,
-            "forearmLengthM": 0.2782350188805728,
+            "elbowFlexDeg": 85.37181035689646,
+            "wristBendDeg": 39.421740274856425,
+            "elbowHingeAlignment": 0.9999991831278402,
+            "upperLengthM": 0.26214311511757343,
+            "forearmLengthM": 0.27823503020206725,
             "referenceLengthsM": [
               0.2621429885986164,
               0.27823521532246515
             ],
-            "forearmTwistDeg": 83.03724590189506,
-            "wristAxialTwistDeg": 0.000017650373107773097,
+            "forearmTwistDeg": 86.39999999999999,
+            "wristAxialTwistDeg": 0.5875849107696232,
             "reachErrorM": 0,
-            "gripErrorM": 5.853861155488209e-7
+            "gripErrorM": 5.692989547243282e-7
           },
           "L": {
-            "elbowFlexDeg": 98.08931530505569,
-            "wristBendDeg": 24.250343879074595,
-            "elbowHingeAlignment": 0.9999998237691916,
-            "upperLengthM": 0.26214289829548343,
-            "forearmLengthM": 0.27823538528769154,
+            "elbowFlexDeg": 98.08932310102499,
+            "wristBendDeg": 24.23569336781159,
+            "elbowHingeAlignment": 0.9999998200516598,
+            "upperLengthM": 0.2621428861778378,
+            "forearmLengthM": 0.2782353706434072,
             "referenceLengthsM": [
               0.2621429872779313,
               0.27823518060107694
             ],
-            "forearmTwistDeg": -41.25705879920846,
-            "wristAxialTwistDeg": -0.000005609745197656789,
+            "forearmTwistDeg": -41.28584993835022,
+            "wristAxialTwistDeg": -0.000014640066366123353,
             "reachErrorM": 0,
-            "gripErrorM": 3.596045710110801e-7
+            "gripErrorM": 3.9290465382740817e-7
           }
         },
         "scope": "Attachment frames and wrist/foot joints; not a skin collision or anatomical comfort proof."
       },
-      "thrustAdvanceM": 0.11786365869054904
+      "thrustAdvanceM": 0.2928659876289265
     },
     {
       "name": "pike-thrust",
@@ -2659,7 +2659,7 @@
         }
       ],
       "reverseSeekError": 0,
-      "feetDelta": 1.0511471859597776e-7,
+      "feetDelta": 3.369974873324022e-7,
       "runtimeMeasures": {
         "shieldGripWorld": null,
         "shieldAxis": null,
@@ -2670,79 +2670,79 @@
         "effectiveShield": "none",
         "handGripWorld": {
           "R": [
-            -0.2512615070018591,
-            1.1218465660090942,
-            0.15984993505962847
+            -0.24406271853076272,
+            1.084919069283649,
+            0.2726545433298904
           ],
           "L": [
-            -0.1543507978986317,
-            1.153260301214234,
-            0.5259390572647965
+            -0.06774608710156232,
+            1.0936493997374674,
+            0.6091599379408008
           ]
         },
         "weaponGripWorld": {
           "R": [
-            -0.25126150700185895,
-            1.1218465660090942,
-            0.15984993505962836
+            -0.24406271853076256,
+            1.084919069283649,
+            0.27265454332989025
           ],
           "L": [
-            -0.15435033565710005,
-            1.153260093146564,
-            0.5259391351906877
+            -0.06774557172949275,
+            1.0936491288518713,
+            0.6091600523721877
           ]
         },
-        "rightGripErrorM": 2.0014830212433605e-16,
-        "leftGripErrorM": 5.128662919341895e-7,
+        "rightGripErrorM": 2.3551386880256624e-16,
+        "leftGripErrorM": 5.933649118609805e-7,
         "axis": [
-          0.2550293965092562,
-          0.08266719512437479,
-          0.9633930359756568
+          0.46399254655110184,
+          0.022973836006121247,
+          0.8855411450656528
         ],
         "tip": [
-          0.3353061637002348,
-          1.3119810913685568,
-          2.3756535249618675
+          0.8231201842519269,
+          1.137758891918013,
+          2.309398925112081
         ],
         "footDriftM": {
-          "L": 9.84820701753257e-8,
-          "R": 1.1560376862660782e-7
+          "L": 2.2603987149659857e-7,
+          "R": 3.9717761209517705e-7
         },
         "reachErrors": {
           "R": {
-            "elbowFlexDeg": 120.29144624757755,
-            "wristBendDeg": 21.135525039225573,
-            "elbowHingeAlignment": 0.9999992615497195,
-            "upperLengthM": 0.2621431118723562,
-            "forearmLengthM": 0.27823494959287115,
+            "elbowFlexDeg": 111.1408338664369,
+            "wristBendDeg": 21.11902804453233,
+            "elbowHingeAlignment": 0.9999993798523037,
+            "upperLengthM": 0.2621431249337148,
+            "forearmLengthM": 0.27823495941199183,
             "referenceLengthsM": [
               0.2621429885986164,
               0.27823521532246515
             ],
-            "forearmTwistDeg": 56.89154576348165,
-            "wristAxialTwistDeg": 0.000007750053685778915,
+            "forearmTwistDeg": 67.70487077724347,
+            "wristAxialTwistDeg": 0.000007732189395331683,
             "reachErrorM": 0,
-            "gripErrorM": 6.66416991782855e-7
+            "gripErrorM": 8.740294859781097e-7
           },
           "L": {
-            "elbowFlexDeg": 28.929104679386537,
-            "wristBendDeg": 26.884443241028322,
-            "elbowHingeAlignment": 0.9999996252564038,
-            "upperLengthM": 0.26214291063054396,
-            "forearmLengthM": 0.27823542341654345,
+            "elbowFlexDeg": 31.983305772695893,
+            "wristBendDeg": 24.125654479099314,
+            "elbowHingeAlignment": 0.9999995588673313,
+            "upperLengthM": 0.262142851769532,
+            "forearmLengthM": 0.27823537994398617,
             "referenceLengthsM": [
               0.2621429872779313,
               0.27823518060107694
             ],
-            "forearmTwistDeg": -84.37646207780632,
-            "wristAxialTwistDeg": 0.00000160529282333875,
+            "forearmTwistDeg": -84.05538975540748,
+            "wristAxialTwistDeg": 0.000005315202650562335,
             "reachErrorM": 0,
-            "gripErrorM": 5.128662919341895e-7
+            "gripErrorM": 5.933649118609805e-7
           }
         },
         "scope": "Attachment frames and wrist/foot joints; not a skin collision or anatomical comfort proof."
       },
-      "thrustAdvanceM": 0.11353447234630018
+      "thrustAdvanceM": 0.2386372122375371
     },
     {
       "name": "greatsword-thrust",
@@ -3152,7 +3152,7 @@
         }
       ],
       "reverseSeekError": 0,
-      "feetDelta": 1.0511471859597776e-7,
+      "feetDelta": 3.369974873324022e-7,
       "runtimeMeasures": {
         "shieldGripWorld": null,
         "shieldAxis": null,
@@ -3163,85 +3163,85 @@
         "effectiveShield": "none",
         "handGripWorld": {
           "R": [
-            -0.0835496456074737,
-            1.1537063672921792,
-            0.358115269741698
+            -0.10029539347087969,
+            1.1596488013911612,
+            0.5971637395652954
           ],
           "L": [
-            -0.08623522875347853,
-            1.1430003776780613,
-            0.22858427660225084
+            -0.10296684371322117,
+            1.1581598599840714,
+            0.46719931163798756
           ]
         },
         "weaponGripWorld": {
           "R": [
-            -0.08354964560747355,
-            1.1537063672921792,
-            0.35811526974169794
+            -0.10029539347087954,
+            1.1596488013911612,
+            0.5971637395652954
           ],
           "L": [
-            -0.0862349063152701,
-            1.1429998954709193,
-            0.22858471745710032
+            -0.10296633161922818,
+            1.1581596799235438,
+            0.46719970283833184
           ]
         },
-        "rightGripErrorM": 1.6243534171511178e-16,
-        "leftGripErrorM": 7.28589819005704e-7,
+        "rightGripErrorM": 1.5265566588595902e-16,
+        "leftGripErrorM": 6.691036994537453e-7,
         "axis": [
-          0.02065654858940182,
-          0.0823576857129188,
-          0.9963887386980977
+          0.020546395861122006,
+          0.011454919474038339,
+          0.9997232769306521
         ],
         "tip": [
-          -0.0585552206410615,
-          1.2533591825934873,
-          1.5637453277781614
+          -0.07543424932096399,
+          1.1735092904172766,
+          1.8068285583524095
         ],
         "footDriftM": {
-          "L": 9.84820701753257e-8,
-          "R": 1.1560376862660782e-7
+          "L": 2.2603987149659857e-7,
+          "R": 3.9717761209517705e-7
         },
         "reachErrors": {
           "R": {
-            "elbowFlexDeg": 96.44545211013684,
-            "wristBendDeg": 32.29264064702567,
-            "elbowHingeAlignment": 0.9999991148307276,
-            "upperLengthM": 0.2621427367753736,
-            "forearmLengthM": 0.2782351245721346,
+            "elbowFlexDeg": 48.94605649068065,
+            "wristBendDeg": 41.002352204475635,
+            "elbowHingeAlignment": 0.9999988961888424,
+            "upperLengthM": 0.26214281094137293,
+            "forearmLengthM": 0.27823509957207515,
             "referenceLengthsM": [
               0.2621429885986164,
               0.27823521532246515
             ],
-            "forearmTwistDeg": 83.06225984110438,
-            "wristAxialTwistDeg": 0.0000018721243014237464,
+            "forearmTwistDeg": 86.39999999999999,
+            "wristAxialTwistDeg": 0.017410444825258508,
             "reachErrorM": 0,
-            "gripErrorM": 6.270881941776057e-7
+            "gripErrorM": 4.606921070360001e-7
           },
           "L": {
-            "elbowFlexDeg": 94.9069421453913,
-            "wristBendDeg": 3.381446047304094,
-            "elbowHingeAlignment": 0.9999992515160718,
-            "upperLengthM": 0.26214278768764554,
-            "forearmLengthM": 0.27823538904833733,
+            "elbowFlexDeg": 80.6525949163053,
+            "wristBendDeg": 27.85574787817642,
+            "elbowHingeAlignment": 0.9999992585893026,
+            "upperLengthM": 0.26214273112925934,
+            "forearmLengthM": 0.2782353848198555,
             "referenceLengthsM": [
               0.2621429872779313,
               0.27823518060107694
             ],
-            "forearmTwistDeg": -76.76448273322781,
-            "wristAxialTwistDeg": -0.00001059797576693259,
+            "forearmTwistDeg": -83.81494065934908,
+            "wristAxialTwistDeg": -0.000043356732340522924,
             "reachErrorM": 0,
-            "gripErrorM": 7.28589819005704e-7
+            "gripErrorM": 6.691036994537453e-7
           }
         },
         "scope": "Attachment frames and wrist/foot joints; not a skin collision or anatomical comfort proof."
       },
-      "thrustAdvanceM": 0.12407333077194592
+      "thrustAdvanceM": 0.2996462129101825
     }
   ],
   "errors": [],
   "network": [],
   "morphology": {
-    "meshes": 10,
+    "meshes": 12,
     "maxDelta": 0.04498396727516039
   },
   "scope": "Actual visible equipment meshes and PBR/UV assignment, sampled morphed vertex displacement, deterministic sampled poses and foot support, review/profile compatibility, 390px software browser. Full collision freedom and real-phone performance are not asserted."

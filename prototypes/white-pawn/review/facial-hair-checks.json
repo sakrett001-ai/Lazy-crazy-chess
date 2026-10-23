@@ -1,0 +1,149 @@
+{
+  "status": "passed",
+  "glbSha256": "52f52e1c1ae832d1a61e1dac9e83dd39ff961fde1a9c402dec8a4a8f6dfce4e6",
+  "runtimeSha256": "a1fcdb8db78cfa0f46a5e6a35fd0b848a42c2be313954ee1bae0ff69dfd6838b",
+  "auditSha256": "ca905729c37641cca971baa2b81193a690f8cf6d76c166ca460de14ccdbdbdb8",
+  "limits": {
+    "maximumVerticesPerVariant": 6000,
+    "minimumFeatherVertices": 200,
+    "maximumMorphErrorM": 1e-8,
+    "maximumBindingGapErrorM": 0.00025
+  },
+  "coverage": {
+    "variants": [
+      "stubble",
+      "short"
+    ],
+    "morphs": [
+      "lean",
+      "strong",
+      "veteran"
+    ],
+    "headRotationsRad": [
+      0,
+      0.35,
+      -0.35
+    ],
+    "vertexSamples": 122400
+  },
+  "checks": [
+    {
+      "name": "Both existing beard slots are retrofitted in place",
+      "passed": true
+    },
+    {
+      "name": "short: finite bounded geometry",
+      "passed": true
+    },
+    {
+      "name": "short: cheek/neck edge contains an interpolated opacity gradient",
+      "passed": true,
+      "count": 5100,
+      "zero": 690,
+      "partial": 2761,
+      "full": 1649,
+      "valid": true
+    },
+    {
+      "name": "short: same skeleton, skin weights and experience/build morphs",
+      "passed": true
+    },
+    {
+      "name": "short: graded fibre material retains the customization slot",
+      "passed": true
+    },
+    {
+      "name": "stubble: finite bounded geometry",
+      "passed": true
+    },
+    {
+      "name": "stubble: cheek/neck edge contains an interpolated opacity gradient",
+      "passed": true,
+      "count": 5100,
+      "zero": 690,
+      "partial": 2761,
+      "full": 1649,
+      "valid": true
+    },
+    {
+      "name": "stubble: same skeleton, skin weights and experience/build morphs",
+      "passed": true
+    },
+    {
+      "name": "stubble: graded fibre material retains the customization slot",
+      "passed": true
+    },
+    {
+      "name": "Lips and nose remain exposed",
+      "passed": true
+    },
+    {
+      "name": "Head rotation and all morphs keep the shell within the skin attachment tolerance",
+      "passed": true,
+      "maxBindingGapErrorM": 0.0001243043741714113,
+      "maxTransformedGapM": 0.008500047796527034
+    },
+    {
+      "name": "Repeated installation does not replace geometry or allocate textures",
+      "passed": true
+    },
+    {
+      "name": "Fibre texture generation is deterministic",
+      "passed": true
+    },
+    {
+      "name": "Negative control detects removal of the feather boundary",
+      "passed": true
+    }
+  ],
+  "cases": [
+    {
+      "kind": "short",
+      "vertices": 5100,
+      "triangles": 9380,
+      "mask": {
+        "count": 5100,
+        "zero": 690,
+        "partial": 2761,
+        "full": 1649,
+        "valid": true
+      },
+      "maxBaseGapM": 0.00850005669518258,
+      "maxMorphErrorM": 0,
+      "maxVeteranDeltaM": 0.0031977333904162943,
+      "textureSha256": "d06dbb9494e6609c98822369063a26f70d8a7c42bbf7b90a4dc2658c2b32aedf",
+      "textureSize": [
+        1024,
+        512
+      ]
+    },
+    {
+      "kind": "stubble",
+      "vertices": 5100,
+      "triangles": 9380,
+      "mask": {
+        "count": 5100,
+        "zero": 690,
+        "partial": 2761,
+        "full": 1649,
+        "valid": true
+      },
+      "maxBaseGapM": 0.0006500558970587002,
+      "maxMorphErrorM": 0,
+      "maxVeteranDeltaM": 0.0031977333904162943,
+      "textureSha256": "5d9408e6f4c67c80a0226d641434466c18180fa7976c98e52e0e333028386444",
+      "textureSize": [
+        1024,
+        512
+      ]
+    }
+  ],
+  "negativeControls": [
+    {
+      "name": "An opaque hard-edged coverage attribute is rejected",
+      "passed": true
+    }
+  ],
+  "failures": [],
+  "scope": "Actual runtime beard meshes: source skin weights, skeleton binding, all body/experience morph deltas, finite geometry, graded opacity attributes, deterministic fibre textures, bounded shell offset, transformed vertex gap and idempotent installation. This does not establish visual quality, hair simulation, arbitrary facial expressions or continuous collision freedom. Front/side/three-quarter visual inspection is separate."
+}

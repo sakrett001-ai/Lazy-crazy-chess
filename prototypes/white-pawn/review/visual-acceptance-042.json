@@ -1,0 +1,20 @@
+{
+  "status": "accepted-for-prototype",
+  "date": "2026-10-23T07:55:01.283175+00:00",
+  "documentSha256": "4c5cc5aa277cd89c71ce78cdcffebe47898cb986c8eac1a4272e3f6b214b9deb",
+  "runtimeSha256": "a1fcdb8db78cfa0f46a5e6a35fd0b848a42c2be313954ee1bae0ff69dfd6838b",
+  "captureManifest": "review/motion-042/captures.json",
+  "captureCount": 22,
+  "reviewer": "Independent final_visual_042 plus root",
+  "findings": [
+    "Hands and greatsword handle visibly outside cuirass at preparation, extension and recovery, including strong build",
+    "Clear arm extension and front/rear knee contribution for short planted thrust",
+    "Short beard has fibre texture, jaw volume and graded cheek/neck boundary; stubble and grey veteran remain distinct"
+  ],
+  "limitations": [
+    "Static phase views do not validate strike speed or force",
+    "Hand shape remains stylized and partly open-looking",
+    "Cropped head hair still has angular edge",
+    "Garment audit remains failed11of18; handled by exact report-specific prototype acceptance"
+  ]
+}

@@ -1,6 +1,6 @@
 {
   "task": "infantry-motion-042",
-  "status": "active",
+  "status": "ready-for-publication",
   "baseCommit": "086c458d206d7743f6c37edb9024b0094c0968c1",
   "production": "0.4.1 sourcef7f3fd8",
   "userCorrection": [
@@ -32,11 +32,26 @@
     "Beard has soft edge and hair appearance across profiles",
     "Final version bound to reports, inspected in motion and published with readback"
   ],
-  "next": "Complete bounded implementations, independently check body surfaces and motion contributions, freeze runtime then visual review and release",
+  "next": "Publish canonical source and hosted release; verify production bytes",
   "limits": [
     "No claim of full physical combat simulation or muscle force",
     "Existing garment problems cannot waive weapon or hand penetration",
     "Software browser performance is not phone FPS"
   ],
-  "incident": "0.4.1 passed narrow joint/contact audits but missed whole-body/torso interactions; user screenshots exposed acceptance gap."
+  "incident": "0.4.1 passed narrow joint/contact audits but missed whole-body/torso interactions; user screenshots exposed acceptance gap.",
+  "runtimeSha256": "a1fcdb8db78cfa0f46a5e6a35fd0b848a42c2be313954ee1bae0ff69dfd6838b",
+  "sourceCheckpoint": "e27de0208d1ad3848e7788fb9dae1206a6a5a320",
+  "finalAudit": {
+    "bodyContact": "passed18cases2178frames",
+    "contributions": "passed12cases",
+    "jointFrames": 4725,
+    "weaponShieldFrames": 2610,
+    "garmentStatesFailed": 11,
+    "garmentStatesTotal": 18
+  },
+  "visualReview": {
+    "status": "accepted-for-prototype",
+    "captureCount": 22,
+    "documentSha256": "4c5cc5aa277cd89c71ce78cdcffebe47898cb986c8eac1a4272e3f6b214b9deb"
+  }
 }
