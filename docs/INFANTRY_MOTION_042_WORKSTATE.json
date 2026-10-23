@@ -1,0 +1,42 @@
+{
+  "task": "infantry-motion-042",
+  "status": "active",
+  "baseCommit": "086c458d206d7743f6c37edb9024b0094c0968c1",
+  "production": "0.4.1 sourcef7f3fd8",
+  "userCorrection": [
+    "greatsword/rearhand inside torso",
+    "thrust driven predominantly by pelvis",
+    "beard opaque polygon patch"
+  ],
+  "evidence": {
+    "armAdvanceM": [
+      0.025,
+      0.035
+    ],
+    "bodyAdvanceM": 0.1,
+    "greatswordRearGripForwardAtReadyM": 0.16,
+    "leftWristForwardAtReadyM": 0.092
+  },
+  "scope": "Correct arm/torso/leg coordination, body clearance and beard rendering; preserve shell and equipment variants",
+  "owners": {
+    "motion": "whole_body_motion_042: loadout/biomechanics, optionalfull-body module",
+    "face": "beard_rebuild_042: appearance/facial-hair",
+    "independentAudit": "body_contact_gate_042",
+    "release": "release_gate_042",
+    "references": "motion_reference_042",
+    "root": "integration,visual inspection,publication"
+  },
+  "acceptance": [
+    "Actual equipped weapon and skin hands clear torso; failure injections detected",
+    "Arm extension and leg/torso contribution measured separately from pelvis",
+    "Beard has soft edge and hair appearance across profiles",
+    "Final version bound to reports, inspected in motion and published with readback"
+  ],
+  "next": "Complete bounded implementations, independently check body surfaces and motion contributions, freeze runtime then visual review and release",
+  "limits": [
+    "No claim of full physical combat simulation or muscle force",
+    "Existing garment problems cannot waive weapon or hand penetration",
+    "Software browser performance is not phone FPS"
+  ],
+  "incident": "0.4.1 passed narrow joint/contact audits but missed whole-body/torso interactions; user screenshots exposed acceptance gap."
+}
