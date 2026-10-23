@@ -18,23 +18,23 @@ try{
  await page.goto(pathToFileURL(path.join(root,'white-pawn.html')).href);
  await page.waitForFunction(()=>window.whitePawn?.ready||window.whitePawn?.fallback,{},{timeout:180000});
  if(!await page.evaluate(()=>whitePawn.ready))throw Error('WebGL did not start');
- for(const [weapon,view]of [['greatsword','side'],['greatsword','three'],['pike','side'],['sword','side'],['spear','side']]){
-  await page.evaluate(({weapon,view})=>{
-   whitePawn.appearance.set({weaponType:weapon,armorType:'plate',bodyBuild:'regular',shieldType:'round',beard:'none',skinTone:'medium',experience:'recruit'});
+ for(const [weapon,view,bodyBuild='regular']of [['greatsword','side'],['greatsword','three'],['greatsword','side','strong'],['pike','side'],['sword','side'],['spear','side']]){
+  await page.evaluate(({weapon,view,bodyBuild})=>{
+   whitePawn.appearance.set({weaponType:weapon,armorType:'plate',bodyBuild,shieldType:'round',beard:'none',skinTone:'medium',experience:'recruit'});
    whitePawn.select('Spear_Study');whitePawn.seek(1.25);whitePawn.fit(view);
    if(view==='side'){
     const c=whitePawn.debug.controls,offset=c.object.position.clone().sub(c.target);
     offset.x=-Math.abs(offset.x);c.object.position.copy(c.target).add(offset);c.update();
    }
-  },{weapon,view});
-  for(const [phase,time]of [['ready',1.25],['extended',1.9],['recovered',2.8]]){
+  },{weapon,view,bodyBuild});
+  for(const [phase,time]of bodyBuild==='strong'?[['preparing',.9],['extended',1.9],['returning',3.1]]:[['ready',1.25],['extended',1.9],['recovered',2.8]]){
    const record=await page.evaluate(time=>{
     whitePawn.seek(time);whitePawn.render();
     return{identity:whitePawn.identity,measurements:whitePawn.loadout.measure(),state:whitePawn.state()};
    },time);
-   const name=`${weapon}-${view}-${phase}.png`;
+   const name=`${weapon}-${view}-${bodyBuild==='regular'?'':bodyBuild+'-'}${phase}.png`;
    await page.locator('#stage').screenshot({path:path.join(out,name),timeout:120000});
-   records.push({weapon,view,phase,time,image:name,...record});
+   records.push({weapon,view,bodyBuild,phase,time,image:name,...record});
    console.log('CAPTURE '+name);
   }
  }
@@ -46,7 +46,7 @@ try{
  ]){
   const record=await page.evaluate(({beard,skinTone,hairColor,experience,side})=>{
    whitePawn.appearance.set({beard,skinTone,hairColor,experience,helmet:'off'});
-   whitePawn.select('rest');whitePawn.seek(0);whitePawn.fit('helmet');
+   whitePawn.select('rest');whitePawn.seek(0);whitePawn.fit('face');
    if(side){const c=whitePawn.debug.controls,d=c.object.position.distanceTo(c.target);c.object.position.copy(c.target).add(c.target.clone().set(-d,.05*d,.12*d));c.update();}
    whitePawn.render();return{identity:whitePawn.identity,state:whitePawn.state()};
   },{beard,skinTone,hairColor,experience,side});

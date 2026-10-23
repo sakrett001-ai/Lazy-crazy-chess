@@ -204,11 +204,14 @@ export function createLoadout({model,bones={}}){
    // The greatsword's rear hand and pommel need space in front of the armour.
    // The pike has a different hand spacing and therefore its own guard line.
    const anchor=isPike?[-.25,-.29,.16]:isGreatsword?[-.05,-.22,.44]:[-.37,-.23,.30];
+   // The fuller breastplate also needs more pommel clearance in the folded
+   // guard. The additional space tapers away as both arms extend.
+   if(isGreatsword&&current.bodyBuild==='strong')anchor[2]+=.030*(1-phase.thrust);
    anchor[1]+=(isPike?.03:.07)*phase.thrust;
    // The round shield's wider rim passes the sword guard during the brace.
    // Move the weapon hand 15 mm outward, with unchanged clip endpoints.
    if(action==='Shield_Brace'&&current.weaponType==='sword'&&summary().effectiveShield==='round')anchor[0]-=.015*envelope(lastTime,.4,.9,3.2,3.7);
-   const grip=origin.clone().add(direction(anchor)).addScaledVector(axis,(isPike?.10:isGreatsword?.13:.14)*phase.thrust);
+   const grip=origin.clone().add(direction(anchor)).addScaledVector(axis,(isPike?.106:isGreatsword?.13:.14)*phase.thrust);
    if(action==='Guard_Breath')grip.addScaledVector(up,.003*Math.sin(Math.PI*2*Math.min(lastTime,6)/6));
    reachErrors.R=armBiomechanics.solve('R',grip,axis,direction([-1,-.55,.45]),toolAxisLocal('R'));
    if(twoHanded.has(current.weaponType)){
