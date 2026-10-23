@@ -181,18 +181,18 @@ function assertGripCoverage(coverage) {
 function assertWeaponClearanceCoverage(report) {
   const c=report.coverage;
   assert(c&&c.quick===false&&Number.isFinite(c.sampleRateHz)&&c.sampleRateHz>=10,'Weapon clearance requires a full audit at10Hz or higher');
-  for(const [key,expected] of Object.entries({weapons:['spear','sword'],shields:['tower','round','heater'],weaponMaterials:['weapon.metal','weapon.wood'],shieldMaterials:['shield.face','shield.wood','shield.trim'],bodyBuilds:['regular'],actions:['rest','Guard_Breath','Shield_Brace','Spear_Study']})) {
+  for(const [key,expected] of Object.entries({weapons:['spear','sword'],shields:['tower','round','heater'],weaponMaterials:['weapon.metal','weapon.wood'],shieldMaterials:['shield.face','shield.wood','shield.trim'],bodyBuilds:['lean','regular','strong'],actions:['rest','Guard_Breath','Shield_Brace','Spear_Study']})) {
     assert(Array.isArray(c[key]),`Weapon clearance audit requires ${key}`);
     assert.deepEqual([...c[key]].sort(),[...expected].sort(),`Weapon clearance audit has incomplete ${key}`);
   }
-  assert(c.caseCount===24&&Array.isArray(report.cases)&&report.cases.length===24,'Weapon clearance requires all24equipment/action cases');
-  assert(Number.isSafeInteger(c.frameCount)&&c.frameCount>=870,'Weapon clearance requires at least870frames');
+  assert(c.caseCount===72&&Array.isArray(report.cases)&&report.cases.length===72,'Weapon clearance requires all72equipment/build/action cases');
+  assert(Number.isSafeInteger(c.frameCount)&&c.frameCount>=2610,'Weapon clearance requires at least2610frames');
   let frames=0;
-  for(const weaponType of ['spear','sword'])for(const shieldType of ['tower','round','heater'])for(const [action,minimum]of Object.entries({rest:1,Guard_Breath:61,Shield_Brace:41,Spear_Study:42})) {
-    const id=[weaponType,shieldType,action].join('/'),matches=report.cases.filter(row=>row?.id===id);
+  for(const weaponType of ['spear','sword'])for(const shieldType of ['tower','round','heater'])for(const bodyBuild of ['lean','regular','strong'])for(const [action,minimum]of Object.entries({rest:1,Guard_Breath:61,Shield_Brace:41,Spear_Study:42})) {
+    const id=[weaponType,shieldType,bodyBuild,action].join('/'),matches=report.cases.filter(row=>row?.id===id);
     assert(matches.length===1,`Weapon clearance requires unique case ${id}`);
     const row=matches[0];
-    for(const [key,value]of Object.entries({weaponType,shieldType,action}))assert.equal(row[key],value,`Weapon clearance case ${id} has changed ${key}`);
+    for(const [key,value]of Object.entries({weaponType,shieldType,bodyBuild,action}))assert.equal(row[key],value,`Weapon clearance case ${id} has changed ${key}`);
     assert(Number.isSafeInteger(row.samples)&&row.samples>=minimum,`Weapon clearance case ${id} has incomplete samples`);frames+=row.samples;
     assert(row.maximumIntersections===0&&row.intersectingFrames===0&&row.nonfinite===0,`Weapon clearance cannot waive intersection or nonfinite evidence in ${id}`);
     assert(count(row.weaponTriangles)&&row.weaponTriangles>0&&count(row.shieldTriangles)&&row.shieldTriangles>0,`Weapon clearance case ${id} lacks actual triangles`);
@@ -213,7 +213,67 @@ function assertEnarmeCoverage(coverage) {
     assert.deepEqual([...coverage[key]].sort(),[...expected].sort(),`Enarme audit has incomplete ${key}`);
   }
 }
-export function makeRelease({html,config,modelBytes,standaloneHtml,modelReport,equipmentReport,geometryReport,geometryReportBytes,geometryAcceptance,geometryAuditSource,loadoutSource,biomechanicsReport,biomechanicsAuditSource,gripReport,gripAuditSource,weaponClearanceReport,weaponClearanceAuditSource,enarmeReport,enarmeAuditSource,variantReport,appearanceReport,viewerReport,hostedReport,builtAt=new Date().toISOString()}) {
+function assertBodyContactCoverage(report) {
+  const c=report.coverage;
+  assert(c&&c.quick===false&&Number.isFinite(c.sampleRateHz)&&c.sampleRateHz>=30,'Body contact requires a full audit at30Hz or higher');
+  assert.equal(report.baseline,false,'Body contact cannot publish a historical baseline');
+  assert.equal(report.bodyClearancePassed,true,'Body contact cannot waive weapon or hand contact with the torso');
+  assert.equal(report.wholeBodyContributionPassed,true,'Body contact requires passed whole-body contribution checks');
+  for(const [key,minimum]of Object.entries({minimumRightHandAdvanceRelativeChestM:.06,minimumRightElbowExtensionDeg:10,minimumCombinedElbowExtensionDeg:10,minimumTwoHandElbowExtensionDeg:0,minimumFrontKneeFlexChangeDeg:2,minimumRearKneeExtensionDeg:2,minimumTorsoPitchChangeDeg:2}))assert(Number.isFinite(report.limits?.[key])&&report.limits[key]>=minimum,`Body contact audit weakened ${key}`);
+  for(const [key,maximum]of Object.entries({containmentToleranceM:.001,maximumFootDriftM:.006}))assert(Number.isFinite(report.limits?.[key])&&report.limits[key]>=0&&report.limits[key]<=maximum,`Body contact audit weakened ${key}`);
+  for(const [key,expected]of Object.entries({weapons:['spear','sword','pike','greatsword'],bodyBuilds:['lean','regular','strong'],armorTypes:['plate','mail','padded'],actions:['Spear_Study']})) {
+    assert(Array.isArray(c[key]),`Body contact audit requires ${key}`);
+    assert.deepEqual([...c[key]].sort(),[...expected].sort(),`Body contact audit has incomplete ${key}`);
+  }
+  assert(c.caseCount===18&&Array.isArray(report.cases)&&report.cases.length===18,'Body contact requires all18equipment/build/armor cases');
+  assert(Number.isSafeInteger(c.frameCount)&&c.frameCount>=2178,'Body contact requires at least2178frames');
+  const expectedCases=[];
+  for(const weaponType of ['spear','sword','pike','greatsword'])for(const bodyBuild of ['lean','regular','strong'])expectedCases.push({weaponType,bodyBuild,armorType:'plate'});
+  for(const armorType of ['mail','padded'])for(const bodyBuild of ['lean','regular','strong'])expectedCases.push({weaponType:'greatsword',bodyBuild,armorType});
+  let frames=0;
+  for(const equipment of expectedCases) {
+    const id=[equipment.weaponType,equipment.bodyBuild,equipment.armorType,'Spear_Study'].join('/'),matches=report.cases.filter(row=>row?.id===id);
+    assert.equal(matches.length,1,`Body contact requires unique case ${id}`);
+    const row=matches[0];
+    for(const [key,value]of Object.entries({...equipment,action:'Spear_Study'}))assert.equal(row[key],value,`Body contact case ${id} has changed ${key}`);
+    assert(row.duration===4&&Number.isSafeInteger(row.samples)&&row.samples>=121,`Body contact case ${id} lacks a complete sampled cycle`);
+    frames+=row.samples;
+    for(const key of ['intersectingFrames','maximumIntersectionPairs','containedFrames','maximumContainedVertices','maximumContainmentDepthM','nonfinite'])assert.equal(row[key],0,`Body contact cannot waive ${key} in ${id}`);
+    assert(Array.isArray(row.examples)&&row.examples.length===0,`Body contact case ${id} retains collision examples`);
+    for(const [label,value]of Object.entries({weaponTriangles:row.weaponTriangles,torsoTriangles:row.torsoTriangles,leftHandTriangles:row.handTriangles?.L,rightHandTriangles:row.handTriangles?.R}))assert(count(value)&&value>0,`Body contact case ${id} lacks actual ${label}`);
+    assert(report.checks.find(check=>check.name===id+': no torso contact')?.passed===true,`Body contact lacks passed check for ${id}`);
+  }
+  assert.equal(frames,c.frameCount,'Body contact frame count differs from sampled cases');
+  assert(Array.isArray(report.contributionCases)&&report.contributionCases.length===12,'Body contact requires12whole-body contribution cases');
+  for(const {weaponType,bodyBuild}of expectedCases.filter(row=>row.armorType==='plate')) {
+    const id=[weaponType,bodyBuild,'plate','Spear_Study'].join('/'),matches=report.contributionCases.filter(row=>row?.id===id);
+    assert.equal(matches.length,1,`Body contact requires unique contribution case ${id}`);
+    const row=matches[0];
+    assert(row.weaponType===weaponType&&row.bodyBuild===bodyBuild&&row.readyTime===1.25&&row.peakTime===1.9,`Body contact contribution case ${id} changed identity or phase`);
+    assert.equal(row.passed,true,`Body contact cannot waive whole-body contribution in ${id}`);
+    // Project regression thresholds: these reject the pelvic-slide defect, not certify combat technique.
+    for(const [key,minimum]of Object.entries({rightHandAdvanceRelativeChestM:.06,frontKneeFlexChangeDeg:2,torsoPitchChangeDeg:2}))assert(Number.isFinite(row[key])&&row[key]>=minimum,`Body contact contribution ${id} lacks ${key}`);
+    for(const key of ['rightElbowExtensionDeg','leftElbowExtensionDeg','totalElbowExtensionDeg'])assert(Number.isFinite(row[key]),`Body contact contribution ${id} lacks ${key}`);
+    assert(Math.abs(row.totalElbowExtensionDeg-row.rightElbowExtensionDeg-row.leftElbowExtensionDeg)<1e-6,`Body contact contribution ${id} has inconsistent combined elbow extension`);
+    if(['pike','greatsword'].includes(weaponType))assert(row.rightElbowExtensionDeg>=0&&row.leftElbowExtensionDeg>=0&&row.totalElbowExtensionDeg>=10,`Body contact contribution ${id} lacks two-hand elbow extension`);
+    else assert(row.rightElbowExtensionDeg>=10,`Body contact contribution ${id} lacks rightElbowExtensionDeg`);
+    assert(Number.isFinite(row.rearKneeExtensionDeg)&&row.rearKneeExtensionDeg>=2,`Body contact contribution ${id} lacks rear-knee extension`);
+    assert(Number.isFinite(row.maximumFootDriftM)&&row.maximumFootDriftM>=0&&row.maximumFootDriftM<=.006,`Body contact contribution ${id} has unplanted feet`);
+    assert(report.checks.find(check=>check.name===id+': arms torso and legs contribute')?.passed===true,`Body contact lacks passed contribution check for ${id}`);
+  }
+  const moved=report.negativeControls.find(row=>row.name==='Moved imported weapon and hand enter torso');
+  assert(moved?.passed===true&&Number.isFinite(moved.movementM)&&moved.movementM>.05,'Body contact requires an actual translated weapon-and-hand negative control');
+  assert(finiteVector(moved.beforeWristWorld)&&finiteVector(moved.afterWristWorld)&&Math.abs(Math.hypot(...moved.afterWristWorld.map((v,i)=>v-moved.beforeWristWorld[i]))-moved.movementM)<1e-6,'Body contact negative control lacks matching actual wrist displacement');
+  assert(moved.beforeIntersectionPairs===0&&moved.beforeContainedVertices===0,'Body contact negative control must begin clear of the torso');
+  assert(count(moved.afterIntersectionPairs)&&count(moved.afterContainedVertices)&&(moved.afterIntersectionPairs>0||moved.afterContainedVertices>0),'Body contact negative control lacks actual torso penetration evidence');
+  const collisionPoints=[...(moved.intersections||[]),...(moved.contained||[])];
+  assert(collisionPoints.length>0&&collisionPoints.every(row=>finiteVector(row.pointWorld)),'Body contact negative control lacks finite actual collision points');
+  const pelvis=report.negativeControls.find(row=>row.name==='Pelvis-only translated ready pose is rejected');
+  assert(pelvis?.passed===true&&Number.isFinite(pelvis.translationM)&&pelvis.translationM>.05,'Body contact requires an actual pelvis-only negative control');
+  assert.equal(pelvis.contributionPassed,false,'Body contact pelvis-only control must reject whole-body contribution');
+  for(const key of ['rightHandAdvanceRelativeChestM','rightElbowExtensionDeg','frontKneeFlexChangeDeg'])assert(Number.isFinite(pelvis[key])&&Math.abs(pelvis[key])<1e-5,`Body contact pelvis-only control unexpectedly changed ${key}`);
+}
+export function makeRelease({html,config,modelBytes,standaloneHtml,modelReport,equipmentReport,geometryReport,geometryReportBytes,geometryAcceptance,geometryAuditSource,loadoutSource,biomechanicsReport,biomechanicsAuditSource,gripReport,gripAuditSource,weaponClearanceReport,weaponClearanceAuditSource,enarmeReport,enarmeAuditSource,bodyContactReport,bodyContactAuditSource,variantReport,appearanceReport,viewerReport,hostedReport,builtAt=new Date().toISOString()}) {
   const document=validateCandidate({html,config,modelBytes});
   assertBaseChecks({modelBytes,standaloneHtml,modelReport,viewerReport});
   assert.equal(equipmentReport?.status,'passed','Equipment and motion verification did not pass');
@@ -230,6 +290,8 @@ export function makeRelease({html,config,modelBytes,standaloneHtml,modelReport,e
   assertWeaponClearanceCoverage(weaponClearanceReport);
   assertMotionAudit({name:'Enarme',report:enarmeReport,auditSource:enarmeAuditSource,modelBytes,loadoutSource});
   assertEnarmeCoverage(enarmeReport.coverage);
+  assertMotionAudit({name:'Body contact',report:bodyContactReport,auditSource:bodyContactAuditSource,modelBytes,loadoutSource});
+  assertBodyContactCoverage(bodyContactReport);
   assert.equal(variantReport?.status,'passed','Equipment variants verification did not pass');
   assert.equal(variantReport?.glbSha256,sha256(modelBytes),'Variant report belongs to different GLB bytes');
   assert.equal(variantReport?.documentSha256,sha256(standaloneHtml),'Variant report is stale for this HTML');
@@ -242,5 +304,5 @@ export function makeRelease({html,config,modelBytes,standaloneHtml,modelReport,e
   assert.equal(hostedReport?.glbSha256,config.modelSha256,'Hosted report belongs to a different GLB');
   assert.equal(hostedReport?.tamperedModelRejected,true,'The model integrity failure case was not verified');
   assert(Number.isFinite(Date.parse(builtAt)),'Invalid build date');
-  return {schemaVersion:1,repository:REPOSITORY,sourceBranch:'main',sourceCommit:config.sourceCommit,version:config.version,modelVersion:config.modelVersion,checks:'passed',motionSha256,biomechanicsStatus:'passed',gripStatus:'passed',weaponClearanceStatus:'passed',enarmeStatus:'passed',...geometry,builtAt,document};
+  return {schemaVersion:1,repository:REPOSITORY,sourceBranch:'main',sourceCommit:config.sourceCommit,version:config.version,modelVersion:config.modelVersion,checks:'passed',motionSha256,biomechanicsStatus:'passed',gripStatus:'passed',weaponClearanceStatus:'passed',enarmeStatus:'passed',bodyContactStatus:'passed',wholeBodyContributionStatus:'passed',...geometry,builtAt,document};
 }

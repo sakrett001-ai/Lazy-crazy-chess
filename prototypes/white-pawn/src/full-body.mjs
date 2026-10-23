@@ -43,7 +43,7 @@ export function createFullBodyMotion({model,bones,update}){
   for(const side of ['L','R'])solveLeg(side,soles[side].point,soles[side].rotation);
   // Share the forward inclination over the thoracic chain; do not hinge the
   // entire person at the pelvis. Keep the head's extra inclination modest.
-  for(const [name,degrees]of [['spine03',2],['spine02',3],['spine01',2],['head',-4]])worldQ(name,Q().setFromAxisAngle(x,THREE.MathUtils.degToRad(degrees)*phase.thrust).multiply(bone(name).getWorldQuaternion(Q())));
+  for(const [name,degrees]of [['spine03',5],['spine02',4],['spine01',3],['head',-7]])worldQ(name,Q().setFromAxisAngle(x,THREE.MathUtils.degToRad(degrees)*phase.thrust).multiply(bone(name).getWorldQuaternion(Q())));
   update();
  }
  return{apply};

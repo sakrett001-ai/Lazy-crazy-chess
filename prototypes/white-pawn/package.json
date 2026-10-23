@@ -1,6 +1,6 @@
 {
   "name": "lazy-crazy-chess-white-pawn",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "private": true,
   "type": "module",
   "scripts": {
@@ -17,7 +17,9 @@
     "verify:biomechanics": "node scripts/verify-biomechanics.mjs",
     "verify:grip": "node scripts/verify-grip.mjs",
     "verify:weapon-clearance": "node scripts/verify-weapon-clearance.mjs",
-    "verify:enarmes": "node scripts/verify-enarmes.mjs"
+    "verify:enarmes": "node scripts/verify-enarmes.mjs",
+    "verify:body-contact": "node scripts/verify-body-contact.mjs",
+    "verify:facial-hair": "node scripts/verify-facial-hair.mjs"
   },
   "dependencies": {
     "three": "0.180.0"

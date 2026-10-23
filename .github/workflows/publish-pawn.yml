@@ -46,6 +46,8 @@ jobs:
           npm run verify:grip
           npm run verify:weapon-clearance
           npm run verify:enarmes
+          npm run verify:body-contact
+          npm run verify:facial-hair
       - name: Verify current modular geometry and runtime
         working-directory: prototypes/white-pawn
         run: npm run verify:geometry
@@ -82,6 +84,8 @@ jobs:
             prototypes/white-pawn/review/grip-checks.json
             prototypes/white-pawn/review/weapon-clearance-checks.json
             prototypes/white-pawn/review/enarme-checks.json
+            prototypes/white-pawn/review/body-contact-checks.json
+            prototypes/white-pawn/review/facial-hair-checks.json
             prototypes/white-pawn/review/appearance-checks.json
             prototypes/white-pawn/review/variant-checks.json
             dist/review/

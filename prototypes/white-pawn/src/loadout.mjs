@@ -4,8 +4,8 @@ import {createGrip} from './grip.mjs';
 import {createFullBodyMotion} from './full-body.mjs';
 
 // Equipment and body shape are independent of material colours. The authored
-// clips continue to drive the planted stance. Weapon arms are reconstructed
-// in anatomical frames after sampling, for one- and two-handed equipment.
+// clips supply the planted stance. The thrust redistributes its drive through
+// knees and thorax; arms are reconstructed in anatomical frames afterwards.
 const normalize=value=>String(value||'').replace(/[._\-\s]/g,'').toLowerCase();
 const V=values=>new THREE.Vector3().fromArray(values);
 const twoHanded=new Set(['pike','greatsword']);
@@ -201,6 +201,8 @@ export function createLoadout({model,bones={}}){
    const guard=isPike?[.55,.12,.826]:isGreatsword?[.12,.3,.947]:[-.10,.8,.592];
    const aimed=isPike?[.55,.075,.832]:isGreatsword?[.12,.075,.99]:[-.15,.087,.985];
    const axis=direction(guard).lerp(direction(aimed),phase.aim).normalize();
+   // The greatsword's rear hand and pommel need space in front of the armour.
+   // The pike has a different hand spacing and therefore its own guard line.
    const anchor=isPike?[-.25,-.29,.16]:isGreatsword?[-.05,-.22,.44]:[-.37,-.23,.30];
    anchor[1]+=(isPike?.03:.07)*phase.thrust;
    // The round shield's wider rim passes the sword guard during the brace.
@@ -217,6 +219,9 @@ export function createLoadout({model,bones={}}){
    reachErrors.L=armBiomechanics.solve('L',second,frame.axis,direction([1,-.55,.45]),toolAxisLocal('L'));
    }else if(summary().effectiveShield!=='none'){
     const shield=frameFor(shields.get(summary().effectiveShield),'L');
+    // The strong torso's breastplate projects farther forward. Fit the whole
+    // shield/hand assembly to that build; its fingers must clear the plate.
+    if(current.bodyBuild==='strong')shield.grip.addScaledVector(forward,.025);
     reachErrors.L=armBiomechanics.solve('L',shield.grip,shield.axis,direction([1,-.55,.45]),undefined,bone('wrist.L').getWorldQuaternion(new THREE.Quaternion()));
    }
    update();

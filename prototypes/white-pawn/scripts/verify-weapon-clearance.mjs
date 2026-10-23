@@ -11,7 +11,7 @@ const root=path.dirname(path.dirname(fileURLToPath(import.meta.url))),quick=proc
 const output=process.env.PAWN_WEAPON_CLEARANCE_REPORT||path.join(root,'review',quick?'weapon-clearance-quick.json':'weapon-clearance-checks.json');
 const hash=x=>createHash('sha256').update(x).digest('hex'),bytes=await readFile(path.join(root,'assets/white-pawn.glb'));
 const sourceBytes=await runtimeSource(root),epsilon=1e-8;
-const report={status:'running',glbSha256:hash(bytes),runtimeSha256:hash(sourceBytes),auditSha256:hash(await readFile(fileURLToPath(import.meta.url))),coverage:{sampleRateHz:10,weapons:['spear','sword'],shields:['tower','round','heater'],weaponMaterials:['weapon.metal','weapon.wood'],shieldMaterials:['shield.face','shield.wood','shield.trim'],bodyBuilds:['regular'],actions:['rest','Guard_Breath','Shield_Brace','Spear_Study'],frameCount:0,caseCount:0,quick},checks:[],cases:[],negativeControls:[],failures:[],scope:'Actual skinned triangle intersections between weapon.metal/weapon.wood surfaces and shield.face/shield.wood/shield.trim surfaces. Includes the physical rim and wooden rear bracing, excludes shield grip, leather enarmes and painted emblem. AABB broad phase followed by finite edge/triangle intersections; positive crossings are recorded in world coordinates. Tests regular physique at10Hz plus the reported1.36s sword frame. This is not continuous collision detection, minimum-clearance certification, coplanar contact classification, inside-volume testing, whole-body collision or a physical combat simulation.'};
+const report={status:'running',glbSha256:hash(bytes),runtimeSha256:hash(sourceBytes),auditSha256:hash(await readFile(fileURLToPath(import.meta.url))),coverage:{sampleRateHz:10,weapons:['spear','sword'],shields:['tower','round','heater'],weaponMaterials:['weapon.metal','weapon.wood'],shieldMaterials:['shield.face','shield.wood','shield.trim'],bodyBuilds:['lean','regular','strong'],actions:['rest','Guard_Breath','Shield_Brace','Spear_Study'],frameCount:0,caseCount:0,quick},checks:[],cases:[],negativeControls:[],failures:[],scope:'Actual skinned triangle intersections between weapon.metal/weapon.wood surfaces and shield.face/shield.wood/shield.trim surfaces. Includes the physical rim and wooden rear bracing, excludes shield grip, leather enarmes and painted emblem. AABB broad phase followed by finite edge/triangle intersections; positive crossings are recorded in world coordinates. Tests lean, regular and strong physiques at10Hz plus the reported1.36s sword frame. This is not continuous collision detection, minimum-clearance certification, coplanar contact classification, inside-volume testing, whole-body collision or a physical combat simulation.'};
 const check=(name,passed,details={})=>{report.checks.push({name,passed:!!passed,...details});if(!passed)report.failures.push(name);};
 const V=()=>new THREE.Vector3(),Q=()=>new THREE.Quaternion(),norm=s=>String(s||'').replace(/[._\-\s]/g,'').toLowerCase();
 const loader=new GLTFLoader();loader.register(()=>({name:'CPU_NO_TEXTURES',loadTexture:()=>Promise.resolve(new THREE.Texture())}));
@@ -27,7 +27,7 @@ const selected=(slot,variant,materials)=>meshes.filter(m=>tag(m,'equipmentSlot')
 const topology=new Map(meshes.map(m=>{const g=m.geometry,count=g.index?g.index.count:g.attributes.position.count,faces=[];for(let i=0;i<count;i+=3)faces.push([0,1,2].map(j=>g.index?g.index.getX(i+j):i+j));return[m,faces];}));
 const loadout=createLoadout({model,bones});
 let mixer=null,clip=null;
-function begin(weaponType,shieldType,action){mixer?.stopAllAction();mixer?.uncacheRoot(model);mixer=null;restore();loadout.apply({weaponType,shieldType,bodyBuild:'regular',armorType:'plate'});clip=gltf.animations.find(c=>c.name===action)||null;return clip?.duration||0;}
+function begin(weaponType,shieldType,bodyBuild,action){mixer?.stopAllAction();mixer?.uncacheRoot(model);mixer=null;restore();loadout.apply({weaponType,shieldType,bodyBuild,armorType:'plate'});clip=gltf.animations.find(c=>c.name===action)||null;return clip?.duration||0;}
 function sample(action,time){mixer?.stopAllAction();mixer?.uncacheRoot(model);mixer=null;restore();if(clip){mixer=new THREE.AnimationMixer(model);const a=mixer.clipAction(clip);a.setLoop(THREE.LoopOnce,1);a.clampWhenFinished=true;a.play();mixer.setTime(time);}loadout.poseAt(action,time);update();}
 function evaluated(mesh){
  const points=Array.from({length:mesh.geometry.attributes.position.count},(_,i)=>mesh.getVertexPosition(i,V()).applyMatrix4(mesh.matrixWorld));
@@ -54,19 +54,19 @@ function measure(weaponType,shieldType){
  for(const s of shield)shieldTriangles+=s.faces.length;
  return{weaponTriangles,shieldTriangles,candidates,nonfinite,intersectionPairs:hits.length,intersections:hits.slice(0,12)};
 }
-function recordCase(weaponType,shieldType,action,times){
- begin(weaponType,shieldType,action);const id=[weaponType,shieldType,action].join('/'),result={id,weaponType,shieldType,action,samples:times.length,maximumIntersections:0,intersectingFrames:0,nonfinite:0,candidates:0,examples:[]};
+function recordCase(weaponType,shieldType,bodyBuild,action,times){
+ begin(weaponType,shieldType,bodyBuild,action);const id=[weaponType,shieldType,bodyBuild,action].join('/'),result={id,weaponType,shieldType,bodyBuild,action,samples:times.length,maximumIntersections:0,intersectingFrames:0,nonfinite:0,candidates:0,examples:[]};
  for(const time of times){sample(action,time);const m=measure(weaponType,shieldType);report.coverage.frameCount++;result.maximumIntersections=Math.max(result.maximumIntersections,m.intersectionPairs);result.nonfinite+=m.nonfinite;result.candidates+=m.candidates;result.weaponTriangles=m.weaponTriangles;result.shieldTriangles=m.shieldTriangles;if(m.intersectionPairs){result.intersectingFrames++;if(result.examples.length<3)result.examples.push({time,...m});}}
  report.cases.push(result);report.coverage.caseCount++;check(id+': weapon does not cross shield surfaces',result.maximumIntersections===0&&result.nonfinite===0&&result.weaponTriangles>0&&result.shieldTriangles>0,{samples:times.length,maximumIntersections:result.maximumIntersections,intersectingFrames:result.intersectingFrames});return result;
 }
 try{
- if(quick)recordCase('sword','round','Spear_Study',[1.36]);
- else for(const weaponType of report.coverage.weapons)for(const shieldType of report.coverage.shields)for(const action of report.coverage.actions){
-  const duration=begin(weaponType,shieldType,action),times=Array.from({length:Math.round(duration*10)+1},(_,i)=>Math.min(duration,i/10));if(action==='Spear_Study')times.push(1.36);times.sort((a,b)=>a-b);recordCase(weaponType,shieldType,action,times);
+ if(quick)for(const bodyBuild of report.coverage.bodyBuilds)recordCase('sword','round',bodyBuild,'Spear_Study',[1.36]);
+ else for(const weaponType of report.coverage.weapons)for(const shieldType of report.coverage.shields)for(const bodyBuild of report.coverage.bodyBuilds)for(const action of report.coverage.actions){
+  const duration=begin(weaponType,shieldType,bodyBuild,action),times=Array.from({length:Math.round(duration*10)+1},(_,i)=>Math.min(duration,i/10));if(action==='Spear_Study')times.push(1.36);times.sort((a,b)=>a-b);recordCase(weaponType,shieldType,bodyBuild,action,times);
  }
  // Move the actual imported right wrist, its skinned hand and rigidly bound
  // sword through a real face triangle; no virtual-cylinder substitution.
- begin('sword','round','rest');sample('rest',0);
+ begin('sword','round','regular','rest');sample('rest',0);
  const front=evaluated(selected('shield','round',['shield.face'])[0]);
  const face=front.faces.reduce((best,f)=>new THREE.Triangle(...f.p).getArea()>new THREE.Triangle(...best.p).getArea()?f:best);
  const triangle=new THREE.Triangle(...face.p),center=triangle.getMidpoint(V()),normal=triangle.getNormal(V());
