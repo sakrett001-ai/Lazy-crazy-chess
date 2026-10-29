@@ -3,6 +3,8 @@ import {clone as cloneSkinned} from 'three/addons/utils/SkeletonUtils.js';
 import {createLoadout} from '../../white-pawn/src/loadout.mjs';
 import {deterministicClip} from '../../white-pawn/src/camera-rig.mjs';
 import {createBodyRig} from './motion.mjs';
+import {createMocapDriver} from './mocap/apply.mjs';
+import {sampleClip} from './mocap/format.mjs';
 
 // Faction finishes on the one shared pawn model. White keeps the workshop
 // default (steel, white shield). Black is a temporary repaint until the
@@ -63,16 +65,24 @@ export function createPawnFactory({gltf}){
   const loadout=createLoadout({model,bones});
   loadout.apply({});
   const rig=createBodyRig({bones});
+  const mocap=createMocapDriver({bones,holder});
   const samplers=Object.fromEntries(gltf.animations.map((clip,index)=>[clip.name,deterministicClip(model,gltf.animations,index)]));
   const place=placement(holder),fade=fader(holder);
   let pose={action:'rest',time:0};
   // layer: the procedural body layer of motion.mjs, applied over the clip
-  // sample and before the arms are solved.
-  function solve(action,time,layer=null){
+  // sample and before the arms are solved. motion: an imported motion clip
+  // (mocap/format.mjs) for the body, {clip,time,weight,inPlace,points,arms};
+  // blended over the sample by weight, under the layer, before the arms.
+  // arms: {phase,shield} for the loadout when the clip times the arms too.
+  function solve(action,time,layer=null,motion=null){
    const saved=place.get();
    holder.position.set(0,0,0);holder.quaternion.identity();holder.updateMatrixWorld(true);
-   restore();samplers[action]?.seek(time);holder.updateMatrixWorld(true);rig.apply(layer);loadout.poseAt(action,time);
-   place.set(saved);pose={action,time,layered:!!layer};
+   restore();samplers[action]?.seek(time);holder.updateMatrixWorld(true);
+   if(motion&&(motion.clip||motion.blend))for(const m of motion.blend||[motion])if(m?.clip)mocap.apply(m.points||sampleClip(m.clip,m.time,{inPlace:m.inPlace}),m.clip,m.weight??1);
+   // A clip at full weight owns the legs and trunk, the thrust's body layer included.
+   const clipBody=!!motion&&(motion.blend||[motion]).some(m=>m?.clip&&(m.weight??1)>=1);
+   holder.updateMatrixWorld(true);rig.apply(layer);loadout.poseAt(action,time,{body:!clipBody,...(motion?.arms||{})});
+   place.set(saved);pose={action,time,layered:!!layer,motion:(motion?.blend||[motion]).filter(m=>m?.clip).map(m=>m.clip.name).join('+')||null};
   }
   // Spear tip and shield face in the model frame for one pose (metres).
   function probe(action,time,layer=null){
@@ -94,9 +104,28 @@ export function createPawnFactory({gltf}){
    place.set(saved);
    return{front,centerX:sx/n,centerZ:sz/n};
   }
+  // Where the segment a→b (world, metres) first meets this pawn's visible
+  // shield, as a distance from a, or null. Skinned shields are ray cast in
+  // their current pose and from both sides, for the contact checks.
+  const ray=new THREE.Raycaster();
+  function shieldHit(a,b){
+   holder.updateMatrixWorld(true);
+   const from=new THREE.Vector3(...a),dir=new THREE.Vector3(...b).sub(from),far=dir.length();
+   const visible=o=>{for(let n=o;n;n=n.parent)if(!n.visible)return false;return true;};
+   const inShield=o=>{for(let n=o;n;n=n.parent)if(n.userData?.equipmentSlot==='shield')return true;return false;};
+   ray.set(from,dir.normalize());ray.near=0;ray.far=far;let best=null;
+   for(const mesh of meshes){if(!inShield(mesh)||!visible(mesh))continue;
+    if(mesh.isSkinnedMesh)mesh.computeBoundingSphere();
+    const list=Array.isArray(mesh.material)?mesh.material:[mesh.material],sides=list.map(m=>m.side);
+    for(const m of list)m.side=THREE.DoubleSide;
+    const hit=ray.intersectObject(mesh,false)[0];
+    list.forEach((m,i)=>m.side=sides[i]);
+    if(hit&&(best===null||hit.distance<best))best=hit.distance;}
+   return best;
+  }
   // Bone positions in the model frame for the current pose.
   function points(names){holder.updateMatrixWorld(true);const inverse=holder.matrixWorld.clone().invert();const norm=x=>String(x).replace(/[._\-\s]/g,'').toLowerCase(),by=new Map(Object.entries(bones).map(([k,b])=>[norm(k),b]));return Object.fromEntries(names.map(n=>[n,by.get(norm(n))?by.get(norm(n)).getWorldPosition(new THREE.Vector3()).applyMatrix4(inverse).toArray().map(v=>+v.toFixed(3)):null]));}
-  return{id,kind:'pawn',color,object:holder,pose:solve,points,rig,probe,shieldFront,measureWorld:()=>loadout.measure(),place:place.set,placement:place.get,fade,current:()=>({...pose}),dispose(){holder.removeFromParent();}};
+  return{id,kind:'pawn',color,object:holder,pose:solve,mocap,points,rig,probe,shieldFront,shieldHit,measureWorld:()=>loadout.measure(),place:place.set,placement:place.get,fade,current:()=>({...pose}),dispose(){holder.removeFromParent();}};
  };
 }
 
