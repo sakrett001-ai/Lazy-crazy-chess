@@ -1,0 +1,14 @@
+{
+  "name": "lazy-crazy-chess-board",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test tests/*.test.mjs",
+    "build": "node scripts/build.mjs",
+    "verify": "node scripts/verify.mjs"
+  },
+  "dependencies": {
+    "chess.js": "1.4.0"
+  }
+}

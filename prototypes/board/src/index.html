@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Живые шахматы · доска</title>
+<style>/*STYLE*/</style>
+</head>
+<body>
+<main>
+ <section id="stage" tabindex="0" aria-label="Шахматная доска">
+  <div id="loading">Собираем армии…</div>
+  <div id="fallback" hidden></div>
+  <div id="phase" aria-live="polite"></div>
+ </section>
+ <aside>
+  <header>
+   <h1>Живые шахматы</h1>
+   <p class="sub">Доска 0.1 · пешки 0.4.2</p>
+  </header>
+  <p id="status" aria-live="polite">Загрузка</p>
+  <p id="hint"></p>
+  <div class="group">
+   <button data-preset="start">Новая партия</button>
+   <button data-preset="capture">Сцена: пешка берёт пешку</button>
+   <button data-preset="clash">Сцена: схватка и оборона</button>
+  </div>
+  <label><input type="checkbox" id="auto"> Чёрные отвечают сами</label>
+  <label><input type="checkbox" id="slow"> Замедлить в 2,5 раза</label>
+  <button id="home">Вернуть камеру</button>
+  <h2>Пешки сейчас</h2>
+  <p id="states"></p>
+  <dl class="legend">
+   <dt>Покой</dt><dd>враг дальше двух клеток: стойка в строю</dd>
+   <dt>Готовность</dt><dd>враг через клетку: поворот к нему, оружие наготове</dd>
+   <dt>Фехтование</dt><dd>вражеская пешка рядом: выпады в щит по очереди, без победителя</dd>
+   <dt>Глухая оборона</dt><dd>рядом более сильная фигура: пешка закрывается щитом</dd>
+  </dl>
+  <h2>Ходы</h2>
+  <p id="history"></p>
+  <p class="note">Ход: нажмите на свою фигуру, затем на подсвеченную клетку. Правила классические. Пешки — модель из мастерской, чёрные пока перекрашены. Остальные фигуры — временные заглушки.</p>
+ </aside>
+</main>
+<script id="model-data" type="application/octet-stream">/*MODEL*/</script>
+<script>/*SCRIPT*/</script>
+</body>
+</html>
