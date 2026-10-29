@@ -1,0 +1,124 @@
+{
+  "status": "passed",
+  "failures": [],
+  "checks": [
+    {
+      "name": "page loads with WebGL",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "32 figures on the board",
+      "ok": true,
+      "detail": 32
+    },
+    {
+      "name": "all figures at rest in the starting position",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "d4 and d5 fence each other",
+      "ok": true,
+      "detail": [
+        "fencing",
+        "fencing"
+      ]
+    },
+    {
+      "name": "e4 braces behind its shield against the knight",
+      "ok": true,
+      "detail": "defense"
+    },
+    {
+      "name": "fencing partners never thrust at the same moment",
+      "ok": true,
+      "detail": 0
+    },
+    {
+      "name": "both partners take a turn to thrust",
+      "ok": true,
+      "detail": {
+        "wp-d4": 120,
+        "bp-d5": 120
+      }
+    },
+    {
+      "name": "fencing thrusts stop at the shield face (≤ 3 cm)",
+      "ok": true,
+      "detail": {
+        "maxDepthM": -0.026
+      }
+    },
+    {
+      "name": "e4 takes d5 is accepted by the rules",
+      "ok": true,
+      "detail": true
+    },
+    {
+      "name": "at the hit the spear tip is at the defender (≤ 25 cm from the body axis)",
+      "ok": true,
+      "detail": {
+        "distanceM": 0.12,
+        "time": 2.3
+      }
+    },
+    {
+      "name": "the hit lands at body height (0.8–1.5 m)",
+      "ok": true,
+      "detail": 1.14
+    },
+    {
+      "name": "attacker moves without jumps (< 15 cm per frame)",
+      "ok": true,
+      "detail": 0.147
+    },
+    {
+      "name": "after the scene the attacker stands on d5 and the victim is gone",
+      "ok": true,
+      "detail": "4k3/8/8/3P4/8/8/8/4K3 b - - 0 1"
+    },
+    {
+      "name": "a legal opening including castling plays through",
+      "ok": true,
+      "detail": "r1bqkb1r/pppp1ppp/2n2n2/4p3/2B1P3/5N2/PPPP1PPP/RNBQ1RK1 b kq - 5 4"
+    },
+    {
+      "name": "no page errors",
+      "ok": true,
+      "detail": []
+    }
+  ],
+  "fencing": {
+    "frames": 240,
+    "maxDepth": -0.02562095035530254,
+    "thrusts": {
+      "wp-d4": 120,
+      "bp-d5": 120
+    },
+    "overlap": 0,
+    "minReach": 0.02562095035530254
+  },
+  "performance": {
+    "pawns": 16,
+    "msPerPose": 3.4574999999953433,
+    "triangles": 3602144,
+    "note": "Pose solving per figure on this machine; rendering speed depends on the GPU."
+  },
+  "images": {
+    "start": "board-start.png",
+    "fencing": "board-clash.png",
+    "capture": {
+      "turn": "board-capture-turn.png",
+      "approach": "board-capture-approach.png",
+      "feint": "board-capture-feint.png",
+      "shield-turn": "board-capture-shield-turn.png",
+      "strike": "board-capture-strike.png",
+      "fall": "board-capture-fall.png",
+      "removed": "board-capture-removed.png",
+      "step-in": "board-capture-step-in.png"
+    },
+    "game": "board-opening.png"
+  },
+  "scope": "Sampled at 30 Hz with a fixed clock. Spear tip and shield face are measured on the skinned model; this is not a physics or continuous collision check. Garment intersections of the pawn model are a separate known limitation."
+}
