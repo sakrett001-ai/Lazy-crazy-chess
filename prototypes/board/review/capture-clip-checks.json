@@ -1,0 +1,110 @@
+{
+  "status": "passed",
+  "failures": [],
+  "checks": [
+    {
+      "name": "page loads with WebGL",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "the board takes the clip pair for the capture",
+      "ok": true,
+      "detail": {
+        "stand": null,
+        "walk": null,
+        "capture": "pawn-capture-strike",
+        "pair": true,
+        "weight": 1
+      }
+    },
+    {
+      "name": "e4 takes d5 is accepted by the rules",
+      "ok": true,
+      "detail": true
+    },
+    {
+      "name": "at the hit the spear tip is at the defender flank (10–25 cm from the body axis)",
+      "ok": true,
+      "detail": {
+        "distanceM": 0.143,
+        "time": 3.467
+      }
+    },
+    {
+      "name": "the hit lands at body height (0.8–1.5 m)",
+      "ok": true,
+      "detail": 1.02
+    },
+    {
+      "name": "after the hit the spear does not sink deeper into the defender (≥ hit − 2 cm from its trunk axis)",
+      "ok": true,
+      "detail": {
+        "atHitM": 0.166,
+        "closestM": 0.229,
+        "time": 3.867
+      }
+    },
+    {
+      "name": "attacker moves without jumps (< 15 cm per frame)",
+      "ok": true,
+      "detail": 0.098
+    },
+    {
+      "name": "knees stay within 0–140° flexion",
+      "ok": true,
+      "detail": {
+        "maxFlexDeg": 130.9
+      }
+    },
+    {
+      "name": "bent knees point forward, never backwards",
+      "ok": true,
+      "detail": 0
+    },
+    {
+      "name": "soles do not sink into the board (≥ rest − 2 cm)",
+      "ok": true,
+      "detail": 0.074
+    },
+    {
+      "name": "pelvis over the feet while standing",
+      "ok": true,
+      "detail": 0
+    },
+    {
+      "name": "planted feet do not slide (≤ 1.5 cm per frame)",
+      "ok": true,
+      "detail": {
+        "plantedFrames": 128,
+        "maxSlideM": 0.0026
+      }
+    },
+    {
+      "name": "after the scene the attacker stands on d5 and the victim is gone",
+      "ok": true,
+      "detail": "4k3/8/8/3P4/8/8/8/4K3 b - - 0 1"
+    },
+    {
+      "name": "no page errors",
+      "ok": true,
+      "detail": []
+    }
+  ],
+  "hit": {
+    "distanceM": 0.143,
+    "heightM": 1.019
+  },
+  "images": {
+    "march": "capture-clip-march.png",
+    "coil": "capture-clip-coil.png",
+    "feint": "capture-clip-feint.png",
+    "strike": "capture-clip-strike.png",
+    "jolt": "capture-clip-jolt.png",
+    "knees-give": "capture-clip-knees-give.png",
+    "step-in": "capture-clip-step-in.png",
+    "end": "capture-clip-end.png"
+  },
+  "frames": 0,
+  "scope": "Sampled at 30 Hz with a fixed clock on the skinned pawns. Bodies come from the clip pair; arms, spear and shield from the loadout on the board timeline. Not a physics or continuous collision check."
+}

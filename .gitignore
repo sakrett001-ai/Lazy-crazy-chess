@@ -11,3 +11,6 @@ prototypes/white-pawn/review/model-*.png
 dist/
 prototypes/board/tools/motionbricks/out/
 prototypes/board/tools/motionbricks/trt-cache/
+prototypes/board/tools/blender/out/
+prototypes/board/review/capture-frames/
+prototypes/board/review/capture-frames-*/

@@ -78,7 +78,9 @@ export function createPawnFactory({gltf}){
    holder.position.set(0,0,0);holder.quaternion.identity();holder.updateMatrixWorld(true);
    restore();samplers[action]?.seek(time);holder.updateMatrixWorld(true);
    if(motion&&(motion.clip||motion.blend))for(const m of motion.blend||[motion])if(m?.clip)mocap.apply(m.points||sampleClip(m.clip,m.time,{inPlace:m.inPlace}),m.clip,m.weight??1);
-   holder.updateMatrixWorld(true);rig.apply(layer);loadout.poseAt(action,time);
+   // A clip at full weight owns the legs and trunk, the thrust's body layer included.
+   const clipBody=!!motion&&(motion.blend||[motion]).some(m=>m?.clip&&(m.weight??1)>=1);
+   holder.updateMatrixWorld(true);rig.apply(layer);loadout.poseAt(action,time,{body:!clipBody});
    place.set(saved);pose={action,time,layered:!!layer,motion:(motion?.blend||[motion]).filter(m=>m?.clip).map(m=>m.clip.name).join('+')||null};
   }
   // Spear tip and shield face in the model frame for one pose (metres).

@@ -2,7 +2,8 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {sub,length,dot,normalize,qRotate,qMul,qConj,frame,rotateY,distance} from '../src/mocap/math.mjs';
 import {resolveJoints,fromMediaPipe,REQUIRED} from '../src/mocap/profiles.mjs';
-import {buildMotionFile,parseMotionFile,prepareClip,sampleClip} from '../src/mocap/format.mjs';
+import {buildMotionFile,parseMotionFile,prepareClip,sampleClip,centerPoints} from '../src/mocap/format.mjs';
+import {readFileSync} from 'node:fs';
 import {parseBVH,bvhPositions,bvhToMotionFile} from '../src/mocap/bvh.mjs';
 import {createRetargeter,PAWN,DRIVEN} from '../src/mocap/retarget.mjs';
 import {pawnRest} from './pawn-rest.mjs';
@@ -219,4 +220,32 @@ test('the built-in synthetic file loads and its stance keeps both feet down',()=
  const stand=prepareClip(file,file.clips.find(c=>c.role==='stand'));
  for(let t=0;t<4;t+=.1){const pose=retarget.pose(sampleClip(stand,t),stand);
   assert.ok(Math.abs(pose.legs.L.ankle[1]-pose.legs.R.ankle[1])<.03,`both feet down at ${t.toFixed(1)} s`);}
+});
+
+test('a shared-frame pair keeps the file\'s own frame and names its partner',()=>{
+ // A figure offset from the origin and facing -X: an ordinary clip is moved
+ // and turned onto the origin, a shared-frame clip is left where it is.
+ const pts=pawnPoints(),moved=Object.fromEntries(Object.entries(pts).map(([k,v])=>[k,rotateY(v,-Math.PI/2).map((x,i)=>x+[2,0,1][i])]));
+ const file=buildMotionFile({source:{kind:'test'},clips:[{name:'own',fps:30,frames:[moved,moved]},{name:'pair',fps:30,frame:'shared',partner:'other',frames:[moved,moved]}]});
+ const own=prepareClip(file,file.clips[0]),pair=prepareClip(file,file.clips[1]);
+ near(own.frames[0].pelvis[0],0,1e-3,'own clip starts at the origin');
+ assert.equal(pair.shared,true);assert.equal(pair.partner,'other');assert.equal(own.partner,null);
+ near(distance(pair.frames[0].pelvis,moved.pelvis),0,1e-3,'shared clip stays in the file\'s frame');
+});
+
+test('centerPoints moves the pelvis over the origin and keeps heights',()=>{
+ const c=centerPoints({pelvis:[1,.9,-2],head:[1.1,1.6,-1.9]});
+ assert.deepEqual(c.pelvis,[0,.9,0]);near(c.head[0],.1,1e-9,'head x');near(c.head[2],.1,1e-9,'head z');assert.equal(c.head[1],1.6);
+});
+
+test('the Blender capture pair is a shared-frame attacker and defender',()=>{
+ const file=parseMotionFile(readFileSync(new URL('../motions/pawn-capture.motion.json',import.meta.url),'utf8'));
+ const strike=file.clips.find(c=>c.name==='pawn-capture-strike'),struck=file.clips.find(c=>c.name==='pawn-capture-struck');
+ assert.ok(strike&&struck,'both clips');assert.equal(strike.partner,'pawn-capture-struck');assert.equal(struck.partner,'pawn-capture-strike');
+ for(const c of [strike,struck]){assert.equal(c.frame,'shared');assert.equal(c.frames,strike.frames);}
+ const a=prepareClip(file,strike),d=prepareClip(file,struck);
+ // The origin is the attacker's square; in its guard the pelvis sits a few cm off.
+ near(Math.hypot(a.frames[0].pelvis[0],a.frames[0].pelvis[2]),0,.1,'attacker starts on its square');
+ assert.ok(d.frames[0].pelvis[2]>1,'defender stands ahead of the attacker');
+ for(const c of [a,d])for(const f of c.frames)for(const s of ['L','R'])assert.ok(f['ankle'+s][1]>-.01,'ankles stay above the board');
 });

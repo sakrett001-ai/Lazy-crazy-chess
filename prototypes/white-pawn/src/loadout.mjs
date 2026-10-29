@@ -185,12 +185,14 @@ export function createLoadout({model,bones={}}){
   applyMorphs();update();return summary();
  }
  function handGrip(side){return bone('wrist.'+side).localToWorld(handReference[side].gripLocal.clone());}
- function poseAt(action='rest',time=0){
+ // body: false when a motion clip already drives the legs and trunk; the
+ // thrust's body layer would then lower and lean the figure a second time.
+ function poseAt(action='rest',time=0,{body=true}={}){
   lastAction=action;lastTime=Number.isFinite(time)?Math.max(0,time):0;reachErrors={};
   applyMorphs();update();
   {
    const phase=loadoutPhases(action,lastTime),isPike=current.weaponType==='pike',isGreatsword=current.weaponType==='greatsword';
-   fullBodyMotion.apply(action,phase);
+   if(body)fullBodyMotion.apply(action,phase);
    // Torso-relative anchors and elbow directions follow pelvis/torso motion;
    // a world-space target used to drag the pike hand through the chest.
    const left=bone('upperarm01.L').getWorldPosition(new THREE.Vector3()),right=bone('upperarm01.R').getWorldPosition(new THREE.Vector3());

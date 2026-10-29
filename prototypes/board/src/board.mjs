@@ -8,7 +8,7 @@ import {planCapture,captureAt,CAPTURE_DURATION,CAPTURE_PHASES,HIT_TIME,headingTo
 import {createPawnFactory,createToken} from './actors.mjs';
 import {createLandscape} from './landscape.mjs';
 import {readMotionSource} from './mocap/library.mjs';
-import {sampleAlong,scaleLayer} from './mocap/format.mjs';
+import {sampleAlong,sampleClip,scaleLayer,centerPoints} from './mocap/format.mjs';
 import {rotateY} from './mocap/math.mjs';
 
 // One square is 2.6 m. A 1.8 m soldier with a tower shield and a 2.4 m
@@ -164,7 +164,7 @@ async function init(bytes){
  // Imported motion clips (mocap/): a stance for figures at rest and a walk
  // for a pawn's step. They are a design aid: without them the board plays
  // its own procedural layer, and the clip share blends the two.
- const motion={sources:[],clips:[],stand:null,walk:null,weight:1};
+ const motion={sources:[],clips:[],stand:null,walk:null,capture:null,weight:1};
  const pingpong=(t,d)=>{if(!(d>0))return 0;const u=t%(2*d);return u<d?u:2*d-u;};
  function standMotion(piece,weight){
   const c=motion.stand,t=clock+hash(piece.id)*c.duration;
@@ -198,10 +198,41 @@ async function init(bytes){
  }
  function pawnCapturePart(attacker,attackerPiece,victim,event){
   const plan=planCapture({from:world(event.from),to:world(event.victimSquare),end:world(event.to),attackerYaw:yaws.get(attackerPiece.id),victimYaw:yaws.get(victim.id),reach});
+  // A capture pair from a file replaces both bodies (arms stay with the
+  // loadout, on the same timeline). Pawns take diagonally, so the pair is
+  // authored for one geometry: attacker at the origin facing the defender
+  // one diagonal square ahead. En passant keeps the procedural scene.
+  const pair=motion.capture&&event.victimSquare===event.to&&victim.kind==='pawn'?captureClips():null;
+  if(pair)return clipCapturePart(attacker,attackerPiece,victim,plan,pair);
   return{duration:CAPTURE_DURATION,plan,update(t){
    const s=captureAt(plan,t);
    attacker.place({x:s.attacker.position[0],z:s.attacker.position[1],yaw:s.attacker.yaw});attacker.pose(s.attacker.action,s.attacker.time,s.attacker.layer);yaws.set(attackerPiece.id,s.attacker.yaw);
    if(!s.victim.removed){victim.place({x:s.victim.position[0],z:s.victim.position[1],yaw:s.victim.yaw,fall:s.victim.fall,fallHeading:s.victim.fallHeading});if(victim.kind==='pawn')victim.pose(s.victim.action,s.victim.time,s.victim.layer);victim.fade(s.victim.opacity);}
+   victim.object.visible=!s.victim.removed;
+   $('#phase').textContent=CAPTURE_PHASES.filter(p=>s.phase.includes(p.name)).map(p=>p.label).join(' · ');
+  },finish(){victim.dispose();actors.delete(victim.id);}};
+ }
+ function captureClips(){const a=motion.capture,v=motion.clips.find(c=>c.name===a.partner&&c.role==='struck');return v?{a,v}:null;}
+ function clipCapturePart(attacker,attackerPiece,victim,plan,{a,v}){
+  const line=headingTo(plan.from,plan.to),attackerYaw=plan.attackerYaw,victimYaw=plan.victimYaw;
+  // Holder at the clip's pelvis, turned onto the line of attack: turning a
+  // holder then turns the figure about its own pelvis, feet included.
+  const put=(actor,clip,t,yaw,extra={})=>{
+   const k=actor.mocap.retarget.leg/clip.leg,p=sampleClip(clip,t),[x,z]=rotate([p.pelvis[0]*k,p.pelvis[2]*k],line);
+   actor.place({x:plan.from[0]+x,z:plan.from[1]+z,yaw,...extra});
+   return{clip,points:centerPoints(p),weight:1};
+  };
+  return{duration:CAPTURE_DURATION,plan,update(t){
+   const s=captureAt(plan,t);
+   const aYaw=t<2.5?lerpAngle(attackerYaw,line,smooth(t,0,.5)):lerpAngle(line,attackerYaw,smooth(t,5.7,6.6));
+   attacker.pose(s.attacker.action,s.attacker.time,null,put(attacker,a,t,aYaw));yaws.set(attackerPiece.id,aYaw);
+   if(!s.victim.removed){
+    // The clip faces the defender back along the line; the holder adds the
+    // turn from its own heading at the start.
+    const want=lerpAngle(victimYaw,line+Math.PI,smooth(t,.4,1.1)),vYaw=line+wrapAngle(want-line-Math.PI);
+    const m=put(victim,v,t,vYaw,{fall:s.victim.fall,fallHeading:s.victim.fallHeading});
+    victim.pose(s.victim.action,s.victim.time,null,m);victim.fade(s.victim.opacity);
+   }
    victim.object.visible=!s.victim.removed;
    $('#phase').textContent=CAPTURE_PHASES.filter(p=>s.phase.includes(p.name)).map(p=>p.label).join(' · ');
   },finish(){victim.dispose();actors.delete(victim.id);}};
@@ -300,16 +331,17 @@ async function init(bytes){
   const source=readMotionSource(name,text);motion.sources.push(source);motion.clips.push(...source.clips);
   const options=sel=>{const v=$(sel).value;$(sel).innerHTML='<option value="">наш слой</option>'+motion.clips.map((c,i)=>`<option value="${i}">${c.label} · ${c.role}</option>`).join('');$(sel).value=v;};
   options('#motion-stand');options('#motion-walk');
+  $('#motion-capture').innerHTML='<option value="">наша сцена</option>'+motion.clips.map((c,i)=>c.role==='strike'?`<option value="${i}">${c.label}</option>`:'').join('');
   const pick=(sel,roles)=>{if($(sel).value)return;const i=motion.clips.findIndex(c=>roles.includes(c.role));if(i>=0)$(sel).value=String(i);};
-  pick('#motion-stand',['stand','shift']);pick('#motion-walk',['march','step','approach']);
+  pick('#motion-stand',['stand','shift']);pick('#motion-walk',['march','step','approach']);pick('#motion-capture',['strike']);
   useMotion();return source.clips.map(c=>c.name);
  }
  function useMotion(){
   const at=sel=>$(sel).value===''?null:motion.clips[+$(sel).value];
-  motion.stand=at('#motion-stand');motion.walk=at('#motion-walk');motion.weight=+$('#motion-weight').value/100;
+  motion.stand=at('#motion-stand');motion.walk=at('#motion-walk');motion.capture=at('#motion-capture');motion.weight=+$('#motion-weight').value/100;
   $('#motion-weight-out').value=Math.round(motion.weight*100)+'%';
   const licenses=[...new Set(motion.sources.map(s=>s.file.source?.license).filter(Boolean))];
-  $('#motion-status').textContent=motion.clips.length?`Клипов: ${motion.clips.length}. Покой: ${motion.stand?.label||'наш слой'}; ход: ${motion.walk?.label||'наш слой'}.`+(licenses.length?` Лицензия источника: ${licenses.join('; ')}.`:''):'';
+  $('#motion-status').textContent=motion.clips.length?`Клипов: ${motion.clips.length}. Покой: ${motion.stand?.label||'наш слой'}; ход: ${motion.walk?.label||'наш слой'}; взятие: ${motion.capture?(captureClips()?motion.capture.label:'нет пары защитника'):'наша сцена'}.`+(licenses.length?` Лицензия источника: ${licenses.join('; ')}.`:''):'';
   for(const p of game?.pieces||[]){const a=actors.get(p.id);if(a)idle(p,a,0,true);}
  }
  $('#motion-open').onclick=()=>$('#motion-file').click();
@@ -317,7 +349,10 @@ async function init(bytes){
   for(const f of $('#motion-file').files){try{addMotion(f.name,await f.text());}catch(error){$('#motion-status').textContent=`${f.name}: ${error.message}`;}}
   $('#motion-file').value='';
  };
- for(const sel of ['#motion-stand','#motion-walk','#motion-weight'])$(sel).oninput=useMotion;
+ // Motion files built into the page (build.mjs --motion): loaded at start
+ // like files opened by hand, so the select boxes show what is in use.
+ for(const {name,text}of JSON.parse($('#motion-data')?.textContent||'[]'))try{addMotion(name,text);}catch(error){$('#motion-status').textContent=`${name}: ${error.message}`;}
+ for(const sel of ['#motion-stand','#motion-walk','#motion-capture','#motion-weight'])$(sel).oninput=useMotion;
  function resize(){const {width,height}=stage.getBoundingClientRect();renderer.setSize(width,height);camera.aspect=width/height;camera.updateProjectionMatrix();if(!moved)homeView();}
  new ResizeObserver(resize).observe(stage);resize();
  renderer.domElement.addEventListener('webglcontextlost',e=>{e.preventDefault();fallback('Контекст WebGL потерян');});
@@ -336,8 +371,11 @@ async function init(bytes){
   // knee flexion and its direction, sole height, pelvis over the feet.
   biomech(id){const a=actors.get(id);if(a?.kind!=='pawn')return null;
    const P=a.points(['root','upperleg01.L','lowerleg01.L','foot.L','upperleg01.R','lowerleg01.R','foot.R']),sub=(u,v)=>u.map((x,i)=>x-v[i]),dot=(u,v)=>u.reduce((s,x,i)=>s+x*v[i],0),len=u=>Math.hypot(...u);
+   // Forward is where the hips face, not the holder's +z: a capture clip's
+   // defender faces back along its holder.
+   const hips=sub(P['upperleg01.L'],P['upperleg01.R']),face=[-hips[2],0,hips[0]];
    const knee=side=>{const h=P['upperleg01.'+side],k=P['lowerleg01.'+side],f=P['foot.'+side],u=sub(h,k),v=sub(f,k),flex=180-Math.acos(dot(u,v)/(len(u)*len(v)))*180/Math.PI;
-    const line=sub(f,h),t=dot(sub(k,h),line)/dot(line,line),off=sub(k,h.map((x,i)=>x+line[i]*t));return{flex,forward:off[2],sole:f[1]};};
+    const line=sub(f,h),t=dot(sub(k,h),line)/dot(line,line),off=sub(k,h.map((x,i)=>x+line[i]*t));return{flex,forward:dot(off,face)/len(face),sole:f[1]};};
    const L=knee('L'),R=knee('R'),feet=[P['foot.L'],P['foot.R']],root=P.root;
    const margin=.15,inside=root[0]>=Math.min(feet[0][0],feet[1][0])-margin&&root[0]<=Math.max(feet[0][0],feet[1][0])+margin&&root[2]>=Math.min(feet[0][2],feet[1][2])-margin&&root[2]<=Math.max(feet[0][2],feet[1][2])+margin;
    return{L,R,pelvisOverFeet:inside,fall:a.placement().fall};},
@@ -345,10 +383,12 @@ async function init(bytes){
   landscape:seed=>{if(seed)buildLandscape(seed);renderer.render(scene,camera);return{seed:landscapeSeed,trees:landscape.trees.slice(0,4)};},
   hitTime:HIT_TIME,captureDuration:CAPTURE_DURATION,
   // Imported motion for the checks: add a file's text, then pick by index.
-  motion:{add:(name,text)=>addMotion(name,text),use({stand=null,walk=null,weight=1}={}){$('#motion-stand').value=stand===null?'':String(stand);$('#motion-walk').value=walk===null?'':String(walk);$('#motion-weight').value=String(Math.round(weight*100));useMotion();return{stand:motion.stand?.name||null,walk:motion.walk?.name||null,weight:motion.weight};}},
+  motion:{add:(name,text)=>addMotion(name,text),list:()=>motion.clips.map(c=>c.name),use({stand=null,walk=null,capture=null,weight=1}={}){$('#motion-stand').value=stand===null?'':String(stand);$('#motion-walk').value=walk===null?'':String(walk);$('#motion-capture').value=capture===null?'':String(capture);$('#motion-weight').value=String(Math.round(weight*100));useMotion();return{stand:motion.stand?.name||null,walk:motion.walk?.name||null,capture:motion.capture?.name||null,pair:!!(motion.capture&&captureClips()),weight:motion.weight};}},
   points(id,names){return actors.get(id)?.points?.(names)||null;},
+  pointsWorld(id,names){const a=actors.get(id);if(!a?.points)return null;a.object.updateMatrixWorld(true);return Object.fromEntries(Object.entries(a.points(names)).map(([k,v])=>[k,v&&new THREE.Vector3(...v).applyMatrix4(a.object.matrixWorld).toArray()]));},
   pose(id,action,time,layer){const a=actors.get(id);a.pose(action,time,layer);renderer.render(scene,camera);return a.points(['root','foot.L','foot.R','lowerleg01.L','lowerleg01.R','head','upperarm01.L','upperarm01.R']);},
   tip(id){const a=actors.get(id);return a?.kind==='pawn'?a.measureWorld().tip:null;},
+  grip(id){const a=actors.get(id);return a?.kind==='pawn'?a.measureWorld().weaponGripWorld.R:null;},
   screenshot:()=>renderer.domElement.toDataURL('image/png'),
   home(){moved=false;homeView();renderer.render(scene,camera);},
   camera(position,target){moved=true;camera.position.fromArray(position);controls.target.fromArray(target);controls.update();renderer.render(scene,camera);}

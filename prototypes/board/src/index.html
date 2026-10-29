@@ -31,11 +31,12 @@
   <button id="terrain">Новый ландшафт</button>
   <details id="motion-panel">
    <summary>Движения из файлов (проба)</summary>
-   <p class="note">Клипы захвата движений (BVH или файл движений «живых шахмат») для пешек в покое и на ходу. Файлы читаются только в этой вкладке и никуда не отправляются. Удары, финты и взятие остаются нашими.</p>
+   <p class="note">Клипы захвата движений (BVH или файл движений «живых шахмат») для пешек в покое, на ходу и во взятии (пара клипов атакующего и защитника). Файлы читаются только в этой вкладке и никуда не отправляются. Руки, копьё и щит остаются нашими.</p>
    <button id="motion-open">Открыть файлы движений…</button>
    <input type="file" id="motion-file" accept=".json,.bvh,application/json" multiple hidden>
    <label>Покой <select id="motion-stand"><option value="">наш слой</option></select></label>
    <label>Ход на клетку <select id="motion-walk"><option value="">наш слой</option></select></label>
+   <label>Взятие пешкой <select id="motion-capture"><option value="">наша сцена</option></select></label>
    <label>Доля клипа <input type="range" id="motion-weight" min="0" max="100" value="100"> <output id="motion-weight-out">100%</output></label>
    <p id="motion-status" class="note"></p>
   </details>
@@ -53,6 +54,7 @@
  </aside>
 </main>
 <script id="model-data" type="application/octet-stream">/*MODEL*/</script>
+<script id="motion-data" type="application/json">/*MOTIONS*/[]</script>
 <script>/*SCRIPT*/</script>
 </body>
 </html>

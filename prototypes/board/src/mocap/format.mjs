@@ -11,7 +11,7 @@ import {sub,add,scale,mid,cross,normalize,length,distance,rotateY,lerp} from './
 // data holds frames × points × 3 numbers in `points` order. A point that no
 // clip of the source has is left out of `points` altogether.
 export const FORMAT='lazy-chess.motion';
-export const ROLES=Object.freeze({stand:'стойка покоя',shift:'переминание',march:'строевой шаг',step:'шаг на клетку и остановка',approach:'подход к цели',other:'прочее'});
+export const ROLES=Object.freeze({stand:'стойка покоя',shift:'переминание',march:'строевой шаг',step:'шаг на клетку и остановка',approach:'подход к цели',strike:'взятие: атакующий',struck:'взятие: защитник',other:'прочее'});
 
 // Builds a file from clips given as arrays of {point:[x,y,z]} frames.
 export function buildMotionFile({source,clips}){
@@ -19,7 +19,7 @@ export function buildMotionFile({source,clips}){
  return{format:FORMAT,version:1,source,points:used,clips:clips.map(c=>{
   const data=[];
   for(const f of c.frames)for(const p of used){const v=f[p]||f.pelvis;data.push(+v[0].toFixed(4),+v[1].toFixed(4),+v[2].toFixed(4));}
-  return{name:c.name,label:c.label||c.name,role:c.role||'other',loop:!!c.loop,fps:c.fps,frames:c.frames.length,data};
+  return{name:c.name,label:c.label||c.name,role:c.role||'other',loop:!!c.loop,fps:c.fps,frames:c.frames.length,...(c.partner?{partner:c.partner}:{}),...(c.frame?{frame:c.frame}:{}),data};
  })};
 }
 
@@ -38,6 +38,8 @@ export function parseMotionFile(json){
 
 // A clip ready to drive a figure: frames turned so the figure starts at the
 // origin facing +Z with up +Y, plus the measures the retargeter needs.
+// frame:'shared' (a pair such as a capture) keeps the file's own frame,
+// which must already be Y up with the attacker at the origin facing +Z.
 export function prepareClip(file,clip){
  const P=file.points,J=P.length,raw=[];
  for(let f=0;f<clip.frames;f++){const o={};P.forEach((p,j)=>{const i=(f*J+j)*3;o[p]=[clip.data[i],clip.data[i+1],clip.data[i+2]];});raw.push(o);}
@@ -47,14 +49,14 @@ export function prepareClip(file,clip){
  let frames=raw.map(o=>Object.fromEntries(Object.entries(o).map(([k,v])=>[k,toYUp(v)])));
  // Facing at the first frame: forward = left × up, with left from the hips.
  const left=sub(frames[0].hipL,frames[0].hipR),fwd=normalize([-left[2],0,left[0]]);
- const turn=Math.atan2(fwd[0],fwd[2]),origin=[frames[0].pelvis[0],0,frames[0].pelvis[2]];
+ const shared=clip.frame==='shared',turn=shared?0:Math.atan2(fwd[0],fwd[2]),origin=shared?[0,0,0]:[frames[0].pelvis[0],0,frames[0].pelvis[2]];
  frames=frames.map(o=>Object.fromEntries(Object.entries(o).map(([k,v])=>[k,rotateY(sub(v,origin),-turn)])));
  const legOf=(o,s)=>distance(o['hip'+s],o['knee'+s])+distance(o['knee'+s],o['ankle'+s]);
  const leg=frames.slice(0,Math.min(frames.length,30)).reduce((a,o)=>a+legOf(o,'L')+legOf(o,'R'),0)/(2*Math.min(frames.length,30));
  const ground=Math.min(...frames.map(o=>Math.min(o.ankleL[1],o.ankleR[1])));
  const duration=(clip.frames-1)/clip.fps;
  const travel=sub(frames[frames.length-1].pelvis,frames[0].pelvis);travel[1]=0;
- return{name:clip.name,label:clip.label||clip.name,role:clip.role||'other',loop:!!clip.loop,fps:clip.fps,count:clip.frames,duration,frames,leg,ground,travel,points:P};
+ return{name:clip.name,label:clip.label||clip.name,role:clip.role||'other',loop:!!clip.loop,fps:clip.fps,count:clip.frames,duration,frames,leg,ground,travel,points:P,partner:clip.partner||null,shared};
 }
 
 // Key points at time t (seconds), linear between frames. A looping clip
@@ -92,6 +94,14 @@ export function sampleAlong(clip,d){
  const p=sampleClip(clip,time),shift=p.pelvis[2];
  for(const k of Object.keys(p))p[k]=[p[k][0],p[k][1],p[k][2]-shift];
  return{points:p,time};
+}
+// Key points with the pelvis moved over the origin (horizontally): the
+// figure's holder is placed where the pelvis is, so turning the holder
+// turns the figure about its own pelvis.
+export function centerPoints(points){
+ const [x,,z]=points.pelvis,out={};
+ for(const [k,v]of Object.entries(points))out[k]=[v[0]-x,v[1],v[2]-z];
+ return out;
 }
 // Forward distance a clip covers (source units), for one lap of a loop.
 export const clipTravel=clip=>{const F=forwardTrack(clip);return F[F.length-1]-F[0];};
