@@ -1,8 +1,6 @@
 {
-  "status": "failed",
-  "failures": [
-    "the hit lands at body height (0.8–1.5 m)"
-  ],
+  "status": "passed",
+  "failures": [],
   "checks": [
     {
       "name": "page loads with WebGL",
@@ -58,18 +56,17 @@
       "detail": true
     },
     {
-      "name": "the thrust reaches the defender at the hit (tip ≤ 25 cm from body axis)",
+      "name": "at the hit the spear tip is at the defender (≤ 25 cm from the body axis)",
       "ok": true,
       "detail": {
-        "distanceM": 0.027,
-        "time": 3.767,
-        "tipHeightM": 2.41
+        "distanceM": 0.12,
+        "time": 2.3
       }
     },
     {
       "name": "the hit lands at body height (0.8–1.5 m)",
-      "ok": false,
-      "detail": 2.41
+      "ok": true,
+      "detail": 1.14
     },
     {
       "name": "attacker moves without jumps (< 15 cm per frame)",
@@ -104,7 +101,7 @@
   },
   "performance": {
     "pawns": 16,
-    "msPerPose": 3.4974999999976717,
+    "msPerPose": 3.4574999999953433,
     "triangles": 3602144,
     "note": "Pose solving per figure on this machine; rendering speed depends on the GPU."
   },
