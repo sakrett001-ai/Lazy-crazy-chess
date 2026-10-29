@@ -10,6 +10,10 @@ import {sub,add,scale,mid,cross,normalize,length,distance,rotateY,lerp} from './
 //  points:[names...],clips:[{name,label,role,loop,fps,frames,data:[...]}]}
 // data holds frames × points × 3 numbers in `points` order. A point that no
 // clip of the source has is left out of `points` altogether.
+// A clip may also carry arms:{action,fields:['aim','thrust','turn','swing','raise'],
+// data:[frames × fields]}: the spear phases and the shield turn the loadout
+// solves the arms with (see sampleArms). A struck clip may give fade:[t0,t1],
+// the seconds over which the taken figure fades out and leaves the board.
 export const FORMAT='lazy-chess.motion';
 export const ROLES=Object.freeze({stand:'стойка покоя',shift:'переминание',march:'строевой шаг',step:'шаг на клетку и остановка',approach:'подход к цели',strike:'взятие: атакующий',struck:'взятие: защитник',other:'прочее'});
 
@@ -32,6 +36,7 @@ export function parseMotionFile(json){
  for(const c of file.clips){
   if(!(c.fps>0))throw Error(`Клип ${c.name}: нет частоты кадров`);
   if(c.data.length!==c.frames*file.points.length*3)throw Error(`Клип ${c.name}: длина данных не совпадает с числом кадров`);
+  if(c.arms&&c.arms.data?.length!==c.frames*c.arms.fields?.length)throw Error(`Клип ${c.name}: дорожка рук не совпадает с числом кадров`);
  }
  return file;
 }
@@ -56,7 +61,7 @@ export function prepareClip(file,clip){
  const ground=Math.min(...frames.map(o=>Math.min(o.ankleL[1],o.ankleR[1])));
  const duration=(clip.frames-1)/clip.fps;
  const travel=sub(frames[frames.length-1].pelvis,frames[0].pelvis);travel[1]=0;
- return{name:clip.name,label:clip.label||clip.name,role:clip.role||'other',loop:!!clip.loop,fps:clip.fps,count:clip.frames,duration,frames,leg,ground,travel,points:P,partner:clip.partner||null,shared};
+ return{name:clip.name,label:clip.label||clip.name,role:clip.role||'other',loop:!!clip.loop,fps:clip.fps,count:clip.frames,duration,frames,leg,ground,travel,points:P,partner:clip.partner||null,shared,arms:clip.arms||null,fade:clip.fade||null};
 }
 
 // Key points at time t (seconds), linear between frames. A looping clip
@@ -69,6 +74,16 @@ export function sampleClip(clip,t,{inPlace=false}={}){
  const shift=inPlace?scale(clip.travel,-(u/Math.max(1,n-1))):scale(clip.travel,laps);
  for(const p of clip.points){const v=lerp(a[p],b[p],w);out[p]=[v[0]+shift[0],v[1],v[2]+shift[2]];}
  return out;
+}
+
+// The arms track of a clip at time t, linear between frames: the loadout's
+// spear phases and shield turn, {action,phase:{aim,thrust,turn},shield:{swing,raise}}.
+// A clip that times its arms (a capture pair) carries it; others give null.
+export function sampleArms(clip,t){
+ const a=clip.arms;if(!a)return null;
+ const F=a.fields.length,u=Math.min(Math.max(t*clip.fps,0),clip.count-1),i=Math.floor(u),k=Math.min(clip.count-1,i+1),w=u-i;
+ const v=Object.fromEntries(a.fields.map((f,j)=>[f,a.data[i*F+j]*(1-w)+a.data[k*F+j]*w]));
+ return{action:a.action,phase:{aim:v.aim??0,thrust:v.thrust??0,turn:v.turn??0},shield:{swing:v.swing??0,raise:v.raise??0}};
 }
 
 // Average forward speed of a clip (source units per second).

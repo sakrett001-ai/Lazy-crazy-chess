@@ -8,7 +8,7 @@ import {planCapture,captureAt,CAPTURE_DURATION,CAPTURE_PHASES,HIT_TIME,headingTo
 import {createPawnFactory,createToken} from './actors.mjs';
 import {createLandscape} from './landscape.mjs';
 import {readMotionSource} from './mocap/library.mjs';
-import {sampleAlong,sampleClip,scaleLayer,centerPoints} from './mocap/format.mjs';
+import {sampleAlong,sampleClip,sampleArms,scaleLayer,centerPoints} from './mocap/format.mjs';
 import {rotateY} from './mocap/math.mjs';
 
 // One square is 2.6 m. A 1.8 m soldier with a tower shield and a 2.4 m
@@ -220,20 +220,27 @@ async function init(bytes){
   const put=(actor,clip,t,yaw,extra={})=>{
    const k=actor.mocap.retarget.leg/clip.leg,p=sampleClip(clip,t),[x,z]=rotate([p.pelvis[0]*k,p.pelvis[2]*k],line);
    actor.place({x:plan.from[0]+x,z:plan.from[1]+z,yaw,...extra});
-   return{clip,points:centerPoints(p),weight:1};
+   return{clip,points:centerPoints(p),weight:1,arms:sampleArms(clip,t)};
   };
+  // A pair that times its own arms (spear phases, shield turn) plays them;
+  // one without keeps the board's action timing.
+  const pose=(actor,m,action,time)=>actor.pose(m.arms?m.arms.action:action,m.arms?0:time,null,m);
   return{duration:CAPTURE_DURATION,plan,update(t){
    const s=captureAt(plan,t);
    const aYaw=t<2.5?lerpAngle(attackerYaw,line,smooth(t,0,.5)):lerpAngle(line,attackerYaw,smooth(t,5.7,6.6));
-   attacker.pose(s.attacker.action,s.attacker.time,null,put(attacker,a,t,aYaw));yaws.set(attackerPiece.id,aYaw);
-   if(!s.victim.removed){
+   pose(attacker,put(attacker,a,t,aYaw),s.attacker.action,s.attacker.time);yaws.set(attackerPiece.id,aYaw);
+   // The struck clip may time the victim's fade itself (it ends its collapse).
+   const removed=v.fade?t>=v.fade[1]:s.victim.removed,opacity=v.fade?1-smooth(t,v.fade[0],v.fade[1]):s.victim.opacity;
+   if(!removed){
     // The clip faces the defender back along the line; the holder adds the
     // turn from its own heading at the start.
     const want=lerpAngle(victimYaw,line+Math.PI,smooth(t,.4,1.1)),vYaw=line+wrapAngle(want-line-Math.PI);
-    const m=put(victim,v,t,vYaw,{fall:s.victim.fall,fallHeading:s.victim.fallHeading});
-    victim.pose(s.victim.action,s.victim.time,null,m);victim.fade(s.victim.opacity);
+    // A clip with its own arms also carries the collapse; the board's rigid
+    // fall is only for a pair that leaves it out.
+    const m=put(victim,v,t,vYaw,v.arms?{}:{fall:s.victim.fall,fallHeading:s.victim.fallHeading});
+    pose(victim,m,s.victim.action,s.victim.time);victim.fade(opacity);
    }
-   victim.object.visible=!s.victim.removed;
+   victim.object.visible=!removed;
    $('#phase').textContent=CAPTURE_PHASES.filter(p=>s.phase.includes(p.name)).map(p=>p.label).join(' · ');
   },finish(){victim.dispose();actors.delete(victim.id);}};
  }
@@ -387,6 +394,7 @@ async function init(bytes){
   points(id,names){return actors.get(id)?.points?.(names)||null;},
   pointsWorld(id,names){const a=actors.get(id);if(!a?.points)return null;a.object.updateMatrixWorld(true);return Object.fromEntries(Object.entries(a.points(names)).map(([k,v])=>[k,v&&new THREE.Vector3(...v).applyMatrix4(a.object.matrixWorld).toArray()]));},
   pose(id,action,time,layer){const a=actors.get(id);a.pose(action,time,layer);renderer.render(scene,camera);return a.points(['root','foot.L','foot.R','lowerleg01.L','lowerleg01.R','head','upperarm01.L','upperarm01.R']);},
+  shieldHit(id,a,b){const a_=actors.get(id);return a_?.shieldHit?a_.shieldHit(a,b):null;},
   tip(id){const a=actors.get(id);return a?.kind==='pawn'?a.measureWorld().tip:null;},
   grip(id){const a=actors.get(id);return a?.kind==='pawn'?a.measureWorld().weaponGripWorld.R:null;},
   screenshot:()=>renderer.domElement.toDataURL('image/png'),
