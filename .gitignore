@@ -9,3 +9,5 @@ prototypes/human-base/review/model-*.png
 prototypes/white-pawn/review/browser-*.png
 prototypes/white-pawn/review/model-*.png
 dist/
+prototypes/board/tools/motionbricks/out/
+prototypes/board/tools/motionbricks/trt-cache/

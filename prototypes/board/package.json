@@ -6,7 +6,10 @@
   "scripts": {
     "test": "node --test tests/*.test.mjs",
     "build": "node scripts/build.mjs",
-    "verify": "node scripts/verify.mjs"
+    "verify": "node scripts/verify.mjs",
+    "verify:motion": "node scripts/verify-motion.mjs",
+    "verify:lab": "node scripts/verify-lab.mjs",
+    "test:take": "cd tools/motionbricks && python3 -m unittest test_take.py"
   },
   "dependencies": {
     "chess.js": "1.4.0"

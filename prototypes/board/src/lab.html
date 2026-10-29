@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Лаборатория движений</title>
+<style>/*STYLE*/</style>
+</head>
+<body>
+<main>
+ <section id="stage" tabindex="0" aria-label="Сцена сравнения движений">
+  <div id="loading">Готовим пешек…</div>
+  <div id="fallback" hidden></div>
+  <div id="lanes" aria-hidden="true"><span>Исходник</span><span>Наш слой</span><span>Клип</span><span>Клип + наш слой</span></div>
+ </section>
+ <aside>
+  <header>
+   <h1>Лаборатория движений</h1>
+   <p class="sub">Живые шахматы · сравнение клипов на пешке</p>
+  </header>
+  <p class="note">Файлы движений, BVH и видео читаются только в этой вкладке и никуда не отправляются. Для видео один раз загружается распознаватель поз MediaPipe.</p>
+  <div class="group">
+   <button id="open">Открыть BVH или файл движений…</button>
+   <input type="file" id="file" accept=".json,.bvh,application/json" multiple hidden>
+   <button id="video-open">Распознать движение с видео…</button>
+   <input type="file" id="video-file" accept="video/*" hidden>
+  </div>
+  <p id="video-status" class="note" aria-live="polite"></p>
+  <label>Клип <select id="clip"></select></label>
+  <div class="row">
+   <button id="play">Пауза</button>
+   <label>Скорость <select id="speed"><option value=".25">×0,25</option><option value=".5">×0,5</option><option value="1" selected>×1</option></select></label>
+  </div>
+  <label>Время <input type="range" id="time" min="0" max="1000" value="0"> <output id="time-out">0,00 с</output></label>
+  <label>Доля клипа в смеси <input type="range" id="share" min="0" max="100" value="60"> <output id="share-out">60%</output></label>
+  <label><input type="checkbox" id="in-place"> На месте (без перемещения)</label>
+  <div class="row cams">
+   <button data-cam="side">Сбоку</button><button data-cam="front">Спереди</button><button data-cam="three">¾</button><button data-cam="feet">Стопы</button>
+  </div>
+  <h2>Биомеханика (смесь)</h2>
+  <p id="bio" class="mono"></p>
+  <h2>Клип</h2>
+  <label>Название <input id="label"></label>
+  <label>Роль <select id="role"></select></label>
+  <label><input type="checkbox" id="loop"> Повторяется по кругу</label>
+  <p id="info" class="note"></p>
+  <button id="export">Сохранить все клипы в файл движений</button>
+  <p class="note">Сохранённый файл открывается на доске: «Движения из файлов (проба)».</p>
+ </aside>
+</main>
+<script id="model-data" type="application/octet-stream">/*MODEL*/</script>
+<script>/*SCRIPT*/</script>
+</body>
+</html>

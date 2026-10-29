@@ -1,0 +1,129 @@
+{
+ "checks": [
+  {
+   "name": "synthetic clips load",
+   "ok": true,
+   "detail": [
+    "synthetic-march",
+    "synthetic-stand"
+   ]
+  },
+  {
+   "name": "stand and walk clips picked",
+   "ok": true,
+   "detail": {
+    "stand": "synthetic-stand",
+    "walk": "synthetic-march",
+    "weight": 1
+   }
+  },
+  {
+   "name": "every pawn at rest stands on the clip",
+   "ok": true,
+   "detail": []
+  },
+  {
+   "name": "stance on the clip: knees 0–140° and forward, soles on the board",
+   "ok": true,
+   "detail": [
+    {
+     "L": {
+      "flex": 4.07144293204675,
+      "forward": 0.015767335547869597,
+      "sole": 0.08
+     },
+     "R": {
+      "flex": 3.7589706227795148,
+      "forward": 0.011182306358022105,
+      "sole": 0.089
+     },
+     "pelvisOverFeet": true,
+     "fall": 0
+    },
+    {
+     "L": {
+      "flex": 4.075987756295035,
+      "forward": 0.008603758984830144,
+      "sole": 0.094
+     },
+     "R": {
+      "flex": 4.837251693341898,
+      "forward": 0.018310523654528777,
+      "sole": 0.077
+     },
+     "pelvisOverFeet": true,
+     "fall": 0
+    }
+   ]
+  },
+  {
+   "name": "e2–e4 starts",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "the walk plays on the clip",
+   "ok": true,
+   "detail": {
+    "frames": 75,
+    "maxFlex": 52.59961104900614,
+    "minFlex": 6.768953920867659,
+    "backward": 0,
+    "minSole": 0.075,
+    "onClip": 75
+   }
+  },
+  {
+   "name": "walking knees stay within 0–140°",
+   "ok": true,
+   "detail": {
+    "frames": 75,
+    "maxFlex": 52.59961104900614,
+    "minFlex": 6.768953920867659,
+    "backward": 0,
+    "minSole": 0.075,
+    "onClip": 75
+   }
+  },
+  {
+   "name": "walking knees never bend backward",
+   "ok": true,
+   "detail": {
+    "frames": 75,
+    "maxFlex": 52.59961104900614,
+    "minFlex": 6.768953920867659,
+    "backward": 0,
+    "minSole": 0.075,
+    "onClip": 75
+   }
+  },
+  {
+   "name": "soles never sink into the board while walking (≥ −1 cm)",
+   "ok": true,
+   "detail": {
+    "frames": 75,
+    "maxFlex": 52.59961104900614,
+    "minFlex": 6.768953920867659,
+    "backward": 0,
+    "minSole": 0.075,
+    "onClip": 75
+   }
+  },
+  {
+   "name": "the pawn arrives on e4",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "without clips the pawns use the procedural layer again",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "no page errors",
+   "ok": true,
+   "detail": []
+  }
+ ],
+ "failures": []
+}

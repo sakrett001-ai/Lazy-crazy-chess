@@ -7,6 +7,9 @@ import {engagements,fencingAction,STATE_LABELS} from './behavior.mjs';
 import {planCapture,captureAt,CAPTURE_DURATION,CAPTURE_PHASES,HIT_TIME,headingTo,lerpAngle,wrapAngle,rotate,strikeLayer,travel,walkLayer,idleLayer,victimHitLayer} from './choreography.mjs';
 import {createPawnFactory,createToken} from './actors.mjs';
 import {createLandscape} from './landscape.mjs';
+import {readMotionSource} from './mocap/library.mjs';
+import {sampleAlong,scaleLayer} from './mocap/format.mjs';
+import {rotateY} from './mocap/math.mjs';
 
 // One square is 2.6 m. A 1.8 m soldier with a tower shield and a 2.4 m
 // spear fits inside it, and a full thrust from the next square reaches the
@@ -154,7 +157,28 @@ async function init(bytes){
    const f=fencingAction(e.role,clock);
    if(f.attacking)actor.pose('Spear_Study',thrustTime(f.time,fence.stop));
    else actor.pose('Shield_Brace',f.time);
-  }else actor.pose('Guard_Breath',(clock+offset)%6,idleLayer(clock,hash(piece.id)));
+  }else if(motion.stand){const w=motion.weight;actor.pose('Guard_Breath',(clock+offset)%6,scaleLayer(idleLayer(clock,hash(piece.id)),1-w),standMotion(piece,w));}
+  else actor.pose('Guard_Breath',(clock+offset)%6,idleLayer(clock,hash(piece.id)));
+ }
+
+ // Imported motion clips (mocap/): a stance for figures at rest and a walk
+ // for a pawn's step. They are a design aid: without them the board plays
+ // its own procedural layer, and the clip share blends the two.
+ const motion={sources:[],clips:[],stand:null,walk:null,weight:1};
+ const pingpong=(t,d)=>{if(!(d>0))return 0;const u=t%(2*d);return u<d?u:2*d-u;};
+ function standMotion(piece,weight){
+  const c=motion.stand,t=clock+hash(piece.id)*c.duration;
+  return{clip:c,time:c.loop?t%c.duration:pingpong(t,c.duration),inPlace:true,weight};
+ }
+ function walkMotion(actor,piece,D,s,dir,yaw){
+  const w=motion.weight,c=motion.walk,k=actor.mocap.retarget.leg/c.leg;
+  const share=w*smooth(s,0,.35)*(1-smooth(s,D-.35,D)),blend=[];
+  if(motion.stand)blend.push(standMotion(piece,w));
+  // The clip walks along its own +Z; turn it onto the path in the figure's frame.
+  const [lx,lz]=rotate(dir,-yaw),turn=Math.atan2(lx,lz),points=sampleAlong(c,s/k).points;
+  for(const p of Object.keys(points))points[p]=rotateY(points[p],turn);
+  blend.push({clip:c,points,weight:share});
+  return{blend,share};
  }
 
  // Scenes for a played move. Each part is an absolute function of time.
@@ -166,7 +190,9 @@ async function init(bytes){
   const duration=pawn?1.1+.7*squaresMoved:.55+.3*squaresMoved,knight=piece.type==='n',startYaw=yaws.get(piece.id),heading=headingTo(a,b),endYaw=forwardYaw(piece.color);
   return{duration,update(t){
    if(pawn){const m=travel(D,t,0,duration);actor.place({x:a[0]+dir[0]*m.s,z:a[1]+dir[1]*m.s,yaw:startYaw});yaws.set(piece.id,startYaw);
-    actor.pose('Guard_Breath',(clock+hash(piece.id)*6)%6,walkLayer(D,m.s,m.accel,dir,startYaw));return;}
+    const layer=walkLayer(D,m.s,m.accel,dir,startYaw);
+    if(motion.walk){const mm=walkMotion(actor,piece,D,m.s,dir,startYaw);actor.pose('Guard_Breath',(clock+hash(piece.id)*6)%6,scaleLayer(layer,1-mm.share),mm);}
+    else actor.pose('Guard_Breath',(clock+hash(piece.id)*6)%6,layer);return;}
    const u=smooth(t,0,duration);const yaw=t<duration*.7?lerpAngle(startYaw,heading,smooth(t,0,.25)):lerpAngle(heading,endYaw,smooth(t,duration*.7,duration));
    actor.place({x:a[0]+(b[0]-a[0])*u,z:a[1]+(b[1]-a[1])*u,yaw,lift:knight?1.1*Math.sin(Math.PI*u):0});yaws.set(piece.id,yaw);},finish(){}};
  }
@@ -269,6 +295,29 @@ async function init(bytes){
  $('#auto').onchange=()=>{if($('#auto').checked&&!scene_&&game.chess.turn()==='b')autoMove();};
  $('#home').onclick=()=>{moved=false;homeView();};
  $('#terrain').onclick=()=>buildLandscape(1+Math.floor(Math.random()*1e6));
+ // Motion files: opened locally, listed by role, picked for rest and walk.
+ function addMotion(name,text){
+  const source=readMotionSource(name,text);motion.sources.push(source);motion.clips.push(...source.clips);
+  const options=sel=>{const v=$(sel).value;$(sel).innerHTML='<option value="">наш слой</option>'+motion.clips.map((c,i)=>`<option value="${i}">${c.label} · ${c.role}</option>`).join('');$(sel).value=v;};
+  options('#motion-stand');options('#motion-walk');
+  const pick=(sel,roles)=>{if($(sel).value)return;const i=motion.clips.findIndex(c=>roles.includes(c.role));if(i>=0)$(sel).value=String(i);};
+  pick('#motion-stand',['stand','shift']);pick('#motion-walk',['march','step','approach']);
+  useMotion();return source.clips.map(c=>c.name);
+ }
+ function useMotion(){
+  const at=sel=>$(sel).value===''?null:motion.clips[+$(sel).value];
+  motion.stand=at('#motion-stand');motion.walk=at('#motion-walk');motion.weight=+$('#motion-weight').value/100;
+  $('#motion-weight-out').value=Math.round(motion.weight*100)+'%';
+  const licenses=[...new Set(motion.sources.map(s=>s.file.source?.license).filter(Boolean))];
+  $('#motion-status').textContent=motion.clips.length?`Клипов: ${motion.clips.length}. Покой: ${motion.stand?.label||'наш слой'}; ход: ${motion.walk?.label||'наш слой'}.`+(licenses.length?` Лицензия источника: ${licenses.join('; ')}.`:''):'';
+  for(const p of game?.pieces||[]){const a=actors.get(p.id);if(a)idle(p,a,0,true);}
+ }
+ $('#motion-open').onclick=()=>$('#motion-file').click();
+ $('#motion-file').onchange=async()=>{
+  for(const f of $('#motion-file').files){try{addMotion(f.name,await f.text());}catch(error){$('#motion-status').textContent=`${f.name}: ${error.message}`;}}
+  $('#motion-file').value='';
+ };
+ for(const sel of ['#motion-stand','#motion-walk','#motion-weight'])$(sel).oninput=useMotion;
  function resize(){const {width,height}=stage.getBoundingClientRect();renderer.setSize(width,height);camera.aspect=width/height;camera.updateProjectionMatrix();if(!moved)homeView();}
  new ResizeObserver(resize).observe(stage);resize();
  renderer.domElement.addEventListener('webglcontextlost',e=>{e.preventDefault();fallback('Контекст WebGL потерян');});
@@ -295,6 +344,8 @@ async function init(bytes){
   feetWorld(id){const a=actors.get(id);if(a?.kind!=='pawn')return null;a.object.updateMatrixWorld(true);const P=a.points(['foot.L','foot.R']);return Object.fromEntries(Object.entries(P).map(([k,v])=>[k,new THREE.Vector3(...v).applyMatrix4(a.object.matrixWorld).toArray()]));},
   landscape:seed=>{if(seed)buildLandscape(seed);renderer.render(scene,camera);return{seed:landscapeSeed,trees:landscape.trees.slice(0,4)};},
   hitTime:HIT_TIME,captureDuration:CAPTURE_DURATION,
+  // Imported motion for the checks: add a file's text, then pick by index.
+  motion:{add:(name,text)=>addMotion(name,text),use({stand=null,walk=null,weight=1}={}){$('#motion-stand').value=stand===null?'':String(stand);$('#motion-walk').value=walk===null?'':String(walk);$('#motion-weight').value=String(Math.round(weight*100));useMotion();return{stand:motion.stand?.name||null,walk:motion.walk?.name||null,weight:motion.weight};}},
   points(id,names){return actors.get(id)?.points?.(names)||null;},
   pose(id,action,time,layer){const a=actors.get(id);a.pose(action,time,layer);renderer.render(scene,camera);return a.points(['root','foot.L','foot.R','lowerleg01.L','lowerleg01.R','head','upperarm01.L','upperarm01.R']);},
   tip(id){const a=actors.get(id);return a?.kind==='pawn'?a.measureWorld().tip:null;},
