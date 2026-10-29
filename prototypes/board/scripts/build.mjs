@@ -1,7 +1,8 @@
 import {build} from '../../human-base/node_modules/esbuild/lib/main.js';
-import {readFile,writeFile} from 'node:fs/promises';
+import {readFile,writeFile,mkdir} from 'node:fs/promises';
 import {fileURLToPath} from 'node:url';
 import path from 'node:path';
+import {gzipSync} from 'node:zlib';
 
 // Standalone board: page, three.js, chess.js and the pawn model in one file.
 const root=path.dirname(path.dirname(fileURLToPath(import.meta.url)));
@@ -17,3 +18,15 @@ const html=template.replace('/*STYLE*/',()=>css).replace('/*SCRIPT*/',()=>script
 const out=path.join(root,'board.html');
 await writeFile(out,html);
 console.log(`Standalone board: ${(Buffer.byteLength(html)/1048576).toFixed(1)} MiB, ${out}`);
+
+// Optional hosted build: `node scripts/build.mjs --web <dir>` writes the page
+// body without the document skeleton and the model as gzip in base64 text.
+const web=process.argv.indexOf('--web');
+if(web>0){
+ const dir=path.resolve(process.argv[web+1]),name='pawn-model.txt';await mkdir(dir,{recursive:true});
+ await writeFile(path.join(dir,name),gzipSync(model,{level:9}).toString('base64'));
+ const page=html.replace(/<script id="model-data"[^>]*>[^<]*<\/script>/,`<script id="model-data" type="application/octet-stream" data-src="${name}"></script>`);
+ const title=page.match(/<title>.*?<\/title>/)[0],style=page.match(/<style>[\s\S]*?<\/style>/)[0],body=page.match(/<body>([\s\S]*)<\/body>/)[1];
+ await writeFile(path.join(dir,'index.html'),`${title}\n${style}\n${body}`);
+ console.log(`Web board: ${dir}`);
+}

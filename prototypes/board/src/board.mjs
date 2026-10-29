@@ -21,6 +21,14 @@ const hash=s=>{let h=2166136261;for(const c of s)h=Math.imul(h^c.charCodeAt(0),1
 function fallback(message){$('#loading').hidden=true;$('#fallback').hidden=false;$('#fallback').textContent=message+'. Обновите страницу или откройте файл в свежей версии Chrome, Edge или Firefox.';window.livingChess={ready:false,fallback:message};}
 
 async function modelBytes(){
+ // The hosted build ships the model next to the page as gzip in base64
+ // text (the host serves text, not raw binary); the standalone file embeds it.
+ const url=$('#model-data')?.dataset.src;
+ if(url){
+  const r=await fetch(url);if(!r.ok)throw Error('Не загрузилась модель пешки');
+  const packed=Uint8Array.from(atob((await r.text()).trim()),c=>c.charCodeAt(0));
+  return new Uint8Array(await new Response(new Blob([packed]).stream().pipeThrough(new DecompressionStream('gzip'))).arrayBuffer());
+ }
  const embedded=$('#model-data')?.textContent.trim();
  if(!embedded||embedded==='/*MODEL*/')throw Error('В сборке нет модели пешки');
  return Uint8Array.from(atob(embedded),c=>c.charCodeAt(0));
