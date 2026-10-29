@@ -198,7 +198,7 @@ class Pawn:
         # tips) in each foot bone's frame, so a heel rise can pivot on the front of the sole.
         v, _ = self.mesh_triangles("BASE")
         inv = np.array(self.arm.matrix_world.inverted())
-        sole = v[v[:, 1] < 0.006]
+        sole = v[v[:, 1] < 0.03]  # the sole and the toe cap
         self.sole = {}
         for s, side in (("L", 1.0), ("R", -1.0)):
             pts = np.array([(inv @ np.append(np.array(C @ Vector(q)), 1.0)) for q in sole[sole[:, 0] * side > 0]])
@@ -399,13 +399,7 @@ class Pawn:
         back = tilt.inverted()
         for n in range(1, 6):
             self.turn(f"toe{n}-1.{s}", back)
-        # A heel rise pivots on the ball of the foot, not on the ankle: lift the ankle by
-        # whatever the tilt pushed the toe joints into the board, then solve again.
-        sole, floor = self.sole[s]
-        sink = max(max(self.toe_rest[n] - self.pb[f"toe{n}-1.{s}"].head.z for n in (1, 3, 5)),
-                   floor - float((sole @ np.array(self.pb[f"foot.{s}"].matrix).T)[:, 2].min()))
-        if sink > 0.001 and _depth < 3:
-            return self.leg(s, target + Vector((0, 0, sink)), heading, tilt, airborne, _depth + 1)
+        original_airborne = airborne
         # Clear of the board only once the toe is: at toe-off the toe stays down.
         airborne = min(airborne, design.clamp((self.pb[f"toe3-1.{s}"].head.z - self.toe_ground - 0.01) / 0.05))
         if airborne > 0:
@@ -418,6 +412,14 @@ class Pawn:
             if excess > 0:
                 lateral = heading @ Vector((1, 0, 0))
                 self.turn(f"foot.{s}", Matrix.Rotation(math.radians(excess * airborne), 3, lateral))
+        # A heel rise pivots on the ball of the foot, not on the ankle, and a hanging foot
+        # must not dip into the board either: lift the ankle by whatever the foot pushed
+        # the toe joints or the sole into the board, then solve again.
+        sole, floor = self.sole[s]
+        sink = max(max(self.toe_rest[n] - self.pb[f"toe{n}-1.{s}"].head.z for n in (1, 3, 5)),
+                   floor - float((sole @ np.array(self.pb[f"foot.{s}"].matrix).T)[:, 2].min()))
+        if sink > 0.001 and _depth < 3:
+            return self.leg(s, target + Vector((0, 0, sink)), heading, tilt, original_airborne, _depth + 1)
 
     def aim(self, name, a, b, target, pole, ref):
         """Turns bone `name` about a so the segment a→b points at target and its knee-forward
@@ -852,8 +854,8 @@ class Pair:
     def fit_spears(self, times, clear=0.01):
         """Moves each spear only as far as it must: turned out to the right clear of the own
         shield, then its point lifted clear of the other figure's shield (a beat throws it
-        up), of the board and of the own body. The attacker's point may stay in the
-        defender's body around the hit."""
+        up), of the board and of the own body, and the defender's of the attacker's
+        body. The attacker's point may stay in the defender's body around the hit."""
         need = {who: {"turn": [], "lift": []} for who in "ad"}
         for t in times:
             pa, pd = self.pose_attacker(t), None
@@ -863,9 +865,9 @@ class Pair:
             D_sh, _ = shield_tree(self.d, to_pair_array)
             D_body, _ = body_tree(self.d, to_pair_array)
             seen = opacity(t) > 0.3
-            for who, plan, own_sh, other_sh, own_body, spear in (
-                    ("a", pa, A_sh, D_sh, A_body, self.a.board_spear),
-                    ("d", pd, D_sh, A_sh, D_body, lambda arms: tuple(pair_point(v) for v in self.d.board_spear(arms)))):
+            for who, plan, own_sh, other_sh, own_body, other_body, spear in (
+                    ("a", pa, A_sh, D_sh, A_body, None, self.a.board_spear),
+                    ("d", pd, D_sh, A_sh, D_body, A_body, lambda arms: tuple(pair_point(v) for v in self.d.board_spear(arms)))):
                 if who == "d" and t > design.FADE[1]:
                     need[who]["turn"].append(0.0)
                     need[who]["lift"].append(0.0)
@@ -880,6 +882,8 @@ class Pair:
                 def free(e):
                     g, tip, butt = spear({**arms, "turn": arms["turn"] - turn, "aim": arms["aim"] - e})
                     if seen and crossing(other_sh, butt, tip) is not None:
+                        return False
+                    if other_body is not None and crossing(other_body, butt, tip) is not None:
                         return False
                     if min(tip.y, butt.y) < clear or crossing(own_sh, butt, tip) is not None:
                         return False
@@ -959,7 +963,6 @@ def guard_error(pair):
 
 COUNTER_GAP = 0.03  # the counter-thrust's point stops this far off the attacker's shield
 FEINT_TIME = 2.8    # the feint holds and the defender's shield has arrived
-FEINT_GAP = 0.06    # the feint's point stops this far short of that shield's face
 
 
 def counter_error(pair):
@@ -976,14 +979,20 @@ def counter_error(pair):
 
 
 def feint_error(pair):
-    """Where the feint's point stands against the rising shield: across its face and up it
-    from the centre, and in front of its face less FEINT_GAP."""
+    """Where the feint goes: the shaft's line through the centre of the defender's rising
+    shield, across the shaft and up it (as for the hit). How far the point goes is not
+    solved: the shield comes out to meet it and the fit lifts the shaft off its face."""
     t = FEINT_TIME
     pa = pair.pose_attacker(t)
     grip, tip, _ = pair.a_spear(pa)
     pair.pose_defender(t)
-    front, face, lateral, up = shield_frame(to_pair_array(pair.d.mesh_points("SHIELD_tower")), grip)
-    return Vector(((tip - front) @ lateral, (tip - front) @ up, (tip - front) @ face - FEINT_GAP))
+    centre = Vector(to_pair_array(pair.d.mesh_points("SHIELD_tower")).mean(axis=0).tolist())
+    way = (tip - grip).normalized()
+    across = way.cross(Vector((0, 1, 0))).normalized()
+    up = across.cross(way)
+    off = centre - grip
+    off -= way * off.dot(way)
+    return Vector((off.dot(across), off.dot(up)))
 
 
 BITE = 0.05  # the point goes this far past the armour at the hit
@@ -1048,7 +1057,7 @@ def aim(pair):
     for i in range(5):
         g = newton(pair, guard_error, ("guard_yaw",), tol=0.01)
         c = newton(pair, counter_error, ("counter_time", "counter_yaw", "counter_bend"))
-        f = newton(pair, feint_error, ("feint_yaw", "feint_high", "feint_reach"))
+        f = newton(pair, feint_error, ("feint_yaw", "feint_high"))
         h = newton(pair, hit_error, ("approach", "strike_yaw", "strike_bend"))
         g, c, f = guard_error(pair).length, counter_error(pair).length, feint_error(pair).length
         print(f"  круг {i + 1}: защита {math.degrees(g):.1f}°, контрвыпад {c * 100:.1f} см, финт {f * 100:.1f} см, "
@@ -1171,7 +1180,7 @@ PARAMS = ("approach", "strike_yaw", "strike_bend", "feint_yaw", "feint_high", "f
           "counter_yaw", "counter_bend")
 # Where each solved number may go: a drill approach, a fencing stamp and lunge, turns the
 # trunk and pelvis can take, and a counter while the attacker is still closing in.
-BOUNDS = {"approach": (0.8, 1.5), "strike_yaw": (-0.3, 0.6), "strike_bend": (-0.2, 0.35), "feint_yaw": (0.0, 0.7),
+BOUNDS = {"approach": (0.8, 1.5), "strike_yaw": (-0.3, 0.6), "strike_bend": (-0.2, 0.35), "feint_yaw": (-0.3, 0.7),
           "feint_reach": (0.05, 0.85), "feint_high": (0.0, 0.8), "guard_yaw": (-0.3, 0.45), "counter_time": (1.3, 2.2), "counter_yaw": (-0.35, 0.35),
           "counter_bend": (-0.15, 0.35)}
 

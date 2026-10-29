@@ -50,7 +50,7 @@ HIT_TIME = 3.45
 DURATION = 6.6
 FPS = 30
 FADE = (4.95, 5.45)  # the taken pawn fades out after its collapse (seconds)
-COUNTER_TIME = 1.6689  # the defender's counter-thrust meets the attacker's shield (solved by --aim:
+COUNTER_TIME = 1.7610  # the defender's counter-thrust meets the attacker's shield (solved by --aim:
                      # the defender strikes as the attacker comes into its reach)
 
 # The pawn's rest stance (guard, left foot forward), model frame, metres:
@@ -149,15 +149,16 @@ def feet_at(t, swings, start_rear):
 # ---------------------------------------------------------------------------------------
 # The attacker. pawn_capture.py --aim solves APPROACH, STRIKE_YAW and STRIKE_BEND so the
 # board's spear tip meets the open flank at HIT_TIME, and FEINT_YAW, FEINT_HIGH and
-# FEINT_REACH so the feint's point stops just short of the defender's rising shield.
-APPROACH = 1.2003
+# FEINT_HIGH so the feint's shaft points at the centre of the defender's rising shield.
+APPROACH = 1.0310
 LUNGE = 0.55      # lead foot advance in the lunge (fencing lunge: 0.4–0.6 m)
-STRIKE_YAW = 0.0866  # extra turn of the body to the left at the hit, radians
-STRIKE_BEND = 0.0106  # trunk bend at the hit against the pelvis tilt: sets the tip height, radians
-FEINT_YAW = 0.2503   # turn of the body to the left in the feint, radians
+STRIKE_YAW = 0.0670  # extra turn of the body to the left at the hit, radians
+STRIKE_BEND = 0.0030  # trunk bend at the hit against the pelvis tilt: sets the tip height, radians
+FEINT_YAW = -0.0247   # turn of the body to the left in the feint, radians
 FEINT_STEP = 0.08    # the feint's stamp: the lead foot lifts and stamps a little forward
-FEINT_REACH = 0.85   # how far the feint's thrust goes, as a share of the full thrust
-FEINT_HIGH = 0.3     # the point raised above the aimed line in the feint (aim less this)
+FEINT_REACH = 0.5    # how far the feint's thrust goes, as a share of the full thrust; the
+                     # shield comes out to meet the point, which glances up off its face
+FEINT_HIGH = 0.0784     # the point raised above the aimed line in the feint (aim less this)
 MARCH_LIFT = 0.15
 CHAMBER = 0.10  # pelvis back over the rear leg before the lunge, metres
 LEAD_TURN = 0.5  # share of the body's turn the lead foot takes
@@ -182,14 +183,14 @@ def attacker(t, approach=APPROACH, strike_yaw=STRIKE_YAW, strike_bend=STRIKE_BEN
     # Feint: the lead foot stamps; lunge: it drives forward; recovery: it returns
     # before the advance onto the square (late swings start from the recovered stance).
     stamp = feint_step * smooth(t, 2.33, 2.52)
-    drive = lunge * smooth(t, 3.06, 3.36)
+    drive = lunge * smooth(t, 3.11, 3.41)
     back = (stamp + drive) * smooth(t, 3.9, 4.4)
     lead = stamp + drive - back
     z["L"] += lead
     # The foot is lifted a little longer than it travels, so it never slides on the board.
-    lift["L"] += 0.05 * bump(t, 2.33, 2.52) + 0.07 * bump(t, 3.03, 3.40) + 0.05 * bump(t, 3.85, 4.45)
+    lift["L"] += 0.05 * bump(t, 2.33, 2.52) + 0.07 * bump(t, 3.08, 3.45) + 0.05 * bump(t, 3.85, 4.45)
     # Rear heel rises as the rear leg straightens in the lunge; the ball stays down.
-    lunge_u = hold(t, 3.05, 3.42, 3.85, 4.45)
+    lunge_u = hold(t, 3.08, 3.45, 3.85, 4.45)
     # The lead foot turns towards the thrust while it is in the air (stamp, drive, return),
     # taking half the body's turn so the front hip is not wound in.
     lead_yaw = LEAD_TURN * (feint_yaw * hold(t, 2.33, 2.52, 3.04, 3.36)
@@ -227,8 +228,8 @@ def attacker(t, approach=APPROACH, strike_yaw=STRIKE_YAW, strike_bend=STRIKE_BEN
     # to the guard once the defender is down; the feint is a part thrust, the strike a
     # full one that follows the lunge's drive by 50 ms (the shaft lags the body).
     # The feint goes up at the face, the point comes down onto the flank line after it.
-    aim = hold(t, 1.9, 2.3, 4.0, 4.5) - feint_high * hold(t, 2.3, 2.5, 2.85, 3.1)
-    thrust = feint_reach * hold(t, 2.35, 2.55, 2.9, 3.1) + hold(t, 3.1, 3.42, 3.72, 4.1)
+    aim = hold(t, 1.9, 2.3, 4.0, 4.5) - feint_high * hold(t, 2.3, 2.5, 2.95, 3.15)
+    thrust = feint_reach * hold(t, 2.35, 2.55, 2.84, 3.04) + hold(t, 3.16, 3.48, 3.74, 4.1)
     # The shield meets the counter-thrust and beats it outwards (to the attacker's left),
     # then comes back square; while marching it rides higher so the knee clears it.
     ct = counter_time
@@ -261,8 +262,8 @@ def attacker(t, approach=APPROACH, strike_yaw=STRIKE_YAW, strike_bend=STRIKE_BEN
 # defender lunges a short step as the attacker comes into its reach.
 GUARD_YAW = 0.2634
 COUNTER_STEP = 0.2
-COUNTER_YAW = -0.0088
-COUNTER_BEND = 0.0425
+COUNTER_YAW = -0.0124
+COUNTER_BEND = 0.0404
 # The shield meets the high feint forward and up: the elbow extended 46°, the shoulder
 # flexed 23° and the hand 15 cm up the trunk. Its top rim goes over the eyes (1.74 m) and
 # its face leans back 40°, so the lower rim comes forward and up (0.69 m) and the line into
@@ -270,6 +271,9 @@ COUNTER_BEND = 0.0425
 COVER = {"reach": 0.8, "raise": 0.4, "lift": 0.15}
 FALL_SHIELD = {"reach": 0.8, "swing": 0.7, "raise": 0.7}  # out to the left, rim on the board by the knee
 KNEEL = {"pelvis_y": 0.575, "pelvis_z": 0.16, "pitch": -1.3}  # on both knees, toes tucked
+
+
+HEEL_R = 0.35  # the rear heel rises off the board as the weight goes back over it after the blow
 
 
 def defender_local(t, guard_yaw=GUARD_YAW, counter_step=COUNTER_STEP, counter_yaw=COUNTER_YAW,
@@ -325,12 +329,12 @@ def defender_local(t, guard_yaw=GUARD_YAW, counter_step=COUNTER_STEP, counter_ya
         "head": {"bend": 0.25 * fold + 0.3 * slump, "twist": 0.1 * fold, "look": look},
         "arms": {
             # Level on the attacker in the guard; the counter-thrust; knocked high by the
-            # beat; after the blow the point sinks to the board ahead and to the right.
-            "aim": smooth(t, 0.55, 1.1) * (1 - 0.55 * beaten) + 1.0 * smooth(tau, 0.3, 1.3),
+            # beat; after the blow the point sinks ahead, down onto the board.
+            "aim": smooth(t, 0.55, 1.1) * (1 - 0.55 * beaten) + 0.5 * smooth(tau, 0.3, 1.3),
             "thrust": thrust,
-            # The point goes out to its right as it sinks, off the line the attacker
-            # advances along once it is down.
-            "turn": -0.12 * knocked - 0.8 * smooth(tau, 0.3, 1.3),
+            # The beat pushes the point a little out to its right; after the blow the
+            # shaft sinks straight ahead (turned out, its butt would go into the body).
+            "turn": -0.12 * knocked,
             # Square to the attacker in the guard (against the body's turn); up and out
             # at the feint and held through the blow; then, as the spear is drawn out
             # and the knees give, the arm goes out to its left and the shield's rim comes
@@ -347,7 +351,7 @@ def defender_local(t, guard_yaw=GUARD_YAW, counter_step=COUNTER_STEP, counter_ya
             # The rear heel comes off the board in the low guard and the lunge, so the
             # rear ankle stays within its dorsiflexion range (the weight on the ball).
             "R": {"pos": foot_r, "yaw": 0.0,
-                  "pitch": KNEEL["pitch"] * kneel - 0.3 * bump(tau, 0.1, 0.55) - (0.18 * guard + 0.3 * lunge) * (1 - kneel)},
+                  "pitch": KNEEL["pitch"] * kneel - 0.3 * bump(tau, 0.1, 0.4) - HEEL_R * bump(tau, 0.25, 0.75) - (0.18 * guard + 0.3 * lunge) * (1 - kneel)},
         },
     }
 
