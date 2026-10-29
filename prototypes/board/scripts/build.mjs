@@ -20,13 +20,15 @@ await writeFile(out,html);
 console.log(`Standalone board: ${(Buffer.byteLength(html)/1048576).toFixed(1)} MiB, ${out}`);
 
 // Optional hosted build: `node scripts/build.mjs --web <dir>` writes the page
-// body without the document skeleton and the model as gzip in base64 text.
+// body without the document skeleton, with the model gzipped inline so the
+// page loads nothing from other addresses and stays under 16 MB.
 const web=process.argv.indexOf('--web');
 if(web>0){
- const dir=path.resolve(process.argv[web+1]),name='pawn-model.txt';await mkdir(dir,{recursive:true});
- await writeFile(path.join(dir,name),gzipSync(model,{level:9}).toString('base64'));
- const page=html.replace(/<script id="model-data"[^>]*>[^<]*<\/script>/,`<script id="model-data" type="application/octet-stream" data-src="${name}"></script>`);
+ const dir=path.resolve(process.argv[web+1]);await mkdir(dir,{recursive:true});
+ const packed=gzipSync(model,{level:9}).toString('base64');
+ const page=html.replace(/<script id="model-data"[^>]*>[^<]*<\/script>/,()=>`<script id="model-data" type="application/octet-stream" data-encoding="gzip">${packed}</script>`);
  const title=page.match(/<title>.*?<\/title>/)[0],style=page.match(/<style>[\s\S]*?<\/style>/)[0],body=page.match(/<body>([\s\S]*)<\/body>/)[1];
- await writeFile(path.join(dir,'index.html'),`${title}\n${style}\n${body}`);
- console.log(`Web board: ${dir}`);
+ const out=`${title}\n${style}\n${body}`;
+ await writeFile(path.join(dir,'index.html'),out);
+ console.log(`Web board: ${(Buffer.byteLength(out)/1048576).toFixed(1)} MiB, ${dir}`);
 }
