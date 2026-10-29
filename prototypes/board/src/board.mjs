@@ -4,8 +4,9 @@ import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 import {RoomEnvironment} from 'three/addons/environments/RoomEnvironment.js';
 import {createGame,PRESETS,coords,FILES} from './game.mjs';
 import {engagements,fencingAction,STATE_LABELS} from './behavior.mjs';
-import {planCapture,captureAt,CAPTURE_DURATION,CAPTURE_PHASES,headingTo,lerpAngle,wrapAngle} from './choreography.mjs';
+import {planCapture,captureAt,CAPTURE_DURATION,CAPTURE_PHASES,HIT_TIME,headingTo,lerpAngle,wrapAngle,rotate,strikeLayer,travel,walkLayer,idleLayer,victimHitLayer} from './choreography.mjs';
 import {createPawnFactory,createToken} from './actors.mjs';
+import {createLandscape} from './landscape.mjs';
 
 // One square is 2.6 m. A 1.8 m soldier with a tower shield and a 2.4 m
 // spear fits inside it, and a full thrust from the next square reaches the
@@ -39,7 +40,7 @@ async function init(bytes){
  renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
  renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.02;
  stage.append(renderer.domElement);
- const scene=new THREE.Scene();scene.background=new THREE.Color('#d9ddd8');scene.fog=new THREE.Fog('#d9ddd8',55,120);
+ const scene=new THREE.Scene();scene.background=new THREE.Color('#d8e2e6');scene.fog=new THREE.Fog('#d8e2e6',60,240);
  const pmrem=new THREE.PMREMGenerator(renderer),room=new RoomEnvironment();
  scene.environment=pmrem.fromScene(room,.04).texture;scene.environmentIntensity=.55;room.dispose();pmrem.dispose();
  scene.add(new THREE.HemisphereLight(0xffffff,0x7c837d,1.05));
@@ -47,15 +48,18 @@ async function init(bytes){
  Object.assign(key.shadow.camera,{left:-14,right:14,top:14,bottom:-14,near:1,far:60});key.shadow.bias=-.0002;key.shadow.normalBias=.02;scene.add(key);
  const fill=new THREE.DirectionalLight(0xdbe6f5,1);fill.position.set(10,8,-12);scene.add(fill);
 
- // Board: dark frame, 64 squares, file and rank letters on the frame.
+ // Board: 64 stone slabs inside a kerb, set in a generated landscape;
+ // file and rank letters on the kerb. A new seed builds a new place.
  const half=4*SQUARE,board=new THREE.Group();scene.add(board);
- const frame=new THREE.Mesh(new THREE.BoxGeometry(2*half+1.4,.42,2*half+1.4),new THREE.MeshStandardMaterial({color:0x2a1d14,roughness:.55}));frame.position.y=-.215;frame.receiveShadow=true;board.add(frame);
- const lightMat=new THREE.MeshStandardMaterial({color:0xcdbf9f,roughness:.62}),darkMat=new THREE.MeshStandardMaterial({color:0x6a5240,roughness:.58});
- const squares=[],squareGeometry=new THREE.BoxGeometry(SQUARE,.06,SQUARE);
- for(let f=0;f<8;f++)for(let r=0;r<8;r++){const name=FILES[f]+(r+1),[x,z]=world(name),m=new THREE.Mesh(squareGeometry,(f+r)%2?lightMat:darkMat);m.position.set(x,-.03,z);m.receiveShadow=true;m.userData.square=name;board.add(m);squares.push(m);}
- function label(text,x,z,rot){const c=document.createElement('canvas');c.width=c.height=64;const g=c.getContext('2d');g.fillStyle='#d8c8a4';g.font='bold 44px sans-serif';g.textAlign='center';g.textBaseline='middle';g.fillText(text,32,34);
-  const m=new THREE.Mesh(new THREE.PlaneGeometry(.5,.5),new THREE.MeshBasicMaterial({map:new THREE.CanvasTexture(c),transparent:true}));m.rotation.set(-Math.PI/2,0,rot);m.position.set(x,.008,z);board.add(m);}
- for(let i=0;i<8;i++){const c=(i-3.5)*SQUARE;label(FILES[i],c,half+.36,0);label(FILES[i],c,-half-.36,Math.PI);label(String(i+1),-half-.36,(3.5-i)*SQUARE,0);label(String(i+1),half+.36,(3.5-i)*SQUARE,Math.PI);}
+ const squares=[];let landscape=null,landscapeSeed=1+Math.floor(Math.random()*1e6);
+ function buildLandscape(seed){
+  landscape?.dispose();landscape=createLandscape({seed,square:SQUARE,squareName:(f,r)=>FILES[f]+(r+1)});
+  scene.add(landscape.group);squares.length=0;squares.push(...landscape.squares);landscapeSeed=seed;
+ }
+ buildLandscape(landscapeSeed);
+ function label(text,x,z,rot){const c=document.createElement('canvas');c.width=c.height=64;const g=c.getContext('2d');g.fillStyle='#efe6cf';g.font='bold 44px sans-serif';g.textAlign='center';g.textBaseline='middle';g.fillText(text,32,34);
+  const m=new THREE.Mesh(new THREE.PlaneGeometry(.42,.42),new THREE.MeshBasicMaterial({map:new THREE.CanvasTexture(c),transparent:true}));m.rotation.set(-Math.PI/2,0,rot);m.position.set(x,.075,z);board.add(m);}
+ for(let i=0;i<8;i++){const c=(i-3.5)*SQUARE;label(FILES[i],c,half+.3,0);label(FILES[i],c,-half-.3,Math.PI);label(String(i+1),-half-.3,(3.5-i)*SQUARE,0);label(String(i+1),half+.3,(3.5-i)*SQUARE,Math.PI);}
  const markGroup=new THREE.Group();board.add(markGroup);
  const selectMat=new THREE.MeshBasicMaterial({color:0xf2c14e,transparent:true,opacity:.85});
  const moveMat=new THREE.MeshBasicMaterial({color:0x2f8f6f,transparent:true,opacity:.7}),takeMat=new THREE.MeshBasicMaterial({color:0xb3261e,transparent:true,opacity:.75});
@@ -68,14 +72,18 @@ async function init(bytes){
   m.rotation.x=-Math.PI/2;m.position.set(x,.004+(kind==='last'?0:.002),z);markGroup.add(m);}
  function clearMarks(){for(const m of [...markGroup.children]){m.geometry.dispose();markGroup.remove(m);}}
 
- const camera=new THREE.PerspectiveCamera(34,1,.1,200);camera.position.set(0,18.5,24.5);
+ const camera=new THREE.PerspectiveCamera(34,1,.1,900);camera.position.set(0,18.5,24.5);
  // Home view: the whole board with its frame fits the stage width; a narrow
  // stage moves the camera back along the same line of sight.
  let moved=false;
  const homeView=()=>{const k=Math.max(1,1.6/camera.aspect);camera.position.set(0,18.5*k,24.5*k);controls.target.set(0,.6,.8);controls.update();};
  const controls=new OrbitControls(camera,renderer.domElement);controls.target.set(0,.6,.8);controls.maxPolarAngle=1.38;controls.minDistance=3;controls.maxDistance=60;controls.enableDamping=false;controls.update();controls.addEventListener('start',()=>{moved=true;});
 
- const gltf=await new Promise((resolve,reject)=>new GLTFLoader().parse(bytes.buffer,'',resolve,reject));
+ // Embedded textures load through an image element, not fetch(): hosted
+ // pages may forbid fetching blob: URLs while still allowing blob: images.
+ const loader=new GLTFLoader();
+ loader.register(parser=>{parser.textureLoader=new THREE.TextureLoader(parser.options.manager);return{name:'image-element-textures'};});
+ const gltf=await new Promise((resolve,reject)=>loader.parse(bytes.buffer,'',resolve,reject));
  const createPawn=createPawnFactory({gltf});
 
  // Reach measurements on the real skinned model, once.
@@ -94,7 +102,11 @@ async function init(bytes){
   return{yaw,stop};
  }
  const contact={straight:fencingAim(SQUARE),diagonal:fencingAim(SQUARE*Math.SQRT2)};
- const reach={x:peak.x,z:peak.z};
+ // The capture's thrust is a lunge, so its reach is measured with the
+ // strike layer: the tip at the moment of impact in the attacker's frame.
+ const lungeProbe=createPawn({id:'probe',color:'w'});
+ const lungeTip=lungeProbe.probe('Spear_Study',1.95,strikeLayer()).tip;lungeProbe.dispose();
+ const reach={x:lungeTip[0],z:lungeTip[2],height:lungeTip[1]};
  let game,actors=new Map(),yaws=new Map(),eng=new Map(),scene_=null,clock=0,speed=1,selected=null,legal=[],lastMove=null,manual=false,autoTimer=null,frameIndex=0,history=[];
  const byId=id=>game.pieces.find(p=>p.id===id);
  function spawn(piece){
@@ -142,23 +154,28 @@ async function init(bytes){
    const f=fencingAction(e.role,clock);
    if(f.attacking)actor.pose('Spear_Study',thrustTime(f.time,fence.stop));
    else actor.pose('Shield_Brace',f.time);
-  }else actor.pose('Guard_Breath',(clock+offset)%6);
+  }else actor.pose('Guard_Breath',(clock+offset)%6,idleLayer(clock,hash(piece.id)));
  }
 
  // Scenes for a played move. Each part is an absolute function of time.
+ // A pawn walks to its square: steps with planted feet, a lean into the
+ // start and back on braking. Other figures are stand-ins and glide.
  function slidePart(actor,piece,from,to){
   const a=world(from),b=world(to),squaresMoved=Math.max(Math.abs(coords(from).file-coords(to).file),Math.abs(coords(from).rank-coords(to).rank));
-  const duration=.55+.3*squaresMoved,knight=piece.type==='n',startYaw=yaws.get(piece.id),travel=headingTo(a,b),endYaw=forwardYaw(piece.color);
-  return{duration,update(t){const u=smooth(t,0,duration);const yaw=actor.kind==='pawn'?startYaw:t<duration*.7?lerpAngle(startYaw,travel,smooth(t,0,.25)):lerpAngle(travel,endYaw,smooth(t,duration*.7,duration));
-   actor.place({x:a[0]+(b[0]-a[0])*u,z:a[1]+(b[1]-a[1])*u,yaw,lift:knight?1.1*Math.sin(Math.PI*u):0});yaws.set(piece.id,yaw);
-   if(actor.kind==='pawn')actor.pose('Guard_Breath',(clock+hash(piece.id)*6)%6);},finish(){}};
+  const pawn=actor.kind==='pawn',D=Math.hypot(b[0]-a[0],b[1]-a[1]),dir=[(b[0]-a[0])/D,(b[1]-a[1])/D];
+  const duration=pawn?1.1+.7*squaresMoved:.55+.3*squaresMoved,knight=piece.type==='n',startYaw=yaws.get(piece.id),heading=headingTo(a,b),endYaw=forwardYaw(piece.color);
+  return{duration,update(t){
+   if(pawn){const m=travel(D,t,0,duration);actor.place({x:a[0]+dir[0]*m.s,z:a[1]+dir[1]*m.s,yaw:startYaw});yaws.set(piece.id,startYaw);
+    actor.pose('Guard_Breath',(clock+hash(piece.id)*6)%6,walkLayer(D,m.s,m.accel,dir,startYaw));return;}
+   const u=smooth(t,0,duration);const yaw=t<duration*.7?lerpAngle(startYaw,heading,smooth(t,0,.25)):lerpAngle(heading,endYaw,smooth(t,duration*.7,duration));
+   actor.place({x:a[0]+(b[0]-a[0])*u,z:a[1]+(b[1]-a[1])*u,yaw,lift:knight?1.1*Math.sin(Math.PI*u):0});yaws.set(piece.id,yaw);},finish(){}};
  }
  function pawnCapturePart(attacker,attackerPiece,victim,event){
   const plan=planCapture({from:world(event.from),to:world(event.victimSquare),end:world(event.to),attackerYaw:yaws.get(attackerPiece.id),victimYaw:yaws.get(victim.id),reach});
   return{duration:CAPTURE_DURATION,plan,update(t){
    const s=captureAt(plan,t);
-   attacker.place({x:s.attacker.position[0],z:s.attacker.position[1],yaw:s.attacker.yaw});attacker.pose(s.attacker.action,s.attacker.time);yaws.set(attackerPiece.id,s.attacker.yaw);
-   if(!s.victim.removed){victim.place({x:s.victim.position[0],z:s.victim.position[1],yaw:s.victim.yaw,fall:s.victim.fall,fallHeading:s.victim.fallHeading});if(victim.kind==='pawn')victim.pose(s.victim.action,s.victim.time);victim.fade(s.victim.opacity);}
+   attacker.place({x:s.attacker.position[0],z:s.attacker.position[1],yaw:s.attacker.yaw});attacker.pose(s.attacker.action,s.attacker.time,s.attacker.layer);yaws.set(attackerPiece.id,s.attacker.yaw);
+   if(!s.victim.removed){victim.place({x:s.victim.position[0],z:s.victim.position[1],yaw:s.victim.yaw,fall:s.victim.fall,fallHeading:s.victim.fallHeading});if(victim.kind==='pawn')victim.pose(s.victim.action,s.victim.time,s.victim.layer);victim.fade(s.victim.opacity);}
    victim.object.visible=!s.victim.removed;
    $('#phase').textContent=CAPTURE_PHASES.filter(p=>s.phase.includes(p.name)).map(p=>p.label).join(' · ');
   },finish(){victim.dispose();actors.delete(victim.id);}};
@@ -166,18 +183,18 @@ async function init(bytes){
  function genericCapturePart(attacker,attackerPiece,victim,event){
   const a=world(event.from),v=world(event.victimSquare),end=world(event.to),d=Math.hypot(v[0]-a[0],v[1]-a[1]),dir=[(v[0]-a[0])/d,(v[1]-a[1])/d];
   const stop=[v[0]-dir[0]*SQUARE*.62,v[1]-dir[1]*SQUARE*.62],travel=headingTo(a,v),startYaw=yaws.get(attackerPiece.id),endYaw=forwardYaw(attackerPiece.color),victimYaw=yaws.get(victim.id);
-  const approach=.45+.18*d/SQUARE,knight=attackerPiece.type==='n',duration=approach+1.9;
+  const approach=.45+.18*d/SQUARE,knight=attackerPiece.type==='n',duration=approach+2.1;
   return{duration,update(t){
-   const u=smooth(t,0,approach),w=smooth(t,approach+1.1,approach+1.8);
-   const x=t<approach+1.1?a[0]+(stop[0]-a[0])*u:stop[0]+(end[0]-stop[0])*w,z=t<approach+1.1?a[1]+(stop[1]-a[1])*u:stop[1]+(end[1]-stop[1])*w;
-   const yaw=t<approach+1.3?lerpAngle(startYaw,travel,smooth(t,0,.25)):lerpAngle(travel,endYaw,smooth(t,approach+1.3,duration));
+   const u=smooth(t,0,approach),w=smooth(t,approach+1.3,approach+2);
+   const x=t<approach+1.3?a[0]+(stop[0]-a[0])*u:stop[0]+(end[0]-stop[0])*w,z=t<approach+1.3?a[1]+(stop[1]-a[1])*u:stop[1]+(end[1]-stop[1])*w;
+   const yaw=t<approach+1.5?lerpAngle(startYaw,travel,smooth(t,0,.25)):lerpAngle(travel,endYaw,smooth(t,approach+1.5,duration));
    attacker.place({x,z,yaw,lift:knight&&t<approach?1.1*Math.sin(Math.PI*u):0});yaws.set(attackerPiece.id,yaw);
    if(attacker.kind==='pawn')attacker.pose('Guard_Breath',(clock)%6);
-   const fallU=clamp((t-approach)/.75,0,1);
+   const fallU=clamp((t-approach-.4)/.6,0,1);
    victim.place({x:v[0],z:v[1],yaw:victimYaw,fall:1.47*fallU*fallU,fallHeading:travel});
-   if(victim.kind==='pawn')victim.pose('Shield_Brace',1.2);
-   victim.fade(1-smooth(t,approach+.9,approach+1.4));victim.object.visible=t<approach+1.4;
-   $('#phase').textContent=t<approach?'сближение':t<approach+.8?'удар':t<approach+1.4?'фигура снята с доски':'занятие клетки';
+   if(victim.kind==='pawn')victim.pose('Shield_Brace',1.2,victimHitLayer(t-approach,rotate(dir,-victimYaw)));
+   victim.fade(1-smooth(t,approach+1.1,approach+1.6));victim.object.visible=t<approach+1.6;
+   $('#phase').textContent=t<approach?'сближение':t<approach+1?'удар':t<approach+1.6?'фигура снята с доски':'занятие клетки';
   },finish(){victim.dispose();actors.delete(victim.id);}};
  }
  function play(from,to){
@@ -221,7 +238,10 @@ async function init(bytes){
   if(draw)renderer.render(scene,camera);
  }
  let last=null;
- function loop(now){if(!manual){const dt=last===null?0:Math.min(.1,(now-last)/1000);last=now;advance(dt);}requestAnimationFrame(loop);}
+ // The next frame is requested first, so one failed frame never stops the board.
+ let failures=0;
+ function loop(now){requestAnimationFrame(loop);if(manual)return;const dt=last===null?0:Math.min(.2,(now-last)/1000);last=now;
+  try{advance(dt);}catch(error){if(failures++<3)console.error(error);if(scene_){try{finishScene();}catch{scene_=null;}}}}
 
  // Picking: figures first, then the square under the pointer.
  const raycaster=new THREE.Raycaster(),pointer=new THREE.Vector2();
@@ -248,6 +268,7 @@ async function init(bytes){
  $('#slow').onchange=()=>{speed=$('#slow').checked?.4:1;};
  $('#auto').onchange=()=>{if($('#auto').checked&&!scene_&&game.chess.turn()==='b')autoMove();};
  $('#home').onclick=()=>{moved=false;homeView();};
+ $('#terrain').onclick=()=>buildLandscape(1+Math.floor(Math.random()*1e6));
  function resize(){const {width,height}=stage.getBoundingClientRect();renderer.setSize(width,height);camera.aspect=width/height;camera.updateProjectionMatrix();if(!moved)homeView();}
  new ResizeObserver(resize).observe(stage);resize();
  renderer.domElement.addEventListener('webglcontextlost',e=>{e.preventDefault();fallback('Контекст WebGL потерян');});
@@ -262,6 +283,20 @@ async function init(bytes){
    pieces:game.pieces.map(p=>{const a=actors.get(p.id),e=eng.get(p.id);return{id:p.id,type:p.type,color:p.color,square:p.square,state:e?.state,role:e?.role,target:e?.target,pose:a?.current(),place:a?.placement()};}),
    actors:actors.size,triangles:renderer.info.render.triangles,calls:renderer.info.render.calls}),
   profile(n=5){const pawns=[...actors.values()].filter(a=>a.kind==='pawn');const t0=performance.now();for(let i=0;i<n;i++)for(const a of pawns)a.pose('Guard_Breath',i*.1);return{pawns:pawns.length,msPerPose:(performance.now()-t0)/(n*pawns.length)};},
+  // Joint geometry of a pawn in its own frame for the biomechanics checks:
+  // knee flexion and its direction, sole height, pelvis over the feet.
+  biomech(id){const a=actors.get(id);if(a?.kind!=='pawn')return null;
+   const P=a.points(['root','upperleg01.L','lowerleg01.L','foot.L','upperleg01.R','lowerleg01.R','foot.R']),sub=(u,v)=>u.map((x,i)=>x-v[i]),dot=(u,v)=>u.reduce((s,x,i)=>s+x*v[i],0),len=u=>Math.hypot(...u);
+   const knee=side=>{const h=P['upperleg01.'+side],k=P['lowerleg01.'+side],f=P['foot.'+side],u=sub(h,k),v=sub(f,k),flex=180-Math.acos(dot(u,v)/(len(u)*len(v)))*180/Math.PI;
+    const line=sub(f,h),t=dot(sub(k,h),line)/dot(line,line),off=sub(k,h.map((x,i)=>x+line[i]*t));return{flex,forward:off[2],sole:f[1]};};
+   const L=knee('L'),R=knee('R'),feet=[P['foot.L'],P['foot.R']],root=P.root;
+   const margin=.15,inside=root[0]>=Math.min(feet[0][0],feet[1][0])-margin&&root[0]<=Math.max(feet[0][0],feet[1][0])+margin&&root[2]>=Math.min(feet[0][2],feet[1][2])-margin&&root[2]<=Math.max(feet[0][2],feet[1][2])+margin;
+   return{L,R,pelvisOverFeet:inside,fall:a.placement().fall};},
+  feetWorld(id){const a=actors.get(id);if(a?.kind!=='pawn')return null;a.object.updateMatrixWorld(true);const P=a.points(['foot.L','foot.R']);return Object.fromEntries(Object.entries(P).map(([k,v])=>[k,new THREE.Vector3(...v).applyMatrix4(a.object.matrixWorld).toArray()]));},
+  landscape:seed=>{if(seed)buildLandscape(seed);renderer.render(scene,camera);return{seed:landscapeSeed,trees:landscape.trees.slice(0,4)};},
+  hitTime:HIT_TIME,captureDuration:CAPTURE_DURATION,
+  points(id,names){return actors.get(id)?.points?.(names)||null;},
+  pose(id,action,time,layer){const a=actors.get(id);a.pose(action,time,layer);renderer.render(scene,camera);return a.points(['root','foot.L','foot.R','lowerleg01.L','lowerleg01.R','head','upperarm01.L','upperarm01.R']);},
   tip(id){const a=actors.get(id);return a?.kind==='pawn'?a.measureWorld().tip:null;},
   screenshot:()=>renderer.domElement.toDataURL('image/png'),
   home(){moved=false;homeView();renderer.render(scene,camera);},

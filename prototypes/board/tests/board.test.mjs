@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {createGame,applyMove,piecesFromChess,PRESETS} from '../src/game.mjs';
 import {engagements,fencingAction} from '../src/behavior.mjs';
-import {planCapture,captureAt,CAPTURE_DURATION,HIT_TIME,rotate,wrapAngle} from '../src/choreography.mjs';
+import {planCapture,captureAt,CAPTURE_DURATION,HIT_TIME,rotate,wrapAngle,strikeLayer,gait} from '../src/choreography.mjs';
 import {Chess} from 'chess.js';
 
 const bySquare=(pieces,square)=>pieces.find(p=>p.square===square);
@@ -73,18 +73,27 @@ test('fencing partners never thrust at the same time and swap every cycle',()=>{
  assert.equal(fencingAction('lead',5).attacking,false);
 });
 
-test('capture choreography: the off-centre spear tip ends at the victim flank at the hit',()=>{
+test('capture choreography: feint, then the thrust ends in the open flank at the hit',()=>{
  const reach={x:-.876,z:2.057};
  const plan=planCapture({from:[1.3,1.3],to:[-1.3,-1.3],attackerYaw:Math.PI,victimYaw:0,reach});
  const hit=captureAt(plan,HIT_TIME),tip=rotate([reach.x,reach.z],hit.attacker.yaw);
  const world=[hit.attacker.position[0]+tip[0],hit.attacker.position[1]+tip[1]];
- assert.ok(Math.hypot(world[0]+1.3,world[1]+1.3)<.13,'tip reaches the victim');
+ const axis=Math.hypot(world[0]+1.3,world[1]+1.3);
+ assert.ok(axis>.1&&axis<.25,'tip at the flank, not the shield centre: '+axis);
+ assert.deepEqual(hit.attacker.layer,strikeLayer(),'reach is measured with the same layer');
  assert.equal(hit.attacker.action,'Spear_Study');
  assert.ok(hit.attacker.time>1.9,'full thrust at the hit');
- // The victim reacts to the feint before the hit and only falls after it.
- assert.equal(captureAt(plan,1.8).victim.action,'Shield_Brace');
+ // The feint is a partial thrust, held for a readable moment.
+ const feint=captureAt(plan,2.7);
+ assert.ok(feint.attacker.time>1.3&&feint.attacker.time<1.6);
+ assert.ok(feint.attacker.layer.spine.twist>.15,'torso aimed at the spear side during the feint');
+ // The defender follows the feint with the shield and only falls after the hit.
+ const cover=captureAt(plan,3);
+ assert.equal(cover.victim.action,'Shield_Brace');
+ assert.ok(cover.victim.layer.spine.twist<-.7,'shield swung across');
  assert.equal(captureAt(plan,HIT_TIME-.01).victim.fall,0);
- assert.ok(captureAt(plan,3.2).victim.fall>1.3);
+ assert.ok(captureAt(plan,4.3).victim.layer.root[1]<-.18&&captureAt(plan,4.3).victim.fall===0,'knees give way before the fall');
+ assert.ok(captureAt(plan,5).victim.fall>1.3);
  const end=captureAt(plan,CAPTURE_DURATION);
  assert.deepEqual(end.attacker.position.map(v=>+v.toFixed(6)),[-1.3,-1.3]);
  assert.ok(Math.abs(wrapAngle(end.attacker.yaw-Math.PI))<1e-6);
@@ -94,4 +103,21 @@ test('capture choreography: the off-centre spear tip ends at the victim flank at
  // Positions are continuous: no jump larger than a fast step per frame.
  let prev=captureAt(plan,0).attacker.position;
  for(let t=1/30;t<=CAPTURE_DURATION;t+=1/30){const p=captureAt(plan,t).attacker.position;assert.ok(Math.hypot(p[0]-prev[0],p[1]-prev[1])<.2);prev=p;}
+});
+
+test('walking gait: feet stay planted while the body moves, and both close at the end',()=>{
+ const D=2.6;
+ let planted=0,checked=0;
+ for(let s=0;s<=D;s+=.01){
+  const g=gait(D,s),g2=gait(D,Math.min(D,s+.01));
+  for(const side of ['L','R']){
+   // A foot without lift keeps its board position: its offset shrinks by exactly the body's advance.
+   if(g.lift[side]===0&&g2.lift[side]===0){checked++;if(Math.abs((g2.along[side]+Math.min(D,s+.01))-(g.along[side]+s))<1e-9)planted++;}
+  }
+  assert.ok(!(g.lift.L>0&&g.lift.R>0),'one foot at a time');
+ }
+ assert.ok(checked>100&&planted===checked,`planted ${planted}/${checked}`);
+ const end=gait(D,D);
+ assert.deepEqual([end.along.L,end.along.R].map(v=>+v.toFixed(9)),[0,0]);
+ assert.equal(gait(D,0).along.L,0);
 });

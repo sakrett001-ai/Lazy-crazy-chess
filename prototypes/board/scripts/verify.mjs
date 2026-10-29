@@ -59,32 +59,54 @@ await page.evaluate(()=>{window.livingChess.load('clash');window.livingChess.cam
 await page.evaluate(()=>window.livingChess.step(1.7));
 images.fencing=await shot('clash');
 
-// 3. Pawn takes pawn: feint, thrust into the flank, fall, step in.
+// 3. Pawn takes pawn: walk in, coil, feint held, shield follows the feint,
+// lunge into the open flank, jolt, knees give way, fall, step in.
 await page.evaluate(()=>window.livingChess.load('capture'));
 const played=await page.evaluate(()=>window.livingChess.play('e4','d5'));
 check('e4 takes d5 is accepted by the rules',played,played);
+const victimId=await page.evaluate(()=>window.livingChess.state().pieces.find(p=>p.square==='d5').id);
+const {hitTime,captureDuration}=await page.evaluate(()=>({hitTime:window.livingChess.hitTime,captureDuration:window.livingChess.captureDuration}));
 // Side view across the line of attack, so the thrust is not hidden behind the attacker.
-await page.evaluate(()=>window.livingChess.camera([5.2,2.4,-5.2],[0,1,0]));
+await page.evaluate(()=>window.livingChess.camera([3.4,1.7,-2.6],[0,1,0]));
 // One pass at 30 Hz: measure every frame and photograph the named phases.
-const phases=[['turn',.35],['approach',1.1],['feint',1.55],['shield-turn',1.85],['strike',2.3],['fall',2.85],['removed',3.75],['step-in',4.4]];
+const phases=[['approach',1.2],['coil',2.2],['feint',2.6],['shield-follows',3.0],['strike',hitTime],['jolt',3.7],['knees-give',4.3],['fall',4.9],['step-in',captureDuration]];
 const capture=[];images.capture={};
-for(let i=0;i<=Math.round(4.5*30);i++){
+for(let i=0;i<=Math.round((captureDuration+.1)*30);i++){
  const t=+(i/30).toFixed(3);
- capture.push(await page.evaluate(t=>{const L=window.livingChess,a=L.state().pieces.find(p=>p.id==='wp-e4');return{t,tip:L.tip('wp-e4'),attacker:a.place,pose:a.pose};},t));
+ capture.push(await page.evaluate(([t,v])=>{const L=window.livingChess,a=L.state().pieces.find(p=>p.id==='wp-e4');return{t,tip:L.tip('wp-e4'),attacker:a.place,pose:a.pose,body:L.biomech('wp-e4'),victim:L.biomech(v)};},[t,victimId]));
  const phase=phases.find(([,at])=>Math.round(at*30)===i);
  if(phase)images.capture[phase[0]]=await shot(`capture-${phase[0]}`);
  await page.evaluate(()=>window.livingChess.step(1/30,30));
 }
 const victim={x:-1.3,z:-1.3};
-// The hit is judged at the scripted moment of impact, not at the closest
-// pass: when the winner steps onto d5 its raised spear stands above it.
-const hit=capture[Math.round(2.3*30)],hitAxis=Math.hypot(hit.tip[0]-victim.x,hit.tip[2]-victim.z);
-check('at the hit the spear tip is at the defender (≤ 25 cm from the body axis)',hitAxis<=.25,{distanceM:+hitAxis.toFixed(3),time:hit.t});
+// The hit is judged at the scripted moment of impact, not at the closest pass.
+const hit=capture[Math.round(hitTime*30)],hitAxis=Math.hypot(hit.tip[0]-victim.x,hit.tip[2]-victim.z);
+check('at the hit the spear tip is at the defender flank (10–25 cm from the body axis)',hitAxis>=.1&&hitAxis<=.25,{distanceM:+hitAxis.toFixed(3),time:hit.t});
 check('the hit lands at body height (0.8–1.5 m)',hit.tip[1]>.8&&hit.tip[1]<1.5,+hit.tip[1].toFixed(2));
 const jumps=capture.slice(1).map((f,i)=>Math.hypot(f.attacker.x-capture[i].attacker.x,f.attacker.z-capture[i].attacker.z));
 check('attacker moves without jumps (< 15 cm per frame)',Math.max(...jumps)<.15,+Math.max(...jumps).toFixed(3));
+// Biomechanics on the skinned joints, every frame: knees bend forward and
+// within their range, soles never sink into the board, the attacker's
+// pelvis stays over its feet, the defender's until it is struck.
+const bodies=[...capture.map(f=>f.body),...capture.filter(f=>f.victim).map(f=>({...f.victim,struck:f.t>hitTime}))].filter(Boolean);
+const knees=bodies.flatMap(b=>[b.L,b.R]),maxFlex=Math.max(...knees.map(k=>k.flex));
+check('knees stay within 0–140° flexion',knees.every(k=>k.flex>=-1&&k.flex<=140),{maxFlexDeg:+maxFlex.toFixed(1)});
+check('bent knees point forward, never backwards',knees.every(k=>k.flex<8||k.forward>0),knees.filter(k=>k.flex>=8&&k.forward<=0).length);
+const soles=bodies.filter(b=>!(b.fall>.01)).flatMap(b=>[b.L.sole,b.R.sole]);
+check('soles do not sink into the board (≥ rest − 2 cm)',Math.min(...soles)>=.054,+Math.min(...soles).toFixed(3));
+check('pelvis over the feet while standing',bodies.filter(b=>!b.struck).every(b=>b.pelvisOverFeet),bodies.filter(b=>!b.struck&&!b.pelvisOverFeet).length);
 state=await page.evaluate(()=>window.livingChess.state());
 check('after the scene the attacker stands on d5 and the victim is gone',state.actors===3&&state.pieces.find(p=>p.square==='d5')?.id==='wp-e4'&&!state.busy,state.fen);
+
+// 3b. A pawn walks two squares: a planted foot never slides on the board.
+await page.evaluate(()=>{const L=window.livingChess;L.load('start');L.play('e2','e4');});
+const walk=[];
+for(let i=0;i<=80;i++){walk.push(await page.evaluate(()=>window.livingChess.feetWorld('wp-e2')));await page.evaluate(()=>window.livingChess.step(1/30,30));}
+let slide=0,planted=0;
+for(let i=1;i<walk.length;i++)for(const f of ['foot.L','foot.R']){const a=walk[i-1][f],b=walk[i][f];if(a[1]<.08&&b[1]<.08){planted++;slide=Math.max(slide,Math.hypot(b[0]-a[0],b[2]-a[2]));}}
+const travelled=Math.hypot(walk.at(-1)['foot.L'][2]-walk[0]['foot.L'][2]);
+check('the pawn walks: feet travel with the body',travelled>4.5,+travelled.toFixed(2));
+check('planted feet do not slide (≤ 1 cm per frame)',planted>40&&slide<=.01,{plantedFrames:planted,maxSlideM:+slide.toFixed(4)});
 
 // 4. A short real game with the automatic reply, including castling.
 await page.evaluate(()=>{const L=window.livingChess;L.load('start');L.home();});
