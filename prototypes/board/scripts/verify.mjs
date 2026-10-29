@@ -64,15 +64,16 @@ await page.evaluate(()=>window.livingChess.load('capture'));
 const played=await page.evaluate(()=>window.livingChess.play('e4','d5'));
 check('e4 takes d5 is accepted by the rules',played,played);
 await page.evaluate(()=>window.livingChess.camera([6.8,3.4,5.4],[-.4,1,-.3]));
-const capture=await page.evaluate(()=>{
- const L=window.livingChess,frames=[];
- for(let i=0;i<=Math.round(4.5*30);i++){
-  const s=L.state(),a=s.pieces.find(p=>p.id==='wp-e4');
-  frames.push({t:+(i/30).toFixed(3),tip:L.tip('wp-e4'),attacker:a.place,pose:a.pose});
-  L.step(1/30,30);
- }
- return frames;
-});
+// One pass at 30 Hz: measure every frame and photograph the named phases.
+const phases=[['turn',.35],['approach',1.1],['feint',1.55],['shield-turn',1.85],['strike',2.3],['fall',2.85],['removed',3.75],['step-in',4.4]];
+const capture=[];images.capture={};
+for(let i=0;i<=Math.round(4.5*30);i++){
+ const t=+(i/30).toFixed(3);
+ capture.push(await page.evaluate(t=>{const L=window.livingChess,a=L.state().pieces.find(p=>p.id==='wp-e4');return{t,tip:L.tip('wp-e4'),attacker:a.place,pose:a.pose};},t));
+ const phase=phases.find(([,at])=>Math.round(at*30)===i);
+ if(phase)images.capture[phase[0]]=await shot(`capture-${phase[0]}`);
+ await page.evaluate(()=>window.livingChess.step(1/30,30));
+}
 const victim={x:-1.3,z:-1.3};
 const hit=capture.reduce((best,f)=>{const d=Math.hypot(f.tip[0]-victim.x,f.tip[2]-victim.z);return d<best.d?{d,f}:best;},{d:Infinity});
 check('the thrust reaches the defender at the hit (tip ≤ 25 cm from body axis)',hit.d<=.25,{distanceM:+hit.d.toFixed(3),time:hit.f.t,tipHeightM:+hit.f.tip[1].toFixed(2)});
@@ -81,19 +82,12 @@ const jumps=capture.slice(1).map((f,i)=>Math.hypot(f.attacker.x-capture[i].attac
 check('attacker moves without jumps (< 15 cm per frame)',Math.max(...jumps)<.15,+Math.max(...jumps).toFixed(3));
 state=await page.evaluate(()=>window.livingChess.state());
 check('after the scene the attacker stands on d5 and the victim is gone',state.actors===3&&state.pieces.find(p=>p.square==='d5')?.id==='wp-e4'&&!state.busy,state.fen);
-// Contact sheet of the phases.
-const phases=[['turn',.35],['approach',1.1],['feint',1.55],['shield-turn',1.85],['strike',2.3],['fall',2.85],['removed',3.75],['step-in',4.4]];
-images.capture={};
-for(const [name,t]of phases){
- await page.evaluate(t=>{const L=window.livingChess;L.load('capture');L.play('e4','d5');L.camera([6.8,3.4,5.4],[-.4,1,-.3]);L.step(t,30);},t);
- images.capture[name]=await shot(`capture-${name}`);
-}
 
 // 4. A short real game with the automatic reply, including castling.
 await page.evaluate(()=>{const L=window.livingChess;L.load('start');L.home();});
 const game=await page.evaluate(()=>{
  const L=window.livingChess,line=[['e2','e4'],['e7','e5'],['g1','f3'],['b8','c6'],['f1','c4'],['g8','f6'],['e1','g1']],done=[];
- for(const [f,t]of line){const ok=L.play(f,t);done.push(ok);L.step(5,30);}
+ for(const [f,t]of line){const ok=L.play(f,t);done.push(ok);L.step(5,10);}
  return{done,state:L.state()};
 });
 check('a legal opening including castling plays through',game.done.every(Boolean)&&game.state.pieces.some(p=>p.id==='wr-h1'&&p.square==='f1'),game.state.fen);

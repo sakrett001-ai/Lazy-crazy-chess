@@ -210,12 +210,12 @@ async function init(bytes){
   play(m.from,m.to);
  }
 
- function advance(dt){
+ function advance(dt,draw=true){
   frameIndex++;clock+=dt*speed;
   if(scene_){scene_.t+=dt*speed;for(const p of scene_.parts)p.update(Math.min(scene_.t,p.duration));if(scene_.t>=scene_.duration)finishScene();}
   const driven=scene_?.driven||new Set();
   for(const piece of game.pieces){if(driven.has(piece.id))continue;const actor=actors.get(piece.id);if(actor)idle(piece,actor,dt,false);}
-  renderer.render(scene,camera);
+  if(draw)renderer.render(scene,camera);
  }
  let last=null;
  function loop(now){if(!manual){const dt=last===null?0:Math.min(.1,(now-last)/1000);last=now;advance(dt);}requestAnimationFrame(loop);}
@@ -253,7 +253,8 @@ async function init(bytes){
 
  window.livingChess={ready:true,load,click,play,
   manual(on=true){manual=on;last=null;},
-  step(seconds,fps=30){const n=Math.max(1,Math.round(seconds*fps));for(let i=0;i<n;i++)advance(1/fps);},
+  // Draws only the last frame: the checks need the motion, not every picture.
+  step(seconds,fps=30){const n=Math.max(1,Math.round(seconds*fps));for(let i=0;i<n;i++)advance(1/fps,i===n-1);},
   state:()=>({fen:game.chess.fen(),status:game.status(),busy:!!scene_,sceneTime:scene_?.t||0,contact,reach,shield,thrust,
    pieces:game.pieces.map(p=>{const a=actors.get(p.id),e=eng.get(p.id);return{id:p.id,type:p.type,color:p.color,square:p.square,state:e?.state,role:e?.role,target:e?.target,pose:a?.current(),place:a?.placement()};}),
    actors:actors.size,triangles:renderer.info.render.triangles,calls:renderer.info.render.calls}),
