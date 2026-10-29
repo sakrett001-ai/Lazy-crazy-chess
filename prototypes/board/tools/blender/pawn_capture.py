@@ -194,6 +194,15 @@ class Pawn:
         self.guard = self.points()
         self.toe_ground = min(self.pb["toe3-1.L"].head.z, self.pb["toe3-1.R"].head.z)
         self.toe_rest = {n: min(self.pb[f"toe{n}-1.L"].head.z, self.pb[f"toe{n}-1.R"].head.z) for n in (1, 3, 5)}
+        # The sole of the skin (shoe-like: weighted to the foot bone all the way to the toe
+        # tips) in each foot bone's frame, so a heel rise can pivot on the front of the sole.
+        v, _ = self.mesh_triangles("BASE")
+        inv = np.array(self.arm.matrix_world.inverted())
+        sole = v[v[:, 1] < 0.006]
+        self.sole = {}
+        for s, side in (("L", 1.0), ("R", -1.0)):
+            pts = np.array([(inv @ np.append(np.array(C @ Vector(q)), 1.0)) for q in sole[sole[:, 0] * side > 0]])
+            self.sole[s] = (pts @ np.array(self.pb[f"foot.{s}"].matrix.inverted()).T, float(pts[:, 2].min()))
         # Gaze: straight ahead in the guard, kept in the head bone's frame; the neck's
         # turn is measured from this neutral against the chest.
         self.gaze_local = self.pb["head"].matrix.to_3x3().normalized().inverted() @ bl((0, 0, 1))
@@ -359,7 +368,9 @@ class Pawn:
             self.turn(f"toe{n}-1.{s}", back)
         # A heel rise pivots on the ball of the foot, not on the ankle: lift the ankle by
         # whatever the tilt pushed the toe joints into the board, then solve again.
-        sink = max(self.toe_rest[n] - self.pb[f"toe{n}-1.{s}"].head.z for n in (1, 3, 5))
+        sole, floor = self.sole[s]
+        sink = max(max(self.toe_rest[n] - self.pb[f"toe{n}-1.{s}"].head.z for n in (1, 3, 5)),
+                   floor - float((sole @ np.array(self.pb[f"foot.{s}"].matrix).T)[:, 2].min()))
         if sink > 0.001 and _depth < 3:
             return self.leg(s, target + Vector((0, 0, sink)), heading, tilt, airborne, _depth + 1)
         # Clear of the board only once the toe is: at toe-off the toe stays down.

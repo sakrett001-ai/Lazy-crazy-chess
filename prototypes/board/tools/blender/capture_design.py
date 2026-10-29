@@ -256,7 +256,7 @@ GUARD_YAW = 0.2634
 COUNTER_STEP = 0.2
 COUNTER_YAW = -0.0088
 COUNTER_BEND = 0.0425
-FEINT_SWING = -0.85  # the shield follows the feint across to the right, far enough that its edge leaves the left flank, radians
+FEINT_SWING = -0.3  # across to its right, as far as the shield goes in front of the chest (raised clear of the thighs) without meeting the trunk or its own spear
 KNEEL = {"pelvis_y": 0.575, "pelvis_z": 0.16, "pitch": -1.3}  # on both knees, toes tucked
 
 
@@ -316,7 +316,9 @@ def defender_local(t, guard_yaw=GUARD_YAW, counter_step=COUNTER_STEP, counter_ya
             # beat; after the blow the point sinks to the board ahead and to the right.
             "aim": smooth(t, 0.55, 1.1) * (1 - 0.55 * beaten) + 1.0 * smooth(tau, 0.3, 1.3),
             "thrust": thrust,
-            "turn": -0.12 * knocked - 0.35 * smooth(tau, 0.3, 1.3),
+            # The point goes out to its right as it sinks, off the line the attacker
+            # advances along once it is down.
+            "turn": -0.12 * knocked - 0.8 * smooth(tau, 0.3, 1.3),
             # Square to the attacker in the guard (against the body's turn), across to the
             # right with the feint; after the blow the arm sags and the shield comes back
             # in front of the body, away from the spear in the left flank, and rests on
