@@ -63,7 +63,8 @@ images.fencing=await shot('clash');
 await page.evaluate(()=>window.livingChess.load('capture'));
 const played=await page.evaluate(()=>window.livingChess.play('e4','d5'));
 check('e4 takes d5 is accepted by the rules',played,played);
-await page.evaluate(()=>window.livingChess.camera([6.8,3.4,5.4],[-.4,1,-.3]));
+// Side view across the line of attack, so the thrust is not hidden behind the attacker.
+await page.evaluate(()=>window.livingChess.camera([5.2,2.4,-5.2],[0,1,0]));
 // One pass at 30 Hz: measure every frame and photograph the named phases.
 const phases=[['turn',.35],['approach',1.1],['feint',1.55],['shield-turn',1.85],['strike',2.3],['fall',2.85],['removed',3.75],['step-in',4.4]];
 const capture=[];images.capture={};
@@ -75,9 +76,11 @@ for(let i=0;i<=Math.round(4.5*30);i++){
  await page.evaluate(()=>window.livingChess.step(1/30,30));
 }
 const victim={x:-1.3,z:-1.3};
-const hit=capture.reduce((best,f)=>{const d=Math.hypot(f.tip[0]-victim.x,f.tip[2]-victim.z);return d<best.d?{d,f}:best;},{d:Infinity});
-check('the thrust reaches the defender at the hit (tip ≤ 25 cm from body axis)',hit.d<=.25,{distanceM:+hit.d.toFixed(3),time:hit.f.t,tipHeightM:+hit.f.tip[1].toFixed(2)});
-check('the hit lands at body height (0.8–1.5 m)',hit.f.tip[1]>.8&&hit.f.tip[1]<1.5,+hit.f.tip[1].toFixed(2));
+// The hit is judged at the scripted moment of impact, not at the closest
+// pass: when the winner steps onto d5 its raised spear stands above it.
+const hit=capture[Math.round(2.3*30)],hitAxis=Math.hypot(hit.tip[0]-victim.x,hit.tip[2]-victim.z);
+check('at the hit the spear tip is at the defender (≤ 25 cm from the body axis)',hitAxis<=.25,{distanceM:+hitAxis.toFixed(3),time:hit.t});
+check('the hit lands at body height (0.8–1.5 m)',hit.tip[1]>.8&&hit.tip[1]<1.5,+hit.tip[1].toFixed(2));
 const jumps=capture.slice(1).map((f,i)=>Math.hypot(f.attacker.x-capture[i].attacker.x,f.attacker.z-capture[i].attacker.z));
 check('attacker moves without jumps (< 15 cm per frame)',Math.max(...jumps)<.15,+Math.max(...jumps).toFixed(3));
 state=await page.evaluate(()=>window.livingChess.state());
@@ -97,5 +100,5 @@ check('no page errors',errors.length===0,errors.slice(0,5));
 await browser.close();
 const report={status:failures.length?'failed':'passed',failures,checks,fencing,performance:{...perf,note:'Pose solving per figure on this machine; rendering speed depends on the GPU.'},images,scope:'Sampled at 30 Hz with a fixed clock. Spear tip and shield face are measured on the skinned model; this is not a physics or continuous collision check. Garment intersections of the pawn model are a separate known limitation.'};
 await writeFile(path.join(review,'board-checks.json'),JSON.stringify(report,null,2)+'\n');
-console.log(JSON.stringify({status:report.status,failures,fencing,hit:{d:hit.d,t:hit.f.t},perf},null,1));
+console.log(JSON.stringify({status:report.status,failures,fencing,hit:{distance:hitAxis,height:hit.tip[1]},perf},null,1));
 process.exit(failures.length?1:0);
