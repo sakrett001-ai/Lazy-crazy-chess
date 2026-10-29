@@ -334,8 +334,10 @@ def defender_local(t, guard_yaw=GUARD_YAW, counter_step=COUNTER_STEP, counter_ya
             "aim": smooth(t, 0.55, 1.1) * (1 - 0.55 * beaten) + 0.5 * smooth(tau, 0.3, 1.3),
             "thrust": thrust,
             # The beat pushes the point a little out to its right; after the blow the
-            # shaft sinks straight ahead (turned out, its butt would go into the body).
-            "turn": -0.12 * knocked,
+            # shaft sinks straight ahead (turned out, its butt would go into the body),
+            # and as the body goes down onto the shield the shaft rolls in across it, to
+            # its left, out of the way of the attacker stepping onto the square.
+            "turn": -0.12 * knocked + 0.3 * smooth(t, 4.85, 5.25),
             # Square to the attacker in the guard (against the body's turn); up and out
             # at the feint and held through the blow; then, as the spear is drawn out
             # and the knees give, the arm goes out to its left and the shield's rim comes

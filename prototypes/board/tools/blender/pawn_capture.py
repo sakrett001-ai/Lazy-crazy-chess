@@ -714,9 +714,12 @@ def contacts(t, A, D):
     if opacity(t) > 0.3 and A.body.overlap(D.body):
         out.append("тела фигур пересекаются")
     hit_window = HIT_WINDOW[0] <= t <= HIT_WINDOW[1]
-    for who, S, other in ((("копьё атакующего", A, D), ("копьё защитника", D, A)) if seen else (("копьё атакующего", A, D),)):
-        if seen and crossing(other.shield, S.butt, S.tip) is not None:
+    there = t <= design.FADE[1]  # drawn at all, fading included: a spear through a half-faded shield shows
+    for who, S, other in ((("копьё атакующего", A, D), ("копьё защитника", D, A)) if there else (("копьё атакующего", A, D),)):
+        if there and crossing(other.shield, S.butt, S.tip) is not None:
             out.append(f"{who} проходит сквозь щит противника")
+        if S is D and not seen:
+            continue
         if crossing(S.shield, S.butt, S.tip) is not None:
             out.append(f"{who} проходит сквозь свой щит")
         if crossing(S.body, S.butt, S.tip) is not None:
@@ -871,7 +874,8 @@ class Pair:
                 break
             for who in "ad":
                 have = self.extra[who]["lift"]
-                total = [have.get(round(t * design.FPS), 0.0) + e for t, e in zip(times, more[who]["lift"])]
+                # a frame no lift can clear (e at its bound) is left for the check to report
+                total = [have.get(round(t * design.FPS), 0.0) + (e if e < 1.0 else 0.0) for t, e in zip(times, more[who]["lift"])]
                 self.extra[who]["lift"] = smooth_extra(times, total)
                 first[who]["lift"] = [max(a, b) for a, b in zip(first[who]["lift"], total)]
         return {who: {k: round(max(v), 3) for k, v in first[who].items()} for who in "ad"}
@@ -887,7 +891,9 @@ class Pair:
             pd = self.pose_defender(t)
             D_sh, _ = shield_tree(self.d, to_pair_array)
             D_body, _ = body_tree(self.d, to_pair_array)
-            seen = opacity(t) > 0.3
+            # Clear of the other shield for as long as the taken pawn is drawn at all,
+            # fading included: a spear through a half-faded shield still shows.
+            there = t <= design.FADE[1]
             for who, plan, own_sh, other_sh, own_body, other_body, spear in (
                     ("a", pa, A_sh, D_sh, A_body, None, self.a.board_spear),
                     ("d", pd, D_sh, A_sh, D_body, A_body, lambda arms: tuple(pair_point(v) for v in self.d.board_spear(arms)))):
@@ -904,7 +910,7 @@ class Pair:
 
                 def free(e):
                     g, tip, butt = spear({**arms, "turn": arms["turn"] - turn, "aim": arms["aim"] - e})
-                    if seen and crossing(other_sh, butt, tip) is not None:
+                    if there and crossing(other_sh, butt, tip) is not None:
                         return False
                     if other_body is not None and crossing(other_body, butt, tip) is not None:
                         return False

@@ -104,9 +104,10 @@ const touches=capture.filter(f=>f.touch.length).map(f=>({t:f.t,touch:f.touch}));
 check('no body or spear passes through a shield, own or opponent (bone chains, butt to tip)',touches.length===0,touches.slice(0,8));
 // Both figures look at each other until the blow; the attacker keeps its eyes
 // on the defender until it is gone.
-const gazeA=capture.filter(f=>f.gaze.attacker!==undefined).map(f=>Math.abs(f.gaze.attacker)),gazeD=capture.filter(f=>f.t<=hitTime&&f.gaze.defender!==undefined).map(f=>Math.abs(f.gaze.defender));
-check('the attacker looks at the defender (heading within 15°)',Math.max(...gazeA)<=15,{maxDeg:+Math.max(...gazeA).toFixed(1)});
-check('the defender looks at the attacker until the blow (heading within 15°)',Math.max(...gazeD)<=15,{maxDeg:+Math.max(...gazeD).toFixed(1)});
+const worst=(frames,who)=>frames.reduce((m,f)=>Math.abs(f.gaze[who])>m.maxDeg?{maxDeg:+Math.abs(f.gaze[who]).toFixed(1),time:f.t}:m,{maxDeg:0,time:null});
+const gazeA=worst(capture.filter(f=>f.gaze.attacker!==undefined),'attacker'),gazeD=worst(capture.filter(f=>f.t<=hitTime&&f.gaze.defender!==undefined),'defender');
+check('the attacker looks at the defender (heading within 15°)',gazeA.maxDeg<=15,gazeA);
+check('the defender looks at the attacker until the blow (heading within 15°)',gazeD.maxDeg<=15,gazeD);
 const state=await page.evaluate(()=>window.livingChess.state());
 check('after the scene the attacker stands on d5 and the victim is gone',state.actors===3&&state.pieces.find(p=>p.square==='d5')?.id==='wp-e4'&&!state.busy,state.fen);
 check('no page errors',errors.length===0,errors.slice(0,5));

@@ -8,7 +8,7 @@ import {planCapture,captureAt,CAPTURE_DURATION,CAPTURE_PHASES,HIT_TIME,headingTo
 import {createPawnFactory,createToken} from './actors.mjs';
 import {createLandscape} from './landscape.mjs';
 import {readMotionSource} from './mocap/library.mjs';
-import {sampleAlong,sampleClip,sampleArms,scaleLayer,centerPoints} from './mocap/format.mjs';
+import {sampleAlong,sampleClip,sampleArms,scaleLayer,centerPoints,turnHead} from './mocap/format.mjs';
 import {rotateY} from './mocap/math.mjs';
 
 // One square is 2.6 m. A 1.8 m soldier with a tower shield and a 2.4 m
@@ -217,10 +217,13 @@ async function init(bytes){
   const line=headingTo(plan.from,plan.to),attackerYaw=plan.attackerYaw,victimYaw=plan.victimYaw;
   // Holder at the clip's pelvis, turned onto the line of attack: turning a
   // holder then turns the figure about its own pelvis, feet included.
-  const put=(actor,clip,t,yaw,extra={})=>{
+  // While the holder is still turning onto the line, the head leads: it is
+  // turned by what the holder has left to turn, so the eyes stay on the other
+  // figure as in the clip (the attacker's turn back after the scene is its own).
+  const put=(actor,clip,t,yaw,extra={},lead=true)=>{
    const k=actor.mocap.retarget.leg/clip.leg,p=sampleClip(clip,t),[x,z]=rotate([p.pelvis[0]*k,p.pelvis[2]*k],line);
    actor.place({x:plan.from[0]+x,z:plan.from[1]+z,yaw,...extra});
-   return{clip,points:centerPoints(p),weight:1,arms:sampleArms(clip,t)};
+   return{clip,points:turnHead(centerPoints(p),lead?wrapAngle(line-yaw):0),weight:1,arms:sampleArms(clip,t)};
   };
   // A pair that times its own arms (spear phases, shield turn) plays them;
   // one without keeps the board's action timing.
@@ -228,7 +231,7 @@ async function init(bytes){
   return{duration:CAPTURE_DURATION,plan,update(t){
    const s=captureAt(plan,t);
    const aYaw=t<2.5?lerpAngle(attackerYaw,line,smooth(t,0,.5)):lerpAngle(line,attackerYaw,smooth(t,5.7,6.6));
-   pose(attacker,put(attacker,a,t,aYaw),s.attacker.action,s.attacker.time);yaws.set(attackerPiece.id,aYaw);
+   pose(attacker,put(attacker,a,t,aYaw,{},t<2.5),s.attacker.action,s.attacker.time);yaws.set(attackerPiece.id,aYaw);
    // The struck clip may time the victim's fade itself (it ends its collapse).
    const removed=v.fade?t>=v.fade[1]:s.victim.removed,opacity=v.fade?1-smooth(t,v.fade[0],v.fade[1]):s.victim.opacity;
    if(!removed){

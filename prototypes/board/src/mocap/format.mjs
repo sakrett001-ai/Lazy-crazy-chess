@@ -118,6 +118,15 @@ export function centerPoints(points){
  for(const [k,v]of Object.entries(points))out[k]=[v[0]-x,v[1],v[2]-z];
  return out;
 }
+// The head (and eyes, ears) turned about the neck by yaw, the way a figure
+// turning to face someone leads with its head: the retarget spreads the turn
+// over the neck bones, the chest keeps its own. Same sense as the holder yaw.
+export function turnHead(points,yaw){
+ if(!yaw||!points.neck)return points;
+ const [nx,,nz]=points.neck,c=Math.cos(yaw),s=Math.sin(yaw),out={...points};
+ for(const k of ['head','eyeL','eyeR','earL','earR'])if(points[k]){const [x,y,z]=points[k],dx=x-nx,dz=z-nz;out[k]=[nx+dx*c+dz*s,y,nz-dx*s+dz*c];}
+ return out;
+}
 // Forward distance a clip covers (source units), for one lap of a loop.
 export const clipTravel=clip=>{const F=forwardTrack(clip);return F[F.length-1]-F[0];};
 
