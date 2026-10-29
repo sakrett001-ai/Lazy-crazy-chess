@@ -10,7 +10,7 @@ import {sub,add,scale,mid,cross,normalize,length,distance,rotateY,lerp} from './
 //  points:[names...],clips:[{name,label,role,loop,fps,frames,data:[...]}]}
 // data holds frames × points × 3 numbers in `points` order. A point that no
 // clip of the source has is left out of `points` altogether.
-// A clip may also carry arms:{action,fields:['aim','thrust','turn','swing','raise','reach'],
+// A clip may also carry arms:{action,fields:['aim','thrust','turn','swing','raise','reach','lift'],
 // data:[frames × fields]}: the spear phases and the shield turn the loadout
 // solves the arms with (see sampleArms). A struck clip may give fade:[t0,t1],
 // the seconds over which the taken figure fades out and leaves the board.
@@ -77,13 +77,13 @@ export function sampleClip(clip,t,{inPlace=false}={}){
 }
 
 // The arms track of a clip at time t, linear between frames: the loadout's
-// spear phases and shield turn, {action,phase:{aim,thrust,turn},shield:{swing,raise,reach}}.
+// spear phases and shield turn, {action,phase:{aim,thrust,turn},shield:{swing,raise,reach,lift}}.
 // A clip that times its arms (a capture pair) carries it; others give null.
 export function sampleArms(clip,t){
  const a=clip.arms;if(!a)return null;
  const F=a.fields.length,u=Math.min(Math.max(t*clip.fps,0),clip.count-1),i=Math.floor(u),k=Math.min(clip.count-1,i+1),w=u-i;
  const v=Object.fromEntries(a.fields.map((f,j)=>[f,a.data[i*F+j]*(1-w)+a.data[k*F+j]*w]));
- return{action:a.action,phase:{aim:v.aim??0,thrust:v.thrust??0,turn:v.turn??0},shield:{swing:v.swing??0,raise:v.raise??0,reach:v.reach??0}};
+ return{action:a.action,phase:{aim:v.aim??0,thrust:v.thrust??0,turn:v.turn??0},shield:{swing:v.swing??0,raise:v.raise??0,reach:v.reach??0,lift:v.lift??0}};
 }
 
 // Average forward speed of a clip (source units per second).

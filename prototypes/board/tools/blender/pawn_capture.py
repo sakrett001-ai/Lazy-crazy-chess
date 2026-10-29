@@ -121,7 +121,7 @@ SPEAR = {"guard": (-0.10, 0.8, 0.592), "aimed": (-0.15, 0.087, 0.985), "anchor":
          "length": 1.566,  # tipBind − gripBind along shaftAxisBind (GLB extras of WEAPON_spear)
          "butt": 1.004}    # the rest of its 2.57 m (lengthMetres) behind the grip
 ARMS_ACTION = "Spear_Study"  # the left arm's keys at time 0: the shield square at the chest
-ARM_FIELDS = ("aim", "thrust", "turn", "swing", "raise", "reach")
+ARM_FIELDS = ("aim", "thrust", "turn", "swing", "raise", "reach", "lift")
 
 
 # ---------------------------------------------------------------------------------------
@@ -261,6 +261,7 @@ class Pawn:
         self.look(plan, target)
         self.arm_base = self.pb["upperarm01.L"].matrix.copy()
         self.forearm_base = self.pb["lowerarm01.L"].matrix.copy()
+        self.hand_base = self.pb["wrist.L"].matrix.copy()
         self.shield_arm(plan["arms"])
         for s in "LR":
             self.leg(s, *targets[s])
@@ -299,24 +300,48 @@ class Pawn:
     def shield_arm(self, arms):
         """The loadout's shield turn: the elbow extended by the reach, then the left arm
         turned rigidly about the shoulder by the swing (about the trunk's up axis, + to
-        the left) and the raise (shoulder flexion, about the trunk's left axis). The board solves the arm by IK onto the same turned
-        grip and wrist, so the shield lands in the same place."""
+        the left) and the raise (shoulder flexion, about the trunk's left axis), then the
+        hand carried up the trunk by the lift, metres, with the shield's face kept (the arm by IK). The board solves the arm by IK onto the same grip and wrist, so the
+        shield lands in the same place."""
         reach = arms.get("reach", 0.0)
         if reach:
             # Elbow extension first, about the elbow's own axis: the shield goes out
             # from the chest before it turns across it.
             sh, el, wr = (self.pb[b].head.copy() for b in ("upperarm01.L", "lowerarm01.L", "wrist.L"))
             self.turn("lowerarm01.L", Matrix.Rotation(-reach, 3, (el - sh).cross(wr - el).normalized()), point=el)
-        if not (arms["swing"] or arms["raise"]):
-            return
-        _, x, up, _ = self.trunk_frame()
-        rot = Matrix.Rotation(arms["swing"], 3, bl(up)) @ Matrix.Rotation(-arms["raise"], 3, bl(x))
-        self.turn("upperarm01.L", rot)
+        if arms["swing"] or arms["raise"]:
+            _, x, up, _ = self.trunk_frame()
+            rot = Matrix.Rotation(arms["swing"], 3, bl(up)) @ Matrix.Rotation(-arms["raise"], 3, bl(x))
+            self.turn("upperarm01.L", rot)
+        lift = arms.get("lift", 0.0)
+        if lift:
+            _, _, up, _ = self.trunk_frame()
+            self.hand_to(self.pb["wrist.L"].head + bl(up) * lift)
+
+    def hand_to(self, target):
+        """Two-bone IK of the left arm onto the wrist target, the elbow kept in its plane
+        and the hand's orientation kept."""
+        hand = self.pb["wrist.L"].matrix.copy()
+        sh, el, wr = (self.pb[b].head.copy() for b in ("upperarm01.L", "lowerarm01.L", "wrist.L"))
+        l1, l2 = (el - sh).length, (wr - el).length
+        reach = target - sh
+        d = min(reach.length, (l1 + l2) * 0.999)
+        u = reach.normalized()
+        pole = (el - sh) - u * (el - sh).dot(u)
+        pole = pole.normalized() if pole.length > 1e-6 else (wr - el).cross(u).normalized()
+        cos_a = max(-1.0, min(1.0, (l1 * l1 + d * d - l2 * l2) / (2 * l1 * d)))
+        knee = sh + l1 * (cos_a * u + math.sqrt(1 - cos_a * cos_a) * pole)
+        self.turn("upperarm01.L", (el - sh).rotation_difference(knee - sh).to_matrix(), point=sh)
+        el, wr = self.pb["lowerarm01.L"].head.copy(), self.pb["wrist.L"].head.copy()
+        self.turn("lowerarm01.L", (wr - el).rotation_difference(target - el).to_matrix(), point=el)
+        hand.translation = self.pb["wrist.L"].head
+        self.set_matrix("wrist.L", hand)
 
     def reshield(self, arms):
         """The shield turn again on the same pose, with other arms values."""
         self.set_matrix("upperarm01.L", self.arm_base)
         self.set_matrix("lowerarm01.L", self.forearm_base)
+        self.set_matrix("wrist.L", self.hand_base)
         self.shield_arm(arms)
 
     def foot_target(self, s, foot, body_yaw):
@@ -965,23 +990,32 @@ BITE = 0.05  # the point goes this far past the armour at the hit
 
 
 def hit_error(pair):
-    """Spear tip less its target at the hit. The target is the defender's open flank, as
-    choreography.mjs aims: its left side below the ribs (the line 0.19 m out from the
-    trunk axis and 0.05 m back, towards the spine), BITE past the surface there."""
+    """Where the thrust stands against its target at the hit. The target is the
+    defender's open flank, as choreography.mjs aims: its left side below the ribs (the
+    line 0.19 m out from the trunk axis and 0.05 m back, towards the spine), on the
+    armour's surface. The shaft's line must pass through that point (two components
+    across the shaft) and the point must be BITE past the first surface the shaft meets
+    on its way in (the third)."""
     t = design.HIT_TIME
     pa = pair.pose_attacker(t)
-    tip = pair.a_spear(pa)[1]
+    grip, tip, _ = pair.a_spear(pa)
     pair.pose_defender(t)
     d = pair.d.points()
     left, _, fwd = frame_of(d)[1]
     flank = d["spine"].lerp(d["chest"], 0.3) + left * 0.19 - fwd * 0.05
     inward = Vector((d["spine"].x - flank.x, 0, d["spine"].z - flank.z)).normalized()
-    # The surface of the armoured flank along that line, then BITE into it.
     body, _ = body_tree(pair.d, lambda v: v)
-    start = flank - inward * 0.4
-    hit = body.ray_cast(start, inward, 0.8)
-    surface = hit[0] if hit[0] is not None else flank
-    return tip - pair_point(surface + inward * BITE)
+    hit = body.ray_cast(flank - inward * 0.4, inward, 0.8)
+    aim_at = pair_point(hit[0] if hit[0] is not None else flank)
+    way = (tip - grip).normalized()
+    across = way.cross(Vector((0, 1, 0))).normalized()
+    up = across.cross(way)
+    off = aim_at - grip
+    off -= way * off.dot(way)
+    D_body, _ = body_tree(pair.d, to_pair_array)
+    entry = crossing(D_body, grip, tip + way * 0.5)
+    depth = (tip - grip).length - entry if entry is not None else (tip - aim_at).dot(way)
+    return Vector((off.dot(across), off.dot(up), depth - BITE))
 
 
 def newton(pair, error, keys, tol=0.004):
@@ -1188,7 +1222,7 @@ def main(argv):
     report = {
         "params": {k: round(v, 4) for k, v in pair.params.items()},
         "aim": {k: round(v, 2) for k, v in errors.items()},
-        "hit": {"miss_cm": round(math.hypot(hit.x, hit.z) * 100, 1), "height_cm": round(hit.y * 100, 1),
+        "hit": {"miss_cm": round(hit.x * 100, 1), "height_cm": round(hit.y * 100, 1), "depth_error_cm": round(hit.z * 100, 1),
                 "bite_cm": [[round(t, 3), None if b is None else round(b * 100, 1)] for t, b in r["bite"]]},
         "attacker": check("атакующий", r["a_frames"], r["a_ang"], ground, a_static, both),
         "defender": check("защитник", r["d_frames"], r["d_ang"], ground, d_static, both),
@@ -1212,7 +1246,8 @@ def main(argv):
     for k, v in errors.items():
         if (k == "guard_deg" and abs(v) > 1.0) or (k != "guard_deg" and v > 1.0):
             issues.append(f"наведение {k}: {v:.1f}")
-    print(f"Попадание: промах {report['hit']['miss_cm']} см по горизонтали, {report['hit']['height_cm']} см по высоте; "
+    print(f"Попадание: линия древка мимо цели на {report['hit']['miss_cm']} см вбок, {report['hit']['height_cm']} см по высоте, "
+          f"глубина от заданной {report['hit']['depth_error_cm']} см; "
           f"наведение {report['aim']}")
     print("Взгляд, наибольшее отклонение:", report["gaze_deg"])
     print("Диапазоны, атакующий:", report["attacker"]["ranges"])

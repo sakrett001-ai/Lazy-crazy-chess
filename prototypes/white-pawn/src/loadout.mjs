@@ -190,10 +190,11 @@ export function createLoadout({model,bones={}}){
  // phase: {aim,thrust,turn} in place of the action's own envelopes (a clip
  // that times the spear itself); aim above 1 lowers the point below the
  // aimed line, turn swings the shaft about the trunk's up axis (+ left).
- // shield: {swing,raise,reach} turns the shield hand: reach extends the elbow
- // about its own axis, then the hand turns about the shoulder in the trunk
- // frame: swing about the trunk's up axis (+ to the left, outwards), raise as
- // shoulder flexion (+ forwards and up).
+ // shield: {swing,raise,reach,lift} moves the shield hand: reach extends the
+ // elbow about its own axis, then the hand turns about the shoulder in the
+ // trunk frame: swing about the trunk's up axis (+ to the left, outwards),
+ // raise as shoulder flexion (+ forwards and up); lift then carries it up the
+ // trunk, metres, the shield's face kept.
  function poseAt(action='rest',time=0,{body=true,phase:given=null,shield:turn=null}={}){
   lastAction=action;lastTime=Number.isFinite(time)?Math.max(0,time):0;reachErrors={};
   applyMorphs();update();
@@ -248,6 +249,8 @@ export function createLoadout({model,bones={}}){
      const q=new THREE.Quaternion().setFromAxisAngle(up,turn.swing||0).multiply(new THREE.Quaternion().setFromAxisAngle(x,-(turn.raise||0)));
      shield.grip.sub(shoulder).applyQuaternion(q).add(shoulder);shield.axis.applyQuaternion(q);wrist.premultiply(q);
     }
+    // lift carries the hand straight up the trunk with the shield's face kept.
+    if(turn&&turn.lift)shield.grip.addScaledVector(up,turn.lift);
     reachErrors.L=armBiomechanics.solve('L',shield.grip,shield.axis,direction([1,-.55,.45]),undefined,wrist);
    }
    update();

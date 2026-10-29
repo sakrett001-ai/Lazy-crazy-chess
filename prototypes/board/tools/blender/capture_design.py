@@ -96,8 +96,10 @@ def swing_shape(t, t0, t1):
     lift peaks at about 60 % and the sole lands flat (строевой шаг: the foot is raised
     15–20 cm and set down on the whole sole)."""
     u = clamp((t - t0) / (t1 - t0))
-    if u <= 0 or u >= 1:
-        return (0.0 if u <= 0 else 1.0), 0.0, 0.0
+    if u <= 0:
+        return 0.0, 0.0, HEEL_OFF  # toe-off: the heel is still up from terminal stance
+    if u >= 1:
+        return 1.0, 0.0, 0.0
     progress = smooth(u, 0.18, 0.85)  # toe-off first, then the leg is carried forward
     lift = bump(u ** 1.4, 0, 1)
     pitch = HEEL_OFF * (1 - smooth(u, 0.0, 0.45))  # the foot levels out in the air
@@ -261,9 +263,12 @@ GUARD_YAW = 0.2634
 COUNTER_STEP = 0.2
 COUNTER_YAW = -0.0088
 COUNTER_BEND = 0.0425
-COVER_REACH = 1.1  # the shield meets the high feint: elbow extended 63°, from 98° to 35° of flexion
+# The shield meets the high feint forward and up: the elbow extended 46°, the shoulder
+# flexed 23° and the hand 15 cm up the trunk. Its top rim goes over the eyes (1.74 m) and
+# its face leans back 40°, so the lower rim comes forward and up (0.69 m) and the line into
+# the left flank under it is open by 10 cm at the hit; the trunk stays square.
+COVER = {"reach": 0.8, "raise": 0.4, "lift": 0.15}
 FALL_SHIELD = {"reach": 0.8, "swing": 0.7, "raise": 0.7}  # out to the left, rim on the board by the knee
-COVER_RAISE = 0.97  # and the shoulder flexed: the lower rim goes up to 1.1 m, clear of the face
 KNEEL = {"pelvis_y": 0.575, "pelvis_z": 0.16, "pitch": -1.3}  # on both knees, toes tucked
 
 
@@ -295,7 +300,7 @@ def defender_local(t, guard_yaw=GUARD_YAW, counter_step=COUNTER_STEP, counter_ya
     slump = smooth(tau, 0.9, 1.6)
     push = (-0.25, -0.97)  # back and to its right, away from the thrust
     foot_l = (rest_l[0],
-              rest_l[1] + 0.04 * bump(t, ct - 0.38, ct - 0.06) + 0.035 * bump(t, ct + 0.12, ct + 0.45) + 0.05 * bump(tau, 0.35, 0.65),
+              rest_l[1] + 0.04 * bump(t, ct - 0.42, ct - 0.03) + 0.035 * bump(t, ct + 0.09, ct + 0.5) + 0.05 * bump(tau, 0.35, 0.65),
               rest_l[2] + step + push[1] * 0.30 * back_l)
     foot_r = (rest_r[0] + push[0] * 0.12 * back_r, rest_r[1] + 0.06 * bump(tau, 0.1, 0.4),
               rest_r[2] + push[1] * 0.35 * back_r)
@@ -331,9 +336,10 @@ def defender_local(t, guard_yaw=GUARD_YAW, counter_step=COUNTER_STEP, counter_ya
             # and the knees give, the arm goes out to its left and the shield's rim comes
             # down to the board beside the left knee, the body sinking onto it (the fit
             # keeps its edge out of the board and the body).
-            "swing": -0.6 * guard_yaw * guard * (1 - cover) * (1 - fall) + FALL_SHIELD["swing"] * fall,
-            "raise": 0.08 * settle * off + COVER_RAISE * cover * (1 - fall) + FALL_SHIELD["raise"] * fall,
-            "reach": COVER_REACH * cover_r * (1 - fall) + FALL_SHIELD["reach"] * fall,
+            "swing": -0.6 * guard_yaw * guard * (1 - fall) + FALL_SHIELD["swing"] * fall,
+            "raise": 0.08 * settle * off + COVER["raise"] * cover * (1 - fall) + FALL_SHIELD["raise"] * fall,
+            "reach": COVER["reach"] * cover_r * (1 - fall) + FALL_SHIELD["reach"] * fall,
+            "lift": COVER["lift"] * cover * (1 - fall),
         },
         "feet": {
             # As the knees go down the heels come up and the toes tuck under.
@@ -341,7 +347,7 @@ def defender_local(t, guard_yaw=GUARD_YAW, counter_step=COUNTER_STEP, counter_ya
             # The rear heel comes off the board in the low guard and the lunge, so the
             # rear ankle stays within its dorsiflexion range (the weight on the ball).
             "R": {"pos": foot_r, "yaw": 0.0,
-                  "pitch": KNEEL["pitch"] * kneel - 0.3 * bump(tau, 0.1, 0.4) - (0.18 * guard + 0.3 * lunge) * (1 - kneel)},
+                  "pitch": KNEEL["pitch"] * kneel - 0.3 * bump(tau, 0.1, 0.55) - (0.18 * guard + 0.3 * lunge) * (1 - kneel)},
         },
     }
 
