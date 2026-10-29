@@ -121,7 +121,7 @@ SPEAR = {"guard": (-0.10, 0.8, 0.592), "aimed": (-0.15, 0.087, 0.985), "anchor":
          "length": 1.566,  # tipBind − gripBind along shaftAxisBind (GLB extras of WEAPON_spear)
          "butt": 1.004}    # the rest of its 2.57 m (lengthMetres) behind the grip
 ARMS_ACTION = "Spear_Study"  # the left arm's keys at time 0: the shield square at the chest
-ARM_FIELDS = ("aim", "thrust", "turn", "swing", "raise")
+ARM_FIELDS = ("aim", "thrust", "turn", "swing", "raise", "reach")
 
 
 # ---------------------------------------------------------------------------------------
@@ -260,6 +260,7 @@ class Pawn:
             self.turn(name, pelvis_rot @ local @ pelvis_rot.inverted())
         self.look(plan, target)
         self.arm_base = self.pb["upperarm01.L"].matrix.copy()
+        self.forearm_base = self.pb["lowerarm01.L"].matrix.copy()
         self.shield_arm(plan["arms"])
         for s in "LR":
             self.leg(s, *targets[s])
@@ -296,10 +297,16 @@ class Pawn:
         apply(twist, bend)
 
     def shield_arm(self, arms):
-        """The loadout's shield turn: the left arm turned rigidly about the shoulder by the
-        swing (about the trunk's up axis, + to the left) and the raise (shoulder flexion,
-        about the trunk's left axis). The board solves the arm by IK onto the same turned
+        """The loadout's shield turn: the elbow extended by the reach, then the left arm
+        turned rigidly about the shoulder by the swing (about the trunk's up axis, + to
+        the left) and the raise (shoulder flexion, about the trunk's left axis). The board solves the arm by IK onto the same turned
         grip and wrist, so the shield lands in the same place."""
+        reach = arms.get("reach", 0.0)
+        if reach:
+            # Elbow extension first, about the elbow's own axis: the shield goes out
+            # from the chest before it turns across it.
+            sh, el, wr = (self.pb[b].head.copy() for b in ("upperarm01.L", "lowerarm01.L", "wrist.L"))
+            self.turn("lowerarm01.L", Matrix.Rotation(-reach, 3, (el - sh).cross(wr - el).normalized()), point=el)
         if not (arms["swing"] or arms["raise"]):
             return
         _, x, up, _ = self.trunk_frame()
@@ -309,6 +316,7 @@ class Pawn:
     def reshield(self, arms):
         """The shield turn again on the same pose, with other arms values."""
         self.set_matrix("upperarm01.L", self.arm_base)
+        self.set_matrix("lowerarm01.L", self.forearm_base)
         self.shield_arm(arms)
 
     def foot_target(self, s, foot, body_yaw):
@@ -884,8 +892,8 @@ def solve_pair(pair, times, shapes=True):
         out["drops"][1] = max(out["drops"][1], pair.d.drop)
         out["tips"].append(a_spear[1])
         out["d_tips"].append(d_spear[1])
-        out["arms_a"].append([pa["arms"][k] for k in ARM_FIELDS])
-        out["arms_d"].append([pd["arms"][k] for k in ARM_FIELDS])
+        out["arms_a"].append([pa["arms"].get(k, 0.0) for k in ARM_FIELDS])
+        out["arms_d"].append([pd["arms"].get(k, 0.0) for k in ARM_FIELDS])
         out["gaze"].append((t, math.degrees(a_gaze.angle(d_eye - a_eye)), math.degrees(d_gaze.angle(a_eye - d_eye))))
         if shapes:
             D = Shapes(pair.d, to_pair_array, d_spear)
@@ -943,14 +951,14 @@ def counter_error(pair):
 
 
 def feint_error(pair):
-    """Where the feint's point stands against the arriving shield: across its face from
-    the centre, and in front of its face less FEINT_GAP."""
+    """Where the feint's point stands against the rising shield: across its face and up it
+    from the centre, and in front of its face less FEINT_GAP."""
     t = FEINT_TIME
     pa = pair.pose_attacker(t)
     grip, tip, _ = pair.a_spear(pa)
     pair.pose_defender(t)
-    front, face, lateral, _ = shield_frame(to_pair_array(pair.d.mesh_points("SHIELD_tower")), grip)
-    return Vector(((tip - front) @ lateral, (tip - front) @ face - FEINT_GAP))
+    front, face, lateral, up = shield_frame(to_pair_array(pair.d.mesh_points("SHIELD_tower")), grip)
+    return Vector(((tip - front) @ lateral, (tip - front) @ up, (tip - front) @ face - FEINT_GAP))
 
 
 BITE = 0.05  # the point goes this far past the armour at the hit
@@ -1006,7 +1014,7 @@ def aim(pair):
     for i in range(5):
         g = newton(pair, guard_error, ("guard_yaw",), tol=0.01)
         c = newton(pair, counter_error, ("counter_time", "counter_yaw", "counter_bend"))
-        f = newton(pair, feint_error, ("feint_yaw", "feint_reach"))
+        f = newton(pair, feint_error, ("feint_yaw", "feint_high", "feint_reach"))
         h = newton(pair, hit_error, ("approach", "strike_yaw", "strike_bend"))
         g, c, f = guard_error(pair).length, counter_error(pair).length, feint_error(pair).length
         print(f"  круг {i + 1}: защита {math.degrees(g):.1f}°, контрвыпад {c * 100:.1f} см, финт {f * 100:.1f} см, "
@@ -1125,12 +1133,12 @@ def render(pair, times, out_dir):
     return paths
 
 
-PARAMS = ("approach", "strike_yaw", "strike_bend", "feint_yaw", "feint_reach", "guard_yaw", "counter_time",
+PARAMS = ("approach", "strike_yaw", "strike_bend", "feint_yaw", "feint_high", "feint_reach", "guard_yaw", "counter_time",
           "counter_yaw", "counter_bend")
 # Where each solved number may go: a drill approach, a fencing stamp and lunge, turns the
 # trunk and pelvis can take, and a counter while the attacker is still closing in.
 BOUNDS = {"approach": (0.8, 1.5), "strike_yaw": (-0.3, 0.6), "strike_bend": (-0.2, 0.35), "feint_yaw": (0.0, 0.7),
-          "feint_reach": (0.05, 0.85), "guard_yaw": (-0.3, 0.45), "counter_time": (1.3, 2.2), "counter_yaw": (-0.35, 0.35),
+          "feint_reach": (0.05, 0.85), "feint_high": (0.0, 0.8), "guard_yaw": (-0.3, 0.45), "counter_time": (1.3, 2.2), "counter_yaw": (-0.35, 0.35),
           "counter_bend": (-0.15, 0.35)}
 
 

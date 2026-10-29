@@ -190,9 +190,10 @@ export function createLoadout({model,bones={}}){
  // phase: {aim,thrust,turn} in place of the action's own envelopes (a clip
  // that times the spear itself); aim above 1 lowers the point below the
  // aimed line, turn swings the shaft about the trunk's up axis (+ left).
- // shield: {swing,raise} turns the shield hand about the shoulder, in the
- // trunk frame: swing about the trunk's up axis (+ to the left, outwards),
- // raise as shoulder flexion (+ forwards and up).
+ // shield: {swing,raise,reach} turns the shield hand: reach extends the elbow
+ // about its own axis, then the hand turns about the shoulder in the trunk
+ // frame: swing about the trunk's up axis (+ to the left, outwards), raise as
+ // shoulder flexion (+ forwards and up).
  function poseAt(action='rest',time=0,{body=true,phase:given=null,shield:turn=null}={}){
   lastAction=action;lastTime=Number.isFinite(time)?Math.max(0,time):0;reachErrors={};
   applyMorphs();update();
@@ -235,6 +236,13 @@ export function createLoadout({model,bones={}}){
     // shield/hand assembly to that build; its fingers must clear the plate.
     if(current.bodyBuild==='strong')shield.grip.addScaledVector(forward,.025);
     const wrist=bone('wrist.L').getWorldQuaternion(new THREE.Quaternion());
+    if(turn&&turn.reach){
+     // Elbow extension about the elbow's own axis: the shield goes out from the
+     // chest before it turns across it.
+     const p=n=>bone(n).getWorldPosition(new THREE.Vector3()),sh=p('upperarm01.L'),el=p('lowerarm01.L'),wr=p('wrist.L');
+     const q=new THREE.Quaternion().setFromAxisAngle(el.clone().sub(sh).cross(wr.clone().sub(el)).normalize(),-turn.reach);
+     shield.grip.sub(el).applyQuaternion(q).add(el);shield.axis.applyQuaternion(q);wrist.premultiply(q);
+    }
     if(turn&&(turn.swing||turn.raise)){
      const shoulder=bone('upperarm01.L').getWorldPosition(new THREE.Vector3());
      const q=new THREE.Quaternion().setFromAxisAngle(up,turn.swing||0).multiply(new THREE.Quaternion().setFromAxisAngle(x,-(turn.raise||0)));

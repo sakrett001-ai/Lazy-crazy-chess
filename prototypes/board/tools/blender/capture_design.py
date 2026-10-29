@@ -9,7 +9,8 @@ ahead (2.6 m * sqrt 2) facing back, -z.
 Controls per figure and time: pelvis (position, yaw, pitch, roll), trunk (bend forward,
 twist to the left, side bend to the left), head offsets on top of the gaze, each foot's
 ankle position with its yaw and toe pitch, and the arms: the spear's aim, thrust and
-turn and the shield's swing and raise about the shoulder (white-pawn/src/loadout.mjs,
+turn and the shield's reach (elbow extension), swing and raise about the shoulder
+(white-pawn/src/loadout.mjs,
 poseAt). The legs are solved by IK to the feet, so a planted foot stays planted by
 construction; the head is turned onto the opponent within the neck's range.
 
@@ -18,9 +19,11 @@ What happens (the defender is a fighter, not a target):
   0.35–1.9 the attacker closes in drill step; the defender settles behind its shield.
   1.2–1.9  the defender counter-thrusts with a short lunge as the attacker comes into reach; the point meets the attacker's
            shield and the shield beats it aside (the shaft rides up and out).
-  2.35–2.8 the attacker feints at the defender's right; its shield follows the threat
-           across the body, which is what opens its left flank.
-  2.9–3.45 the attacker turns onto the open line and lunges: the point enters the flank.
+  2.35–2.8 the attacker feints high at the defender's face; its shield goes up and out
+           to meet the point (elbow extended, shoulder flexed), which is what opens
+           its left flank below. Trunk and shield stay square to the attacker.
+  2.9–3.45 the attacker drops the point onto the open line and lunges: the point goes
+           in under the raised shield, into the flank.
   3.45–5.0 the defender is driven back two steps and goes down onto both knees, folding
            over the wound; its shield arm drops and the spear point sinks to the board.
   4.6–6.5  the attacker recovers, watches, and advances onto the square.
@@ -143,8 +146,8 @@ def feet_at(t, swings, start_rear):
 
 # ---------------------------------------------------------------------------------------
 # The attacker. pawn_capture.py --aim solves APPROACH, STRIKE_YAW and STRIKE_BEND so the
-# board's spear tip meets the open flank at HIT_TIME, and FEINT_YAW and FEINT_REACH so the
-# feint's point stops just short of the defender's arriving shield.
+# board's spear tip meets the open flank at HIT_TIME, and FEINT_YAW, FEINT_HIGH and
+# FEINT_REACH so the feint's point stops just short of the defender's rising shield.
 APPROACH = 1.2003
 LUNGE = 0.55      # lead foot advance in the lunge (fencing lunge: 0.4–0.6 m)
 STRIKE_YAW = 0.0866  # extra turn of the body to the left at the hit, radians
@@ -152,6 +155,7 @@ STRIKE_BEND = 0.0106  # trunk bend at the hit against the pelvis tilt: sets the 
 FEINT_YAW = 0.2503   # turn of the body to the left in the feint, radians
 FEINT_STEP = 0.08    # the feint's stamp: the lead foot lifts and stamps a little forward
 FEINT_REACH = 0.85   # how far the feint's thrust goes, as a share of the full thrust
+FEINT_HIGH = 0.3     # the point raised above the aimed line in the feint (aim less this)
 MARCH_LIFT = 0.15
 CHAMBER = 0.10  # pelvis back over the rear leg before the lunge, metres
 LEAD_TURN = 0.5  # share of the body's turn the lead foot takes
@@ -167,7 +171,7 @@ def attacker_swings(approach):
 
 def attacker(t, approach=APPROACH, strike_yaw=STRIKE_YAW, strike_bend=STRIKE_BEND,
              feint_yaw=FEINT_YAW, feint_step=FEINT_STEP, lunge=LUNGE, march_raise=MARCH_RAISE,
-             counter_time=COUNTER_TIME, feint_reach=FEINT_REACH, **_):
+             counter_time=COUNTER_TIME, feint_reach=FEINT_REACH, feint_high=FEINT_HIGH, **_):
     rest_l, rest_r = REST["ankleL"], REST["ankleR"]
     early, late = attacker_swings(approach)
     z, lift, pitch = feet_at(t, early + late, 0.0)
@@ -220,7 +224,8 @@ def attacker(t, approach=APPROACH, strike_yaw=STRIKE_YAW, strike_bend=STRIKE_BEN
     # Arms. The spear comes to the aim as the attacker sets for the attack and goes back
     # to the guard once the defender is down; the feint is a part thrust, the strike a
     # full one that follows the lunge's drive by 50 ms (the shaft lags the body).
-    aim = hold(t, 1.9, 2.3, 4.0, 4.5)
+    # The feint goes up at the face, the point comes down onto the flank line after it.
+    aim = hold(t, 1.9, 2.3, 4.0, 4.5) - feint_high * hold(t, 2.3, 2.5, 2.85, 3.1)
     thrust = feint_reach * hold(t, 2.35, 2.55, 2.9, 3.1) + hold(t, 3.1, 3.42, 3.72, 4.1)
     # The shield meets the counter-thrust and beats it outwards (to the attacker's left),
     # then comes back square; while marching it rides higher so the knee clears it.
@@ -256,7 +261,9 @@ GUARD_YAW = 0.2634
 COUNTER_STEP = 0.2
 COUNTER_YAW = -0.0088
 COUNTER_BEND = 0.0425
-FEINT_SWING = -0.3  # across to its right, as far as the shield goes in front of the chest (raised clear of the thighs) without meeting the trunk or its own spear
+COVER_REACH = 1.1  # the shield meets the high feint: elbow extended 63°, from 98° to 35° of flexion
+FALL_SHIELD = {"reach": 0.8, "swing": 0.7, "raise": 0.7}  # out to the left, rim on the board by the knee
+COVER_RAISE = 0.97  # and the shoulder flexed: the lower rim goes up to 1.1 m, clear of the face
 KNEEL = {"pelvis_y": 0.575, "pelvis_z": 0.16, "pitch": -1.3}  # on both knees, toes tucked
 
 
@@ -274,10 +281,10 @@ def defender_local(t, guard_yaw=GUARD_YAW, counter_step=COUNTER_STEP, counter_ya
     thrust = hold(t, ct - 0.32, ct - 0.01, ct + 0.0, ct + 0.3)
     beaten = smooth(t, ct, ct + 0.22)  # the shaft is knocked up and out and stays high
     knocked = bump(t, ct, ct + 0.55)    # the push of the beat on the shoulders
-    # Feint: the shield follows the threat across to the right from 120 ms after it
-    # starts (reaction time), the shoulders go a little with it.
+    # Feint: the shield goes up and out to meet the high point from 120 ms after it
+    # starts (reaction time); the elbow leads, the shoulder follows.
     cover = smooth(t, 2.47, 2.75)
-    cover_t = smooth(t, 2.52, 2.82)
+    cover_r = smooth(t, 2.43, 2.7)
     tau = t - HIT_TIME
     # The blow: the body is driven back and folds over the wound in its left flank.
     jolt = smooth(tau, 0, 0.14)
@@ -301,14 +308,14 @@ def defender_local(t, guard_yaw=GUARD_YAW, counter_step=COUNTER_STEP, counter_ya
     pelvis = tuple(a + (b - a) * kneel for a, b in zip(stand, down))
     look = 1 - smooth(tau, 0.0, 0.15)  # after the blow the head goes with the body
     off = 1 - smooth(tau, 0, 0.4)
-    down_arm = smooth(tau, 0.65, 1.3)
+    fall = smooth(tau, 0.1, 0.7)  # the shield arm goes out to the side as the spear is drawn out
     return {
         "pelvis": pelvis,
-        "yaw": guard_yaw * guard + counter_yaw * lunge - 0.08 * cover * off,
+        "yaw": guard_yaw * guard + counter_yaw * lunge,
         "pitch": 0.08 * kneel,
         "roll": 0.0,
         "trunk": {"bend": 0.06 * guard + 0.03 * settle + counter_bend * lunge + 0.32 * fold + 0.25 * slump - 0.1 * kneel,
-                  "twist": -0.12 * knocked - 0.12 * cover_t * off + 0.12 * fold,
+                  "twist": -0.12 * knocked + 0.12 * fold,
                   "side": 0.18 * fold},
         "head": {"bend": 0.25 * fold + 0.3 * slump, "twist": 0.1 * fold, "look": look},
         "arms": {
@@ -319,12 +326,14 @@ def defender_local(t, guard_yaw=GUARD_YAW, counter_step=COUNTER_STEP, counter_ya
             # The point goes out to its right as it sinks, off the line the attacker
             # advances along once it is down.
             "turn": -0.12 * knocked - 0.8 * smooth(tau, 0.3, 1.3),
-            # Square to the attacker in the guard (against the body's turn), across to the
-            # right with the feint; after the blow the arm sags and the shield comes back
-            # in front of the body, away from the spear in the left flank, and rests on
-            # the board as the knees go down (the fit keeps its edge out of the board).
-            "swing": -0.6 * guard_yaw * guard + (FEINT_SWING + 0.6 * guard_yaw) * cover + (-0.25 - FEINT_SWING) * down_arm * cover,
-            "raise": 0.08 * settle * off - 0.2 * smooth(tau, 0.1, 0.8),
+            # Square to the attacker in the guard (against the body's turn); up and out
+            # at the feint and held through the blow; then, as the spear is drawn out
+            # and the knees give, the arm goes out to its left and the shield's rim comes
+            # down to the board beside the left knee, the body sinking onto it (the fit
+            # keeps its edge out of the board and the body).
+            "swing": -0.6 * guard_yaw * guard * (1 - cover) * (1 - fall) + FALL_SHIELD["swing"] * fall,
+            "raise": 0.08 * settle * off + COVER_RAISE * cover * (1 - fall) + FALL_SHIELD["raise"] * fall,
+            "reach": COVER_REACH * cover_r * (1 - fall) + FALL_SHIELD["reach"] * fall,
         },
         "feet": {
             # As the knees go down the heels come up and the toes tuck under.
