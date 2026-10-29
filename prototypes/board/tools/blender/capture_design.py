@@ -227,9 +227,10 @@ def attacker(t, approach=APPROACH, strike_yaw=STRIKE_YAW, strike_bend=STRIKE_BEN
     # Arms. The spear comes to the aim as the attacker sets for the attack and goes back
     # to the guard once the defender is down; the feint is a part thrust, the strike a
     # full one that follows the lunge's drive by 50 ms (the shaft lags the body).
-    # The feint goes up at the face, the point comes down onto the flank line after it.
-    aim = hold(t, 1.9, 2.3, 4.0, 4.5) - feint_high * hold(t, 2.3, 2.5, 2.95, 3.15)
-    thrust = feint_reach * hold(t, 2.35, 2.55, 2.84, 3.04) + hold(t, 3.16, 3.48, 3.74, 4.1)
+    # The feint goes up at the face; the point comes back off the shield first and only
+    # then down onto the flank line, so it does not drag across the shield's face.
+    aim = hold(t, 1.9, 2.3, 4.0, 4.5) - feint_high * hold(t, 2.3, 2.5, 2.98, 3.14)
+    thrust = feint_reach * hold(t, 2.35, 2.55, 2.82, 2.98) + hold(t, 3.16, 3.48, 3.74, 4.1)
     # The shield meets the counter-thrust and beats it outwards (to the attacker's left),
     # then comes back square; while marching it rides higher so the knee clears it.
     ct = counter_time
