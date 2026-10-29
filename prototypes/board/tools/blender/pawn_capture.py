@@ -855,7 +855,30 @@ class Pair:
         """Moves each spear only as far as it must: turned out to the right clear of the own
         shield, then its point lifted clear of the other figure's shield (a beat throws it
         up), of the board and of the own body, and the defender's of the attacker's
-        body. The attacker's point may stay in the defender's body around the hit."""
+        body. The attacker's point may stay in the defender's body around the hit.
+
+        Lifting is not monotone where the point swings round the shield's edge: the
+        smoothing can carry a neighbour's lift into a frame that was clear unlifted and
+        put the point into the shield. So the smoothed fit is checked again, and each frame
+        it puts in contact gets the lift it still needs on top, up to three rounds."""
+        first = self.spear_needs(times, clear)
+        for who in "ad":
+            for k in ("turn", "lift"):
+                self.extra[who][k] = smooth_extra(times, first[who][k])
+        for _ in range(3):
+            more = self.spear_needs(times, clear)
+            if not any(max(more[who]["lift"]) > 1e-4 for who in "ad"):
+                break
+            for who in "ad":
+                have = self.extra[who]["lift"]
+                total = [have.get(round(t * design.FPS), 0.0) + e for t, e in zip(times, more[who]["lift"])]
+                self.extra[who]["lift"] = smooth_extra(times, total)
+                first[who]["lift"] = [max(a, b) for a, b in zip(first[who]["lift"], total)]
+        return {who: {k: round(max(v), 3) for k, v in first[who].items()} for who in "ad"}
+
+    def spear_needs(self, times, clear=0.01):
+        """For each frame, how much more each spear must turn out and lift than it does now
+        (the fits already made included) to be clear."""
         need = {who: {"turn": [], "lift": []} for who in "ad"}
         for t in times:
             pa, pd = self.pose_attacker(t), None
@@ -890,10 +913,7 @@ class Pair:
                     return crossing(own_body, butt, tip) is None
                 need[who]["turn"].append(turn)
                 need[who]["lift"].append(bisect(free, 1.0))
-        for who in "ad":
-            for k in ("turn", "lift"):
-                self.extra[who][k] = smooth_extra(times, need[who][k])
-        return {who: {k: round(max(v), 3) for k, v in need[who].items()} for who in "ad"}
+        return need
 
 
 def solve_pair(pair, times, shapes=True):
