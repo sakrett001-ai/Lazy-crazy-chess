@@ -56,27 +56,62 @@
       "detail": true
     },
     {
-      "name": "at the hit the spear tip is at the defender (≤ 25 cm from the body axis)",
+      "name": "at the hit the spear tip is at the defender flank (10–25 cm from the body axis)",
       "ok": true,
       "detail": {
-        "distanceM": 0.12,
-        "time": 2.3
+        "distanceM": 0.185,
+        "time": 3.467
       }
     },
     {
       "name": "the hit lands at body height (0.8–1.5 m)",
       "ok": true,
-      "detail": 1.14
+      "detail": 0.91
     },
     {
       "name": "attacker moves without jumps (< 15 cm per frame)",
       "ok": true,
-      "detail": 0.147
+      "detail": 0.088
+    },
+    {
+      "name": "knees stay within 0–140° flexion",
+      "ok": true,
+      "detail": {
+        "maxFlexDeg": 84.9
+      }
+    },
+    {
+      "name": "bent knees point forward, never backwards",
+      "ok": true,
+      "detail": 0
+    },
+    {
+      "name": "soles do not sink into the board (≥ rest − 2 cm)",
+      "ok": true,
+      "detail": 0.074
+    },
+    {
+      "name": "pelvis over the feet while standing",
+      "ok": true,
+      "detail": 0
     },
     {
       "name": "after the scene the attacker stands on d5 and the victim is gone",
       "ok": true,
       "detail": "4k3/8/8/3P4/8/8/8/4K3 b - - 0 1"
+    },
+    {
+      "name": "the pawn walks: feet travel with the body",
+      "ok": true,
+      "detail": 5.2
+    },
+    {
+      "name": "planted feet do not slide (≤ 1 cm per frame)",
+      "ok": true,
+      "detail": {
+        "plantedFrames": 70,
+        "maxSlideM": 0.001
+      }
     },
     {
       "name": "a legal opening including castling plays through",
@@ -101,21 +136,22 @@
   },
   "performance": {
     "pawns": 16,
-    "msPerPose": 3.4574999999953433,
-    "triangles": 3602144,
+    "msPerPose": 4.5125,
+    "triangles": 3821852,
     "note": "Pose solving per figure on this machine; rendering speed depends on the GPU."
   },
   "images": {
     "start": "board-start.png",
     "fencing": "board-clash.png",
     "capture": {
-      "turn": "board-capture-turn.png",
       "approach": "board-capture-approach.png",
+      "coil": "board-capture-coil.png",
       "feint": "board-capture-feint.png",
-      "shield-turn": "board-capture-shield-turn.png",
+      "shield-follows": "board-capture-shield-follows.png",
       "strike": "board-capture-strike.png",
+      "jolt": "board-capture-jolt.png",
+      "knees-give": "board-capture-knees-give.png",
       "fall": "board-capture-fall.png",
-      "removed": "board-capture-removed.png",
       "step-in": "board-capture-step-in.png"
     },
     "game": "board-opening.png"

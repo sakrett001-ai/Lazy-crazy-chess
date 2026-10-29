@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import {clone as cloneSkinned} from 'three/addons/utils/SkeletonUtils.js';
 import {createLoadout} from '../../white-pawn/src/loadout.mjs';
 import {deterministicClip} from '../../white-pawn/src/camera-rig.mjs';
+import {createBodyRig} from './motion.mjs';
 
 // Faction finishes on the one shared pawn model. White keeps the workshop
 // default (steel, white shield). Black is a temporary repaint until the
@@ -61,18 +62,21 @@ export function createPawnFactory({gltf}){
   const restore=()=>{for(const [b,p,q,s]of rest){b.position.copy(p);b.quaternion.copy(q);b.scale.copy(s);}};
   const loadout=createLoadout({model,bones});
   loadout.apply({});
+  const rig=createBodyRig({bones});
   const samplers=Object.fromEntries(gltf.animations.map((clip,index)=>[clip.name,deterministicClip(model,gltf.animations,index)]));
   const place=placement(holder),fade=fader(holder);
   let pose={action:'rest',time:0};
-  function solve(action,time){
+  // layer: the procedural body layer of motion.mjs, applied over the clip
+  // sample and before the arms are solved.
+  function solve(action,time,layer=null){
    const saved=place.get();
    holder.position.set(0,0,0);holder.quaternion.identity();holder.updateMatrixWorld(true);
-   restore();samplers[action]?.seek(time);loadout.poseAt(action,time);
-   place.set(saved);pose={action,time};
+   restore();samplers[action]?.seek(time);holder.updateMatrixWorld(true);rig.apply(layer);loadout.poseAt(action,time);
+   place.set(saved);pose={action,time,layered:!!layer};
   }
   // Spear tip and shield face in the model frame for one pose (metres).
-  function probe(action,time){
-   const saved=place.get();solve(action,time);
+  function probe(action,time,layer=null){
+   const saved=place.get();solve(action,time,layer);
    holder.position.set(0,0,0);holder.quaternion.identity();holder.updateMatrixWorld(true);
    const m=loadout.measure();
    place.set(saved);
@@ -90,7 +94,9 @@ export function createPawnFactory({gltf}){
    place.set(saved);
    return{front,centerX:sx/n,centerZ:sz/n};
   }
-  return{id,kind:'pawn',color,object:holder,pose:solve,probe,shieldFront,measureWorld:()=>loadout.measure(),place:place.set,placement:place.get,fade,current:()=>({...pose}),dispose(){holder.removeFromParent();}};
+  // Bone positions in the model frame for the current pose.
+  function points(names){holder.updateMatrixWorld(true);const inverse=holder.matrixWorld.clone().invert();const norm=x=>String(x).replace(/[._\-\s]/g,'').toLowerCase(),by=new Map(Object.entries(bones).map(([k,b])=>[norm(k),b]));return Object.fromEntries(names.map(n=>[n,by.get(norm(n))?by.get(norm(n)).getWorldPosition(new THREE.Vector3()).applyMatrix4(inverse).toArray().map(v=>+v.toFixed(3)):null]));}
+  return{id,kind:'pawn',color,object:holder,pose:solve,points,rig,probe,shieldFront,measureWorld:()=>loadout.measure(),place:place.set,placement:place.get,fade,current:()=>({...pose}),dispose(){holder.removeFromParent();}};
  };
 }
 

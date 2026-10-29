@@ -1,7 +1,8 @@
 import {build} from '../../human-base/node_modules/esbuild/lib/main.js';
-import {readFile,writeFile} from 'node:fs/promises';
+import {readFile,writeFile,mkdir} from 'node:fs/promises';
 import {fileURLToPath} from 'node:url';
 import path from 'node:path';
+import {gzipSync} from 'node:zlib';
 
 // Standalone board: page, three.js, chess.js and the pawn model in one file.
 const root=path.dirname(path.dirname(fileURLToPath(import.meta.url)));
@@ -17,3 +18,17 @@ const html=template.replace('/*STYLE*/',()=>css).replace('/*SCRIPT*/',()=>script
 const out=path.join(root,'board.html');
 await writeFile(out,html);
 console.log(`Standalone board: ${(Buffer.byteLength(html)/1048576).toFixed(1)} MiB, ${out}`);
+
+// Optional hosted build: `node scripts/build.mjs --web <dir>` writes the page
+// body without the document skeleton, with the model gzipped inline so the
+// page loads nothing from other addresses and stays under 16 MB.
+const web=process.argv.indexOf('--web');
+if(web>0){
+ const dir=path.resolve(process.argv[web+1]);await mkdir(dir,{recursive:true});
+ const packed=gzipSync(model,{level:9}).toString('base64');
+ const page=html.replace(/<script id="model-data"[^>]*>[^<]*<\/script>/,()=>`<script id="model-data" type="application/octet-stream" data-encoding="gzip">${packed}</script>`);
+ const title=page.match(/<title>.*?<\/title>/)[0],style=page.match(/<style>[\s\S]*?<\/style>/)[0],body=page.match(/<body>([\s\S]*)<\/body>/)[1];
+ const out=`${title}\n${style}\n${body}`;
+ await writeFile(path.join(dir,'index.html'),out);
+ console.log(`Web board: ${(Buffer.byteLength(out)/1048576).toFixed(1)} MiB, ${dir}`);
+}
