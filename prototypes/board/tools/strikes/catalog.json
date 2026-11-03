@@ -73,5 +73,30 @@
    },
    "note": "Прямой удар правой с разворотом таза и переносом веса — та же механика, что у укола копьём из-за щита. Тело и время укола из записи, руки ставит мастерская по своим линиям копья и щита."
   }
+ ],
+ "storyboard": [
+  {
+   "id": "bishop-vom-tag-cut",
+   "figure": "Офицер",
+   "label": "Прямой удар сверху из «вом Таг» (Тальхоффер, 1443)",
+   "motion": "storyboard/talhoffer-cut.lazy-chess.json",
+   "clip": "talhoffer-vom-tag-cut",
+   "out": "../../motions/bishop-vom-tag-cut.motion.json",
+   "hold": [
+    0.5,
+    0.6
+   ],
+   "track": "recorded",
+   "hands": "two",
+   "loadout": {
+    "weaponType": "bastard"
+   },
+   "source": {
+    "work": "Hans Talhoffer, Fechtbuch, 1443, Gotha, Forschungsbibliothek, Chart. A 558",
+    "license": "рукопись — общественное достояние",
+    "tool": "Lazy-skills-lab, skills/storyboard-motion"
+   },
+   "note": "Поза стойки и конца удара подняты с листа трактата вместе с мечом: линия клинка, гарда и место каждого кулака на рукояти из раскадровки, между ключами — сплайн навыка. Стойка и опускание таза сверены с живой записью (группа «Расфехтовки», VK); темп 0,2 с настроен по ней, а не проверен."
+  }
  ]
 }
