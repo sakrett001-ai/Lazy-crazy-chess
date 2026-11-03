@@ -20,6 +20,7 @@ const world=sq=>{const {file,rank}=coords(sq);return[(file-3.5)*SQUARE,(3.5-rank
 const forwardYaw=color=>color==='w'?Math.PI:0;
 const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
 const smooth=(t,a,b)=>{const u=clamp((t-a)/(b-a),0,1);return u*u*(3-2*u);};
+const HEAD_FIND=.25; // s, the head coming round onto the opponent as a capture starts
 const hash=s=>{let h=2166136261;for(const c of s)h=Math.imul(h^c.charCodeAt(0),16777619);return(h>>>0)/4294967296;};
 
 function fallback(message){$('#loading').hidden=true;$('#fallback').hidden=false;$('#fallback').textContent=message+'. Обновите страницу или откройте файл в свежей версии Chrome, Edge или Firefox.';window.livingChess={ready:false,fallback:message};}
@@ -220,10 +221,12 @@ async function init(bytes){
   // While the holder is still turning onto the line, the head leads: it is
   // turned by what the holder has left to turn, so the eyes stay on the other
   // figure as in the clip (the attacker's turn back after the scene is its own).
+  // At the move's start the head comes round onto the other figure over the
+  // first quarter second (HEAD_FIND) instead of snapping there in one frame.
   const put=(actor,clip,t,yaw,extra={},lead=true)=>{
    const k=actor.mocap.retarget.leg/clip.leg,p=sampleClip(clip,t),[x,z]=rotate([p.pelvis[0]*k,p.pelvis[2]*k],line);
    actor.place({x:plan.from[0]+x,z:plan.from[1]+z,yaw,...extra});
-   return{clip,points:turnHead(centerPoints(p),lead?wrapAngle(line-yaw):0),weight:1,arms:sampleArms(clip,t)};
+   return{clip,points:turnHead(centerPoints(p),lead?wrapAngle(line-yaw)*smooth(t,0,HEAD_FIND):0),weight:1,arms:sampleArms(clip,t)};
   };
   // A pair that times its own arms (spear phases, shield turn) plays them;
   // one without keeps the board's action timing.

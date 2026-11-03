@@ -103,9 +103,11 @@ check('planted feet do not slide (≤ 1.5 cm per frame)',planted>60&&slide<=.015
 const touches=capture.filter(f=>f.touch.length).map(f=>({t:f.t,touch:f.touch}));
 check('no body or spear passes through a shield, own or opponent (bone chains, butt to tip)',touches.length===0,touches.slice(0,8));
 // Both figures look at each other until the blow; the attacker keeps its eyes
-// on the defender until it is gone.
+// on the defender until it is gone. The move starts with both facing their own
+// files: the heads come round onto each other over the first quarter second
+// (board.mjs HEAD_FIND), and from then on the gaze holds.
 const worst=(frames,who)=>frames.reduce((m,f)=>Math.abs(f.gaze[who])>m.maxDeg?{maxDeg:+Math.abs(f.gaze[who]).toFixed(1),time:f.t}:m,{maxDeg:0,time:null});
-const gazeA=worst(capture.filter(f=>f.gaze.attacker!==undefined),'attacker'),gazeD=worst(capture.filter(f=>f.t<=hitTime&&f.gaze.defender!==undefined),'defender');
+const HEAD_FIND=.25,gazeA=worst(capture.filter(f=>f.t>=HEAD_FIND&&f.gaze.attacker!==undefined),'attacker'),gazeD=worst(capture.filter(f=>f.t>=HEAD_FIND&&f.t<=hitTime&&f.gaze.defender!==undefined),'defender');
 check('the attacker looks at the defender (heading within 15°)',gazeA.maxDeg<=15,gazeA);
 check('the defender looks at the attacker until the blow (heading within 15°)',gazeD.maxDeg<=15,gazeD);
 const state=await page.evaluate(()=>window.livingChess.state());
