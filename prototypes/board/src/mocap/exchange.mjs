@@ -54,7 +54,36 @@ export function exchangeLayout(pair,k,distance,given=null){
 // walk off the line of the fight.
 export function cyclePose(clip,t,k,scale){
  const p=sampleClip(clip,t),{forward}=travelAt(clip,t);
- return{points:centerPoints(p),offset:{x:0,z:forward*k*scale}};
+ return{points:holdThrust(clip,t,centerPoints(p)),offset:{x:0,z:forward*k*scale}};
+}
+
+// The spear hangs from the trunk (loadout.mjs), and two metres of it turn a
+// small turn of the shoulders into a wide sweep of the point: in the
+// decisive cycle of ролик 516 the attacker's trunk turns 18° in one frame at
+// the reach and 45° over 0,2 s, so the point would swipe 0,6 m a frame
+// across the partner instead of going in. A swordsman can turn through his
+// cut; a spearman holds the line of the thrust with his shoulders while the
+// hips turn under them. So over the thrust the attacker's upper body keeps
+// the yaw it has at the reach (the board aims the thrust by that pose),
+// within the spine's twist over the hips (TWIST_MAX), eased in from the
+// chamber and out after the recovery.
+const TWIST_MAX=50*Math.PI/180;
+const yawOf=(L,R)=>Math.atan2(-(R[2]-L[2]),R[0]-L[0]);
+const wrapA=a=>Math.atan2(Math.sin(a),Math.cos(a));
+const LOWER=/^(pelvis|hip|knee|ankle|heel|toe)/;
+const reachYaws=new WeakMap();
+function holdThrust(clip,t,points){
+ const s=clip.events?.strike;if(clip.side!=='attack'||!s||!points.shoulderL||!points.hipL)return points;
+ if(!reachYaws.has(clip)){const q=centerPoints(sampleClip(clip,s.reach));reachYaws.set(clip,yawOf(q.shoulderL,q.shoulderR));}
+ const w=smooth(t,s.start-.25,s.start+.6*(s.reach-s.start))*(1-smooth(t,s.reach+.25,s.reach+.6));if(w<=0)return points;
+ const sh=yawOf(points.shoulderL,points.shoulderR),hip=yawOf(points.hipL,points.hipR);
+ const want=hip+clamp(wrapA(reachYaws.get(clip)-hip),-TWIST_MAX,TWIST_MAX),a=wrapA(want-sh)*w;
+ if(Math.abs(a)<1e-6)return points;
+ const c=Math.cos(a),n=Math.sin(a),o=points.pelvis,out={};
+ // yawOf negates z: a turn by +a is x,z → (x cos a + z sin a, −x sin a + z cos a) about the pelvis.
+ for(const [name,v] of Object.entries(points)){if(LOWER.test(name)){out[name]=v;continue;}
+  const x=v[0]-o[0],z=v[2]-o[2];out[name]=[o[0]+x*c+z*n,v[1],o[2]-x*n+z*c];}
+ return out;
 }
 const blendPose=(a,b,w)=>{if(w<=0)return a;if(w>=1)return b;const points={};for(const n of Object.keys(b.points))points[n]=lerp(a.points[n],b.points[n],w);
  return{points,offset:{x:a.offset.x+(b.offset.x-a.offset.x)*w,z:a.offset.z+(b.offset.z-a.offset.z)*w}};};

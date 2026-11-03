@@ -180,7 +180,9 @@ async function init(bytes){
  const fenceStates=new Map();
  // The loadout fitted to the recorded body (exchange.mjs): the spear
  // levelled against the lean, the shield carried over the front knee.
- const spearArms=(arms,points,clip,k,local)=>arms.action==='Spear_Study'?{phase:levelSpear(loadoutPhases(arms.action,arms.time),trunkLean(points,clip.neutral))}
+ // The shield is carried over the front knee whoever is thrusting: the
+ // attacker carries one too, and its lunge brings the knee up most.
+ const spearArms=(arms,points,clip,k,local)=>arms.action==='Spear_Study'?{phase:levelSpear(loadoutPhases(arms.action,arms.time),trunkLean(points,clip.neutral)),shield:shieldAt(clip,local,k)}
   :arms.action==='Shield_Brace'?{shield:shieldAt(clip,local,k)}:undefined;
  // Exchange fitted to the two squares and to the weapons. The recording's
  // fighters held longswords; a pawn's spear is longer. So the approach is
