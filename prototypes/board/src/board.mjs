@@ -216,7 +216,7 @@ async function init(bytes){
   const top=sweep.reduce((a,b)=>Math.hypot(b.x,b.z)>Math.hypot(a.x,a.z)?b:a);
   let stop=top.t;for(const s of sweep){if(s.t>top.t)break;if(Math.hypot(s.x,s.z)>limit){stop=Math.max(1,s.t-.05);break;}}
   const at=sweep.find(s=>s.t>=stop-1e-9)||top;
-  return{yaw:Math.atan2(aim[0],aim[1])-Math.atan2(at.x,at.z),stop,short:Math.max(0,limit-Math.hypot(top.x,top.z))};
+  return{yaw:Math.atan2(aim[0],aim[1])-Math.atan2(at.x,at.z),stop,target:aim,tip:[at.x,at.z],short:Math.max(0,limit-Math.hypot(top.x,top.z))};
  }
  function duelExchange(actor,piece,target){
   const pair=motion.duel?.exchange;if(!pair)return null;
@@ -511,6 +511,8 @@ async function init(bytes){
  load('start');$('#loading').hidden=true;requestAnimationFrame(loop);
 
  window.livingChess={ready:true,load,click,play,
+  // The recorded exchange's fit to the squares: scale, gap at the blow, aim.
+  duelLayouts:()=>[...layouts].map(([key,l])=>({key,scale:l.scale,gap:l.gap,closest:l.closest,aim:l.aim})),
   manual(on=true){manual=on;last=null;},
   // Draws only the last frame: the checks need the motion, not every picture.
   step(seconds,fps=30,draw=true){const n=Math.max(1,Math.round(seconds*fps));for(let i=0;i<n;i++)advance(1/fps,draw&&i===n-1);},
