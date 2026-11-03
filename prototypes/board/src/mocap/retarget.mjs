@@ -7,7 +7,8 @@ import {add,sub,scale,mid,lerp,normalize,distance,qMul,qConj,qSlerp,qRotate,fram
 // the source frame: world = source · rest⁻¹ · restWorld. Only directions
 // between key points are used, so the source's bone axes, rest pose, units
 // and proportions never enter; the pelvis height comes from the supporting
-// foot, so the figure stands on the ground whatever its leg length.
+// foot's ankle or toe, so the figure stands on the ground whatever its leg
+// length and foot proportions.
 
 // Bones of the pawn (MakeHuman game-engine rig) the retargeter drives, from
 // the pelvis outwards. Arms are left to the weapon loadout, which places the
@@ -46,11 +47,11 @@ export function createRetargeter(rest){
  const restFrames={pelvis:FRAMES.pelvis(pts),chest:FRAMES.chest(pts),head:FRAMES.head({...pts,eyeL:add(P.head,[1,0,0]),eyeR:P.head}),
   thighL:FRAMES.thigh(pts,'L'),thighR:FRAMES.thigh(pts,'R'),shinL:FRAMES.shin(pts,'L'),shinR:FRAMES.shin(pts,'R'),footL:FRAMES.foot(pts,'L'),footR:FRAMES.foot(pts,'R')};
  const leg=(distance(pts.hipL,pts.kneeL)+distance(pts.kneeL,pts.ankleL)+distance(pts.hipR,pts.kneeR)+distance(pts.kneeR,pts.ankleR))/2;
- const ankleHeight=Math.min(pts.ankleL[1],pts.ankleR[1]);
+ const ankleHeight=Math.min(pts.ankleL[1],pts.ankleR[1]),toeHeight=Math.min(pts.toeL[1],pts.toeR[1]);
 
  // pose(points, clip): world rotations of the driven bones and the root
  // position, all in model space. clip supplies leg (source leg length) and
- // ground (lowest source ankle height) from prepareClip.
+ // ground and groundToe (lowest source ankle and toe heights) from prepareClip.
  function pose(src,clip){
   const delta=(name,q)=>qMul(q,qConj(restFrames[name]));
   const dP=delta('pelvis',FRAMES.pelvis(src)),dC=delta('chest',FRAMES.chest(src));
@@ -66,14 +67,20 @@ export function createRetargeter(rest){
    d['thigh'+s]=delta('thigh'+s,FRAMES.thigh(src,s));d['shin'+s]=delta('shin'+s,FRAMES.shin(src,s));d['foot'+s]=delta('foot'+s,FRAMES.foot(src,s));
    turned(c.hip,d['thigh'+s]);turned(c.knee,d['shin'+s]);turned(c.ankle,d['foot'+s]);
   }
-  // Root: horizontal travel scaled to the figure; height set so the lower
-  // ankle sits as high above the ground as the source's does.
+  // Root: horizontal travel scaled to the figure. Height: each ankle and toe
+  // is measured above its own lowest level (the source's lowest over the
+  // clip, the figure's rest pose), and the figure's lowest of them is set as
+  // high as the source's. A flat foot puts the ankle where it stands at rest;
+  // a toe that stays on the floor while the heel rises keeps the figure's
+  // toe on the floor, whatever the figure's foot proportions.
   const k=leg/clip.leg,root=[P.root[0]+src.pelvis[0]*k,P.root[1],P.root[2]+src.pelvis[2]*k];
   const chain=s=>{const c=PAWN.legs[s],hip=add(root,qRotate(dP,sub(P[c.hip],P.root))),knee=add(hip,qRotate(d['thigh'+s],sub(P[c.knee],P[c.hip]))),ankle=add(knee,qRotate(d['shin'+s],sub(P[c.ankle],P[c.knee])));
    return{hip,knee,ankle,toe:add(ankle,qRotate(d['foot'+s],sub(P[c.toe],P[c.ankle])))};};
-  const low=Math.min(chain('L').ankle[1],chain('R').ankle[1]),want=ankleHeight+(Math.min(src.ankleL[1],src.ankleR[1])-clip.ground)*k;
+  const L=chain('L'),R=chain('R'),toes=clip.groundToe!==undefined;
+  const low=Math.min(L.ankle[1]-ankleHeight,R.ankle[1]-ankleHeight,...(toes?[L.toe[1]-toeHeight,R.toe[1]-toeHeight]:[]));
+  const want=Math.min(Math.min(src.ankleL[1],src.ankleR[1])-clip.ground,...(toes?[Math.min(src.toeL[1],src.toeR[1])-clip.groundToe]:[]))*k;
   root[1]+=want-low;
   return{root,world,legs:{L:chain('L'),R:chain('R')},scale:k};
  }
- return{pose,leg,ankleHeight,restFrames,points:pts};
+ return{pose,leg,ankleHeight,toeHeight,restFrames,points:pts};
 }

@@ -63,11 +63,15 @@ export const MEDIAPIPE=Object.freeze({nose:0,eyeL:2,eyeR:5,earL:7,earR:8,shoulde
 // Key points from one MediaPipe world-landmark frame. MediaPipe's world
 // space is image-aligned (x right, y down, z away from the camera); ours is
 // y up, so y and z flip.
+const BALL=.26;
 export function fromMediaPipe(landmarks){
  const p=i=>{const l=landmarks[i];return[l.x,-l.y,-l.z];};
  const out={};for(const [k,i]of Object.entries(MEDIAPIPE))out[k]=p(i);
  const m=(a,b)=>a.map((v,i)=>(v+b[i])/2);
  out.pelvis=m(out.hipL,out.hipR);out.neck=m(out.shoulderL,out.shoulderR);out.head=m(out.earL,out.earR);
  out.chest=out.pelvis.map((v,i)=>v+(out.neck[i]-v)*.7);
+ // MediaPipe's foot point is the tip of the toes; ours is the ball of the
+ // foot, at 74 % of the foot's length from the heel (ANSUR II medians).
+ for(const s of ['L','R'])out['toe'+s]=out['toe'+s].map((v,i)=>v+(out['heel'+s][i]-v)*BALL);
  return out;
 }

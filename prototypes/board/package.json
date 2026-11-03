@@ -11,7 +11,9 @@
     "verify:lab": "node scripts/verify-lab.mjs",
     "verify:capture": "node scripts/verify-capture.mjs",
     "test:take": "cd tools/motionbricks && python3 -m unittest test_take.py",
-    "capture:blender": "python3 tools/blender/pawn_capture.py"
+    "capture:blender": "python3 tools/blender/pawn_capture.py",
+    "test:videomocap": "cd tools/videomocap && python3 -m unittest test_clean.py",
+    "preview:video": "node scripts/preview-video-motion.mjs"
   },
   "dependencies": {
     "chess.js": "1.4.0"

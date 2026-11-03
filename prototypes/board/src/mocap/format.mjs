@@ -59,9 +59,10 @@ export function prepareClip(file,clip){
  const legOf=(o,s)=>distance(o['hip'+s],o['knee'+s])+distance(o['knee'+s],o['ankle'+s]);
  const leg=frames.slice(0,Math.min(frames.length,30)).reduce((a,o)=>a+legOf(o,'L')+legOf(o,'R'),0)/(2*Math.min(frames.length,30));
  const ground=Math.min(...frames.map(o=>Math.min(o.ankleL[1],o.ankleR[1])));
+ const groundToe=Math.min(...frames.map(o=>Math.min(o.toeL[1],o.toeR[1])));
  const duration=(clip.frames-1)/clip.fps;
  const travel=sub(frames[frames.length-1].pelvis,frames[0].pelvis);travel[1]=0;
- return{name:clip.name,label:clip.label||clip.name,role:clip.role||'other',loop:!!clip.loop,fps:clip.fps,count:clip.frames,duration,frames,leg,ground,travel,points:P,partner:clip.partner||null,shared,arms:clip.arms||null,fade:clip.fade||null};
+ return{name:clip.name,label:clip.label||clip.name,role:clip.role||'other',loop:!!clip.loop,fps:clip.fps,count:clip.frames,duration,frames,leg,ground,groundToe,travel,points:P,partner:clip.partner||null,shared,arms:clip.arms||null,fade:clip.fade||null};
 }
 
 // Key points at time t (seconds), linear between frames. A looping clip
