@@ -27,34 +27,34 @@
       "name": "at the hit the spear tip is at the defender flank (10–25 cm from the body axis)",
       "ok": true,
       "detail": {
-        "distanceM": 0.143,
+        "distanceM": 0.247,
         "time": 3.467
       }
     },
     {
       "name": "the hit lands at body height (0.8–1.5 m)",
       "ok": true,
-      "detail": 1.02
+      "detail": 1.01
     },
     {
       "name": "after the hit the spear does not sink deeper into the defender (≥ hit − 2 cm from its trunk axis)",
       "ok": true,
       "detail": {
-        "atHitM": 0.166,
-        "closestM": 0.229,
-        "time": 3.867
+        "atHitM": 0.144,
+        "closestM": 0.2,
+        "time": 3.733
       }
     },
     {
       "name": "attacker moves without jumps (< 15 cm per frame)",
       "ok": true,
-      "detail": 0.098
+      "detail": 0.139
     },
     {
       "name": "knees stay within 0–140° flexion",
       "ok": true,
       "detail": {
-        "maxFlexDeg": 130.9
+        "maxFlexDeg": 128.8
       }
     },
     {
@@ -76,8 +76,29 @@
       "name": "planted feet do not slide (≤ 1.5 cm per frame)",
       "ok": true,
       "detail": {
-        "plantedFrames": 128,
-        "maxSlideM": 0.0026
+        "plantedFrames": 138,
+        "maxSlideM": 0.001
+      }
+    },
+    {
+      "name": "no body or spear passes through a shield, own or opponent (bone chains, butt to tip)",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "the attacker looks at the defender (heading within 15°)",
+      "ok": true,
+      "detail": {
+        "maxDeg": 3.2,
+        "time": 3.867
+      }
+    },
+    {
+      "name": "the defender looks at the attacker until the blow (heading within 15°)",
+      "ok": true,
+      "detail": {
+        "maxDeg": 2.6,
+        "time": 0.4
       }
     },
     {
@@ -92,19 +113,19 @@
     }
   ],
   "hit": {
-    "distanceM": 0.143,
-    "heightM": 1.019
+    "distanceM": 0.247,
+    "heightM": 1.008
   },
   "images": {
-    "march": "capture-clip-march.png",
-    "coil": "capture-clip-coil.png",
-    "feint": "capture-clip-feint.png",
-    "strike": "capture-clip-strike.png",
-    "jolt": "capture-clip-jolt.png",
-    "knees-give": "capture-clip-knees-give.png",
-    "step-in": "capture-clip-step-in.png",
-    "end": "capture-clip-end.png"
+    "march": "capture-clip-above-march.png",
+    "counter": "capture-clip-above-counter.png",
+    "feint": "capture-clip-above-feint.png",
+    "strike": "capture-clip-above-strike.png",
+    "jolt": "capture-clip-above-jolt.png",
+    "knees-give": "capture-clip-above-knees-give.png",
+    "step-in": "capture-clip-above-step-in.png",
+    "end": "capture-clip-above-end.png"
   },
-  "frames": 0,
+  "frames": 202,
   "scope": "Sampled at 30 Hz with a fixed clock on the skinned pawns. Bodies come from the clip pair; arms, spear and shield from the loadout on the board timeline. Not a physics or continuous collision check."
 }
