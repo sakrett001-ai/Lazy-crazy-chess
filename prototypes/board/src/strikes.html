@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Удары с записи</title>
+<style>
+html,body{margin:0;height:100%;background:#d8e2e6;font:14px/1.4 system-ui,sans-serif;color:#1d2a2e}
+#stage{position:fixed;inset:0}
+#bar{position:fixed;left:12px;top:12px;right:12px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+#bar select,#bar button,#bar input{font:inherit}
+#lanes{position:fixed;left:0;right:0;bottom:12px;display:flex;justify-content:space-around;pointer-events:none;font-weight:600}
+#loading{position:fixed;inset:0;display:grid;place-items:center}
+</style>
+</head>
+<body>
+<div id="stage"></div>
+<div id="loading">Готовим бойца…</div>
+<div id="bar"><select id="clip"></select><button id="play">Пауза</button><input type="range" id="time" min="0" max="1000" value="0"><output id="out"></output>
+ <button data-cam="three">¾</button><button data-cam="side">Сбоку</button><button data-cam="front">Спереди</button></div>
+<div id="lanes"><span>Запись</span><span>Боец</span></div>
+<script id="strike-data" type="application/json">/*STRIKES*/</script>
+<script id="model-data" type="application/octet-stream">/*MODEL*/</script>
+<script>/*SCRIPT*/</script>
+</body>
+</html>

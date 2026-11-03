@@ -54,7 +54,7 @@ function fader(holder){
 
 export function createPawnFactory({gltf}){
  const caches={w:new Map(),b:new Map()};
- return function createPawn({id,color}){
+ return function createPawn({id,color,weapons=[]}){
   const model=cloneSkinned(gltf.scene),holder=new THREE.Group();
   holder.name=id;holder.add(model);
   const bones={},meshes=[];
@@ -62,7 +62,7 @@ export function createPawnFactory({gltf}){
   holder.updateMatrixWorld(true);
   const rest=Object.entries(bones).map(([,b])=>[b,b.position.clone(),b.quaternion.clone(),b.scale.clone()]);
   const restore=()=>{for(const [b,p,q,s]of rest){b.position.copy(p);b.quaternion.copy(q);b.scale.copy(s);}};
-  const loadout=createLoadout({model,bones});
+  const loadout=createLoadout({model,bones,extraWeapons:weapons});
   loadout.apply({});
   const rig=createBodyRig({bones});
   const mocap=createMocapDriver({bones,holder});
@@ -125,7 +125,7 @@ export function createPawnFactory({gltf}){
   }
   // Bone positions in the model frame for the current pose.
   function points(names){holder.updateMatrixWorld(true);const inverse=holder.matrixWorld.clone().invert();const norm=x=>String(x).replace(/[._\-\s]/g,'').toLowerCase(),by=new Map(Object.entries(bones).map(([k,b])=>[norm(k),b]));return Object.fromEntries(names.map(n=>[n,by.get(norm(n))?by.get(norm(n)).getWorldPosition(new THREE.Vector3()).applyMatrix4(inverse).toArray().map(v=>+v.toFixed(3)):null]));}
-  return{id,kind:'pawn',color,object:holder,pose:solve,mocap,points,rig,probe,shieldFront,shieldHit,measureWorld:()=>loadout.measure(),place:place.set,placement:place.get,fade,current:()=>({...pose}),dispose(){holder.removeFromParent();}};
+  return{id,kind:'pawn',color,object:holder,pose:solve,equip:settings=>loadout.apply(settings),loadout:()=>loadout.summary(),biomechanics:()=>loadout.biomechanics(),mocap,points,rig,probe,shieldFront,shieldHit,measureWorld:()=>loadout.measure(),place:place.set,placement:place.get,fade,current:()=>({...pose}),dispose(){holder.removeFromParent();}};
  };
 }
 

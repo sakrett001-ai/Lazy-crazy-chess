@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {sub,length,dot,normalize,qRotate,qMul,qConj,frame,rotateY,distance} from '../src/mocap/math.mjs';
+import {sub,length,dot,normalize,qRotate,qMul,qConj,frame,rotateY,distance,mid} from '../src/mocap/math.mjs';
 import {resolveJoints,fromMediaPipe,REQUIRED} from '../src/mocap/profiles.mjs';
 import {buildMotionFile,parseMotionFile,prepareClip,sampleClip,centerPoints} from '../src/mocap/format.mjs';
 import {readFileSync} from 'node:fs';
@@ -248,4 +248,83 @@ test('the Blender capture pair is a shared-frame attacker and defender',()=>{
  near(Math.hypot(a.frames[0].pelvis[0],a.frames[0].pelvis[2]),0,.1,'attacker starts on its square');
  assert.ok(d.frames[0].pelvis[2]>1,'defender stands ahead of the attacker');
  for(const c of [a,d])for(const f of c.frames)for(const s of ['L','R'])assert.ok(f['ankle'+s][1]>-.01,'ankles stay above the board');
+});
+
+test('a skeleton with its own spine curve stands at the pawn\'s rest when it stands at its neutral',()=>{
+ // Another skeleton: neck 6 cm further back, head point 5 cm back, the
+ // lower spine point over the pelvis. Frame against frame the pawn leans
+ // back; against the file's neutral the same stance is the pawn's rest.
+ const own=p=>({...p,neck:[p.neck[0],p.neck[1],p.neck[2]-.06],head:[p.head[0],p.head[1],p.head[2]-.05],spine:[p.pelvis[0],p.spine[1],p.pelvis[2]]});
+ const stance=own(pawnPoints()),trunk=[PAWN.root,...PAWN.spine,...PAWN.neck,PAWN.head];
+ const plain=parseMotionFile(JSON.parse(JSON.stringify(asFile([stance])))),pc=prepareClip(plain,plain.clips[0]),bent=retarget.pose(sampleClip(pc,0),pc);
+ assert.ok(qAngle(bent.world.neck01,rest.quat.neck01)>4,'without a neutral the trunk turns');
+ const file=parseMotionFile(JSON.parse(JSON.stringify({...asFile([stance]),neutral:buildMotionFile({source:{},neutral:stance,clips:[{name:'n',fps:30,frames:[stance]}]}).neutral})));
+ const clip=prepareClip(file,file.clips[0]),pose=retarget.pose(sampleClip(clip,0),clip);
+ for(const b of DRIVEN)assert.ok(qAngle(pose.world[b],rest.quat[b])<.5,`${b} turned ${qAngle(pose.world[b],rest.quat[b]).toFixed(2)}°`);
+ assert.ok(trunk.every(b=>pose.world[b]),'trunk driven');
+ // A bow from that neutral bends the pawn forward by the same rotation.
+ const bow=JSON.parse(JSON.stringify(stance)),about=bow.pelvis;
+ for(const k of ['spine','chest','neck','head','shoulderL','shoulderR','elbowL','elbowR','wristL','wristR'])if(bow[k]){const d=sub(bow[k],about),c=Math.cos(.3),s=Math.sin(.3);bow[k]=[about[0]+d[0],about[1]+d[1]*c-d[2]*s,about[2]+d[1]*s+d[2]*c];}
+ const bf=parseMotionFile(JSON.parse(JSON.stringify({...asFile([bow]),neutral:file.neutral}))),bc=prepareClip(bf,bf.clips[0]),bp=retarget.pose(sampleClip(bc,0),bc);
+ near(qAngle(bp.world.neck01,rest.quat.neck01),.3*180/Math.PI,1.5,'bow of 17°');
+});
+
+test('a skeleton that marks its toe lower stands flat and lifts the heel as recorded',()=>{
+ // Another skeleton marks the toe 9 cm under the pawn's toe point: its flat
+ // foot's ankle→toe line drops about 40° where the pawn's drops 18°.
+ const pitch=(a,t)=>Math.atan2(a[1]-t[1],Math.hypot(t[0]-a[0],t[2]-a[2]))*180/Math.PI;
+ const low=p=>({...p,toeL:[p.toeL[0],p.toeL[1]-.06,p.toeL[2]-.03],toeR:[p.toeR[0],p.toeR[1]-.06,p.toeR[2]-.03]});
+ const stance=low(pawnPoints()),restPitch=pitch(retarget.points.ankleL,retarget.points.toeL);
+ assert.ok(pitch(stance.ankleL,stance.toeL)-restPitch>15,'the source toe line is steeper');
+ const neutral=buildMotionFile({source:{},neutral:stance,clips:[{name:'n',fps:30,frames:[stance]}]}).neutral;
+ const run=f=>{const file=parseMotionFile(JSON.parse(JSON.stringify({...asFile([f]),neutral})));const c=prepareClip(file,file.clips[0]);return retarget.pose(sampleClip(c,0),c);};
+ const flat=run(stance);
+ for(const s of ['L','R'])near(pitch(flat.legs[s].ankle,flat.legs[s].toe),restPitch,.5,'flat foot, boot flat '+s);
+ // The heel rises 25° about the toe: the boot's heel rises 25° too.
+ const lift=JSON.parse(JSON.stringify(stance)),t=lift.toeL,a=sub(lift.ankleL,t),c=Math.cos(25*Math.PI/180),sn=Math.sin(25*Math.PI/180);
+ const r=Math.hypot(a[0],a[2]),u=[a[0]/r,a[2]/r],h=r*c-a[1]*sn,y=r*sn+a[1]*c;
+ lift.ankleL=[t[0]+u[0]*h,t[1]+y,t[2]+u[1]*h];
+ const up=run(lift);
+ near(pitch(up.legs.L.ankle,up.legs.L.toe)-restPitch,25,1,'heel lifted 25°');
+});
+
+test('a cut from a recording leads the weapon hand in the trunk frame',async()=>{
+ const {cutTrack,thrustTrack,trunkFrame,toTrunk}=await import('../src/mocap/strike.mjs');
+ const {sampleArms}=await import('../src/mocap/format.mjs');
+ // Hands rise from the belly to over the head and come down in front.
+ const frames=Array.from({length:31},(_,f)=>{const p=JSON.parse(JSON.stringify(pawnPoints())),u=Math.sin(f/30*Math.PI),sh=mid(p.shoulderL,p.shoulderR);
+  for(const s of ['L','R']){p['elbow'+s]=[p['shoulder'+s][0]*.6,sh[1]-.15+.45*u,sh[2]+.22];p['wrist'+s]=[s==='L'?.03:-.03,sh[1]-.3+.75*u,sh[2]+.3-.1*u];}return p;});
+ const track=cutTrack(frames,{smooth:0});
+ assert.equal(track.data.length,frames.length*track.fields.length);
+ const clip={arms:track,fps:30,count:frames.length},low=sampleArms(clip,0).hand,high=sampleArms(clip,.5).hand;
+ assert.ok(high.grip[1]>.6&&low.grip[1]<0,'grip follows the hands up');
+ assert.ok(high.axis[1]>.8,'overhead the blade stands up');
+ for(const h of [low,high]){near(Math.hypot(...h.axis),1,1e-3,'unit axis');near(Math.hypot(...h.pole),1,1e-3,'unit pole');}
+ const f=trunkFrame(frames[0]),w=toTrunk(f,frames[0].wristR);assert.ok(w[2]>0,'hands in front of the chest');
+ // A thrust: the wrist goes forward and comes back, aim leads the thrust.
+ const jab=Array.from({length:31},(_,i)=>{const p=JSON.parse(JSON.stringify(pawnPoints())),u=Math.max(0,Math.sin((i-6)/20*Math.PI));p.wristR=[p.shoulderR[0],p.shoulderR[1]-.1,p.shoulderR[2]+.25+.3*u];p.elbowR=[p.shoulderR[0]-.05,p.shoulderR[1]-.2,p.shoulderR[2]+.1+.15*u];return p;});
+ const t=thrustTrack(jab,{fps:30,smooth:0}),thrust=i=>t.data[i*2+1],aim=i=>t.data[i*2];
+ assert.ok(thrust(16)>.9&&thrust(0)<.05,'thrust at the farthest reach');
+ assert.ok(aim(10)>thrust(10),'aim leads the thrust');
+});
+
+test('weapon weight: a light blade keeps the line, a heavy head runs on past a sudden stop', async()=>{
+ const {cutTrack}=await import('../src/mocap/strike.mjs');
+ const {massProperties,clearanceSamples,RUNTIME_WEAPONS}=await import('../../white-pawn/src/weapons.mjs');
+ // Masses and balance in the range of surviving pieces.
+ const b=massProperties('bastard'),h=massProperties('warhammer');
+ assert.ok(b.massKg>1.3&&b.massKg<1.8&&b.lengthM>1.1&&b.lengthM<1.22,'bastard: 1.3–1.8 kg, 1.1–1.2 m');
+ assert.ok(h.massKg>2&&h.massKg<3.5&&h.lengthM>1.3&&h.lengthM<2,'war hammer: 2–3.5 kg, 1.3–2 m');
+ assert.ok(h.inertiaKgM2>5*b.inertiaKgM2,'the hammer is far harder to turn');
+ assert.ok(clearanceSamples('warhammer').every(([s])=>s<RUNTIME_WEAPONS.warhammer.secondS-.05||s>.05),'clearance samples stay out of the hands');
+ // A fast downward cut that stops dead: hands from overhead to the belly in 0.3 s.
+ const frames=Array.from({length:40},(_,f)=>{const p=JSON.parse(JSON.stringify(pawnPoints())),u=Math.min(1,Math.max(0,(f-10)/9)),e=u*u*(3-2*u),sh=mid(p.shoulderL,p.shoulderR);
+  for(const s of ['L','R']){p['elbow'+s]=[p['shoulder'+s][0]*.6,sh[1]+.3-.45*e,sh[2]+.22];p['wrist'+s]=[s==='L'?.03:-.03,sh[1]+.45-.75*e,sh[2]+.2+.1*e];}return p;});
+ const run=(type,mp)=>cutTrack(frames,{smooth:0,shift:-RUNTIME_WEAPONS[type].secondS/2/.59,weapon:{...mp,spacingM:-RUNTIME_WEAPONS[type].secondS}}).dynamics;
+ const light=run('bastard',b),heavy=run('warhammer',h);
+ assert.ok(light.aheadDeg<3&&light.behindDeg<3,'bastard stays on the line: '+JSON.stringify(light));
+ assert.ok(heavy.aheadDeg>light.aheadDeg+5,'hammer runs on past the stop: '+JSON.stringify(heavy));
+ assert.ok(heavy.saturatedShare>0&&light.saturatedShare===0,'only the hammer asks the hands for more than they give');
+ // Without a weapon the track is unchanged.
+ const plain=cutTrack(frames,{smooth:0}),again=cutTrack(frames,{smooth:0});assert.deepEqual(plain.data,again.data);assert.equal(plain.dynamics,undefined);
 });

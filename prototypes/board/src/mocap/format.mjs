@@ -10,7 +10,8 @@ import {sub,add,scale,mid,cross,normalize,length,distance,rotateY,lerp} from './
 //  points:[names...],clips:[{name,label,role,loop,fps,frames,data:[...]}]}
 // data holds frames × points × 3 numbers in `points` order. A point that no
 // clip of the source has is left out of `points` altogether.
-// A clip may also carry arms:{action,fields:['aim','thrust','turn','swing','raise','reach','lift'],
+// A clip may also carry arms:{action,fields:['aim','thrust','turn','swing','raise','reach','lift'] and, for a
+// strike led by the recorded hand, 'gx','gy','gz','ax','ay','az','px','py','pz' (strike.mjs),
 // data:[frames × fields]}: the spear phases and the shield turn the loadout
 // solves the arms with (see sampleArms). A struck clip may give fade:[t0,t1],
 // the seconds over which the taken figure fades out and leaves the board.
@@ -18,12 +19,14 @@ export const FORMAT='lazy-chess.motion';
 export const ROLES=Object.freeze({stand:'стойка покоя',shift:'переминание',march:'строевой шаг',step:'шаг на клетку и остановка',approach:'подход к цели',strike:'взятие: атакующий',struck:'взятие: защитник',other:'прочее'});
 
 // Builds a file from clips given as arrays of {point:[x,y,z]} frames.
-export function buildMotionFile({source,clips}){
+export function buildMotionFile({source,clips,neutral=null}){
  const used=POINTS.filter(p=>clips.some(c=>c.frames.some(f=>f[p])));
- return{format:FORMAT,version:1,source,points:used,clips:clips.map(c=>{
+ // neutral: one frame of the same skeleton standing at ease ({point:[x,y,z]}),
+ // the trunk and head reference for the retargeter (retarget.mjs).
+ return{format:FORMAT,version:1,source,points:used,...(neutral?{neutral:used.flatMap(p=>(neutral[p]||neutral.pelvis).map(v=>+v.toFixed(4)))}:{}),clips:clips.map(c=>{
   const data=[];
   for(const f of c.frames)for(const p of used){const v=f[p]||f.pelvis;data.push(+v[0].toFixed(4),+v[1].toFixed(4),+v[2].toFixed(4));}
-  return{name:c.name,label:c.label||c.name,role:c.role||'other',loop:!!c.loop,fps:c.fps,frames:c.frames.length,...(c.partner?{partner:c.partner}:{}),...(c.frame?{frame:c.frame}:{}),data};
+  return{name:c.name,label:c.label||c.name,role:c.role||'other',loop:!!c.loop,fps:c.fps,frames:c.frames.length,...(c.partner?{partner:c.partner}:{}),...(c.frame?{frame:c.frame}:{}),...(c.arms?{arms:c.arms}:{}),data};
  })};
 }
 
@@ -33,6 +36,7 @@ export function parseMotionFile(json){
  if(file.version!==1)throw Error('Неизвестная версия файла движений: '+file.version);
  const missing=REQUIRED.filter(p=>!file.points.includes(p));
  if(missing.length)throw Error('В файле нет обязательных точек: '+missing.join(', '));
+ if(file.neutral&&file.neutral.length!==file.points.length*3)throw Error('Нейтральная стойка не совпадает с числом точек');
  for(const c of file.clips){
   if(!(c.fps>0))throw Error(`Клип ${c.name}: нет частоты кадров`);
   if(c.data.length!==c.frames*file.points.length*3)throw Error(`Клип ${c.name}: длина данных не совпадает с числом кадров`);
@@ -48,6 +52,7 @@ export function parseMotionFile(json){
 export function prepareClip(file,clip){
  const P=file.points,J=P.length,raw=[];
  for(let f=0;f<clip.frames;f++){const o={};P.forEach((p,j)=>{const i=(f*J+j)*3;o[p]=[clip.data[i],clip.data[i+1],clip.data[i+2]];});raw.push(o);}
+ const neutral=file.neutral?standing(Object.fromEntries(P.map((p,j)=>[p,file.neutral.slice(j*3,j*3+3)]))):null;
  // Up axis: the one along which the head stands farthest from the ankles.
  const f0=raw[0],stand=sub(f0.head,mid(f0.ankleL,f0.ankleR)),axis=[0,1,2].reduce((a,b)=>Math.abs(stand[b])>Math.abs(stand[a])?b:a,1),sign=Math.sign(stand[axis])||1;
  const toYUp=v=>axis===1?[v[0],v[1]*sign,v[2]*sign]:axis===2?[v[0],v[2]*sign,-v[1]*sign]:[-v[1]*sign,v[0]*sign,v[2]];
@@ -62,7 +67,17 @@ export function prepareClip(file,clip){
  const groundToe=Math.min(...frames.map(o=>Math.min(o.toeL[1],o.toeR[1])));
  const duration=(clip.frames-1)/clip.fps;
  const travel=sub(frames[frames.length-1].pelvis,frames[0].pelvis);travel[1]=0;
- return{name:clip.name,label:clip.label||clip.name,role:clip.role||'other',loop:!!clip.loop,fps:clip.fps,count:clip.frames,duration,frames,leg,ground,groundToe,travel,points:P,partner:clip.partner||null,shared,arms:clip.arms||null,fade:clip.fade||null};
+ return{name:clip.name,label:clip.label||clip.name,role:clip.role||'other',loop:!!clip.loop,fps:clip.fps,count:clip.frames,duration,frames,leg,ground,groundToe,travel,points:P,partner:clip.partner||null,shared,arms:clip.arms||null,fade:clip.fade||null,neutral};
+}
+
+// A single standing frame turned like a clip's first frame: Y up, the hips
+// facing +Z, the pelvis over the origin.
+function standing(o){
+ const stand=sub(o.head,mid(o.ankleL,o.ankleR)),axis=[0,1,2].reduce((a,b)=>Math.abs(stand[b])>Math.abs(stand[a])?b:a,1),sign=Math.sign(stand[axis])||1;
+ const toYUp=v=>axis===1?[v[0],v[1]*sign,v[2]*sign]:axis===2?[v[0],v[2]*sign,-v[1]*sign]:[-v[1]*sign,v[0]*sign,v[2]];
+ const up=Object.fromEntries(Object.entries(o).map(([k,v])=>[k,toYUp(v)]));
+ const left=sub(up.hipL,up.hipR),fwd=normalize([-left[2],0,left[0]]),turn=Math.atan2(fwd[0],fwd[2]),origin=[up.pelvis[0],0,up.pelvis[2]];
+ return Object.fromEntries(Object.entries(up).map(([k,v])=>[k,rotateY(sub(v,origin),-turn)]));
 }
 
 // Key points at time t (seconds), linear between frames. A looping clip
@@ -84,7 +99,12 @@ export function sampleArms(clip,t){
  const a=clip.arms;if(!a)return null;
  const F=a.fields.length,u=Math.min(Math.max(t*clip.fps,0),clip.count-1),i=Math.floor(u),k=Math.min(clip.count-1,i+1),w=u-i;
  const v=Object.fromEntries(a.fields.map((f,j)=>[f,a.data[i*F+j]*(1-w)+a.data[k*F+j]*w]));
- return{action:a.action,phase:{aim:v.aim??0,thrust:v.thrust??0,turn:v.turn??0},shield:{swing:v.swing??0,raise:v.raise??0,reach:v.reach??0,lift:v.lift??0}};
+ const out={action:a.action,phase:{aim:v.aim??0,thrust:v.thrust??0,turn:v.turn??0},shield:{swing:v.swing??0,raise:v.raise??0,reach:v.reach??0,lift:v.lift??0}};
+ // A strike taken from a recording leads the weapon hand itself (strike.mjs):
+ // grip, blade axis and elbow pole in the trunk frame, the grip in arm lengths,
+ // and the middle of the recorded wrists, which the fighter's wrists follow.
+ if(a.fields.includes('gx'))out.hand={grip:[v.gx,v.gy,v.gz],axis:[v.ax,v.ay,v.az],pole:[v.px??0,v.py??0,v.pz??0],...(a.fields.includes('wx')?{wrists:[v.wx,v.wy,v.wz]}:{})};
+ return out;
 }
 
 // Average forward speed of a clip (source units per second).

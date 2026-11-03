@@ -47,16 +47,51 @@ def toe_base(tip, heel):
     return tip + (heel - tip) * BALL
 
 
-def motion_file(P, fps, *, name, label=None, role='other', loop=False, source=None, report=None):
+# Neutral stance: one frame of the same person standing at ease. The
+# retargeter turns the trunk, head and feet by the source's rotation away from
+# it (src/mocap/retarget.mjs). Without it each bone copies the source's
+# absolute line, and skeletons mark their points differently: the Bandai
+# Namco skeleton's flat foot drops 40° from ankle to toe, the pawn's 18°, so
+# the pawn stood on its toes with the heel raised 22° while the actor's foot
+# was flat; its neck–spine line leans 6° back at ease, so a hand held straight
+# over the head landed 8 cm forward of it. 'auto' takes the stillest frame
+# with both knees straighter than 20°.
+STRAIGHT_KNEE_DEG = 20.0
+
+
+def neutral_frame(P, fps, choice='auto'):
+    P = np.asarray(P, float)
+    if choice is None:
+        return None
+    if choice != 'auto':
+        i = int(choice)
+        if not -len(P) <= i < len(P):
+            raise ValueError(f'кадра {i} нет: в клипе {len(P)} кадров')
+        return i % len(P)
+    speed = np.zeros(len(P))
+    if len(P) > 1:
+        v = np.linalg.norm(np.diff(P, axis=0), axis=-1).mean(-1) * fps
+        speed = np.r_[v[0], (v[:-1] + v[1:]) / 2, v[-1]] if len(P) > 2 else np.r_[v, v]
+    bent = np.maximum(np.abs(C.knee_flexion(P, 'L')), np.abs(C.knee_flexion(P, 'R')))
+    ok = bent < STRAIGHT_KNEE_DEG
+    return int(np.argmin(np.where(ok, speed, np.inf))) if ok.any() else int(np.argmin(bent))
+
+
+def motion_file(P, fps, *, name, label=None, role='other', loop=False, source=None, report=None, neutral='auto'):
     pts = key_points(np.asarray(P, float))
     data = np.stack([pts[n] for n in POINTS], 1).round(4).reshape(-1).tolist()
     clip = {'name': name, 'label': label or name, 'role': role, 'loop': bool(loop), 'fps': fps, 'frames': len(P), 'data': data}
+    ni = neutral_frame(P, fps, neutral)
     src = {'kind': 'video', 'name': (source or {}).get('video', name),
            'license': 'зависит от видео; поза — MediaPipe Pose (Apache-2.0)',
            'note': 'Одна камера: поза очищена tools/videomocap (сглаживание, длины костей, пол по линиям сцены, путь таза по изображению, опорные стопы).'}
     if report:
         src['quality'] = {k: report[k] for k in ('floorFrom', 'tiltDeg', 'missingShare', 'boneCV', 'skateBefore', 'skateAfter', 'contacts', 'focalPx') if k in report}
-    return {'format': 'lazy-chess.motion', 'version': 1, 'source': src, 'points': POINTS, 'clips': [clip]}
+    out = {'format': 'lazy-chess.motion', 'version': 1, 'source': src, 'points': POINTS, 'clips': [clip]}
+    if ni is not None:
+        out['neutral'] = np.stack([pts[n][ni] for n in POINTS]).round(4).reshape(-1).tolist()
+        src['neutralFrame'] = ni
+    return out
 
 
 def main():
@@ -73,6 +108,7 @@ def main():
     ap.add_argument('--rotate', type=int, default=0)
     ap.add_argument('--fov', type=float, default=C.DEFAULTS['fov'], help='угол обзора камеры по длинной стороне кадра, градусы')
     ap.add_argument('--keep', help='папка, куда сохранить сырые и очищенные точки')
+    ap.add_argument('--neutral', default='auto', help="кадр, где человек стоит вольно: номер, auto (самый спокойный кадр с прямыми ногами) или none")
     a = ap.parse_args()
     if a.video:
         import capture
@@ -90,11 +126,13 @@ def main():
     else:
         ap.error('нужен очищенный файл или --video')
     name = a.name or os.path.splitext(os.path.basename(a.video or a.clean))[0].split('.')[0]
-    out = motion_file(P, fps, name=name, label=a.label, role=a.role, loop=a.loop, source=source, report=report)
+    out = motion_file(P, fps, name=name, label=a.label, role=a.role, loop=a.loop, source=source, report=report,
+                      neutral=None if a.neutral == 'none' else a.neutral)
     json.dump(out, open(a.out, 'w'), ensure_ascii=False, separators=(',', ':'))
     q = out['source'].get('quality', {})
     print(f"{name}: {len(P)} кадров, {fps:g} к/с; пол — {q.get('floorFrom')}, наклон камеры {q.get('tiltDeg')}°, "
-          f"скольжение стоп {q.get('skateBefore')} → {q.get('skateAfter')} см → {a.out}")
+          f"скольжение стоп {q.get('skateBefore')} → {q.get('skateAfter')} см; "
+          f"нейтральная стойка — кадр {out['source'].get('neutralFrame', 'нет')} → {a.out}")
 
 
 if __name__ == '__main__':

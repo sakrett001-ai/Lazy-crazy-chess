@@ -2,21 +2,25 @@ import * as THREE from 'three';
 import {createArmBiomechanics} from './biomechanics.mjs';
 import {createGrip} from './grip.mjs';
 import {createFullBodyMotion} from './full-body.mjs';
+import {TWO_HANDED,WEAPON_NAMES,RUNTIME_WEAPONS,gripRadiusOf,attachRuntimeWeapons} from './weapons.mjs';
 
 // Equipment and body shape are independent of material colours. The authored
 // clips supply the planted stance. The thrust redistributes its drive through
 // knees and thorax; arms are reconstructed in anatomical frames afterwards.
 const normalize=value=>String(value||'').replace(/[._\-\s]/g,'').toLowerCase();
 const V=values=>new THREE.Vector3().fromArray(values);
-const twoHanded=new Set(['pike','greatsword']);
-const weaponNames={spear:'копьё',sword:'меч',pike:'длинное копьё',greatsword:'двуручный меч'};
+const twoHanded=TWO_HANDED,weaponNames=WEAPON_NAMES;
 const shieldNames={tower:'ростовой щит',round:'круглый щит',heater:'треугольный щит',none:'без щита'};
 const defaults={armorType:'plate',shieldType:'tower',weaponType:'spear',bodyBuild:'regular',experience:'recruit',beard:'none',helmet:'on'};
 const smooth=(t,start,end)=>{const u=THREE.MathUtils.clamp((t-start)/(end-start),0,1);return u*u*u*(u*(u*6-15)+10);};
 const envelope=(t,start,peak,hold,end)=>smooth(t,start,peak)*(1-smooth(t,hold,end));
 export function loadoutPhases(action,time){return action==='Spear_Study'?{aim:envelope(time,.55,1.2,2.8,3.75),thrust:envelope(time,1.25,1.9,2.1,2.8)}:{aim:0,thrust:0};}
 
-export function createLoadout({model,bones={}}){
+// extraWeapons: runtime weapons to add (weapons.mjs: bastard, warhammer). The
+// pawn workshop keeps its GLB catalogue; the board's bishop and rook ask for
+// their own.
+export function createLoadout({model,bones={},extraWeapons=[]}){
+ if(extraWeapons.length)attachRuntimeWeapons(THREE,{model,types:extraWeapons});
  const lookup=new Map(),meshes=[],entries=[];
  model.traverse(object=>{if(object.isBone)lookup.set(normalize(object.name),object);if(object.isMesh)meshes.push(object);});
  for(const [name,bone]of Object.entries(bones))lookup.set(normalize(name),bone);
@@ -45,12 +49,13 @@ export function createLoadout({model,bones={}}){
  function frameFor(object,side='R'){
   if(!object)return null;
   const mesh=firstMesh(object),data=object.userData||{};
-  let grip,axis,tip,second=null;
+  let grip,axis,tip,second=null,points=null;
   if(Array.isArray(data.gripBind)&&Array.isArray(data.shaftAxisBind||data.handleAxisBind)){
    const bindGrip=V(data.gripBind),bindAxis=V(data.shaftAxisBind||data.handleAxisBind).normalize();
    grip=skinPoint(mesh,bindGrip,side);axis=skinPoint(mesh,bindGrip.clone().add(bindAxis),side).sub(grip).normalize();
    tip=Array.isArray(data.tipBind)?skinPoint(mesh,V(data.tipBind),side):grip.clone().addScaledVector(axis,1);
    if(Array.isArray(data.secondGripBind))second=skinPoint(mesh,V(data.secondGripBind),side);
+   if(Array.isArray(data.clearanceBind))points=data.clearanceBind.map(q=>[skinPoint(mesh,V(q.slice(0,3)),side),q[3]]);
   }else{
    // Exact guard frames from the preserved baseline's authored equipment.
    const guardGrip=V(side==='R'?[-.28447413444519043,1.1486186981201172,.334890753030777]:[.00598069466650486,1.1586185693740845,.21028414368629456]);
@@ -58,7 +63,18 @@ export function createLoadout({model,bones={}}){
    const transform=calibration?wrist.matrixWorld.clone().multiply(calibration.clone().invert()):new THREE.Matrix4();
    grip=guardGrip.applyMatrix4(transform);axis=new THREE.Vector3(0,1,0).transformDirection(transform);tip=grip.clone().addScaledVector(axis,side==='R'?1.63:0);
   }
-  return{grip,axis,tip,second,mesh,object};
+  return{grip,axis,tip,second,points,mesh,object};
+ }
+ // The plate's outer envelope around the body (m): chest 17, head with
+ // helmet 14, thigh 9 cm, the same capsules the strike checks use.
+ const ARMOUR=[['spine05','neck01',.17],['neck03','head',.14],['upperleg01.L','lowerleg01.L',.09],['upperleg01.R','lowerleg01.R',.09]];
+ function armourClearance(){
+  const f=frameFor(weapons.get(current.weaponType));if(!f||!f.points)return{clearance:Infinity,push:new THREE.Vector3()};
+  let clearance=Infinity,push=new THREE.Vector3();
+  for(const[a,b,r]of ARMOUR){const A=bone(a).getWorldPosition(new THREE.Vector3()),B=bone(b).getWorldPosition(new THREE.Vector3()),AB=B.clone().sub(A);
+   for(const[p,w]of f.points){const near=A.clone().addScaledVector(AB,THREE.MathUtils.clamp(p.clone().sub(A).dot(AB)/AB.lengthSq(),0,1)),d=p.distanceTo(near)-r-w;
+    if(d<clearance){clearance=d;push=p.clone().sub(near).normalize();}}}
+  return{clearance,push};
  }
  const initialWristFrames=Object.fromEntries(['L','R'].map(side=>[side,bone('wrist.'+side).matrixWorld.clone()]));
  const handReference=Object.fromEntries(['L','R'].map(side=>{
@@ -69,7 +85,7 @@ export function createLoadout({model,bones={}}){
  const feet=Object.fromEntries(['L','R'].map(side=>[side,bone('foot.'+side).getWorldPosition(new THREE.Vector3())]));
  const armBiomechanics=createArmBiomechanics({model,bones,handReference,update});
  const fullBodyMotion=createFullBodyMotion({model,bones,update});
- let current={...defaults},lastAction='rest',lastTime=0,reachErrors={};
+ let current={...defaults},lastAction='rest',lastTime=0,reachErrors={},wristMissM=null;
  const diagonalGripAngle=35*Math.PI/180;
  const toolAxisLocal=side=>handReference[side].axisLocal.clone().multiplyScalar(Math.cos(diagonalGripAngle)).addScaledVector(handReference[side].forwardLocal,Math.sin(diagonalGripAngle)).normalize();
  // The catalogue GLB retains its original transverse handles. In the viewer
@@ -90,6 +106,7 @@ export function createLoadout({model,bones={}}){
   if(metadataTransform){const data=object.userData,g=V(data.gripBind),axis=V(data.shaftAxisBind).add(g).applyMatrix4(metadataTransform);
    data.gripBind=g.applyMatrix4(metadataTransform).toArray();data.shaftAxisBind=axis.sub(g).normalize().toArray();
    for(const key of ['tipBind','secondGripBind'])if(data[key])data[key]=V(data[key]).applyMatrix4(metadataTransform).toArray();
+   if(data.clearanceBind)data.clearanceBind=data.clearanceBind.map(q=>[...V(q.slice(0,3)).applyMatrix4(metadataTransform).toArray(),q[3]]);
    data.runtimeDiagonalGripDegrees=35;
   }
  }
@@ -195,11 +212,11 @@ export function createLoadout({model,bones={}}){
  // trunk frame: swing about the trunk's up axis (+ to the left, outwards),
  // raise as shoulder flexion (+ forwards and up); lift then carries it up the
  // trunk, metres, the shield's face kept.
- function poseAt(action='rest',time=0,{body=true,phase:given=null,shield:turn=null}={}){
-  lastAction=action;lastTime=Number.isFinite(time)?Math.max(0,time):0;reachErrors={};
+ function poseAt(action='rest',time=0,{body=true,phase:given=null,shield:turn=null,hand=null}={}){
+  lastAction=action;lastTime=Number.isFinite(time)?Math.max(0,time):0;reachErrors={};wristMissM=null;
   applyMorphs();update();
   {
-   const phase=given||loadoutPhases(action,lastTime),isPike=current.weaponType==='pike',isGreatsword=current.weaponType==='greatsword';
+   const phase=given||loadoutPhases(action,lastTime),isPike=current.weaponType==='pike',isGreatsword=current.weaponType==='greatsword'||RUNTIME_WEAPONS[current.weaponType]?.guard==='greatsword';
    if(body)fullBodyMotion.apply(action,phase);
    // Torso-relative anchors and elbow directions follow pelvis/torso motion;
    // a world-space target used to drag the pike hand through the chest.
@@ -224,13 +241,69 @@ export function createLoadout({model,bones={}}){
    if(action==='Shield_Brace'&&current.weaponType==='sword'&&summary().effectiveShield==='round')anchor[0]-=.015*envelope(lastTime,.4,.9,3.2,3.7);
    const grip=origin.clone().add(direction(anchor)).addScaledVector(axis,(isPike?.106:isGreatsword?.13:.14)*phase.thrust);
    if(action==='Guard_Breath')grip.addScaledVector(up,.003*Math.sin(Math.PI*2*Math.min(lastTime,6)/6));
-   reachErrors.R=armBiomechanics.solve('R',grip,axis,direction([-1,-.55,.45]),toolAxisLocal('R'));
+   let pole=direction([-1,-.55,.45]);
+   // hand: a strike led by a recorded hand (board/src/mocap/strike.mjs). Grip
+   // in the trunk frame in arm lengths from the middle of the shoulders, blade
+   // axis and elbow pole as trunk directions. The arm is still solved by the
+   // same biomechanics: elbow and wrist limits, forearm twist, diagonal grip.
+   if(hand){
+    const arm=armBiomechanics.calibration().R.lengthsM,length=arm[0]+arm[1];
+    grip.copy(origin).add(direction(hand.grip.map(v=>v*length)));
+    axis.copy(direction(hand.axis)).normalize();
+    if(hand.pole&&Math.hypot(...hand.pole)>1e-3)pole=direction(hand.pole).normalize();
+   }
+   reachErrors.R=armBiomechanics.solve('R',grip,axis,pole,toolAxisLocal('R'));
    if(twoHanded.has(current.weaponType)){
    // The second hand follows the actual skinned weapon attachment. It is not
    // advanced independently from the shaft during the thrust.
    const frame=frameFor(weapons.get(current.weaponType));
    const second=frame.second||frame.grip.clone().addScaledVector(frame.axis,isPike?.38:-.13);
    reachErrors.L=armBiomechanics.solve('L',second,frame.axis,direction([1,-.55,.45]),toolAxisLocal('L'));
+   // A recorded hand is the actor's, and the fighter's arms and plate set the
+   // limits. The pawn's elbow does not straighten past 8°, so an arm the actor
+   // stretched out overhead left the hand up to 4 cm short of the grip; with
+   // the trunk upright the hammer's shaft over the head came 3 cm into the
+   // helmet. The whole weapon moves, its direction kept: towards the shoulder
+   // of the hand that falls short, out of the plate along its nearest normal.
+   // A recorded strike also gives the middle of the recorded wrists. Where
+   // the wrists land depends on the fighter's own hand (the grip sits 10 cm
+   // past the wrist, partly across the palm) and on the hand spacing along
+   // the grip, so the weapon moves along with the hands until the middle of
+   // the fighter's wrists stands where the recording's does, within the same
+   // limits (wristMissM: what is left).
+   if(hand){
+    const arm=armBiomechanics.calibration().R.lengthsM,length=arm[0]+arm[1];
+    const missOf=k=>reachErrors[k]?.reachErrorM??0,miss=()=>Math.max(missOf('R'),missOf('L'));
+    const secondOf=f=>f.second||f.grip.clone().addScaledVector(f.axis,isPike?.38:-.13);
+    const solveBoth=at=>{
+     reachErrors.R=armBiomechanics.solve('R',at,axis,pole,toolAxisLocal('R'));
+     reachErrors.L=armBiomechanics.solve('L',secondOf(frameFor(weapons.get(current.weaponType))),frameFor(weapons.get(current.weaponType)).axis,direction([1,-.55,.45]),toolAxisLocal('L'));
+     update();return{reach:miss(),...armourClearance()};
+    };
+    const settle=from=>{
+     const at=from.clone();let s=solveBoth(at);
+     for(let i=0;i<8&&(s.reach>.004||s.clearance<.004);i++){
+      if(s.reach>.004){
+       const side=missOf('L')>missOf('R')?'L':'R',f=frameFor(weapons.get(current.weaponType)),held=side==='R'?f.grip:secondOf(f);
+       at.addScaledVector(bone('upperarm01.'+side).getWorldPosition(new THREE.Vector3()).sub(held).normalize(),missOf(side)+.002);
+      }else at.addScaledVector(s.push,.006-s.clearance);
+      s=solveBoth(at);
+     }
+     return{at,state:s};
+    };
+    const ok=s=>s.reach<=.005&&s.clearance>=0;
+    let best=settle(grip);
+    if(hand.wrists){
+     const target=origin.clone().add(direction(hand.wrists.map(v=>v*length)));
+     const wrists=()=>bone('wrist.R').getWorldPosition(new THREE.Vector3()).add(bone('wrist.L').getWorldPosition(new THREE.Vector3())).multiplyScalar(.5);
+     const base=best,baseMiss=wrists().distanceTo(target);
+     let at=base.at.clone();
+     for(let pass=0;pass<2;pass++){at.add(target.clone().sub(wrists()));const s=settle(at);at=s.at;best=s;}
+     if(!ok(best.state)&&ok(base.state)||wrists().distanceTo(target)>baseMiss){best=settle(base.at);}
+     wristMissM=+wrists().distanceTo(target).toFixed(4);
+    }
+    grip.copy(best.at);
+   }
    }else if(summary().effectiveShield!=='none'){
     const shield=frameFor(shields.get(summary().effectiveShield),'L');
     // The strong torso's breastplate projects farther forward. Fit the whole
@@ -269,8 +342,8 @@ export function createLoadout({model,bones={}}){
   update();const frame=frameFor(weapons.get(current.weaponType)),state=summary(),right=handGrip('R'),left=handGrip('L');
   const second=state.twoHanded?(frame.second||frame.grip.clone().addScaledVector(frame.axis,current.weaponType==='pike'?.38:-.13)):null;
   const shield=state.effectiveShield!=='none'?frameFor(shields.get(state.effectiveShield),'L'):null;
-  return{shieldGripWorld:shield?.grip.toArray()||null,shieldAxis:shield?.axis.toArray()||null,weaponGripAngleDeg:35,action:lastAction,time:lastTime,weapon:current.weaponType,effectiveShield:state.effectiveShield,handGripWorld:{R:right.toArray(),L:left.toArray()},weaponGripWorld:{R:frame.grip.toArray(),L:second?.toArray()||null},rightGripErrorM:right.distanceTo(frame.grip),leftGripErrorM:second?left.distanceTo(second):null,axis:frame.axis.toArray(),tip:frame.tip.toArray(),footDriftM:Object.fromEntries(['L','R'].map(side=>[side,bone('foot.'+side).getWorldPosition(new THREE.Vector3()).distanceTo(feet[side])])),reachErrors:JSON.parse(JSON.stringify(reachErrors)),scope:'Attachment frames and wrist/foot joints; not a skin collision or anatomical comfort proof.'};
+  return{shieldGripWorld:shield?.grip.toArray()||null,shieldAxis:shield?.axis.toArray()||null,weaponGripAngleDeg:35,action:lastAction,time:lastTime,weapon:current.weaponType,effectiveShield:state.effectiveShield,handGripWorld:{R:right.toArray(),L:left.toArray()},weaponGripWorld:{R:frame.grip.toArray(),L:second?.toArray()||null},rightGripErrorM:right.distanceTo(frame.grip),leftGripErrorM:second?left.distanceTo(second):null,axis:frame.axis.toArray(),tip:frame.tip.toArray(),clearance:frame.points?.map(([p,r])=>[...p.toArray(),r])||null,footDriftM:Object.fromEntries(['L','R'].map(side=>[side,bone('foot.'+side).getWorldPosition(new THREE.Vector3()).distanceTo(feet[side])])),reachErrors:JSON.parse(JSON.stringify(reachErrors)),wristMissM,scope:'Attachment frames and wrist/foot joints; not a skin collision or anatomical comfort proof.'};
  }
- function gripFrames(){return Object.fromEntries(['R','L'].map(side=>[side,{gripLocal:handReference[side].gripLocal.toArray(),axisLocal:(side==='R'||summary().twoHanded?toolAxisLocal(side):handReference[side].axisLocal).toArray(),anatomicalAxisLocal:handReference[side].axisLocal.toArray(),weaponGripAngleDeg:side==='R'||summary().twoHanded?35:0,forwardLocal:handReference[side].forwardLocal.toArray(),wristBone:bone('wrist.'+side).name,radiusM:current.weaponType==='pike'?.016:.014,active:side==='R'||summary().twoHanded||summary().effectiveShield!=='none'}]));}
+ function gripFrames(){return Object.fromEntries(['R','L'].map(side=>[side,{gripLocal:handReference[side].gripLocal.toArray(),axisLocal:(side==='R'||summary().twoHanded?toolAxisLocal(side):handReference[side].axisLocal).toArray(),anatomicalAxisLocal:handReference[side].axisLocal.toArray(),weaponGripAngleDeg:side==='R'||summary().twoHanded?35:0,forwardLocal:handReference[side].forwardLocal.toArray(),wristBone:bone('wrist.'+side).name,radiusM:gripRadiusOf(current.weaponType),active:side==='R'||summary().twoHanded||summary().effectiveShield!=='none'}]));}
  return{apply,poseAt,summary,availableActions,captions,measure,gripFrames,grip:gripController,biomechanics:()=>({R:armBiomechanics.measure('R'),L:armBiomechanics.measure('L'),calibration:armBiomechanics.calibration()}),dispose(){}};
 }

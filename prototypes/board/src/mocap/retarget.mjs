@@ -30,7 +30,13 @@ const FRAMES={
  head:p=>frame(sub(p.head,p.neck),p.eyeL&&p.eyeR?sub(p.eyeL,p.eyeR):p.earL&&p.earR?sub(p.earL,p.earR):sub(p.shoulderL,p.shoulderR),[1,0,0]),
  thigh:(p,s)=>frame(sub(p['knee'+s],p['hip'+s]),sub(p['toe'+s],p['ankle'+s]),sub(p.hipL,p.hipR)),
  shin:(p,s)=>frame(sub(p['ankle'+s],p['knee'+s]),sub(p['toe'+s],p['ankle'+s]),sub(p.hipL,p.hipR)),
- foot:(p,s)=>frame(sub(p['toe'+s],p['ankle'+s]),sub(p['knee'+s],p['ankle'+s]),[0,1,0])
+ foot:(p,s)=>frame(sub(p['toe'+s],p['ankle'+s]),sub(p['knee'+s],p['ankle'+s]),[0,1,0]),
+ // The foot level across: its long axis from the ankle and toe, its sole's
+ // cross axis kept horizontal. Two points do not give the foot's roll; the
+ // knee does not either: with the toes turned out and the knee travelling
+ // forward the shin–foot plane rolls about the foot while a foot on the
+ // floor stays flat, and the boot rolled up to 60° on its edge.
+ footLevel:(p,s)=>frame(sub(p['toe'+s],p['ankle'+s]),[0,1,0],sub(p['knee'+s],p['ankle'+s]))
 };
 
 // rest: {pos:{bone:[x,y,z]},quat:{bone:[x,y,z,w]}} in the figure's model
@@ -52,10 +58,29 @@ export function createRetargeter(rest){
  // pose(points, clip): world rotations of the driven bones and the root
  // position, all in model space. clip supplies leg (source leg length) and
  // ground and groundToe (lowest source ankle and toe heights) from prepareClip.
+ // A clip may carry its skeleton's neutral stance (prepareClip). Skeletons
+ // place the spine, neck and head points differently: the Bandai Namco
+ // chest→neck line leans 4° back in an easy stance where the pawn's leans
+ // 6° forward, its pelvis→spine line stands upright where the pawn's leans
+ // 19° forward (lumbar curve). Frame against frame, the pawn then leans
+ // back and looks up. With a neutral, the trunk and head turn by the
+ // source's rotation away from its own neutral, so standing at ease gives
+ // the pawn's rest. The feet follow the same rule. Skeletons mark the toe
+ // differently too: on the Bandai Namco skeleton the ankle→toe line of a
+ // flat foot drops 40° to the floor, on the pawn 18°. Frame against frame
+ // the pawn copied the 40° and stood on its toes, heel raised 22° while the
+ // recorded foot was flat. Against the neutral (footLevel) a flat foot is the
+ // pawn's flat boot, and a heel lifted by 25° lifts the boot's heel by 25°. Thighs and
+ // shins keep the frame-against-frame rule: their checks (knees, soles) hold
+ // on it.
+ const neutrals=new WeakMap();
+ const neutralFrames=n=>{if(!neutrals.has(n))neutrals.set(n,{pelvis:FRAMES.pelvis(n),chest:FRAMES.chest(n),head:FRAMES.head(n),footL:FRAMES.footLevel(n,'L'),footR:FRAMES.footLevel(n,'R')});return neutrals.get(n);};
  function pose(src,clip){
+  const N=clip.neutral?neutralFrames(clip.neutral):null;
   const delta=(name,q)=>qMul(q,qConj(restFrames[name]));
-  const dP=delta('pelvis',FRAMES.pelvis(src)),dC=delta('chest',FRAMES.chest(src));
-  const dH=delta('head',FRAMES.head(src));
+  const trunk=(name,q)=>N?qMul(q,qConj(N[name])):delta(name,q);
+  const dP=trunk('pelvis',FRAMES.pelvis(src)),dC=trunk('chest',FRAMES.chest(src));
+  const dH=trunk('head',FRAMES.head(src));
   const world={},turned=(bone,d)=>{world[bone]=qMul(d,Q[bone]);};
   turned(PAWN.root,dP);
   PAWN.spine.forEach((b,i)=>turned(b,qSlerp(dP,dC,(i+1)/PAWN.spine.length)));
@@ -64,7 +89,7 @@ export function createRetargeter(rest){
   const d={};
   for(const s of ['L','R']){
    const c=PAWN.legs[s];
-   d['thigh'+s]=delta('thigh'+s,FRAMES.thigh(src,s));d['shin'+s]=delta('shin'+s,FRAMES.shin(src,s));d['foot'+s]=delta('foot'+s,FRAMES.foot(src,s));
+   d['thigh'+s]=delta('thigh'+s,FRAMES.thigh(src,s));d['shin'+s]=delta('shin'+s,FRAMES.shin(src,s));d['foot'+s]=N?qMul(FRAMES.footLevel(src,s),qConj(N['foot'+s])):delta('foot'+s,FRAMES.foot(src,s));
    turned(c.hip,d['thigh'+s]);turned(c.knee,d['shin'+s]);turned(c.ankle,d['foot'+s]);
   }
   // Root: horizontal travel scaled to the figure. Height: each ankle and toe

@@ -51,6 +51,7 @@ npm run build               # собирает board.html
 npm run verify              # прогон в браузере, кадры фаз в review/
 npm run verify:motion       # клипы покоя и шага из файла на доске
 npm run verify:lab          # лаборатория движений
+npm run verify:strikes      # удары с записи (нужен tools/strikes/out, см. docs/STRIKES.md)
 npm run verify:capture      # взятие из клипов Blender: попадание, суставы, стопы
 npm run capture:blender     # пересобрать клип взятия (нужен pip install bpy)
 npm run test:videomocap     # очистка движения с видео на синтетике (numpy)
@@ -71,6 +72,7 @@ npm run preview:video -- take.motion.json --out review/take   # клип с ви
 | `src/actors.mjs` | Пешки на общей модели с окраской фракций, заглушки остальных фигур. |
 | `src/mocap/` | Чтение BVH и файлов движений, позы с видео, перенос клипа на скелет пешки. |
 | `src/lab.mjs` | Лаборатория движений (`motion-lab.html`). |
+| `src/strikes.mjs`, `src/mocap/strike.mjs` | Удары с записи: стенд «запись и боец рядом» и дорожка рук для удара ([docs/STRIKES.md](../../docs/STRIKES.md)). |
 | `tools/blender/` | Сцена взятия пешкой в Blender: план тела, решение на скелете, проверки, клип. |
 | `tools/motionbricks/` | Запекание походок crowdbricks (видеокарта NVIDIA) и перевод take в файл движений. |
 | `tools/videomocap/` | Движение с обычного видео на процессоре: MediaPipe Pose, очистка по знанию о теле и сцене, файл движений, замер точности. |

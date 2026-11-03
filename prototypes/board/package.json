@@ -13,7 +13,9 @@
     "test:take": "cd tools/motionbricks && python3 -m unittest test_take.py",
     "capture:blender": "python3 tools/blender/pawn_capture.py",
     "test:videomocap": "cd tools/videomocap && python3 -m unittest test_clean.py",
-    "preview:video": "node scripts/preview-video-motion.mjs"
+    "preview:video": "node scripts/preview-video-motion.mjs",
+    "build:strikes": "node scripts/build-strikes.mjs",
+    "verify:strikes": "node scripts/verify-strikes.mjs"
   },
   "dependencies": {
     "chess.js": "1.4.0"
