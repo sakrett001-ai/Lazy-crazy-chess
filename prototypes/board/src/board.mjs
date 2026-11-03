@@ -10,7 +10,7 @@ import {createLandscape} from './landscape.mjs';
 import {readMotionSource} from './mocap/library.mjs';
 import {sampleAlong,sampleClip,sampleArms,scaleLayer,centerPoints,turnHead} from './mocap/format.mjs';
 import {rotateY} from './mocap/math.mjs';
-import {exchangePairs,exchangeLayout,exchangeAt,exchangeArms,cyclePose,trunkLean,levelSpear,shieldAt,CROSSFADE} from './mocap/exchange.mjs';
+import {exchangePairs,exchangeLayout,exchangeAt,exchangeArms,cyclePose,travelAt,trunkLean,levelSpear,shieldAt,CROSSFADE} from './mocap/exchange.mjs';
 import {loadoutPhases} from '../../white-pawn/src/loadout.mjs';
 
 // One square is 2.6 m. A 1.8 m soldier with a tower shield and a 2.4 m
@@ -174,9 +174,6 @@ async function init(bytes){
  // for a pawn's step. They are a design aid: without them the board plays
  // its own procedural layer, and the clip share blends the two.
  const motion={sources:[],clips:[],stand:null,walk:null,capture:null,duel:null,weight:1};
- // Exchange fitted to the two squares: approach scale, where the spear stops
- // (the partner's shield) and the yaw that aims it there; per distance and
- // figure size. The thrust is measured at the gap of the recorded blow.
  const layouts=new Map();
  // The last exchange each fencing pawn played: whom against, its role and
  // when. A capture between two that were fencing each other goes on from it.
@@ -185,38 +182,61 @@ async function init(bytes){
  // levelled against the lean, the shield carried over the front knee.
  const spearArms=(arms,points,clip,k,local)=>arms.action==='Spear_Study'?{phase:levelSpear(loadoutPhases(arms.action,arms.time),trunkLean(points,clip.neutral))}
   :arms.action==='Shield_Brace'?{shield:shieldAt(clip,local,k)}:undefined;
+ // Exchange fitted to the two squares and to the weapons. The recording's
+ // fighters held longswords; a pawn's spear is longer. So the approach is
+ // what the spear allows: a fencing thrust comes in to full reach and stops
+ // at the partner's braced shield, and the two keep the distance that needs
+ // (never closer than the recording, never past their squares); a decisive
+ // thrust must reach the trunk, and the winner presses in as far as that
+ // takes, never so far that the pelvises come within CLOSEST. The blow is
+ // measured on the real model posed as the recording has it at the moment
+ // of reach: a fencer's trunk is turned and leans, and the spear hangs from
+ // the trunk, so an upright probe would aim beside the partner. The partner
+ // is posed the same way at that moment. A decisive thrust goes at the side
+ // away from the shield and stops a hand's depth inside the near surface of
+ // the trunk (DEPTH), not through it.
+ const TRUNK_HALF=.15,OPEN_SIDE=.1,DEPTH=.08,FULL_REACH=1.95,PRESS_MAX=1.6,CLOSEST=1.25;
+ let aimProbe=null;const blows=new Map();
+ function measureBlow(pair,k){
+  const key=`${pair.attack.name}|${k.toFixed(4)}`;if(blows.has(key))return blows.get(key);
+  const P=aimProbe||(aimProbe=createPawn({id:'aim-probe',color:'w'})),A=pair.attack,B=pair.defend,r=A.events.strike.reach;
+  const pose=(clip,arms)=>{const points=cyclePose(clip,r,k,1).points;return{clip,points,weight:1,arms:spearArms(arms,points,clip,k,r)};};
+  const defence=exchangeArms(B,r),shield=P.shieldFront(defence.action,defence.time,pose(B,defence));
+  P.pose(defence.action,defence.time,null,pose(B,defence));
+  const {root,spine05}=P.points(['root','spine05']),axis=root.map((x,i)=>(x+spine05[i])/2);
+  const sweep=[];for(let t=1;t<=2.2001;t+=.05){const arms={action:'Spear_Study',time:t},{tip}=P.probe(arms.action,t,null,pose(A,arms));sweep.push({t,x:tip[0],z:tip[2],R:Math.hypot(tip[0],tip[2])});}
+  const full=sweep.find(s=>s.t>=FULL_REACH-1e-9),travel=travelAt(A,r).forward+travelAt(B,r).forward;
+  const m={shield,axis,sweep,full,travel};blows.set(key,m);return m;
+ }
+ // Where the thrust goes at a gap (pelvis to pelvis at the reach): the aim
+ // point and how far the tip may come out (attacker's frame, z forward).
+ function blowTarget(m,gap,flesh){
+  const cx=-m.shield.centerX;
+  if(!flesh)return{aim:[cx,gap-m.shield.centerZ],limit:Math.hypot(cx,gap-m.shield.front)-.015};
+  const ax=-m.axis[0],az=gap-m.axis[2],side=Math.sign(ax-cx)||1,aim=[ax+side*OPEN_SIDE,az-TRUNK_HALF+DEPTH];
+  return{aim,limit:Math.hypot(...aim)};
+ }
+ function blowAim(m,gap,flesh){
+  const {aim,limit}=blowTarget(m,gap,flesh);let stop=FULL_REACH;
+  for(const s of m.sweep){if(s.t>FULL_REACH+1e-9)break;if(s.R>limit){stop=Math.max(1,s.t-.05);break;}}
+  const at=m.sweep.find(s=>s.t>=stop-1e-9);
+  return{yaw:Math.atan2(aim[0],aim[1])-Math.atan2(at.x,at.z),stop,target:aim,tip:[at.x,at.z],limit,over:Math.max(0,m.sweep[0].R-limit),short:Math.max(0,limit-at.R)};
+ }
  function duelLayout(pair,k,distance,flesh=false){
   const key=`${pair.attack.name}|${k.toFixed(4)}|${distance.toFixed(3)}|${flesh}`;
-  if(!layouts.has(key)){const l=exchangeLayout(pair,k,distance),s=pair.attack.events.strike,gap=l.gapAt(s.reach);
-   layouts.set(key,{...l,gap,aim:recordedAim(pair,k,l,flesh)});}
+  if(!layouts.has(key)){
+   const base=exchangeLayout(pair,k,distance),m=measureBlow(pair,k),r=pair.attack.events.strike.reach,S=m.travel*k;
+   // The gap at which the full thrust just meets its target (the limit grows
+   // with the gap), and the approach scale that gives it: the gap at the
+   // reach is distance − scale·S.
+   let lo=0,hi=distance;for(let i=0;i<40;i++){const g=(lo+hi)/2;if(blowTarget(m,g,flesh).limit>m.full.R)hi=g;else lo=g;}
+   const want=S>1e-6?(distance-(lo+hi)/2)/S:base.scale;
+   let scale=flesh?clamp(Math.max(base.scale,want),0,PRESS_MAX):clamp(Math.min(base.scale,want),0,1);
+   while(scale>base.scale&&exchangeLayout(pair,k,distance,scale).closest<CLOSEST)scale-=.02;
+   const l=exchangeLayout(pair,k,distance,scale),gap=l.gapAt(r);
+   layouts.set(key,{...l,gap,aim:blowAim(m,gap,flesh)});
+  }
   return layouts.get(key);
- }
- // Aim of a recorded blow, measured on the real model posed as the
- // recording has it at the moment of reach: the trunk of a fencer is turned
- // and leans, and the spear hangs from the trunk, so an upright probe would
- // aim it beside the partner and stop it in the wrong place. The partner is
- // posed the same way at that moment. A fencing thrust goes at the braced
- // shield and stops at its face; a decisive one goes past it, at the side
- // away from the shield, and stops a hand's depth inside the near surface of
- // the trunk (DEPTH), not through it.
- const TRUNK_HALF=.15,OPEN_SIDE=.1,DEPTH=.08;
- let aimProbe=null;
- function recordedAim(pair,k,l,flesh){
-  const P=aimProbe||(aimProbe=createPawn({id:'aim-probe',color:'w'})),A=pair.attack,B=pair.defend,r=A.events.strike.reach,gap=l.gapAt(r);
-  const pose=(clip,arms)=>{const points=cyclePose(clip,r,k,l.scale).points;return{clip,points,weight:1,arms:spearArms(arms,points,clip,k,r)};};
-  const toA=p=>[-p[0],p[1],gap-p[2]]; // the partner's model frame → the attacker's
-  const defence=exchangeArms(B,r),shieldOf=P.shieldFront(defence.action,defence.time,pose(B,defence)),cx=-shieldOf.centerX;
-  let aim,limit;
-  if(flesh){
-   P.pose(defence.action,defence.time,null,pose(B,defence));
-   const {root,spine05}=P.points(['root','spine05']),axis=toA(root.map((x,i)=>(x+spine05[i])/2));
-   const side=Math.sign(axis[0]-cx)||1;aim=[axis[0]+side*OPEN_SIDE,axis[2]-TRUNK_HALF+DEPTH];limit=Math.hypot(...aim);
-  }else{aim=[cx,gap-shieldOf.centerZ];limit=Math.hypot(cx,gap-shieldOf.front)-.015;}
-  const sweep=[];for(let t=1;t<=2.2001;t+=.05){const arms={action:'Spear_Study',time:t},{tip}=P.probe(arms.action,t,null,pose(A,arms));sweep.push({t,x:tip[0],z:tip[2]});}
-  const top=sweep.reduce((a,b)=>Math.hypot(b.x,b.z)>Math.hypot(a.x,a.z)?b:a);
-  let stop=top.t;for(const s of sweep){if(s.t>top.t)break;if(Math.hypot(s.x,s.z)>limit){stop=Math.max(1,s.t-.05);break;}}
-  const at=sweep.find(s=>s.t>=stop-1e-9)||top;
-  return{yaw:Math.atan2(aim[0],aim[1])-Math.atan2(at.x,at.z),stop,target:aim,tip:[at.x,at.z],short:Math.max(0,limit-Math.hypot(top.x,top.z))};
  }
  function duelExchange(actor,piece,target){
   const pair=motion.duel?.exchange;if(!pair)return null;

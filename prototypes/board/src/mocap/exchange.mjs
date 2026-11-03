@@ -29,15 +29,17 @@ export function exchangePairs(clips){
 
 // Forward travel of a clip's pelvis from its start (source units, +Z is
 // towards the partner) and sideways drift, at time t.
-const travelAt=(clip,t)=>{const p=sampleClip(clip,t).pelvis,o=clip.frames[0].pelvis;return{forward:p[2]-o[2],side:p[0]-o[0]};};
+export const travelAt=(clip,t)=>{const p=sampleClip(clip,t).pelvis,o=clip.frames[0].pelvis;return{forward:p[2]-o[2],side:p[0]-o[0]};};
 
 // How a cycle fits two squares `distance` apart for a figure whose legs are
 // k times the recording's: scale for the approach and the pelvis-to-pelvis
 // gap over the cycle (board units). The recorded closest gap is kept.
-export function exchangeLayout(pair,k,distance){
+// A given scale (the board's fit of the blow, board.mjs) replaces the one
+// that keeps the recorded closest gap.
+export function exchangeLayout(pair,k,distance,given=null){
  const {attack,defend}=pair,D=Math.max(attack.duration,defend.duration),gap0=(attack.events?.gap??distance/k);
  let close=0;for(let t=0;t<=D+1e-9;t+=1/30)close=Math.max(close,travelAt(attack,t).forward+travelAt(defend,t).forward);
- const closest=(gap0-close)*k,scale=close>1e-6?clamp((distance-closest)/(close*k),0,1):1;
+ const closest=(gap0-close)*k,scale=given??(close>1e-6?clamp((distance-closest)/(close*k),0,1):1);
  const gapAt=t=>distance-scale*k*(travelAt(attack,t).forward+travelAt(defend,t).forward);
  let min=Infinity;for(let t=0;t<=D+1e-9;t+=1/30)min=Math.min(min,gapAt(t));
  return{scale,closest:min,recordedClosest:closest,gapAt};
