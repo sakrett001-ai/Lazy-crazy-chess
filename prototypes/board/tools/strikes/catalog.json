@@ -1,0 +1,64 @@
+{
+ "about": "Удары из открытых записей. Источник — Bandai Namco Research Motion Dataset-1 (CC BY-NC 4.0, маркерный захват, 30 к/с). Кадры источника, роль руки и снаряжение бойца. Сами записи и производные клипы в репозиторий не кладём: build.mjs собирает их в out/ из клона набора.",
+ "dataset": {
+  "name": "Bandai-Namco-Research-Motiondataset-1",
+  "url": "https://github.com/BandaiNamcoResearchInc/Bandai-Namco-Research-Motiondataset",
+  "license": "CC BY-NC 4.0",
+  "credit": "Bandai Namco Research Inc., Kobayashi et al. 2023, arXiv:2306.08861",
+  "neutral": {
+   "file": "dataset-1_bow_normal_001.bvh",
+   "frame": 0,
+   "note": "Стойка «вольно» того же скелета: от неё считаются повороты корпуса и головы (src/mocap/retarget.mjs)."
+  }
+ },
+ "strikes": [
+  {
+   "id": "bishop-diagonal-cut",
+   "figure": "Офицер",
+   "label": "Косой удар с шагом",
+   "file": "dataset-1_slash_normal_002.bvh",
+   "frames": [
+    8,
+    140
+   ],
+   "track": "cut",
+   "hands": "two",
+   "loadout": {
+    "weaponType": "greatsword"
+   },
+   "note": "Двуручный косой удар сверху справа налево с подшагом правой — один решающий приём дуэлянта. Бастард в мастерской пока заменяет двуручный меч."
+  },
+  {
+   "id": "rook-overhead-blow",
+   "figure": "Ладья",
+   "label": "Удар сверху двумя руками",
+   "file": "dataset-1_slash_normal_001.bvh",
+   "frames": [
+    10,
+    132
+   ],
+   "track": "cut",
+   "hands": "two",
+   "loadout": {
+    "weaponType": "greatsword"
+   },
+   "note": "Вертикальный двуручный удар сверху: механика удара полэксом или молотом. Молота и полэкса в модели нет, на стенде двуручный меч."
+  },
+  {
+   "id": "pawn-spear-thrust",
+   "figure": "Пешка",
+   "label": "Укол копьём с поворотом корпуса",
+   "file": "dataset-1_punch_normal_002.bvh",
+   "frames": [
+    26,
+    92
+   ],
+   "track": "thrust",
+   "loadout": {
+    "weaponType": "spear",
+    "shieldType": "tower"
+   },
+   "note": "Прямой удар правой с разворотом таза и переносом веса — та же механика, что у укола копьём из-за щита. Тело и время укола из записи, руки ставит мастерская по своим линиям копья и щита."
+  }
+ ]
+}

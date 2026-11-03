@@ -125,7 +125,7 @@ export function createPawnFactory({gltf}){
   }
   // Bone positions in the model frame for the current pose.
   function points(names){holder.updateMatrixWorld(true);const inverse=holder.matrixWorld.clone().invert();const norm=x=>String(x).replace(/[._\-\s]/g,'').toLowerCase(),by=new Map(Object.entries(bones).map(([k,b])=>[norm(k),b]));return Object.fromEntries(names.map(n=>[n,by.get(norm(n))?by.get(norm(n)).getWorldPosition(new THREE.Vector3()).applyMatrix4(inverse).toArray().map(v=>+v.toFixed(3)):null]));}
-  return{id,kind:'pawn',color,object:holder,pose:solve,mocap,points,rig,probe,shieldFront,shieldHit,measureWorld:()=>loadout.measure(),place:place.set,placement:place.get,fade,current:()=>({...pose}),dispose(){holder.removeFromParent();}};
+  return{id,kind:'pawn',color,object:holder,pose:solve,equip:settings=>loadout.apply(settings),loadout:()=>loadout.summary(),biomechanics:()=>loadout.biomechanics(),mocap,points,rig,probe,shieldFront,shieldHit,measureWorld:()=>loadout.measure(),place:place.set,placement:place.get,fade,current:()=>({...pose}),dispose(){holder.removeFromParent();}};
  };
 }
 

@@ -52,10 +52,23 @@ export function createRetargeter(rest){
  // pose(points, clip): world rotations of the driven bones and the root
  // position, all in model space. clip supplies leg (source leg length) and
  // ground and groundToe (lowest source ankle and toe heights) from prepareClip.
+ // A clip may carry its skeleton's neutral stance (prepareClip). Skeletons
+ // place the spine, neck and head points differently: the Bandai Namco
+ // chest→neck line leans 4° back in an easy stance where the pawn's leans
+ // 6° forward, its pelvis→spine line stands upright where the pawn's leans
+ // 19° forward (lumbar curve). Frame against frame, the pawn then leans
+ // back and looks up. With a neutral, the trunk and head turn by the
+ // source's rotation away from its own neutral, so standing at ease gives
+ // the pawn's rest. The legs keep the frame-against-frame rule: their
+ // checks (knees, soles) hold on it.
+ const neutrals=new WeakMap();
+ const neutralFrames=n=>{if(!neutrals.has(n))neutrals.set(n,{pelvis:FRAMES.pelvis(n),chest:FRAMES.chest(n),head:FRAMES.head(n)});return neutrals.get(n);};
  function pose(src,clip){
+  const N=clip.neutral?neutralFrames(clip.neutral):null;
   const delta=(name,q)=>qMul(q,qConj(restFrames[name]));
-  const dP=delta('pelvis',FRAMES.pelvis(src)),dC=delta('chest',FRAMES.chest(src));
-  const dH=delta('head',FRAMES.head(src));
+  const trunk=(name,q)=>N?qMul(q,qConj(N[name])):delta(name,q);
+  const dP=trunk('pelvis',FRAMES.pelvis(src)),dC=trunk('chest',FRAMES.chest(src));
+  const dH=trunk('head',FRAMES.head(src));
   const world={},turned=(bone,d)=>{world[bone]=qMul(d,Q[bone]);};
   turned(PAWN.root,dP);
   PAWN.spine.forEach((b,i)=>turned(b,qSlerp(dP,dC,(i+1)/PAWN.spine.length)));

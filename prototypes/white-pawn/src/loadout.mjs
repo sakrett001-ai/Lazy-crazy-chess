@@ -195,7 +195,7 @@ export function createLoadout({model,bones={}}){
  // trunk frame: swing about the trunk's up axis (+ to the left, outwards),
  // raise as shoulder flexion (+ forwards and up); lift then carries it up the
  // trunk, metres, the shield's face kept.
- function poseAt(action='rest',time=0,{body=true,phase:given=null,shield:turn=null}={}){
+ function poseAt(action='rest',time=0,{body=true,phase:given=null,shield:turn=null,hand=null}={}){
   lastAction=action;lastTime=Number.isFinite(time)?Math.max(0,time):0;reachErrors={};
   applyMorphs();update();
   {
@@ -224,7 +224,18 @@ export function createLoadout({model,bones={}}){
    if(action==='Shield_Brace'&&current.weaponType==='sword'&&summary().effectiveShield==='round')anchor[0]-=.015*envelope(lastTime,.4,.9,3.2,3.7);
    const grip=origin.clone().add(direction(anchor)).addScaledVector(axis,(isPike?.106:isGreatsword?.13:.14)*phase.thrust);
    if(action==='Guard_Breath')grip.addScaledVector(up,.003*Math.sin(Math.PI*2*Math.min(lastTime,6)/6));
-   reachErrors.R=armBiomechanics.solve('R',grip,axis,direction([-1,-.55,.45]),toolAxisLocal('R'));
+   let pole=direction([-1,-.55,.45]);
+   // hand: a strike led by a recorded hand (board/src/mocap/strike.mjs). Grip
+   // in the trunk frame in arm lengths from the middle of the shoulders, blade
+   // axis and elbow pole as trunk directions. The arm is still solved by the
+   // same biomechanics: elbow and wrist limits, forearm twist, diagonal grip.
+   if(hand){
+    const arm=armBiomechanics.calibration().R.lengthsM,length=arm[0]+arm[1];
+    grip.copy(origin).add(direction(hand.grip.map(v=>v*length)));
+    axis.copy(direction(hand.axis)).normalize();
+    if(hand.pole&&Math.hypot(...hand.pole)>1e-3)pole=direction(hand.pole).normalize();
+   }
+   reachErrors.R=armBiomechanics.solve('R',grip,axis,pole,toolAxisLocal('R'));
    if(twoHanded.has(current.weaponType)){
    // The second hand follows the actual skinned weapon attachment. It is not
    // advanced independently from the shaft during the thrust.
