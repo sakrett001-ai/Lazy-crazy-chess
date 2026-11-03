@@ -36,6 +36,12 @@ test('on neighbouring squares the fighters come as close as the recording but ne
  assert.ok(exchangeLayout(pairs.exchange,k,STRAIGHT).scale<exchangeLayout(pairs.exchange,k,DIAGONAL).scale,'the nearer squares shorten the approach more');
 });
 
+test('the shoulders turn over the hips no further than the spine twists',()=>{
+ const yaw=(a,b)=>Math.atan2(-(b[2]-a[2]),b[0]-a[0])*180/Math.PI,wrap=a=>((a+540)%360)-180;
+ for(const c of clips)for(const f of c.frames){const d=wrap(yaw(f.shoulderL,f.shoulderR)-yaw(f.hipL,f.hipR));
+  assert.ok(Math.abs(d)<=51,`${c.name}: twist ${d.toFixed(0)}°`);}
+});
+
 test('a figure keeps to the line of the fight: no sideways drift',()=>{
  for(const c of clips)for(let t=0;t<=c.duration;t+=.1)assert.equal(cyclePose(c,t,k,1).offset.x,0);
 });

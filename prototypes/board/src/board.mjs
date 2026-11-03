@@ -187,8 +187,9 @@ async function init(bytes){
  // what the spear allows: a fencing thrust comes in to full reach and stops
  // at the partner's braced shield, and the two keep the distance that needs
  // (never closer than the recording, never past their squares); a decisive
- // thrust must reach the trunk, and the winner presses in as far as that
- // takes, never so far that the pelvises come within CLOSEST. The blow is
+ // thrust must reach the trunk at full reach, so the winner comes in exactly
+ // as far as that takes (pressing past the recording if need be, never so
+ // far that the pelvises come within CLOSEST). The blow is
  // measured on the real model posed as the recording has it at the moment
  // of reach: a fencer's trunk is turned and leans, and the spear hangs from
  // the trunk, so an upright probe would aim beside the partner. The partner
@@ -231,7 +232,7 @@ async function init(bytes){
    // reach is distance − scale·S.
    let lo=0,hi=distance;for(let i=0;i<40;i++){const g=(lo+hi)/2;if(blowTarget(m,g,flesh).limit>m.full.R)hi=g;else lo=g;}
    const want=S>1e-6?(distance-(lo+hi)/2)/S:base.scale;
-   let scale=flesh?clamp(Math.max(base.scale,want),0,PRESS_MAX):clamp(Math.min(base.scale,want),0,1);
+   let scale=flesh?clamp(want,0,PRESS_MAX):clamp(Math.min(base.scale,want),0,1);
    while(scale>base.scale&&exchangeLayout(pair,k,distance,scale).closest<CLOSEST)scale-=.02;
    const l=exchangeLayout(pair,k,distance,scale),gap=l.gapAt(r);
    layouts.set(key,{...l,gap,aim:blowAim(m,gap,flesh)});

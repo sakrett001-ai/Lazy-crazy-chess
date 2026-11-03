@@ -82,6 +82,52 @@ def steady_root(X, fps, sigma=ROOT_SIGMA, max_speed=ROOT_MAX_SPEED):
     return Y, float(np.abs(D).max())
 
 
+# Поворот плеч против таза у одной камеры, снимающей бойцов сбоку, — самая
+# плохо видимая величина: линия плеч лежит вдоль оси камеры, и её глубину
+# MediaPipe оценивает наугад. В ролике 516 за 0,4 с плечи атакующего
+# «обходят» вокруг корпуса на 250°, хотя таз поворачивается всего на 40°:
+# так позвоночник не скручивается, на доске копьё разворачивалось назад.
+# Скрутка грудного и поясничного отделов вместе — до 40–50° в каждую
+# сторону (справочные амплитуды осевого вращения: грудной ~35°, поясничный
+# ~5–10°), так что кадры со скруткой больше 90° — ошибка оценки, а не поза:
+# их скрутка берётся между соседними надёжными кадрами, затем вся скрутка
+# ограничивается TWIST_MAX и сглаживается. Верх тела (голова, плечи, руки)
+# поворачивается вокруг вертикали через таз на поправку.
+TWIST_MAX = 50.0     # градусов, предел скрутки плеч относительно таза
+TWIST_REJECT = 90.0  # градусов, больше — ошибка оценки
+TWIST_SIGMA = 2.0    # кадров
+UPPER = [i for i, n in enumerate(C.NAMES) if not n.startswith(('hip', 'knee', 'ankle', 'heel', 'foot', 'toe'))]
+
+
+def wrap(a):
+    return (a + 180.0) % 360.0 - 180.0
+
+
+def steady_twist(X, max_twist=TWIST_MAX, reject=TWIST_REJECT, sigma=TWIST_SIGMA):
+    """Shoulder line kept within the spine's twist over the hips. Returns the
+    corrected frames, the number of frames taken as estimation errors and the
+    largest correction, degrees."""
+    yaw = lambda a, b: np.degrees(np.arctan2(-(X[:, b, 2] - X[:, a, 2]), X[:, b, 0] - X[:, a, 0]))  # noqa: E731
+    d = wrap(yaw(C.I['shoulderL'], C.I['shoulderR']) - yaw(C.I['hipL'], C.I['hipR']))
+    ok = np.abs(d) <= reject
+    idx = np.arange(len(d))
+    want = np.interp(idx, idx[ok], d[ok]) if ok.any() else np.zeros_like(d)
+    want = np.clip(want, -max_twist, max_twist)
+    r = int(np.ceil(3 * sigma))
+    w = np.exp(-0.5 * (np.arange(-r, r + 1) / sigma) ** 2)
+    want = np.convolve(np.pad(want, r, mode='edge'), w / w.sum(), mode='valid')
+    rot = np.radians(wrap(want - d))
+    Y = X.copy()
+    o = C.pelvis(X)
+    for f in range(len(X)):
+        c, s = np.cos(rot[f]), np.sin(rot[f])
+        v = X[f, UPPER] - o[f]
+        # yaw() measures angles with z negated: a turn by +a there is x,z → (x cos a + z sin a, −x sin a + z cos a)
+        Y[f, UPPER, 0] = o[f, 0] + v[:, 0] * c + v[:, 2] * s
+        Y[f, UPPER, 2] = o[f, 2] - v[:, 0] * s + v[:, 2] * c
+    return Y, int((~ok).sum()), float(np.degrees(np.abs(rot)).max())
+
+
 def own_frame(X, facing):
     """Pair frame (x from A to B) → the fighter's frame: facing +x (A) or -x (B) onto +Z."""
     th = np.radians(-90.0 if facing > 0 else 90.0)
@@ -96,9 +142,11 @@ def build(pair):
     full = {n: np.asarray(pair['people'][n]['frames'], float) for n in ('A', 'B')}
     # Only the bout's own frames: the track's first frames (the person found
     # by the detector) may jump by metres and would drag the whole path.
-    lo, hi, shift = min(c['frames'][0] for c in CYCLES), max(c['frames'][1] for c in CYCLES) + 1, {}
+    lo, hi, shift, twist = min(c['frames'][0] for c in CYCLES), max(c['frames'][1] for c in CYCLES) + 1, {}, {}
     for n in ('A', 'B'):
         full[n] = full[n].copy()
+        Y, bad, most = steady_twist(full[n][lo:hi])
+        full[n][lo:hi], twist[n] = Y, (bad, most)
         full[n][lo:hi], shift[n] = steady_root(full[n][lo:hi], fps)
     neutral = {}
     for n, X in full.items():
@@ -129,7 +177,9 @@ def build(pair):
     src = {'kind': 'video', 'name': SOURCE['video'], 'license': SOURCE['license'],
            'note': 'Одна камера, двое: tools/videomocap (pair.py — кто есть кто, duel.py — общая сцена и удары). Расстояние между бойцами — по глубине камеры, без эталона.',
            'distance': pair.get('distance'), 'neutralFrames': {n: v[0] for n, v in neutral.items()},
-           'root': {'sigmaFrames': ROOT_SIGMA, 'maxSpeedLegsPerSecond': ROOT_MAX_SPEED, 'maxShift': {n: round(v, 3) for n, v in shift.items()}}}
+           'root': {'sigmaFrames': ROOT_SIGMA, 'maxSpeedLegsPerSecond': ROOT_MAX_SPEED, 'maxShift': {n: round(v, 3) for n, v in shift.items()}},
+           'twist': {'maxDegrees': TWIST_MAX, 'rejectDegrees': TWIST_REJECT, 'sigmaFrames': TWIST_SIGMA,
+                     'rejectedFrames': {n: v[0] for n, v in twist.items()}, 'maxCorrectionDegrees': {n: round(v[1], 1) for n, v in twist.items()}}}
     return {'format': 'lazy-chess.motion', 'version': 1, 'source': src, 'points': POINTS, 'neutral': clips[0]['neutral'], 'clips': clips}
 
 
