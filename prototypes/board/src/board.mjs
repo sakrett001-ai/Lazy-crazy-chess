@@ -108,16 +108,6 @@ async function init(bytes){
   return{yaw,stop};
  }
  const contact={straight:fencingAim(SQUARE),diagonal:fencingAim(SQUARE*Math.SQRT2)};
- // A decisive blow goes past the shield into the body: aimed at the
- // partner's open side (away from the shield) and stopped a hand's depth
- // inside the near surface of the trunk, not through it.
- const TRUNK_HALF=.15,OPEN_SIDE=.22,DEPTH=.08;
- function fleshAim(distance){
-  const cx=OPEN_SIDE*Math.sign(shield.centerX||1),cz=distance-TRUNK_HALF+DEPTH;
-  const yaw=Math.atan2(cx,cz)-Math.atan2(peak.x,peak.z),limit=Math.hypot(cx,cz);let stop=peak.t;
-  for(const s of thrust){if(s.t<1)continue;if(s.t>peak.t)break;if(Math.hypot(s.x,s.z)>limit){stop=Math.max(0,s.t-.05);break;}}
-  return{yaw,stop};
- }
  // The capture's thrust is a lunge, so its reach is measured with the
  // strike layer: the tip at the moment of impact in the attacker's frame.
  const lungeProbe=createPawn({id:'probe',color:'w'});
@@ -198,8 +188,35 @@ async function init(bytes){
  function duelLayout(pair,k,distance,flesh=false){
   const key=`${pair.attack.name}|${k.toFixed(4)}|${distance.toFixed(3)}|${flesh}`;
   if(!layouts.has(key)){const l=exchangeLayout(pair,k,distance),s=pair.attack.events.strike,gap=l.gapAt(s.reach);
-   layouts.set(key,{...l,gap,aim:flesh?fleshAim(gap):fencingAim(gap)});}
+   layouts.set(key,{...l,gap,aim:recordedAim(pair,k,l,flesh)});}
   return layouts.get(key);
+ }
+ // Aim of a recorded blow, measured on the real model posed as the
+ // recording has it at the moment of reach: the trunk of a fencer is turned
+ // and leans, and the spear hangs from the trunk, so an upright probe would
+ // aim it beside the partner and stop it in the wrong place. The partner is
+ // posed the same way at that moment. A fencing thrust goes at the braced
+ // shield and stops at its face; a decisive one goes past it, at the side
+ // away from the shield, and stops a hand's depth inside the near surface of
+ // the trunk (DEPTH), not through it.
+ const TRUNK_HALF=.15,OPEN_SIDE=.1,DEPTH=.08;
+ let aimProbe=null;
+ function recordedAim(pair,k,l,flesh){
+  const P=aimProbe||(aimProbe=createPawn({id:'aim-probe',color:'w'})),A=pair.attack,B=pair.defend,r=A.events.strike.reach,gap=l.gapAt(r);
+  const pose=(clip,arms)=>{const points=cyclePose(clip,r,k,l.scale).points;return{clip,points,weight:1,arms:spearArms(arms,points,clip,k,r)};};
+  const toA=p=>[-p[0],p[1],gap-p[2]]; // the partner's model frame → the attacker's
+  const defence=exchangeArms(B,r),shieldOf=P.shieldFront(defence.action,defence.time,pose(B,defence)),cx=-shieldOf.centerX;
+  let aim,limit;
+  if(flesh){
+   P.pose(defence.action,defence.time,null,pose(B,defence));
+   const {root,spine05}=P.points(['root','spine05']),axis=toA(root.map((x,i)=>(x+spine05[i])/2));
+   const side=Math.sign(axis[0]-cx)||1;aim=[axis[0]+side*OPEN_SIDE,axis[2]-TRUNK_HALF+DEPTH];limit=Math.hypot(...aim);
+  }else{aim=[cx,gap-shieldOf.centerZ];limit=Math.hypot(cx,gap-shieldOf.front)-.015;}
+  const sweep=[];for(let t=1;t<=2.2001;t+=.05){const arms={action:'Spear_Study',time:t},{tip}=P.probe(arms.action,t,null,pose(A,arms));sweep.push({t,x:tip[0],z:tip[2]});}
+  const top=sweep.reduce((a,b)=>Math.hypot(b.x,b.z)>Math.hypot(a.x,a.z)?b:a);
+  let stop=top.t;for(const s of sweep){if(s.t>top.t)break;if(Math.hypot(s.x,s.z)>limit){stop=Math.max(1,s.t-.05);break;}}
+  const at=sweep.find(s=>s.t>=stop-1e-9)||top;
+  return{yaw:Math.atan2(aim[0],aim[1])-Math.atan2(at.x,at.z),stop,short:Math.max(0,limit-Math.hypot(top.x,top.z))};
  }
  function duelExchange(actor,piece,target){
   const pair=motion.duel?.exchange;if(!pair)return null;

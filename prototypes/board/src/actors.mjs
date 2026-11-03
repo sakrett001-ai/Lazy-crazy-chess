@@ -84,17 +84,18 @@ export function createPawnFactory({gltf}){
    holder.updateMatrixWorld(true);rig.apply(layer);loadout.poseAt(action,time,{body:!clipBody,...(motion?.arms||{})});
    place.set(saved);pose={action,time,layered:!!layer,motion:(motion?.blend||[motion]).filter(m=>m?.clip).map(m=>m.clip.name).join('+')||null};
   }
-  // Spear tip and shield face in the model frame for one pose (metres).
-  function probe(action,time,layer=null){
-   const saved=place.get();solve(action,time,layer);
+  // Spear tip and shield face in the model frame for one pose (metres);
+  // motion as in solve, for a pose from a clip.
+  function probe(action,time,layer=null,motion=null){
+   const saved=place.get();solve(action,time,layer,motion);
    holder.position.set(0,0,0);holder.quaternion.identity();holder.updateMatrixWorld(true);
    const m=loadout.measure();
    place.set(saved);
    return{tip:m.tip,shieldGrip:m.shieldGripWorld};
   }
   // Foremost point of the visible shield along the figure's forward axis.
-  function shieldFront(action,time){
-   const saved=place.get();solve(action,time);
+  function shieldFront(action,time,motion=null){
+   const saved=place.get();solve(action,time,null,motion);
    holder.position.set(0,0,0);holder.quaternion.identity();holder.updateMatrixWorld(true);
    const point=new THREE.Vector3();let front=-Infinity,sx=0,sz=0,n=0;
    const visible=o=>{for(let n=o;n;n=n.parent)if(!n.visible)return false;return true;};
