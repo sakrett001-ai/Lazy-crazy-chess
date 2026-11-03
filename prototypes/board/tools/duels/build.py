@@ -158,6 +158,48 @@ def steady_legs(X, ratio=LEG_SWAP, least=LEG_SWAP_MIN):
     return Y, swaps
 
 
+# Колено — шарнир: оно сгибается вперёд по линии стопы, а бедро может лишь
+# повернуть эту линию относительно таза — наружу до 45°, внутрь до 35–45°
+# (нормы подвижности тазобедренного сустава, AAOS). Камера сбоку не видит
+# глубины, и у поднятой ноги MediaPipe уводит колено вбок от этой плоскости
+# (в ролике 516 у атакующего перед решающим ударом — на 70–90°): колено
+# сгибается в сторону, чего сустав не умеет. Колено поворачивается вокруг
+# линии «бедро — лодыжка» в пределы HIP_ROT от направления таза вперёд;
+# длины бедра и голени и стопа не меняются. Сама линия таза у камеры сбоку
+# идёт почти вдоль глубины и тоже оценена грубо (у бойцов 516 направление
+# колена от неё — ±60° в 5–95 % кадров), поэтому к 45° нормы добавлен запас
+# 15° на эту ошибку: правятся только колени, ушедшие вбок явно.
+HIP_ROT = 60.0  # градусов: 45° нормы AAOS + 15° на ошибку линии таза
+
+
+def unit(v):
+    return v / np.maximum(np.linalg.norm(v, axis=-1, keepdims=True), 1e-9)
+
+
+def steady_knees(X, limit=HIP_ROT):
+    """Each knee turned about its hip-ankle line into the hinge plane the hip
+    rotation allows. Returns the corrected frames, the number of leg frames
+    corrected and the largest correction, degrees."""
+    Y = X.copy()
+    lat = X[:, C.I['hipR']] - X[:, C.I['hipL']]
+    count, most = 0, 0.0
+    for s in 'LR':
+        H, K, A = X[:, C.I['hip' + s]], X[:, C.I['knee' + s]], X[:, C.I['ankle' + s]]
+        u = unit(A - H)
+        f = unit(np.cross(lat, u))
+        g = np.cross(u, f)
+        base = H + u * np.sum((K - H) * u, axis=1, keepdims=True)
+        off = K - base
+        ang = np.degrees(np.arctan2(np.sum(off * g, axis=1), np.sum(off * f, axis=1)))
+        corr = np.radians(np.clip(ang, -limit, limit) - ang)
+        corr[np.linalg.norm(off, axis=1) < 0.01] = 0
+        c, n = np.cos(corr)[:, None], np.sin(corr)[:, None]
+        Y[:, C.I['knee' + s]] = base + off * c + np.cross(u, off) * n
+        count += int((np.abs(corr) > 1e-6).sum())
+        most = max(most, float(np.degrees(np.abs(corr)).max()))
+    return Y, count, most
+
+
 def own_frame(X, facing):
     """Pair frame (x from A to B) → the fighter's frame: facing +x (A) or -x (B) onto +Z."""
     th = np.radians(-90.0 if facing > 0 else 90.0)
@@ -172,13 +214,16 @@ def build(pair):
     full = {n: np.asarray(pair['people'][n]['frames'], float) for n in ('A', 'B')}
     # Only the bout's own frames: the track's first frames (the person found
     # by the detector) may jump by metres and would drag the whole path.
-    lo, hi, shift, twist, swaps = min(c['frames'][0] for c in CYCLES), max(c['frames'][1] for c in CYCLES) + 1, {}, {}, {}
+    lo, hi, shift, twist, swaps, knees = min(c['frames'][0] for c in CYCLES), max(c['frames'][1] for c in CYCLES) + 1, {}, {}, {}, {}
     for n in ('A', 'B'):
         full[n] = full[n].copy()
         Y, swaps[n] = steady_legs(full[n][lo:hi])
         swaps[n] = [lo + f for f in swaps[n]]
         Y, bad, most = steady_twist(Y)
-        full[n][lo:hi], twist[n] = Y, (bad, most)
+        twist[n] = (bad, most)
+        Y, kn, kmost = steady_knees(Y)
+        knees[n] = (kn, kmost)
+        full[n][lo:hi] = Y
         full[n][lo:hi], shift[n] = steady_root(full[n][lo:hi], fps)
     neutral = {}
     for n, X in full.items():
@@ -211,6 +256,8 @@ def build(pair):
            'distance': pair.get('distance'), 'neutralFrames': {n: v[0] for n, v in neutral.items()},
            'root': {'sigmaFrames': ROOT_SIGMA, 'maxSpeedLegsPerSecond': ROOT_MAX_SPEED, 'maxShift': {n: round(v, 3) for n, v in shift.items()}},
            'legs': {'swapRatio': LEG_SWAP, 'swappedAt': swaps},
+           'knees': {'hipRotationDegrees': HIP_ROT, 'correctedLegFrames': {n: v[0] for n, v in knees.items()},
+                     'maxCorrectionDegrees': {n: round(v[1], 1) for n, v in knees.items()}},
            'twist': {'maxDegrees': TWIST_MAX, 'rejectDegrees': TWIST_REJECT, 'sigmaFrames': TWIST_SIGMA,
                      'rejectedFrames': {n: v[0] for n, v in twist.items()}, 'maxCorrectionDegrees': {n: round(v[1], 1) for n, v in twist.items()}}}
     return {'format': 'lazy-chess.motion', 'version': 1, 'source': src, 'points': POINTS, 'neutral': clips[0]['neutral'], 'clips': clips}

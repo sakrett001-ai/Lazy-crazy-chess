@@ -10,7 +10,7 @@ import {createLandscape} from './landscape.mjs';
 import {readMotionSource} from './mocap/library.mjs';
 import {sampleAlong,sampleClip,sampleArms,scaleLayer,centerPoints,turnHead} from './mocap/format.mjs';
 import {rotateY} from './mocap/math.mjs';
-import {exchangePairs,exchangeLayout,exchangeAt,exchangeArms,cyclePose,travelAt,trunkLean,levelSpear,shieldAt,CROSSFADE} from './mocap/exchange.mjs';
+import {exchangePairs,exchangeLayout,exchangeAt,exchangeArms,cyclePose,travelAt,trunkLean,levelSpear,shieldAt,SHIELD_WINDOW,CROSSFADE} from './mocap/exchange.mjs';
 import {loadoutPhases} from '../../white-pawn/src/loadout.mjs';
 
 // One square is 2.6 m. A 1.8 m soldier with a tower shield and a 2.4 m
@@ -182,8 +182,65 @@ async function init(bytes){
  // levelled against the lean, the shield carried over the front knee.
  // The shield is carried over the front knee whoever is thrusting: the
  // attacker carries one too, and its lunge brings the knee up most.
- const spearArms=(arms,points,clip,k,local)=>arms.action==='Spear_Study'?{phase:levelSpear(loadoutPhases(arms.action,arms.time),trunkLean(points,clip.neutral)),shield:shieldAt(clip,local,k)}
-  :arms.action==='Shield_Brace'?{shield:shieldAt(clip,local,k)}:undefined;
+ const fittedArms=(arms,points,clip,k,local,shield)=>arms.action==='Spear_Study'?{phase:levelSpear(loadoutPhases(arms.action,arms.time),trunkLean(points,clip.neutral)),shield}
+  :arms.action==='Shield_Brace'?{shield}:undefined;
+ const spearArms=(arms,points,clip,k,local)=>fittedArms(arms,points,clip,k,local,{...shieldAt(clip,local,k),raise:shieldRaise(clip,k,local)});
+ // Lifting the shield up the trunk does not always clear the knee: in the
+ // deepest lunge the front thigh comes up under the shield's lower edge
+ // whatever the lift. A fighter then swings the shield arm forwards and up
+ // from the shoulder, the lower edge ahead of the knee. How far is measured
+ // on the real model: every recorded moment is posed with the clip's own
+ // arms and the shield raised in RAISE_STEP steps until no thigh or shin
+ // of the figure meets it (RAISE_MAX at most). Like the lift, each moment's
+ // raise holds over SHIELD_WINDOW around it, fading to nothing at the edge:
+ // the shield comes up before the knee arrives and goes down after it.
+ const RAISE_STEP=.1,RAISE_MAX=.8,RAISE_RATE=30;let shieldProbe=null;const raises=new Map();
+ const LEGS=[['upperleg01.L','lowerleg01.L'],['lowerleg01.L','foot.L'],['upperleg01.R','lowerleg01.R'],['lowerleg01.R','foot.R'],['foot.L','toe3-1.L'],['foot.R','toe3-1.R']];
+ const legsClear=P=>{P.object.updateMatrixWorld(true);const B=Object.fromEntries(Object.entries(P.points(LEGS.flat())).map(([n,v])=>[n,new THREE.Vector3(...v).applyMatrix4(P.object.matrixWorld).toArray()]));return!LEGS.some(([a,b])=>P.shieldHit(B[a],B[b])!==null);};
+ // The least raise from `from` up that clears the legs for pose(raise), or RAISE_MAX.
+ const leastRaise=(P,pose,from=0)=>{for(let raise=from;raise<=RAISE_MAX+1e-9;raise+=RAISE_STEP){pose(raise);if(legsClear(P))return raise;}return RAISE_MAX;};
+ // Carrying a moment's raise over its neighbours can put the lower edge on
+ // a foot that is clear lower down (the edge goes forwards as it rises). So
+ // each sample is posed again at the carried raise and, where that touches,
+ // raised further, until the carried shield clears every sample.
+ function measureRaise(clip,k){
+  const key=`${clip.name}|${k.toFixed(4)}`;if(raises.has(key))return raises.get(key);
+  const P=shieldProbe||(shieldProbe=createPawn({id:'shield-probe',color:'w'})),R=[],poses=[];
+  P.place({x:0,z:0,yaw:0});
+  for(let i=0;i<=Math.ceil(clip.duration*RAISE_RATE);i++){const t=Math.min(clip.duration,i/RAISE_RATE),arms=exchangeArms(clip,t),points=cyclePose(clip,t,k,1).points,base=shieldAt(clip,t,k);
+   const pose=raise=>P.pose(arms.action,arms.time,null,{clip,points,weight:1,arms:fittedArms(arms,points,clip,k,t,{...base,raise})});
+   poses.push({t,pose});R.push(leastRaise(P,pose));}
+  raises.set(key,R);
+  for(let pass=0;pass<4;pass++){let changed=false;
+   for(let j=0;j<R.length;j++){const {t,pose}=poses[j],carried=shieldRaise(clip,k,t);if(carried<=R[j]+1e-9)continue;
+    pose(carried);if(legsClear(P))continue;const r=leastRaise(P,pose,carried+RAISE_STEP);if(r>R[j]){R[j]=r;changed=true;}}
+   if(!changed)break;}
+  return R;
+ }
+ // The board's own walk (choreography.mjs gait) swings the shield-side leg
+ // forwards and up under the guard's shield the same way. A walking
+ // fighter carries the shield forward over the stride: one raise, measured
+ // on the model over a two-square walk the same way (the gait's step does
+ // not depend on the distance), leaning into the start and back on braking
+ // as far as the walk leans, comes in over the first quarter step and
+ // goes down as the figure stops (walkRaise: the share of it at s of D).
+ let walkRaiseMax=null;
+ function measureWalkRaise(){
+  if(walkRaiseMax!==null)return walkRaiseMax;
+  const P=shieldProbe||(shieldProbe=createPawn({id:'shield-probe',color:'w'})),D=2*SQUARE;P.place({x:0,z:0,yaw:0});let most=0;
+  // Raised further for one moment, the shield is checked again over the whole stride.
+  for(let pass=0;pass<4;pass++){const before=most;
+   for(let s=.05;s<D;s+=.05)for(const accel of [-4,0,4])most=leastRaise(P,r=>P.pose('Guard_Breath',0,walkLayer(D,s,accel,[0,1],0),{arms:{shield:{raise:r}}}),most);
+   if(most===before)break;}
+  return walkRaiseMax=most;
+ }
+ const walkRaise=(D,s,{carried=false}={})=>{const l=D/Math.max(2,Math.round(D/.62));return measureWalkRaise()*(carried?1:smooth(s,0,.25*l))*(1-smooth(s,D-.35*l,D));};
+ function shieldRaise(clip,k,t){
+  const R=measureRaise(clip,k),dt=1/RAISE_RATE,lo=Math.max(0,Math.ceil((t-SHIELD_WINDOW)/dt)),hi=Math.min(R.length-1,Math.floor((t+SHIELD_WINDOW)/dt));
+  // Full within a sample of the moment: between two samples either may be the nearer pose.
+  let raise=0;for(let j=lo;j<=hi;j++)raise=Math.max(raise,R[j]*Math.min(1,1-(Math.abs(j*dt-t)-dt)/SHIELD_WINDOW));
+  return raise;
+ }
  // Exchange fitted to the two squares and to the weapons. The recording's
  // fighters held longswords; a pawn's spear is longer. So the approach is
  // what the spear allows: a fencing thrust comes in to full reach and stops
@@ -281,8 +338,9 @@ async function init(bytes){
   return{duration,update(t){
    if(pawn){const m=travel(D,t,0,duration);actor.place({x:a[0]+dir[0]*m.s,z:a[1]+dir[1]*m.s,yaw:startYaw});yaws.set(piece.id,startYaw);
     const layer=walkLayer(D,m.s,m.accel,dir,startYaw);
-    if(motion.walk){const mm=walkMotion(actor,piece,D,m.s,dir,startYaw);actor.pose('Guard_Breath',(clock+hash(piece.id)*6)%6,scaleLayer(layer,1-mm.share),mm);}
-    else actor.pose('Guard_Breath',(clock+hash(piece.id)*6)%6,layer);return;}
+    const arms={shield:{raise:walkRaise(D,m.s)}};
+    if(motion.walk){const mm=walkMotion(actor,piece,D,m.s,dir,startYaw);actor.pose('Guard_Breath',(clock+hash(piece.id)*6)%6,scaleLayer(layer,1-mm.share),{...mm,arms});}
+    else actor.pose('Guard_Breath',(clock+hash(piece.id)*6)%6,layer,{arms});return;}
    const u=smooth(t,0,duration);const yaw=t<duration*.7?lerpAngle(startYaw,heading,smooth(t,0,.25)):lerpAngle(heading,endYaw,smooth(t,duration*.7,duration));
    actor.place({x:a[0]+(b[0]-a[0])*u,z:a[1]+(b[1]-a[1])*u,yaw,lift:knight?1.1*Math.sin(Math.PI*u):0});yaws.set(piece.id,yaw);},finish(){}};
  }
@@ -338,9 +396,12 @@ async function init(bytes){
    if(!first||u>=CROSSFADE)return{clip:lastClip,local:u,layout:last,...cur};
    const end=leadOf(T-1e-6),tail=cyclePose(end.clip,end.local+u,k,first.scale),w=smooth(u,0,CROSSFADE),points={};
    for(const n of Object.keys(cur.points))points[n]=cur.points[n].map((x,i)=>tail.points[n][i]+(x-tail.points[n][i])*w);
-   return{clip:lastClip,local:u,layout:last,points,offset:{x:tail.offset.x+(cur.offset.x-tail.offset.x)*w,z:tail.offset.z+(cur.offset.z-tail.offset.z)*w}};
+   return{clip:lastClip,local:u,layout:last,points,offset:{x:tail.offset.x+(cur.offset.x-tail.offset.x)*w,z:tail.offset.z+(cur.offset.z-tail.offset.z)*w},tail:{clip:end.clip,local:end.local+u}};
   };
   const aimOf=b=>{const s=b.clip.events.strike;return b.clip.side==='attack'?b.layout.aim.yaw*smooth(b.local,s.start-.25,s.reach)*(1-smooth(b.local,s.reach+.25,s.reach+.95)):0;};
+  // While the lead-in blends into the decisive cycle the legs are between
+  // the two, and so is the shield: it is carried for whichever needs more.
+  const fitArms=(arms,b)=>{const f=spearArms(arms,b.points,b.clip,k,b.local);if(f?.shield&&b.tail)f.shield.raise=Math.max(f.shield.raise,shieldRaise(b.tail.clip,k,b.tail.local));return f;};
   const armsOf=b=>exchangeArms(b.clip,b.local,{stop:b.clip.side==='attack'?b.layout.aim.stop:1.95});
   const at=(p,o,heading,w)=>{const [x,z]=rotate([o.x*w,o.z*w],heading);return{x:p[0]+x,z:p[1]+z};};
   let stand=null,walk=null;
@@ -352,14 +413,17 @@ async function init(bytes){
     if(t>=settle&&!stand)stand=o;
     const arms=armsOf(b);
     attacker.place({...(stand||o),yaw});yaws.set(attackerPiece.id,yaw);
-    attacker.pose(arms.action,arms.time,null,{clip:b.clip,points:turnHead(b.points,wrapAngle(line-yaw)),weight:w,arms:spearArms(arms,b.points,b.clip,k,b.local)});
+    // Back to guard, the shield comes over to the walk's carry.
+    const fitted=fitArms(arms,b);if(fitted?.shield)fitted.shield.raise=Math.max(fitted.shield.raise,measureWalkRaise()*smooth(t,settle,walkAt));
+    attacker.pose(arms.action,arms.time,null,{clip:b.clip,points:turnHead(b.points,wrapAngle(line-yaw)),weight:w,arms:fitted});
    }else{
     if(!walk){const from=stand?[stand.x,stand.z]:a,L=Math.hypot(end[0]-from[0],end[1]-from[1]);walk={from,L,dir:[(end[0]-from[0])/L,(end[1]-from[1])/L],T:1.1+.7*D/SQUARE};}
     const m=travel(walk.L,t-walkAt,0,walk.T),yaw=line;
     attacker.place({x:walk.from[0]+walk.dir[0]*m.s,z:walk.from[1]+walk.dir[1]*m.s,yaw});yaws.set(attackerPiece.id,yaw);
     const layer=walkLayer(walk.L,m.s,m.accel,walk.dir,yaw);
-    if(motion.walk){const mm=walkMotion(attacker,attackerPiece,walk.L,m.s,walk.dir,yaw);attacker.pose('Guard_Breath',(clock)%6,scaleLayer(layer,1-mm.share),mm);}
-    else attacker.pose('Guard_Breath',clock%6,layer);
+    const arms={shield:{raise:walkRaise(walk.L,m.s,{carried:true})}};
+    if(motion.walk){const mm=walkMotion(attacker,attackerPiece,walk.L,m.s,walk.dir,yaw);attacker.pose('Guard_Breath',(clock)%6,scaleLayer(layer,1-mm.share),{...mm,arms});}
+    else attacker.pose('Guard_Breath',clock%6,layer,{arms});
    }
    // Defender: fences on, then is struck by the decisive blow and falls.
    const removed=t>=gone;victim.object.visible=!removed;
@@ -368,7 +432,7 @@ async function init(bytes){
     const yaw=lerpAngle(victimYaw,back+aimOf(b),smooth(t,0,.4)),o=at(v,b.offset,back,f),fallU=clamp((t-hit-.3)/.6,0,1);
     victim.place({...o,yaw,fall:1.47*fallU*fallU,fallHeading:line});
     const arms=armsOf(b);
-    victim.pose(arms.action,arms.time,tau>0?victimHitLayer(tau,rotate(dir,-yaw)):null,{clip:b.clip,points:turnHead(b.points,wrapAngle(back-yaw)),weight:w,arms:spearArms(arms,b.points,b.clip,k,b.local)});
+    victim.pose(arms.action,arms.time,tau>0?victimHitLayer(tau,rotate(dir,-yaw)):null,{clip:b.clip,points:turnHead(b.points,wrapAngle(back-yaw)),weight:w,arms:fitArms(arms,b)});
     victim.fade(1-smooth(t,hit+1.1,gone));
    }
    $('#phase').textContent=t<T?(going?'обмен ударами':'обмен: защитник атакует'):t<hit?'обмен: решающий удар':t<gone?'защитник проиграл схватку':'занятие клетки';

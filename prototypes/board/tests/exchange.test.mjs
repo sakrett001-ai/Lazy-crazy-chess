@@ -99,3 +99,10 @@ test('the shield is carried over the front knee within the arm, without chasing 
    if(prev)assert.ok(Math.abs(s.lift-prev.lift)<=SHIELD_LIFT_MAX/(.35*30)*1.05+1e-9,`${c.name} ${t.toFixed(2)}: lift jumps`);
    prev=s;}}
 });
+
+test('every bent knee bends forwards within the hip rotation, not sideways',()=>{
+ const sub=(a,b)=>a.map((x,i)=>x-b[i]),dot=(a,b)=>a[0]*b[0]+a[1]*b[1]+a[2]*b[2],cross=(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]],unit=a=>{const n=Math.hypot(...a);return a.map(x=>x/n);};
+ for(const c of clips)c.frames.forEach((f,i)=>{const lat=sub(f.hipR,f.hipL);for(const s of ['L','R']){const H=f['hip'+s],K=f['knee'+s],A=f['ankle'+s],u=unit(sub(A,H)),fw=unit(cross(lat,u)),HK=sub(K,H),off=HK.map((x,j)=>x-u[j]*dot(HK,u)),KA=sub(A,K);
+  const flex=Math.acos(Math.max(-1,Math.min(1,dot(HK,KA)/Math.hypot(...HK)/Math.hypot(...KA))))*180/Math.PI;
+  if(flex>8)assert.ok(dot(off,fw)>0.5*Math.hypot(...off)-1e-3,`${c.name} frame ${i} knee ${s}: flex ${flex.toFixed(0)}°, bends ${(Math.acos(Math.max(-1,Math.min(1,dot(off,fw)/Math.hypot(...off))))*180/Math.PI).toFixed(0)}° off forwards`);}});
+});
