@@ -54,7 +54,7 @@ async function init(bytes){
  const camera=new THREE.PerspectiveCamera(34,1,.05,300);
  const controls=new OrbitControls(camera,renderer.domElement);controls.enableDamping=false;
  let view='three',follow=0;
- function cameraTo(name){view=name;const z=follow,c={side:[[11.5,1.3,z],[0,.95,z]],front:[[0,1.5,z+11],[0,.95,z]],three:[[8.5,3.2,z+8.5],[0,.9,z]],feet:[[3.2,.55,z+3.6],[1.1,.15,z]]}[name];
+ function cameraTo(name){view=name;const z=follow,c={side:[[11.5,1.3,z],[0,.95,z]],front:[[0,1.5,z+11],[0,.95,z]],three:[[8.5,3.2,z+8.5],[0,.9,z]],feet:[[3.2,.55,z+3.6],[1.1,.15,z]],clip:[[-2.1,2.2,z+2.8],[1.1,.8,z+.35]]}[name];
   camera.position.fromArray(c[0]);controls.target.fromArray(c[1]);controls.update();}
 
  const loader=new GLTFLoader();
@@ -90,7 +90,13 @@ async function init(bytes){
  function measure(pawn){
   const P=pawn.points(['upperleg01.L','lowerleg01.L','foot.L','toe3-1.L','upperleg01.R','lowerleg01.R','foot.R','toe3-1.R','root']),sub=(u,v)=>u.map((x,i)=>x-v[i]),dot=(u,v)=>u.reduce((s,x,i)=>s+x*v[i],0),len=u=>Math.hypot(...u);
   const knee=s=>{const h=P['upperleg01.'+s],k=P['lowerleg01.'+s],f=P['foot.'+s],u=sub(h,k),v=sub(f,k),flex=180-Math.acos(Math.max(-1,Math.min(1,dot(u,v)/(len(u)*len(v)))))*180/Math.PI;
-   const line=sub(f,h),t=dot(sub(k,h),line)/dot(line,line),off=sub(k,h.map((x,i)=>x+line[i]*t));return{flex,forward:off[2],sole:Math.min(f[1],P['toe3-1.'+s][1])};};
+   // Forward is where the toes point, so a figure that turns keeps its own forward.
+   // A raised foot (toe-off, heel high, steeper than 30°) gives no reliable heading:
+   // its horizontal trace drifts sideways and can even flip. Then forward is the
+   // pelvis's own, across the hips.
+   const line=sub(f,h),t=dot(sub(k,h),line)/dot(line,line),off=sub(k,h.map((x,i)=>x+line[i]*t)),toe=sub(P['toe3-1.'+s],f),flat=Math.hypot(toe[0],toe[2]),lat=sub(P['upperleg01.L'],P['upperleg01.R']);
+   const dir=flat>.87*len(toe)?[toe[0],toe[2]]:[-lat[2],lat[0]],fw=Math.hypot(...dir)||1;
+   return{flex,forward:(off[0]*dir[0]+off[2]*dir[1])/fw,sole:Math.min(f[1],P['toe3-1.'+s][1])};};
   return{L:knee('L'),R:knee('R'),pelvis:P.root[1]};
  }
  function render(){

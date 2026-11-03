@@ -136,8 +136,8 @@
   },
   "performance": {
     "pawns": 16,
-    "msPerPose": 3.2,
-    "triangles": 3821120,
+    "msPerPose": 7.410000000009314,
+    "triangles": 3820376,
     "note": "Pose solving per figure on this machine; rendering speed depends on the GPU."
   },
   "images": {
