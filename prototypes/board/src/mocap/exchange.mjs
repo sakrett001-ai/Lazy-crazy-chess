@@ -65,9 +65,12 @@ export function cyclePose(clip,t,k,scale){
 // cut; a spearman holds the line of the thrust with his shoulders while the
 // hips turn under them. So over the thrust the attacker's upper body keeps
 // the yaw it has at the reach (the board aims the thrust by that pose),
-// within the spine's twist over the hips (TWIST_MAX), eased in from the
-// chamber and out after the recovery.
-const TWIST_MAX=50*Math.PI/180;
+// within the spine's twist over the hips (TWIST_MAX), eased in over the
+// last HOLD_IN seconds before the reach and out after the recovery. Earlier
+// the thrust is still drawn and the trunk turns with the step: holding it
+// from the chamber twisted the shoulders 45° over the hips and swung the
+// shield across the front leg.
+const TWIST_MAX=50*Math.PI/180,HOLD_IN=.15;
 const yawOf=(L,R)=>Math.atan2(-(R[2]-L[2]),R[0]-L[0]);
 const wrapA=a=>Math.atan2(Math.sin(a),Math.cos(a));
 const LOWER=/^(pelvis|hip|knee|ankle|heel|toe)/;
@@ -75,7 +78,7 @@ const reachYaws=new WeakMap();
 function holdThrust(clip,t,points){
  const s=clip.events?.strike;if(clip.side!=='attack'||!s||!points.shoulderL||!points.hipL)return points;
  if(!reachYaws.has(clip)){const q=centerPoints(sampleClip(clip,s.reach));reachYaws.set(clip,yawOf(q.shoulderL,q.shoulderR));}
- const w=smooth(t,s.start-.25,s.start+.6*(s.reach-s.start))*(1-smooth(t,s.reach+.25,s.reach+.6));if(w<=0)return points;
+ const w=smooth(t,s.reach-HOLD_IN,s.reach)*(1-smooth(t,s.reach+.25,s.reach+.6));if(w<=0)return points;
  const sh=yawOf(points.shoulderL,points.shoulderR),hip=yawOf(points.hipL,points.hipR);
  const want=hip+clamp(wrapA(reachYaws.get(clip)-hip),-TWIST_MAX,TWIST_MAX),a=wrapA(want-sh)*w;
  if(Math.abs(a)<1e-6)return points;

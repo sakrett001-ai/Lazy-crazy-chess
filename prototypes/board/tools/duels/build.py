@@ -128,6 +128,38 @@ def steady_twist(X, max_twist=TWIST_MAX, reject=TWIST_REJECT, sigma=TWIST_SIGMA)
     return Y, int((~ok).sum()), float(np.degrees(np.abs(rot)).max())
 
 
+# У бойцов, снятых сбоку, ноги на скрестном шаге заслоняют друг друга, и
+# MediaPipe путает, какая из них левая: в ролике 516 метки ног атакующего
+# меняются местами пять раз за поединок (на кадрах 52, 137, 142, 156, 165),
+# стопа «перелетает» на 0,3–1,2 м за кадр, на доске колено выгибалось
+# назад. Путает она колени и стопы порознь (стопы чаще). Метки расставляются
+# по непрерывности отдельно для коленей и для стоп: если в кадре они,
+# переставленные местами, ближе к предыдущему кадру почти вдвое (LEG_SWAP)
+# и скачок не мелкий (LEG_SWAP_MIN), метки меняются обратно с этого кадра.
+LEG_SWAP = 0.6
+LEG_SWAP_MIN = 0.1  # м за кадр на точку
+LEG_GROUPS = [['knee'], ['ankle', 'heel', 'toe']]
+
+
+def steady_legs(X, ratio=LEG_SWAP, least=LEG_SWAP_MIN):
+    """Left and right labels of the knees and of the feet kept continuous.
+    Returns the corrected frames and, per group, the frames where the labels
+    were swapped back."""
+    Y = X.copy()
+    swaps = {}
+    for group in LEG_GROUPS:
+        Lx, Rx = [C.I[n + 'L'] for n in group], [C.I[n + 'R'] for n in group]
+        at = swaps[group[0]] = []
+        for f in range(1, len(Y)):
+            p, q = Y[f - 1], Y[f]
+            keep = np.linalg.norm(q[Lx] - p[Lx], axis=1).sum() + np.linalg.norm(q[Rx] - p[Rx], axis=1).sum()
+            cross = np.linalg.norm(q[Lx] - p[Rx], axis=1).sum() + np.linalg.norm(q[Rx] - p[Lx], axis=1).sum()
+            if cross < ratio * keep and keep / (2 * len(group)) > least:
+                Y[f:, Lx], Y[f:, Rx] = Y[f:, Rx].copy(), Y[f:, Lx].copy()
+                at.append(f)
+    return Y, swaps
+
+
 def own_frame(X, facing):
     """Pair frame (x from A to B) → the fighter's frame: facing +x (A) or -x (B) onto +Z."""
     th = np.radians(-90.0 if facing > 0 else 90.0)
@@ -142,10 +174,12 @@ def build(pair):
     full = {n: np.asarray(pair['people'][n]['frames'], float) for n in ('A', 'B')}
     # Only the bout's own frames: the track's first frames (the person found
     # by the detector) may jump by metres and would drag the whole path.
-    lo, hi, shift, twist = min(c['frames'][0] for c in CYCLES), max(c['frames'][1] for c in CYCLES) + 1, {}, {}
+    lo, hi, shift, twist, swaps = min(c['frames'][0] for c in CYCLES), max(c['frames'][1] for c in CYCLES) + 1, {}, {}, {}
     for n in ('A', 'B'):
         full[n] = full[n].copy()
-        Y, bad, most = steady_twist(full[n][lo:hi])
+        Y, swaps[n] = steady_legs(full[n][lo:hi])
+        swaps[n] = {g: [lo + f for f in v] for g, v in swaps[n].items()}
+        Y, bad, most = steady_twist(Y)
         full[n][lo:hi], twist[n] = Y, (bad, most)
         full[n][lo:hi], shift[n] = steady_root(full[n][lo:hi], fps)
     neutral = {}
@@ -178,6 +212,7 @@ def build(pair):
            'note': 'Одна камера, двое: tools/videomocap (pair.py — кто есть кто, duel.py — общая сцена и удары). Расстояние между бойцами — по глубине камеры, без эталона.',
            'distance': pair.get('distance'), 'neutralFrames': {n: v[0] for n, v in neutral.items()},
            'root': {'sigmaFrames': ROOT_SIGMA, 'maxSpeedLegsPerSecond': ROOT_MAX_SPEED, 'maxShift': {n: round(v, 3) for n, v in shift.items()}},
+           'legs': {'swapRatio': LEG_SWAP, 'swappedBackAt': swaps},
            'twist': {'maxDegrees': TWIST_MAX, 'rejectDegrees': TWIST_REJECT, 'sigmaFrames': TWIST_SIGMA,
                      'rejectedFrames': {n: v[0] for n, v in twist.items()}, 'maxCorrectionDegrees': {n: round(v[1], 1) for n, v in twist.items()}}}
     return {'format': 'lazy-chess.motion', 'version': 1, 'source': src, 'points': POINTS, 'neutral': clips[0]['neutral'], 'clips': clips}

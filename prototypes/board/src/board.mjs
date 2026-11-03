@@ -203,24 +203,29 @@ async function init(bytes){
  function measureBlow(pair,k){
   const key=`${pair.attack.name}|${k.toFixed(4)}`;if(blows.has(key))return blows.get(key);
   const P=aimProbe||(aimProbe=createPawn({id:'aim-probe',color:'w'})),A=pair.attack,B=pair.defend,r=A.events.strike.reach;
-  const pose=(clip,arms)=>{const points=cyclePose(clip,r,k,1).points;return{clip,points,weight:1,arms:spearArms(arms,points,clip,k,r)};};
-  const defence=exchangeArms(B,r),shield=P.shieldFront(defence.action,defence.time,pose(B,defence));
+  const pose=(clip,arms,at=r)=>{const points=cyclePose(clip,at,k,1).points;return{clip,points,weight:1,arms:spearArms(arms,points,clip,k,at)};};
+  // The thrust holds at its stop for a quarter second after the reach while
+  // the partner's shield and body keep coming: the shield is measured over
+  // that hold (dS: the pair's approach since the reach, source units).
+  const shields=[0,.08,.16,.25].map(d=>{const arms=exchangeArms(B,r+d),sh=P.shieldFront(arms.action,arms.time,pose(B,arms,r+d));
+   return{...sh,dS:travelAt(A,r+d).forward+travelAt(B,r+d).forward-travelAt(A,r).forward-travelAt(B,r).forward};});
+  const defence=exchangeArms(B,r),shield=shields[0];
   P.pose(defence.action,defence.time,null,pose(B,defence));
   const {root,spine05}=P.points(['root','spine05']),axis=root.map((x,i)=>(x+spine05[i])/2);
   const sweep=[];for(let t=1;t<=2.2001;t+=.05){const arms={action:'Spear_Study',time:t},{tip}=P.probe(arms.action,t,null,pose(A,arms));sweep.push({t,x:tip[0],z:tip[2],R:Math.hypot(tip[0],tip[2])});}
   const full=sweep.find(s=>s.t>=FULL_REACH-1e-9),travel=travelAt(A,r).forward+travelAt(B,r).forward;
-  const m={shield,axis,sweep,full,travel};blows.set(key,m);return m;
+  const m={shield,shields,axis,sweep,full,travel,k};blows.set(key,m);return m;
  }
  // Where the thrust goes at a gap (pelvis to pelvis at the reach): the aim
  // point and how far the tip may come out (attacker's frame, z forward).
- function blowTarget(m,gap,flesh){
+ function blowTarget(m,gap,flesh,scale=1){
   const cx=-m.shield.centerX;
-  if(!flesh)return{aim:[cx,gap-m.shield.centerZ],limit:Math.hypot(cx,gap-m.shield.front)-.015};
+  if(!flesh)return{aim:[cx,gap-m.shield.centerZ],limit:Math.min(...m.shields.map(s=>Math.hypot(-s.centerX,gap-scale*m.k*s.dS-s.front)))-.015};
   const ax=-m.axis[0],az=gap-m.axis[2],side=Math.sign(ax-cx)||1,aim=[ax+side*OPEN_SIDE,az-TRUNK_HALF+DEPTH];
   return{aim,limit:Math.hypot(...aim)};
  }
- function blowAim(m,gap,flesh){
-  const {aim,limit}=blowTarget(m,gap,flesh);let stop=FULL_REACH;
+ function blowAim(m,gap,flesh,scale=1){
+  const {aim,limit}=blowTarget(m,gap,flesh,scale);let stop=FULL_REACH;
   for(const s of m.sweep){if(s.t>FULL_REACH+1e-9)break;if(s.R>limit){stop=Math.max(1,s.t-.05);break;}}
   const at=m.sweep.find(s=>s.t>=stop-1e-9);
   return{yaw:Math.atan2(aim[0],aim[1])-Math.atan2(at.x,at.z),stop,target:aim,tip:[at.x,at.z],limit,over:Math.max(0,m.sweep[0].R-limit),short:Math.max(0,limit-at.R)};
@@ -232,12 +237,12 @@ async function init(bytes){
    // The gap at which the full thrust just meets its target (the limit grows
    // with the gap), and the approach scale that gives it: the gap at the
    // reach is distance − scale·S.
-   let lo=0,hi=distance;for(let i=0;i<40;i++){const g=(lo+hi)/2;if(blowTarget(m,g,flesh).limit>m.full.R)hi=g;else lo=g;}
+   let lo=0,hi=distance;for(let i=0;i<40;i++){const g=(lo+hi)/2;if(blowTarget(m,g,flesh,base.scale).limit>m.full.R)hi=g;else lo=g;}
    const want=S>1e-6?(distance-(lo+hi)/2)/S:base.scale;
    let scale=flesh?clamp(want,0,PRESS_MAX):clamp(Math.min(base.scale,want),0,1);
    while(scale>base.scale&&exchangeLayout(pair,k,distance,scale).closest<CLOSEST)scale-=.02;
    const l=exchangeLayout(pair,k,distance,scale),gap=l.gapAt(r);
-   layouts.set(key,{...l,gap,aim:blowAim(m,gap,flesh)});
+   layouts.set(key,{...l,gap,aim:blowAim(m,gap,flesh,scale)});
   }
   return layouts.get(key);
  }
@@ -550,9 +555,15 @@ async function init(bytes){
    const P=a.points(['root','upperleg01.L','lowerleg01.L','foot.L','upperleg01.R','lowerleg01.R','foot.R']),sub=(u,v)=>u.map((x,i)=>x-v[i]),dot=(u,v)=>u.reduce((s,x,i)=>s+x*v[i],0),len=u=>Math.hypot(...u);
    // Forward is where the hips face, not the holder's +z: a capture clip's
    // defender faces back along its holder.
-   const hips=sub(P['upperleg01.L'],P['upperleg01.R']),face=[-hips[2],0,hips[0]];
+   const hips=sub(P['upperleg01.L'],P['upperleg01.R']);
+   // A bent knee goes out of the hip–foot line forwards for a leg under the
+   // body, forwards and up for one raised in front (a step, a kick): the
+   // side of the line it bends to is across that line and the hips (x),
+   // which is the hips' forward for an upright leg.
+   const cross=(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]],x=hips.map(v=>v/len(hips));
    const knee=side=>{const h=P['upperleg01.'+side],k=P['lowerleg01.'+side],f=P['foot.'+side],u=sub(h,k),v=sub(f,k),flex=180-Math.acos(dot(u,v)/(len(u)*len(v)))*180/Math.PI;
-    const line=sub(f,h),t=dot(sub(k,h),line)/dot(line,line),off=sub(k,h.map((x,i)=>x+line[i]*t));return{flex,forward:dot(off,face)/len(face),sole:f[1]};};
+    const line=sub(f,h),t=dot(sub(k,h),line)/dot(line,line),off=sub(k,h.map((x,i)=>x+line[i]*t)),bend=cross(line.map(v=>v/len(line)),x);
+    return{flex,forward:dot(off,bend)/len(bend),sole:f[1]};};
    const L=knee('L'),R=knee('R'),feet=[P['foot.L'],P['foot.R']],root=P.root;
    const margin=.15,inside=root[0]>=Math.min(feet[0][0],feet[1][0])-margin&&root[0]<=Math.max(feet[0][0],feet[1][0])+margin&&root[2]>=Math.min(feet[0][2],feet[1][2])-margin&&root[2]<=Math.max(feet[0][2],feet[1][2])+margin;
    return{L,R,pelvisOverFeet:inside,fall:a.placement().fall};},
