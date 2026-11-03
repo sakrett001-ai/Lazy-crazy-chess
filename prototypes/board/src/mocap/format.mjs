@@ -15,8 +15,14 @@ import {sub,add,scale,mid,cross,normalize,length,distance,rotateY,lerp} from './
 // data:[frames × fields]}: the spear phases and the shield turn the loadout
 // solves the arms with (see sampleArms). A struck clip may give fade:[t0,t1],
 // the seconds over which the taken figure fades out and leaves the board.
+// A clip may carry neutral: its own person's stance (a pair records two
+// people), used instead of the file's. An exchange clip (role exchange,
+// tools/duels/build.py) is one fighter of a recorded bout: side attack or
+// defend, partner, decisive (the blow landed unanswered) and events in
+// seconds: strike {start,reach,end,target,reached}, parry {start,at}, gap
+// (pelvis to pelvis at the start, source units). See exchange.mjs.
 export const FORMAT='lazy-chess.motion';
-export const ROLES=Object.freeze({stand:'стойка покоя',shift:'переминание',march:'строевой шаг',step:'шаг на клетку и остановка',approach:'подход к цели',strike:'взятие: атакующий',struck:'взятие: защитник',other:'прочее'});
+export const ROLES=Object.freeze({stand:'стойка покоя',shift:'переминание',march:'строевой шаг',step:'шаг на клетку и остановка',approach:'подход к цели',strike:'взятие: атакующий',struck:'взятие: защитник',exchange:'обмен ударами',other:'прочее'});
 
 // Builds a file from clips given as arrays of {point:[x,y,z]} frames.
 export function buildMotionFile({source,clips,neutral=null}){
@@ -26,7 +32,7 @@ export function buildMotionFile({source,clips,neutral=null}){
  return{format:FORMAT,version:1,source,points:used,...(neutral?{neutral:used.flatMap(p=>(neutral[p]||neutral.pelvis).map(v=>+v.toFixed(4)))}:{}),clips:clips.map(c=>{
   const data=[];
   for(const f of c.frames)for(const p of used){const v=f[p]||f.pelvis;data.push(+v[0].toFixed(4),+v[1].toFixed(4),+v[2].toFixed(4));}
-  return{name:c.name,label:c.label||c.name,role:c.role||'other',loop:!!c.loop,fps:c.fps,frames:c.frames.length,...(c.partner?{partner:c.partner}:{}),...(c.frame?{frame:c.frame}:{}),...(c.arms?{arms:c.arms}:{}),data};
+  return{name:c.name,label:c.label||c.name,role:c.role||'other',loop:!!c.loop,fps:c.fps,frames:c.frames.length,...(c.partner?{partner:c.partner}:{}),...(c.frame?{frame:c.frame}:{}),...(c.arms?{arms:c.arms}:{}),...(c.exchange?c.exchange:{}),data};
  })};
 }
 
@@ -40,6 +46,8 @@ export function parseMotionFile(json){
  for(const c of file.clips){
   if(!(c.fps>0))throw Error(`Клип ${c.name}: нет частоты кадров`);
   if(c.data.length!==c.frames*file.points.length*3)throw Error(`Клип ${c.name}: длина данных не совпадает с числом кадров`);
+  if(c.neutral&&c.neutral.length!==file.points.length*3)throw Error(`Клип ${c.name}: нейтральная стойка не совпадает с числом точек`);
+  if(c.role==='exchange'&&!['attack','defend'].includes(c.side))throw Error(`Клип ${c.name}: у обмена нет стороны (attack или defend)`);
   if(c.arms&&c.arms.data?.length!==c.frames*c.arms.fields?.length)throw Error(`Клип ${c.name}: дорожка рук не совпадает с числом кадров`);
  }
  return file;
@@ -52,7 +60,8 @@ export function parseMotionFile(json){
 export function prepareClip(file,clip){
  const P=file.points,J=P.length,raw=[];
  for(let f=0;f<clip.frames;f++){const o={};P.forEach((p,j)=>{const i=(f*J+j)*3;o[p]=[clip.data[i],clip.data[i+1],clip.data[i+2]];});raw.push(o);}
- const neutral=file.neutral?standing(Object.fromEntries(P.map((p,j)=>[p,file.neutral.slice(j*3,j*3+3)]))):null;
+ // A clip of a pair carries its own person's stance; others share the file's.
+ const stance=clip.neutral||file.neutral,neutral=stance?standing(Object.fromEntries(P.map((p,j)=>[p,stance.slice(j*3,j*3+3)]))):null;
  // Up axis: the one along which the head stands farthest from the ankles.
  const f0=raw[0],stand=sub(f0.head,mid(f0.ankleL,f0.ankleR)),axis=[0,1,2].reduce((a,b)=>Math.abs(stand[b])>Math.abs(stand[a])?b:a,1),sign=Math.sign(stand[axis])||1;
  const toYUp=v=>axis===1?[v[0],v[1]*sign,v[2]*sign]:axis===2?[v[0],v[2]*sign,-v[1]*sign]:[-v[1]*sign,v[0]*sign,v[2]];
@@ -67,7 +76,8 @@ export function prepareClip(file,clip){
  const groundToe=Math.min(...frames.map(o=>Math.min(o.toeL[1],o.toeR[1])));
  const duration=(clip.frames-1)/clip.fps;
  const travel=sub(frames[frames.length-1].pelvis,frames[0].pelvis);travel[1]=0;
- return{name:clip.name,label:clip.label||clip.name,role:clip.role||'other',loop:!!clip.loop,fps:clip.fps,count:clip.frames,duration,frames,leg,ground,groundToe,travel,points:P,partner:clip.partner||null,shared,arms:clip.arms||null,fade:clip.fade||null,neutral};
+ return{name:clip.name,label:clip.label||clip.name,role:clip.role||'other',loop:!!clip.loop,fps:clip.fps,count:clip.frames,duration,frames,leg,ground,groundToe,travel,points:P,partner:clip.partner||null,shared,arms:clip.arms||null,fade:clip.fade||null,neutral,
+  ...(clip.role==='exchange'?{side:clip.side,decisive:!!clip.decisive,events:clip.events||{}}:{})};
 }
 
 // A single standing frame turned like a clip's first frame: Y up, the hips

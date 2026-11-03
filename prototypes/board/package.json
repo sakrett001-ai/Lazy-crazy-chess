@@ -9,10 +9,11 @@
     "verify": "node scripts/verify.mjs",
     "verify:motion": "node scripts/verify-motion.mjs",
     "verify:lab": "node scripts/verify-lab.mjs",
+    "verify:duel": "node scripts/verify-duel.mjs",
     "verify:capture": "node scripts/verify-capture.mjs",
     "test:take": "cd tools/motionbricks && python3 -m unittest test_take.py",
     "capture:blender": "python3 tools/blender/pawn_capture.py",
-    "test:videomocap": "cd tools/videomocap && python3 -m unittest test_clean.py",
+    "test:videomocap": "cd tools/videomocap && python3 -m unittest test_clean.py test_pair.py",
     "preview:video": "node scripts/preview-video-motion.mjs",
     "build:strikes": "node scripts/build-strikes.mjs",
     "verify:strikes": "node scripts/verify-strikes.mjs"

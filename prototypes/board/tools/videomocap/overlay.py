@@ -2,9 +2,12 @@
 """Draw the captured stick figure over the video, for review.
 
     python3 overlay.py take.mp4 take.raw.json -o take.overlay.mp4 [--fps 30] [--height 760]
+    python3 overlay.py duel.mp4 duel.A.raw.json duel.B.raw.json -o duel.overlay.mp4
 
 Each point is coloured by its confidence (green sure, red unsure); points
-below 0.3 are not drawn, exactly as clean.py drops them.
+below 0.3 are not drawn, exactly as clean.py drops them. With two people the
+bones take each person's colour (A amber, B violet) and a letter at the head;
+a ring marks a frame where pair.py found the person again in a crop.
 """
 import argparse, json
 import numpy as np
@@ -21,13 +24,18 @@ def colour(c):
     return (40, int(80 + 175 * c), int(230 * (1 - c) + 25))  # BGR: red → green
 
 
+PEOPLE = [(0, 190, 255), (230, 90, 200)]  # BGR: amber, violet
+
+
 def overlay(video, raw, out, fps=None, height=None, min_conf=0.3):
+    """raw: one vmocap.raw or a list of them (the people of one duel)."""
     import cv2
-    names = raw['landmarks']
+    raws = raw if isinstance(raw, list) else [raw]
+    names = raws[0]['landmarks']
     idx = {n: i for i, n in enumerate(names)}
-    frames = raw['frames']
+    frames = raws[0]['frames']
     cap = cv2.VideoCapture(video)
-    src_fps = cap.get(cv2.CAP_PROP_FPS) or raw['source']['fps']
+    src_fps = cap.get(cv2.CAP_PROP_FPS) or raws[0]['source']['fps']
     fps = fps or src_fps
     writer, k, shown = None, 0, 0
     while True:
@@ -35,18 +43,27 @@ def overlay(video, raw, out, fps=None, height=None, min_conf=0.3):
         if not ok or k >= len(frames):
             break
         if k >= shown * src_fps / fps - 1e-6:
-            f = frames[k]
-            if f.get('world'):
+            for n, r in enumerate(raws):
+                f = r['frames'][k] if k < len(r['frames']) else {}
+                if not f.get('world'):
+                    continue
                 pts = np.array(f['image'])[:, :2]
                 conf = np.minimum(f['vis'], f['pres'])
                 w = max(2, img.shape[0] // 300)
                 for a, b in BONES:
                     i, j = idx[a], idx[b]
                     if conf[i] >= min_conf and conf[j] >= min_conf:
-                        cv2.line(img, tuple(map(int, pts[i])), tuple(map(int, pts[j])), colour(min(conf[i], conf[j])), w, cv2.LINE_AA)
+                        c = PEOPLE[n % 2] if len(raws) > 1 else colour(min(conf[i], conf[j]))
+                        cv2.line(img, tuple(map(int, pts[i])), tuple(map(int, pts[j])), c, w, cv2.LINE_AA)
                 for i, p in enumerate(pts):
                     if conf[i] >= min_conf:
                         cv2.circle(img, tuple(map(int, p)), w + 2, colour(conf[i]), -1, cv2.LINE_AA)
+                if len(raws) > 1:
+                    head = tuple(map(int, pts[idx['nose']] - [0, 6 * w]))
+                    who = (r.get('pair') or {}).get('person') or 'AB'[n % 2]
+                    cv2.putText(img, who, head, cv2.FONT_HERSHEY_SIMPLEX, w / 3, PEOPLE[n % 2], w, cv2.LINE_AA)
+                    if f.get('recovered'):
+                        cv2.circle(img, tuple(map(int, pts[idx['nose']])), 8 * w, PEOPLE[n % 2], w, cv2.LINE_AA)
             if height:
                 img = cv2.resize(img, (round(img.shape[1] * height / img.shape[0]) // 2 * 2, height), interpolation=cv2.INTER_AREA)
             if writer is None:
@@ -63,12 +80,13 @@ def overlay(video, raw, out, fps=None, height=None, min_conf=0.3):
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument('video')
-    ap.add_argument('raw')
+    ap.add_argument('raw', nargs='+', help='один файл или два (A и B поединка)')
     ap.add_argument('-o', '--out', required=True)
     ap.add_argument('--fps', type=float)
     ap.add_argument('--height', type=int)
     a = ap.parse_args()
-    n = overlay(a.video, json.load(open(a.raw)), a.out, a.fps, a.height)
+    raws = [json.load(open(p)) for p in a.raw]
+    n = overlay(a.video, raws if len(raws) > 1 else raws[0], a.out, a.fps, a.height)
     print(f'{n} кадров → {a.out}')
 
 

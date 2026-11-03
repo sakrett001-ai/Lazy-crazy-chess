@@ -10,6 +10,8 @@ import {createLandscape} from './landscape.mjs';
 import {readMotionSource} from './mocap/library.mjs';
 import {sampleAlong,sampleClip,sampleArms,scaleLayer,centerPoints,turnHead} from './mocap/format.mjs';
 import {rotateY} from './mocap/math.mjs';
+import {exchangePairs,exchangeLayout,exchangeAt,exchangeArms,cyclePose,trunkLean,levelSpear,shieldAt,CROSSFADE} from './mocap/exchange.mjs';
+import {loadoutPhases} from '../../white-pawn/src/loadout.mjs';
 
 // One square is 2.6 m. A 1.8 m soldier with a tower shield and a 2.4 m
 // spear fits inside it, and a full thrust from the next square reaches the
@@ -106,6 +108,16 @@ async function init(bytes){
   return{yaw,stop};
  }
  const contact={straight:fencingAim(SQUARE),diagonal:fencingAim(SQUARE*Math.SQRT2)};
+ // A decisive blow goes past the shield into the body: aimed at the
+ // partner's open side (away from the shield) and stopped a hand's depth
+ // inside the near surface of the trunk, not through it.
+ const TRUNK_HALF=.15,OPEN_SIDE=.22,DEPTH=.08;
+ function fleshAim(distance){
+  const cx=OPEN_SIDE*Math.sign(shield.centerX||1),cz=distance-TRUNK_HALF+DEPTH;
+  const yaw=Math.atan2(cx,cz)-Math.atan2(peak.x,peak.z),limit=Math.hypot(cx,cz);let stop=peak.t;
+  for(const s of thrust){if(s.t<1)continue;if(s.t>peak.t)break;if(Math.hypot(s.x,s.z)>limit){stop=Math.max(0,s.t-.05);break;}}
+  return{yaw,stop};
+ }
  // The capture's thrust is a lunge, so its reach is measured with the
  // strike layer: the tip at the moment of impact in the attacker's frame.
  const lungeProbe=createPawn({id:'probe',color:'w'});
@@ -143,10 +155,16 @@ async function init(bytes){
   const e=eng.get(piece.id),target=e?.target?byId(e.target):null;
   const [x,z]=world(piece.square);
   let desired=target?headingTo([x,z],world(target.square)):forwardYaw(piece.color),fence=null;
-  if(e?.state==='fencing'){const q=coords(target.square),p=coords(piece.square);fence=q.file!==p.file&&q.rank!==p.rank?contact.diagonal:contact.straight;
+  // A recorded exchange (motion.duel) drives two pawns fencing each other:
+  // body from the recording, spear and shield timed to its blows.
+  const line=target?headingTo([x,z],world(target.square)):0,ex=e?.state==='fencing'&&actor.kind==='pawn'&&target.type==='p'?duelExchange(actor,piece,target):null;
+  if(ex)desired+=ex.aimYaw;
+  else if(e?.state==='fencing'){const q=coords(target.square),p=coords(piece.square);fence=q.file!==p.file&&q.rank!==p.rank?contact.diagonal:contact.straight;
    const f=fencingAction(e.role,clock);if(f.attacking)desired+=fence.yaw*smooth(f.time,.3,1)*(1-smooth(f.time,3,3.8));}
   let yaw=yaws.get(piece.id);const diff=wrapAngle(desired-yaw),step=3.2*dt;
   yaw=Math.abs(diff)<=step?desired:yaw+Math.sign(diff)*step;yaws.set(piece.id,yaw);
+  if(ex){const w=motion.weight,[ox,oz]=rotate([ex.offset.x*w,ex.offset.z*w],line);actor.place({x:x+ox,z:z+oz,yaw});
+   actor.pose(ex.arms.action,ex.arms.time,null,{clip:ex.clip,points:turnHead(ex.points,wrapAngle(line-yaw)),weight:w,arms:spearArms(ex.arms,ex.points,ex.clip,ex.k,ex.local)});return;}
   actor.place({x,z,yaw});
   if(actor.kind!=='pawn')return;
   // Calm figures are re-posed less often; engaged ones every frame.
@@ -165,7 +183,33 @@ async function init(bytes){
  // Imported motion clips (mocap/): a stance for figures at rest and a walk
  // for a pawn's step. They are a design aid: without them the board plays
  // its own procedural layer, and the clip share blends the two.
- const motion={sources:[],clips:[],stand:null,walk:null,capture:null,weight:1};
+ const motion={sources:[],clips:[],stand:null,walk:null,capture:null,duel:null,weight:1};
+ // Exchange fitted to the two squares: approach scale, where the spear stops
+ // (the partner's shield) and the yaw that aims it there; per distance and
+ // figure size. The thrust is measured at the gap of the recorded blow.
+ const layouts=new Map();
+ // The last exchange each fencing pawn played: whom against, its role and
+ // when. A capture between two that were fencing each other goes on from it.
+ const fenceStates=new Map();
+ // The loadout fitted to the recorded body (exchange.mjs): the spear
+ // levelled against the lean, the shield carried over the front knee.
+ const spearArms=(arms,points,clip,k,local)=>arms.action==='Spear_Study'?{phase:levelSpear(loadoutPhases(arms.action,arms.time),trunkLean(points,clip.neutral))}
+  :arms.action==='Shield_Brace'?{shield:shieldAt(clip,local,k)}:undefined;
+ function duelLayout(pair,k,distance,flesh=false){
+  const key=`${pair.attack.name}|${k.toFixed(4)}|${distance.toFixed(3)}|${flesh}`;
+  if(!layouts.has(key)){const l=exchangeLayout(pair,k,distance),s=pair.attack.events.strike,gap=l.gapAt(s.reach);
+   layouts.set(key,{...l,gap,aim:flesh?fleshAim(gap):fencingAim(gap)});}
+  return layouts.get(key);
+ }
+ function duelExchange(actor,piece,target){
+  const pair=motion.duel?.exchange;if(!pair)return null;
+  const k=actor.mocap.retarget.leg/pair.attack.leg,[x,z]=world(piece.square),[tx,tz]=world(target.square);
+  const l=duelLayout(pair,k,Math.hypot(tx-x,tz-z)),role=eng.get(piece.id).role;
+  const ex=exchangeAt(pair,role,clock,k,l.scale),s=ex.clip.events.strike;
+  fenceStates.set(piece.id,{target:target.id,role,clock});
+  const aimYaw=ex.side==='attack'?l.aim.yaw*smooth(ex.local,s.start-.25,s.reach)*(1-smooth(ex.local,s.reach+.25,s.reach+.95)):0;
+  return{...ex,k,aimYaw,arms:exchangeArms(ex.clip,ex.local,{stop:ex.side==='attack'?l.aim.stop:1.95})};
+ }
  const pingpong=(t,d)=>{if(!(d>0))return 0;const u=t%(2*d);return u<d?u:2*d-u;};
  function standMotion(piece,weight){
   const c=motion.stand,t=clock+hash(piece.id)*c.duration;
@@ -203,6 +247,9 @@ async function init(bytes){
   // loadout, on the same timeline). Pawns take diagonally, so the pair is
   // authored for one geometry: attacker at the origin facing the defender
   // one diagonal square ahead. En passant keeps the procedural scene.
+  // A recorded exchange with a decisive cycle (motion.duel) plays the
+  // capture as a duel the taken pawn loses; it comes before the clip pair.
+  if(motion.duel?.decisive&&event.victimSquare===event.to&&victim.kind==='pawn')return duelCapturePart(attacker,attackerPiece,victim,event);
   const pair=motion.capture&&event.victimSquare===event.to&&victim.kind==='pawn'?captureClips():null;
   if(pair)return clipCapturePart(attacker,attackerPiece,victim,plan,pair);
   return{duration:CAPTURE_DURATION,plan,update(t){
@@ -211,6 +258,75 @@ async function init(bytes){
    if(!s.victim.removed){victim.place({x:s.victim.position[0],z:s.victim.position[1],yaw:s.victim.yaw,fall:s.victim.fall,fallHeading:s.victim.fallHeading});if(victim.kind==='pawn')victim.pose(s.victim.action,s.victim.time,s.victim.layer);victim.fade(s.victim.opacity);}
    victim.object.visible=!s.victim.removed;
    $('#phase').textContent=CAPTURE_PHASES.filter(p=>s.phase.includes(p.name)).map(p=>p.label).join(' · ');
+  },finish(){victim.dispose();actors.delete(victim.id);}};
+ }
+ // A capture as a won duel, from a recorded bout (motion.duel). The two
+ // stay on their squares and exchange: if they were already fencing each
+ // other, the cycle under way plays out (the scene starts from the very
+ // pose they were in); otherwise one full cycle, the defender striking and
+ // the attacker answering with the shield, the recording faded in over the
+ // stance. Then the recording's decisive cycle: the attacker's blow comes in
+ // past a shield raised too late and lands; the defender is jolted, buckles
+ // and falls along the blow and leaves the board; the attacker comes back to
+ // guard and steps onto the square. Without the plain exchange in the file
+ // the scene starts with the decisive cycle.
+ function duelCapturePart(attacker,attackerPiece,victim,event){
+  const {exchange,decisive}=motion.duel,a=world(event.from),v=world(event.victimSquare),end=world(event.to),D=Math.hypot(v[0]-a[0],v[1]-a[1]);
+  const line=headingTo(a,v),back=line+Math.PI,dir=[(v[0]-a[0])/D,(v[1]-a[1])/D],startYaw=yaws.get(attackerPiece.id),victimYaw=yaws.get(victim.id);
+  const k=attacker.mocap.retarget.leg/decisive.attack.leg,first=exchange?duelLayout(exchange,k,D):null,last=duelLayout(decisive,k,D,true);
+  const L=first?Math.min(exchange.attack.duration,exchange.defend.duration)-CROSSFADE:0,c0=clock,mw=motion.weight;
+  const sa=fenceStates.get(attackerPiece.id),sv=fenceStates.get(victim.id);
+  const going=!!first&&sa?.target===victim.id&&sv?.target===attackerPiece.id&&sa.clock===c0&&sv.clock===c0;
+  // The lead-in before the decisive cycle: what is left of the cycle under
+  // way, or one whole cycle the defender opens.
+  const T=going?L-(c0-Math.floor(c0/L)*L):L,fadeIn=t=>going?1:smooth(t,0,.4);
+  const lead=going?(role=>t=>{const e=exchangeAt(exchange,role,c0+t,k,first.scale);return{clip:e.clip,local:e.local,points:e.points,offset:e.offset};})
+   :(clip=>t=>({clip,local:t,...cyclePose(clip,t,k,first.scale)}));
+  const leadA=first?lead(going?sa.role:exchange.defend):null,leadV=first?lead(going?sv.role:exchange.attack):null;
+  const blow=decisive.attack.events.strike,hit=T+blow.reach;
+  const settle=hit+.5,walkAt=hit+1.15,gone=hit+1.6;
+  // Body of one fighter: the lead-in, then the decisive cycle, its first
+  // CROSSFADE seconds blended from the lead-in's tail.
+  const body=(leadOf,lastClip,t)=>{
+   if(first&&t<T)return{...leadOf(t),layout:first};
+   const u=t-T,cur=cyclePose(lastClip,u,k,last.scale);
+   if(!first||u>=CROSSFADE)return{clip:lastClip,local:u,layout:last,...cur};
+   const end=leadOf(T-1e-6),tail=cyclePose(end.clip,end.local+u,k,first.scale),w=smooth(u,0,CROSSFADE),points={};
+   for(const n of Object.keys(cur.points))points[n]=cur.points[n].map((x,i)=>tail.points[n][i]+(x-tail.points[n][i])*w);
+   return{clip:lastClip,local:u,layout:last,points,offset:{x:tail.offset.x+(cur.offset.x-tail.offset.x)*w,z:tail.offset.z+(cur.offset.z-tail.offset.z)*w}};
+  };
+  const aimOf=b=>{const s=b.clip.events.strike;return b.clip.side==='attack'?b.layout.aim.yaw*smooth(b.local,s.start-.25,s.reach)*(1-smooth(b.local,s.reach+.25,s.reach+.95)):0;};
+  const armsOf=b=>exchangeArms(b.clip,b.local,{stop:b.clip.side==='attack'?b.layout.aim.stop:1.95});
+  const at=(p,o,heading,w)=>{const [x,z]=rotate([o.x*w,o.z*w],heading);return{x:p[0]+x,z:p[1]+z};};
+  let stand=null,walk=null;
+  return{duration:walkAt+1.1+.7*D/SQUARE,update(t){
+   // Attacker: the duel on its square, back to guard, then the step in.
+   if(t<walkAt){
+    const b=body(leadA,decisive.attack,Math.min(t,settle)),f=fadeIn(t)*mw,w=f*(1-smooth(t,settle,walkAt));
+    const yaw=lerpAngle(startYaw,line+aimOf(b),smooth(t,0,.4)),o=at(a,b.offset,line,f);
+    if(t>=settle&&!stand)stand=o;
+    const arms=armsOf(b);
+    attacker.place({...(stand||o),yaw});yaws.set(attackerPiece.id,yaw);
+    attacker.pose(arms.action,arms.time,null,{clip:b.clip,points:turnHead(b.points,wrapAngle(line-yaw)),weight:w,arms:spearArms(arms,b.points,b.clip,k,b.local)});
+   }else{
+    if(!walk){const from=stand?[stand.x,stand.z]:a,L=Math.hypot(end[0]-from[0],end[1]-from[1]);walk={from,L,dir:[(end[0]-from[0])/L,(end[1]-from[1])/L],T:1.1+.7*D/SQUARE};}
+    const m=travel(walk.L,t-walkAt,0,walk.T),yaw=line;
+    attacker.place({x:walk.from[0]+walk.dir[0]*m.s,z:walk.from[1]+walk.dir[1]*m.s,yaw});yaws.set(attackerPiece.id,yaw);
+    const layer=walkLayer(walk.L,m.s,m.accel,walk.dir,yaw);
+    if(motion.walk){const mm=walkMotion(attacker,attackerPiece,walk.L,m.s,walk.dir,yaw);attacker.pose('Guard_Breath',(clock)%6,scaleLayer(layer,1-mm.share),mm);}
+    else attacker.pose('Guard_Breath',clock%6,layer);
+   }
+   // Defender: fences on, then is struck by the decisive blow and falls.
+   const removed=t>=gone;victim.object.visible=!removed;
+   if(!removed){
+    const b=body(leadV,decisive.defend,Math.min(t,hit)),f=fadeIn(t)*mw,w=f*(1-smooth(t,hit+.05,hit+.35)),tau=t-hit;
+    const yaw=lerpAngle(victimYaw,back+aimOf(b),smooth(t,0,.4)),o=at(v,b.offset,back,f),fallU=clamp((t-hit-.3)/.6,0,1);
+    victim.place({...o,yaw,fall:1.47*fallU*fallU,fallHeading:line});
+    const arms=armsOf(b);
+    victim.pose(arms.action,arms.time,tau>0?victimHitLayer(tau,rotate(dir,-yaw)):null,{clip:b.clip,points:turnHead(b.points,wrapAngle(back-yaw)),weight:w,arms:spearArms(arms,b.points,b.clip,k,b.local)});
+    victim.fade(1-smooth(t,hit+1.1,gone));
+   }
+   $('#phase').textContent=t<T?(going?'обмен ударами':'обмен: защитник атакует'):t<hit?'обмен: решающий удар':t<gone?'защитник проиграл схватку':'занятие клетки';
   },finish(){victim.dispose();actors.delete(victim.id);}};
  }
  function captureClips(){const a=motion.capture,v=motion.clips.find(c=>c.name===a.partner&&c.role==='struck');return v?{a,v}:null;}
@@ -347,14 +463,19 @@ async function init(bytes){
   $('#motion-capture').innerHTML='<option value="">наша сцена</option>'+motion.clips.map((c,i)=>c.role==='strike'?`<option value="${i}">${c.label}</option>`:'').join('');
   const pick=(sel,roles)=>{if($(sel).value)return;const i=motion.clips.findIndex(c=>roles.includes(c.role));if(i>=0)$(sel).value=String(i);};
   pick('#motion-stand',['stand','shift']);pick('#motion-walk',['march','step','approach']);pick('#motion-capture',['strike']);
+  // Recorded exchanges, one entry per source that has one.
+  const duels=motion.sources.map((src,i)=>({i,pairs:exchangePairs(src.clips)})).filter(d=>d.pairs.exchange||d.pairs.decisive),dv=$('#motion-duel').value;
+  $('#motion-duel').innerHTML='<option value="">наш слой</option>'+duels.map(d=>`<option value="${d.i}">${(d.pairs.exchange||d.pairs.decisive).attack.label.split(':')[0]}</option>`).join('');
+  $('#motion-duel').value=dv||(duels.length?String(duels[0].i):'');
   useMotion();return source.clips.map(c=>c.name);
  }
  function useMotion(){
   const at=sel=>$(sel).value===''?null:motion.clips[+$(sel).value];
   motion.stand=at('#motion-stand');motion.walk=at('#motion-walk');motion.capture=at('#motion-capture');motion.weight=+$('#motion-weight').value/100;
+  motion.duel=$('#motion-duel').value===''?null:exchangePairs(motion.sources[+$('#motion-duel').value].clips);
   $('#motion-weight-out').value=Math.round(motion.weight*100)+'%';
   const licenses=[...new Set(motion.sources.map(s=>s.file.source?.license).filter(Boolean))];
-  $('#motion-status').textContent=motion.clips.length?`Клипов: ${motion.clips.length}. Покой: ${motion.stand?.label||'наш слой'}; ход: ${motion.walk?.label||'наш слой'}; взятие: ${motion.capture?(captureClips()?motion.capture.label:'нет пары защитника'):'наша сцена'}.`+(licenses.length?` Лицензия источника: ${licenses.join('; ')}.`:''):'';
+  $('#motion-status').textContent=motion.clips.length?`Клипов: ${motion.clips.length}. Покой: ${motion.stand?.label||'наш слой'}; ход: ${motion.walk?.label||'наш слой'}; взятие: ${motion.duel?.decisive?'решающий удар из записи':motion.capture?(captureClips()?motion.capture.label:'нет пары защитника'):'наша сцена'}; обмен ударами: ${motion.duel?.exchange?'по записи':'наш слой'}.`+(licenses.length?` Лицензия источника: ${licenses.join('; ')}.`:''):'';
   for(const p of game?.pieces||[]){const a=actors.get(p.id);if(a)idle(p,a,0,true);}
  }
  $('#motion-open').onclick=()=>$('#motion-file').click();
@@ -365,7 +486,7 @@ async function init(bytes){
  // Motion files built into the page (build.mjs --motion): loaded at start
  // like files opened by hand, so the select boxes show what is in use.
  for(const {name,text}of JSON.parse($('#motion-data')?.textContent||'[]'))try{addMotion(name,text);}catch(error){$('#motion-status').textContent=`${name}: ${error.message}`;}
- for(const sel of ['#motion-stand','#motion-walk','#motion-capture','#motion-weight'])$(sel).oninput=useMotion;
+ for(const sel of ['#motion-stand','#motion-walk','#motion-capture','#motion-duel','#motion-weight'])$(sel).oninput=useMotion;
  function resize(){const {width,height}=stage.getBoundingClientRect();renderer.setSize(width,height);camera.aspect=width/height;camera.updateProjectionMatrix();if(!moved)homeView();}
  new ResizeObserver(resize).observe(stage);resize();
  renderer.domElement.addEventListener('webglcontextlost',e=>{e.preventDefault();fallback('Контекст WebGL потерян');});
@@ -375,8 +496,9 @@ async function init(bytes){
  window.livingChess={ready:true,load,click,play,
   manual(on=true){manual=on;last=null;},
   // Draws only the last frame: the checks need the motion, not every picture.
-  step(seconds,fps=30){const n=Math.max(1,Math.round(seconds*fps));for(let i=0;i<n;i++)advance(1/fps,i===n-1);},
-  state:()=>({fen:game.chess.fen(),status:game.status(),busy:!!scene_,sceneTime:scene_?.t||0,contact,reach,shield,thrust,
+  step(seconds,fps=30,draw=true){const n=Math.max(1,Math.round(seconds*fps));for(let i=0;i<n;i++)advance(1/fps,draw&&i===n-1);},
+  render(){renderer.render(scene,camera);},
+  state:()=>({fen:game.chess.fen(),status:game.status(),busy:!!scene_,sceneTime:scene_?.t||0,clock,contact,reach,shield,thrust,
    pieces:game.pieces.map(p=>{const a=actors.get(p.id),e=eng.get(p.id);return{id:p.id,type:p.type,color:p.color,square:p.square,state:e?.state,role:e?.role,target:e?.target,pose:a?.current(),place:a?.placement()};}),
    actors:actors.size,triangles:renderer.info.render.triangles,calls:renderer.info.render.calls}),
   profile(n=5){const pawns=[...actors.values()].filter(a=>a.kind==='pawn');const t0=performance.now();for(let i=0;i<n;i++)for(const a of pawns)a.pose('Guard_Breath',i*.1);return{pawns:pawns.length,msPerPose:(performance.now()-t0)/(n*pawns.length)};},
@@ -396,7 +518,7 @@ async function init(bytes){
   landscape:seed=>{if(seed)buildLandscape(seed);renderer.render(scene,camera);return{seed:landscapeSeed,trees:landscape.trees.slice(0,4)};},
   hitTime:HIT_TIME,captureDuration:CAPTURE_DURATION,
   // Imported motion for the checks: add a file's text, then pick by index.
-  motion:{add:(name,text)=>addMotion(name,text),list:()=>motion.clips.map(c=>c.name),use({stand=null,walk=null,capture=null,weight=1}={}){$('#motion-stand').value=stand===null?'':String(stand);$('#motion-walk').value=walk===null?'':String(walk);$('#motion-capture').value=capture===null?'':String(capture);$('#motion-weight').value=String(Math.round(weight*100));useMotion();return{stand:motion.stand?.name||null,walk:motion.walk?.name||null,capture:motion.capture?.name||null,pair:!!(motion.capture&&captureClips()),weight:motion.weight};}},
+  motion:{add:(name,text)=>addMotion(name,text),list:()=>motion.clips.map(c=>c.name),use({stand=null,walk=null,capture=null,duel=null,weight=1}={}){$('#motion-duel').value=duel===null?'':String(duel);$('#motion-stand').value=stand===null?'':String(stand);$('#motion-walk').value=walk===null?'':String(walk);$('#motion-capture').value=capture===null?'':String(capture);$('#motion-weight').value=String(Math.round(weight*100));useMotion();return{stand:motion.stand?.name||null,walk:motion.walk?.name||null,capture:motion.capture?.name||null,pair:!!(motion.capture&&captureClips()),duel:motion.duel?{exchange:motion.duel.exchange?.attack.name||null,decisive:motion.duel.decisive?.attack.name||null}:null,weight:motion.weight};}},
   points(id,names){return actors.get(id)?.points?.(names)||null;},
   pointsWorld(id,names){const a=actors.get(id);if(!a?.points)return null;a.object.updateMatrixWorld(true);return Object.fromEntries(Object.entries(a.points(names)).map(([k,v])=>[k,v&&new THREE.Vector3(...v).applyMatrix4(a.object.matrixWorld).toArray()]));},
   pose(id,action,time,layer){const a=actors.get(id);a.pose(action,time,layer);renderer.render(scene,camera);return a.points(['root','foot.L','foot.R','lowerleg01.L','lowerleg01.R','head','upperarm01.L','upperarm01.R']);},

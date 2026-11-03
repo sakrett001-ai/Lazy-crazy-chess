@@ -8,6 +8,7 @@ Nothing is smoothed here: cleaning is clean.py, so the raw file can be
 cleaned again with other settings without running the model.
 
     python3 capture.py video.mp4 -o take.raw.json [--model heavy|full|lite]
+    python3 capture.py duel.mp4 -o duel.raw.json --people 2   # → duel.A.raw.json, duel.B.raw.json
 
 No graphics card is needed. The model file is downloaded once from Google's
 public address into ~/.cache/vmocap (or pass --model-path).
@@ -34,15 +35,18 @@ def model_path(name, explicit=None):
     return path
 
 
-def scene_segments(video, boxes, turn=None, count=5, max_tilt=40, min_len=0.05, keep=300):
+def scene_segments(video, boxes, turn=None, count=5, max_tilt=40, min_len=0.05, keep=300, span=None):
     """Long, roughly upright straight edges of the scene (walls, doors,
-    furniture) from `count` frames, away from the person. Their common
+    furniture) from `count` frames, away from the people. Their common
     vanishing point tells where up is for a camera that is tilted (clean.py).
+    `boxes` maps a frame to one box or a list of boxes (two people);
+    `span` (first, last frame) keeps to one shot of an edited video.
     Returns [[x1,y1,x2,y2],...] in pixels."""
     import cv2
     cap = cv2.VideoCapture(video)
     total = int(cap.get(cv2.CAP_PROP_FRAME_COUNT)) or 1
-    picks = sorted(set(int(round(i)) for i in np.linspace(0, max(total - 1, 0), count)))
+    first, last = span if span else (0, max(total - 1, 0))
+    picks = sorted(set(int(round(i)) for i in np.linspace(first, last, count)))
     lsd = cv2.createLineSegmentDetector()
     segs = []
     for i in picks:
@@ -57,12 +61,13 @@ def scene_segments(video, boxes, turn=None, count=5, max_tilt=40, min_len=0.05, 
         if found is None:
             continue
         box = boxes.get(i)
+        many = [] if box is None else (box if np.ndim(box) == 2 else [box])
         for x1, y1, x2, y2 in found.reshape(-1, 4):
             if np.hypot(x2 - x1, y2 - y1) < min_len * max(g.shape):
                 continue
             if np.degrees(np.arctan2(abs(x2 - x1), abs(y2 - y1))) > max_tilt:
                 continue
-            if box and box[0] < (x1 + x2) / 2 < box[2] and box[1] < (y1 + y2) / 2 < box[3]:
+            if any(b[0] < (x1 + x2) / 2 < b[2] and b[1] < (y1 + y2) / 2 < b[3] for b in many):
                 continue
             segs.append([round(float(v), 1) for v in (x1, y1, x2, y2)])
     cap.release()
@@ -133,6 +138,58 @@ def capture(video, model='heavy', path=None, rotate=0, max_frames=None, every=1)
         'landmarks': NAMES, 'frames': frames}
 
 
+def padded_box(image, pad=0.15):
+    xy = np.array(image)[:, :2]
+    lo, hi = xy.min(0), xy.max(0)
+    p = (hi - lo) * pad
+    return [*(lo - p), *(hi + p)]
+
+
+def capture_two(video, model='heavy', path=None, rotate=0, max_frames=None):
+    """Two people (a duel): one raw file per person, each in the usual
+    vmocap.raw layout plus `pair` (partner, edit cuts, shots, how many frames
+    were found again in a crop or dropped as a merged skeleton). See pair.py."""
+    import cv2
+    import pair
+    started = time.time()
+    A, B, info = pair.capture_pair(video, model_path(model, path), rotate, max_frames)
+    turn = {90: cv2.ROTATE_90_CLOCKWISE, 180: cv2.ROTATE_180, 270: cv2.ROTATE_90_COUNTERCLOCKWISE}.get(rotate)
+    # Shots between edit cuts: each has its own camera, so its own scene lines.
+    bounds = [0] + info['cuts'] + [info['frames']]
+    shots = []
+    for s0, s1 in zip(bounds[:-1], bounds[1:]):
+        if s1 - s0 < 2:
+            continue
+        boxes = {}
+        for k in range(s0, s1):
+            b = [padded_box(f['image']) for f in (A[k], B[k]) if f['world']]
+            if b:
+                boxes[k] = b
+        segs = scene_segments(video, boxes, turn, span=(s0, s1 - 1)) if boxes else []
+        shots.append({'start': s0, 'end': s1 - 1, 'segments': segs})
+    longest = max(shots, key=lambda s: s['end'] - s['start']) if shots else {'segments': []}
+    elapsed = round(time.time() - started, 2)
+    raws = []
+    for name, frames, other in (('A', A, 'B'), ('B', B, 'A')):
+        found = sum(1 for f in frames if f['world'])
+        raws.append({
+            'format': 'vmocap.raw', 'version': 1,
+            'source': {'video': os.path.basename(video), 'fps': info['fps'], 'width': info['size'][0], 'height': info['size'][1],
+                       'model': f'MediaPipe Pose Landmarker {model} (Apache-2.0)', 'frames': len(frames), 'found': found,
+                       'seconds': elapsed, 'fpsProcessed': round(len(frames) / max(elapsed, 1e-6), 1)},
+            'scene': {'segments': longest['segments']},
+            'pair': {'person': name, 'partner': other, 'cuts': info['cuts'], 'shots': shots,
+                     'recovered': info['recovered'][name], 'merged': info['merged'], 'untangled': info['untangled'],
+                     'both': info['both'], 'started': info['started']},
+            'landmarks': NAMES, 'frames': frames})
+    return raws
+
+
+def pair_paths(out):
+    stem = out[:-len('.raw.json')] if out.endswith('.raw.json') else os.path.splitext(out)[0]
+    return f'{stem}.A.raw.json', f'{stem}.B.raw.json'
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument('video')
@@ -142,7 +199,16 @@ def main():
     ap.add_argument('--rotate', type=int, default=0, choices=[0, 90, 180, 270], help='повернуть кадр перед распознаванием')
     ap.add_argument('--every', type=int, default=1, help='брать каждый N-й кадр')
     ap.add_argument('--max-frames', type=int)
+    ap.add_argument('--people', type=int, default=1, choices=[1, 2], help='2 — поединок: два файла, A (слева при первом появлении обоих) и B')
     a = ap.parse_args()
+    if a.people == 2:
+        for path, raw in zip(pair_paths(a.out), capture_two(a.video, a.model, a.model_path, a.rotate, a.max_frames)):
+            with open(path, 'w') as f:
+                json.dump(raw, f, separators=(',', ':'))
+            s, p = raw['source'], raw['pair']
+            print(f"{s['video']} {p['person']}: {s['found']}/{s['frames']} кадров, найден в обрезке {p['recovered']}; "
+                  f"оба в кадре {p['both']}, склеек {len(p['cuts'])}, слитых скелетов отброшено {p['merged']} → {path}")
+        return
     raw = capture(a.video, a.model, a.model_path, a.rotate, a.max_frames, a.every)
     with open(a.out, 'w') as f:
         json.dump(raw, f, separators=(',', ':'))
