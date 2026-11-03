@@ -130,33 +130,31 @@ def steady_twist(X, max_twist=TWIST_MAX, reject=TWIST_REJECT, sigma=TWIST_SIGMA)
 
 # У бойцов, снятых сбоку, ноги на скрестном шаге заслоняют друг друга, и
 # MediaPipe путает, какая из них левая: в ролике 516 метки ног атакующего
-# меняются местами пять раз за поединок (на кадрах 52, 137, 142, 156, 165),
-# стопа «перелетает» на 0,3–1,2 м за кадр, на доске колено выгибалось
-# назад. Путает она колени и стопы порознь (стопы чаще). Метки расставляются
-# по непрерывности отдельно для коленей и для стоп: если в кадре они,
-# переставленные местами, ближе к предыдущему кадру почти вдвое (LEG_SWAP)
-# и скачок не мелкий (LEG_SWAP_MIN), метки меняются обратно с этого кадра.
+# меняются местами на кадре 156, и стопа «перелетает» на 1,2 м за кадр.
+# Чистка (tools/videomocap, шаг lengths) уже выровняла кости, так что нога
+# переставляется только целиком — колено вместе со стопой: переставив одни
+# стопы, голень стала бы длиннее своей на полметра и колено выгнулось бы
+# назад. Метки ставятся по непрерывности, с этого кадра и дальше: если
+# переставленные ноги ближе к предыдущему кадру почти вдвое (LEG_SWAP) и
+# скачок не мелкий (LEG_SWAP_MIN), метки меняются.
 LEG_SWAP = 0.6
 LEG_SWAP_MIN = 0.1  # м за кадр на точку
-LEG_GROUPS = [['knee'], ['ankle', 'heel', 'toe']]
+LEG = ['knee', 'ankle', 'heel', 'toe']
 
 
 def steady_legs(X, ratio=LEG_SWAP, least=LEG_SWAP_MIN):
-    """Left and right labels of the knees and of the feet kept continuous.
-    Returns the corrected frames and, per group, the frames where the labels
-    were swapped back."""
+    """Left and right leg labels kept continuous, each leg swapped whole.
+    Returns the corrected frames and the frames where the labels were swapped."""
+    Lx, Rx = [C.I[n + 'L'] for n in LEG], [C.I[n + 'R'] for n in LEG]
     Y = X.copy()
-    swaps = {}
-    for group in LEG_GROUPS:
-        Lx, Rx = [C.I[n + 'L'] for n in group], [C.I[n + 'R'] for n in group]
-        at = swaps[group[0]] = []
-        for f in range(1, len(Y)):
-            p, q = Y[f - 1], Y[f]
-            keep = np.linalg.norm(q[Lx] - p[Lx], axis=1).sum() + np.linalg.norm(q[Rx] - p[Rx], axis=1).sum()
-            cross = np.linalg.norm(q[Lx] - p[Rx], axis=1).sum() + np.linalg.norm(q[Rx] - p[Lx], axis=1).sum()
-            if cross < ratio * keep and keep / (2 * len(group)) > least:
-                Y[f:, Lx], Y[f:, Rx] = Y[f:, Rx].copy(), Y[f:, Lx].copy()
-                at.append(f)
+    swaps = []
+    for f in range(1, len(Y)):
+        p, q = Y[f - 1], Y[f]
+        keep = np.linalg.norm(q[Lx] - p[Lx], axis=1).sum() + np.linalg.norm(q[Rx] - p[Rx], axis=1).sum()
+        cross = np.linalg.norm(q[Lx] - p[Rx], axis=1).sum() + np.linalg.norm(q[Rx] - p[Lx], axis=1).sum()
+        if cross < ratio * keep and keep / (2 * len(LEG)) > least:
+            Y[f:, Lx], Y[f:, Rx] = Y[f:, Rx].copy(), Y[f:, Lx].copy()
+            swaps.append(f)
     return Y, swaps
 
 
@@ -178,7 +176,7 @@ def build(pair):
     for n in ('A', 'B'):
         full[n] = full[n].copy()
         Y, swaps[n] = steady_legs(full[n][lo:hi])
-        swaps[n] = {g: [lo + f for f in v] for g, v in swaps[n].items()}
+        swaps[n] = [lo + f for f in swaps[n]]
         Y, bad, most = steady_twist(Y)
         full[n][lo:hi], twist[n] = Y, (bad, most)
         full[n][lo:hi], shift[n] = steady_root(full[n][lo:hi], fps)
@@ -212,7 +210,7 @@ def build(pair):
            'note': 'Одна камера, двое: tools/videomocap (pair.py — кто есть кто, duel.py — общая сцена и удары). Расстояние между бойцами — по глубине камеры, без эталона.',
            'distance': pair.get('distance'), 'neutralFrames': {n: v[0] for n, v in neutral.items()},
            'root': {'sigmaFrames': ROOT_SIGMA, 'maxSpeedLegsPerSecond': ROOT_MAX_SPEED, 'maxShift': {n: round(v, 3) for n, v in shift.items()}},
-           'legs': {'swapRatio': LEG_SWAP, 'swappedBackAt': swaps},
+           'legs': {'swapRatio': LEG_SWAP, 'swappedAt': swaps},
            'twist': {'maxDegrees': TWIST_MAX, 'rejectDegrees': TWIST_REJECT, 'sigmaFrames': TWIST_SIGMA,
                      'rejectedFrames': {n: v[0] for n, v in twist.items()}, 'maxCorrectionDegrees': {n: round(v[1], 1) for n, v in twist.items()}}}
     return {'format': 'lazy-chess.motion', 'version': 1, 'source': src, 'points': POINTS, 'neutral': clips[0]['neutral'], 'clips': clips}
