@@ -41,7 +41,7 @@ async function init(bytes){
  ground.rotation.x=-Math.PI/2;ground.receiveShadow=true;scene.add(ground);
  for(let i=-2;i<=2;i++){const l=new THREE.Mesh(new THREE.PlaneGeometry(14,.02),new THREE.MeshBasicMaterial({color:0x8d9a94}));l.rotation.x=-Math.PI/2;l.position.set(0,.002,i*.5);scene.add(l);}
  const camera=new THREE.PerspectiveCamera(30,1,.05,100);
- function cameraTo(name){const c={three:[[5.4,2.3,6.4],[0,1.05,.3]],side:[[8.4,2.3,.3],[0,1,.3]],front:[[0,1.5,8.2],[0,1.05,.3]],above:[[2.2,6.5,3.6],[0,.9,.3]]}[name]||[[5.2,2.4,6.2],[0,1.05,.3]];camera.position.fromArray(c[0]);camera.lookAt(V().fromArray(c[1]));camera.updateMatrixWorld(true);view=name;
+ function cameraTo(name){const c={three:[[5.4,2.3,6.4],[0,1.05,.3]],side:[[8.4,2.3,.3],[0,1,.3]],front:[[0,1.5,8.2],[0,1.05,.3]],above:[[2.2,6.5,3.6],[0,.9,.3]]}[name]||[[5.2,2.4,6.2],[0,1.05,.3]];const far=group?1.5:1;camera.position.fromArray(c[1].map((v,i)=>v+(c[0][i]-v)*far));camera.lookAt(V().fromArray(c[1]));camera.updateMatrixWorld(true);view=name;
   const right=V().setFromMatrixColumn(camera.matrixWorld,0);right.y=0;right.normalize();
   lanes.source=right.clone().multiplyScalar(-SPREAD);lanes.fighter=right.clone().multiplyScalar(SPREAD);}
  const lanes={source:V(),fighter:V()};
@@ -63,10 +63,31 @@ async function init(bytes){
  const file=parseMotionFile(JSON.parse($('#strike-data').textContent));
  const strikes=file.strikes||[];
  const clips=file.clips.map((c,i)=>({...prepareClip(file,c),strike:strikes[i]||{}}));
- $('#clip').innerHTML=clips.map((c,i)=>`<option value="${i}">${c.label}</option>`).join('');
- let index=0,t=0,playing=true,manual=false;
- const clip=()=>clips[index];
- function select(i){index=i;t=0;$('#clip').value=String(i);const s=clip().strike;pawn.equip({armorType:'plate',shieldType:'tower',...(s.loadout||{})});return render();}
+ // Skill levels side by side (src/mocap/skill.mjs): the same strike as a
+ // recruit, the fighter of the recording and a veteran, one pawn each, on one
+ // clock lined up at the blow, so the windups differ and the blows meet.
+ const groups=[];
+ for(const c of clips){const s=c.strike;if(!s.level)continue;let g=groups.find(x=>x.id===s.strike);if(!g)groups.push(g={id:s.strike,label:`${s.figure}: ${s.label}`,members:[]});g.members.push(c);}
+ for(const g of groups){g.blow=Math.max(...g.members.map(c=>c.strike.phases.blow));g.offsets=g.members.map(c=>g.blow-c.strike.phases.blow);g.duration=Math.max(...g.members.map((c,i)=>g.offsets[i]+c.duration));}
+ $('#clip').innerHTML=clips.map((c,i)=>`<option value="${i}">${c.label}</option>`).join('')+(groups.length?`<optgroup label="Уровни рядом">${groups.map((g,i)=>`<option value="g${i}">${g.label} — уровни рядом</option>`).join('')}</optgroup>`:'');
+ let index=0,t=0,playing=true,manual=false,group=null;
+ const clip=()=>clips[index],trio=[];
+ const total=()=>group?group.duration:clip().duration;
+ // Lanes of the trio across the line of sight, 1.6 m apart: a war hammer
+ // reaches 1.5 m from the hands.
+ const TRIO=1.6;
+ function select(i){
+  if(String(i).startsWith('g'))return selectGroup(+String(i).slice(1));
+  group=null;for(const p of trio)p.object.visible=false;index=+i;t=0;$('#clip').value=String(index);$('#lanes').innerHTML='<span>Запись</span><span>Боец</span>';
+  const s=clip().strike;pawn.equip({armorType:'plate',shieldType:'tower',...(s.loadout||{})});return render();}
+ function selectGroup(i){
+  group=groups[i];t=0;$('#clip').value='g'+i;
+  while(trio.length<group.members.length-1){const p=createPawnFactory({gltf})({id:'level'+trio.length,color:'w',weapons:['bastard','warhammer']});scene.add(p.object);trio.push(p);}
+  group.pawns=[pawn,...trio].slice(0,group.members.length);
+  group.members.forEach((c,k)=>{group.pawns[k].object.visible=true;group.pawns[k].equip({armorType:'plate',shieldType:'tower',...(c.strike.loadout||{})});});
+  $('#lanes').innerHTML=group.members.map(c=>`<span>${c.strike.levelLabel}</span>`).join('');
+  cameraTo(view);return render();
+ }
 
  // Body capsules for the blade-through-body check: torso, head, thighs.
  // Radii are the plate armour's outer envelope, generous on purpose (cm):
@@ -95,7 +116,24 @@ async function init(bytes){
   return{L:one('L'),R:one('R')};
  }
 
+ function renderGroup(){
+  const g=group,right=V().setFromMatrixColumn(camera.matrixWorld,0);right.y=0;right.normalize();
+  stick.visible=joints.visible=blade.visible=false;
+  const n=g.members.length,out=[];
+  g.members.forEach((c,k)=>{
+   const time=Math.min(Math.max(0,t-g.offsets[k]),c.duration),points=sampleClip(c,time),arms=sampleArms(c,time),p=g.pawns[k];
+   p.pose('rest',0,null,{clip:c,points,weight:1,arms:{phase:arms.phase,...(arms.hand?{hand:arms.hand}:{})}});
+   const at=right.clone().multiplyScalar((k-(n-1)/2)*TRIO);p.place({x:at.x,z:at.z,yaw:0});
+   const head=V(at.x,2.05,at.z).project(camera);
+   out.push({level:c.strike.level,label:c.strike.levelLabel,t:time,screen:[(head.x+1)/2,(1-head.y)/2]});
+  });
+  renderer.render(scene,camera);
+  $('#time').value=String(Math.round(Math.min(t,g.duration)/g.duration*1000));$('#out').value=Math.min(t,g.duration).toFixed(2)+' с';
+  return{t,group:g.id,levels:out};
+ }
  function render(){
+  if(group)return renderGroup();
+  stick.visible=joints.visible=true;
   const c=clip(),time=Math.min(t,c.duration),k=pawnLeg/c.leg;
   const points=sampleClip(c,time),arms=sampleArms(c,time);
   pawn.pose('rest',0,null,{clip:c,points,weight:1,arms:{phase:arms.phase,...(arms.hand?{hand:arms.hand}:{})}});
@@ -120,14 +158,15 @@ async function init(bytes){
  }
  function resize(){const w=innerWidth,h=innerHeight;renderer.setSize(w,h);camera.aspect=w/h;camera.updateProjectionMatrix();render();}
  addEventListener('resize',resize);
- $('#clip').onchange=()=>select(+$('#clip').value);
+ $('#clip').onchange=()=>select($('#clip').value);
  $('#play').onclick=()=>{playing=!playing;$('#play').textContent=playing?'Пауза':'Пуск';};
- $('#time').oninput=()=>{playing=false;t=+$('#time').value/1000*clip().duration;render();};
+ $('#time').oninput=()=>{playing=false;t=+$('#time').value/1000*total();render();};
  for(const b of document.querySelectorAll('[data-cam]'))b.onclick=()=>{cameraTo(b.dataset.cam);render();};
  cameraTo('three');select(0);resize();$('#loading').hidden=true;
  let last=null;
- (function loop(now){requestAnimationFrame(loop);if(manual||now===undefined)return;const dt=last===null?0:Math.min(.1,(now-last)/1000);last=now;if(playing){t+=dt;if(t>clip().duration+.6)t=0;}try{render();}catch(e){console.error(e);}})();
+ (function loop(now){requestAnimationFrame(loop);if(manual||now===undefined)return;const dt=last===null?0:Math.min(.1,(now-last)/1000);last=now;if(playing){t+=dt;if(t>total()+.6)t=0;}try{render();}catch(e){console.error(e);}})();
  window.strikeLab={ready:true,pawn,list:()=>clips.map(c=>({name:c.name,label:c.label,duration:c.duration,count:c.count,strike:c.strike})),select,
+  groups:()=>groups.map((g,i)=>({index:i,id:g.id,label:g.label,duration:g.duration,blow:g.blow,levels:g.members.map((c,k)=>({level:c.strike.level,label:c.strike.levelLabel,offset:g.offsets[k],duration:c.duration,phases:c.strike.phases,dynamics:c.strike.dynamics||null,params:c.strike.params}))})),selectGroup,
   manual(on=true){manual=on;last=null;},set(x){t=x;return render();},camera(name){cameraTo(name);return render();},
   size(w,h){renderer.setSize(w,h);camera.aspect=w/h;camera.updateProjectionMatrix();},
   screenshot(){render();return renderer.domElement.toDataURL('image/png');}};
