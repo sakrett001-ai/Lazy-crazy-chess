@@ -185,12 +185,22 @@ export function createLoadout({model,bones={}}){
   applyMorphs();update();return summary();
  }
  function handGrip(side){return bone('wrist.'+side).localToWorld(handReference[side].gripLocal.clone());}
- function poseAt(action='rest',time=0){
+ // body: false when a motion clip already drives the legs and trunk; the
+ // thrust's body layer would then lower and lean the figure a second time.
+ // phase: {aim,thrust,turn} in place of the action's own envelopes (a clip
+ // that times the spear itself); aim above 1 lowers the point below the
+ // aimed line, turn swings the shaft about the trunk's up axis (+ left).
+ // shield: {swing,raise,reach,lift} moves the shield hand: reach extends the
+ // elbow about its own axis, then the hand turns about the shoulder in the
+ // trunk frame: swing about the trunk's up axis (+ to the left, outwards),
+ // raise as shoulder flexion (+ forwards and up); lift then carries it up the
+ // trunk, metres, the shield's face kept.
+ function poseAt(action='rest',time=0,{body=true,phase:given=null,shield:turn=null}={}){
   lastAction=action;lastTime=Number.isFinite(time)?Math.max(0,time):0;reachErrors={};
   applyMorphs();update();
   {
-   const phase=loadoutPhases(action,lastTime),isPike=current.weaponType==='pike',isGreatsword=current.weaponType==='greatsword';
-   fullBodyMotion.apply(action,phase);
+   const phase=given||loadoutPhases(action,lastTime),isPike=current.weaponType==='pike',isGreatsword=current.weaponType==='greatsword';
+   if(body)fullBodyMotion.apply(action,phase);
    // Torso-relative anchors and elbow directions follow pelvis/torso motion;
    // a world-space target used to drag the pike hand through the chest.
    const left=bone('upperarm01.L').getWorldPosition(new THREE.Vector3()),right=bone('upperarm01.R').getWorldPosition(new THREE.Vector3());
@@ -201,6 +211,7 @@ export function createLoadout({model,bones={}}){
    const guard=isPike?[.55,.12,.826]:isGreatsword?[.12,.3,.947]:[-.10,.8,.592];
    const aimed=isPike?[.55,.075,.832]:isGreatsword?[.12,.075,.99]:[-.15,.087,.985];
    const axis=direction(guard).lerp(direction(aimed),phase.aim).normalize();
+   if(phase.turn)axis.applyAxisAngle(up,phase.turn);
    // The greatsword's rear hand and pommel need space in front of the armour.
    // The pike has a different hand spacing and therefore its own guard line.
    const anchor=isPike?[-.25,-.29,.16]:isGreatsword?[-.05,-.22,.44]:[-.37,-.23,.30];
@@ -225,7 +236,22 @@ export function createLoadout({model,bones={}}){
     // The strong torso's breastplate projects farther forward. Fit the whole
     // shield/hand assembly to that build; its fingers must clear the plate.
     if(current.bodyBuild==='strong')shield.grip.addScaledVector(forward,.025);
-    reachErrors.L=armBiomechanics.solve('L',shield.grip,shield.axis,direction([1,-.55,.45]),undefined,bone('wrist.L').getWorldQuaternion(new THREE.Quaternion()));
+    const wrist=bone('wrist.L').getWorldQuaternion(new THREE.Quaternion());
+    if(turn&&turn.reach){
+     // Elbow extension about the elbow's own axis: the shield goes out from the
+     // chest before it turns across it.
+     const p=n=>bone(n).getWorldPosition(new THREE.Vector3()),sh=p('upperarm01.L'),el=p('lowerarm01.L'),wr=p('wrist.L');
+     const q=new THREE.Quaternion().setFromAxisAngle(el.clone().sub(sh).cross(wr.clone().sub(el)).normalize(),-turn.reach);
+     shield.grip.sub(el).applyQuaternion(q).add(el);shield.axis.applyQuaternion(q);wrist.premultiply(q);
+    }
+    if(turn&&(turn.swing||turn.raise)){
+     const shoulder=bone('upperarm01.L').getWorldPosition(new THREE.Vector3());
+     const q=new THREE.Quaternion().setFromAxisAngle(up,turn.swing||0).multiply(new THREE.Quaternion().setFromAxisAngle(x,-(turn.raise||0)));
+     shield.grip.sub(shoulder).applyQuaternion(q).add(shoulder);shield.axis.applyQuaternion(q);wrist.premultiply(q);
+    }
+    // lift carries the hand straight up the trunk with the shield's face kept.
+    if(turn&&turn.lift)shield.grip.addScaledVector(up,turn.lift);
+    reachErrors.L=armBiomechanics.solve('L',shield.grip,shield.axis,direction([1,-.55,.45]),undefined,wrist);
    }
    update();
   }

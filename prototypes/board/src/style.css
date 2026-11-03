@@ -23,3 +23,7 @@ label{display:block;margin:6px 0}
 #history{font-size:13px;word-spacing:2px}
 .note{font-size:12px;color:#5a6866}
 @media (max-width:800px){main{grid-template-columns:1fr;grid-template-rows:62vh auto;height:auto}aside{border-left:0;border-top:1px solid #c7cdc6;padding:14px 16px}}
+#motion-panel{margin:12px 0;padding:8px 10px;border:1px solid #c7cdc6;border-radius:8px;background:#f7f8f5}
+#motion-panel summary{cursor:pointer;font-weight:600}
+#motion-panel select{max-width:100%;font:inherit}
+#motion-panel input[type=range]{width:100%}

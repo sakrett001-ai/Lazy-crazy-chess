@@ -1,0 +1,151 @@
+{
+ "checks": [
+  {
+   "name": "the lab starts",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "built-in clips are listed",
+   "ok": true,
+   "detail": [
+    {
+     "name": "synthetic-march",
+     "label": "Проверочная ходьба",
+     "role": "march",
+     "loop": true,
+     "count": 34
+    },
+    {
+     "name": "synthetic-stand",
+     "label": "Проверочная стойка",
+     "role": "stand",
+     "loop": true,
+     "count": 121
+    }
+   ]
+  },
+  {
+   "name": "march: blended knees 0–140°, never backward",
+   "ok": true,
+   "detail": {
+    "minFlex": 10.69291115153959,
+    "maxFlex": 57.16016883555059,
+    "minSole": 0.019,
+    "backward": 0
+   }
+  },
+  {
+   "name": "march: soles never sink below the ground (≥ −1 cm)",
+   "ok": true,
+   "detail": {
+    "minFlex": 10.69291115153959,
+    "maxFlex": 57.16016883555059,
+    "minSole": 0.019,
+    "backward": 0
+   }
+  },
+  {
+   "name": "march: the figures walk forward",
+   "ok": true,
+   "detail": {
+    "t": 2.0000000000000027,
+    "s": 2.456514174146481,
+    "bio": {
+     "L": {
+      "flex": 20.185564212049115,
+      "forward": 0.07266407301326319,
+      "sole": 0.079
+     },
+     "R": {
+      "flex": 18.875477348887216,
+      "forward": 0.07193133815189129,
+      "sole": 0.029
+     },
+     "pelvis": 0.923
+    }
+   }
+  },
+  {
+   "name": "march: the clip lane is on the clip and our lane is not",
+   "ok": true,
+   "detail": [
+    {
+     "action": "Guard_Breath",
+     "time": 2.0000000000000027,
+     "layered": true,
+     "motion": null
+    },
+    {
+     "action": "Guard_Breath",
+     "time": 2.0000000000000027,
+     "layered": false,
+     "motion": "synthetic-march"
+    },
+    {
+     "action": "Guard_Breath",
+     "time": 2.0000000000000027,
+     "layered": true,
+     "motion": "synthetic-march"
+    }
+   ]
+  },
+  {
+   "name": "on the spot: no travel",
+   "ok": true,
+   "detail": {
+    "t": 1.5000000000000013,
+    "s": 0,
+    "bio": {
+     "L": {
+      "flex": 17.87598332025044,
+      "forward": 0.0674657915330957,
+      "sole": 0.036
+     },
+     "R": {
+      "flex": 14.27339257922273,
+      "forward": 0.04914050023114727,
+      "sole": 0.112
+     },
+     "pelvis": 0.923
+    }
+   }
+  },
+  {
+   "name": "on the spot: soles stay on the ground",
+   "ok": true,
+   "detail": {
+    "minFlex": 10.69291115153959,
+    "maxFlex": 56.09375943782459,
+    "minSole": 0.019,
+    "backward": 0
+   }
+  },
+  {
+   "name": "stance: knees and soles fine",
+   "ok": true,
+   "detail": {
+    "minFlex": 13.992784659620952,
+    "maxFlex": 17.68519817023366,
+    "minSole": 0.018,
+    "backward": 0
+   }
+  },
+  {
+   "name": "export is a valid motion file with both clips",
+   "ok": true,
+   "detail": true
+  },
+  {
+   "name": "the exported file opens again",
+   "ok": true,
+   "detail": 2
+  },
+  {
+   "name": "no page errors",
+   "ok": true,
+   "detail": []
+  }
+ ],
+ "failures": []
+}

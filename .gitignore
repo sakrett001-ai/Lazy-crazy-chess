@@ -9,3 +9,10 @@ prototypes/human-base/review/model-*.png
 prototypes/white-pawn/review/browser-*.png
 prototypes/white-pawn/review/model-*.png
 dist/
+prototypes/board/tools/motionbricks/out/
+prototypes/board/tools/motionbricks/trt-cache/
+prototypes/board/tools/blender/out/
+prototypes/board/review/capture-frames/
+prototypes/board/review/capture-frames-*/
+# phase stills of verify-capture.mjs are rebuilt on every run; three are kept in git
+prototypes/board/review/capture-clip-*.png
