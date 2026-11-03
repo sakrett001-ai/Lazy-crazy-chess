@@ -3,7 +3,7 @@ import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {RoomEnvironment} from 'three/addons/environments/RoomEnvironment.js';
 import {createPawnFactory} from './actors.mjs';
 import {parseMotionFile,prepareClip,sampleClip,sampleArms} from './mocap/format.mjs';
-import {trunkFrame} from './mocap/strike.mjs';
+import {cutFrame} from './mocap/strike.mjs';
 
 // Strike stand: the recording as a stick figure and the fighter beside it,
 // one strike at a time, plus the per-frame checks of verify-strikes.mjs.
@@ -50,7 +50,7 @@ async function init(bytes){
  const loader=new GLTFLoader();
  loader.register(parser=>{parser.textureLoader=new THREE.TextureLoader(parser.options.manager);return{name:'image-element-textures'};});
  const gltf=await new Promise((res,rej)=>loader.parse(bytes.buffer,'',res,rej));
- const pawn=createPawnFactory({gltf})({id:'fighter',color:'w'});scene.add(pawn.object);
+ const pawn=createPawnFactory({gltf})({id:'fighter',color:'w',weapons:['bastard','warhammer']});scene.add(pawn.object);
  const {leg:pawnLeg,ankleHeight}=pawn.mocap.retarget;
 
  const stickGeo=new THREE.BufferGeometry();stickGeo.setAttribute('position',new THREE.Float32BufferAttribute(new Float32Array(BONES.length*6),3));
@@ -77,11 +77,14 @@ async function init(bytes){
   const names=capsules.flatMap(c=>[c[0],c[1]]),P=pawn.points(names),place=pawn.placement();
   // points() is in the pawn's model frame; measure() in world. Bring the tip and grip into the model frame.
   const toModel=v=>{const p=V().fromArray(v).sub(V(place.x,0,place.z)).applyAxisAngle(V(0,1,0),-(place.yaw||0));return p;};
-  const grip=toModel(m.weaponGripWorld.R),tip=toModel(m.tip);let min=Infinity,where=null;
-  // From 25 cm past the grip outwards: the hilt is in the hands.
-  for(let k=0;k<=24;k++){const u=k/24,p=grip.clone().lerp(tip,.18+.82*u);
-   for(const [a,b,r]of capsules){const d=segDist(p,V().fromArray(P[a]),V().fromArray(P[b]))-r;if(d<min){min=d;where=a;}}}
-  return{min,where};
+  const grip=toModel(m.weaponGripWorld.R),tip=toModel(m.tip);let min=Infinity,where=null,floor=Infinity;
+  // Runtime weapons (bastard, hammer) carry samples along the whole weapon
+  // outside the hands, with their own radius: pommel, butt and head included.
+  // The catalogue blades: from 25 cm past the grip outwards.
+  const samples=m.clearance?m.clearance.map(q=>[toModel(q.slice(0,3)),q[3]]):Array.from({length:25},(_,k)=>[grip.clone().lerp(tip,.18+.82*k/24),0]);
+  for(const [p,w]of samples){floor=Math.min(floor,p.y-w);
+   for(const [a,b,r]of capsules){const d=segDist(p,V().fromArray(P[a]),V().fromArray(P[b]))-r-w;if(d<min){min=d;where=a;}}}
+  return{min,where,floor};
  }
  function knees(){
   const P=pawn.points(['upperleg01.L','lowerleg01.L','foot.L','toe3-1.L','upperleg01.R','lowerleg01.R','foot.R','toe3-1.R']),sub=(u,v)=>u.map((x,i)=>x-v[i]),dot=(u,v)=>u.reduce((s,x,i)=>s+x*v[i],0),len=u=>Math.hypot(...u);
@@ -103,7 +106,7 @@ async function init(bytes){
   stickGeo.attributes.position.needsUpdate=true;
   for(const v of Object.values(points)){if(j>=40)break;m4.makeTranslation(...at(v));joints.setMatrixAt(j++,m4);}joints.count=j;joints.instanceMatrix.needsUpdate=true;
   // Blade line beside the recording, from the same track the fighter follows.
-  if(arms.hand){const f=trunkFrame(points),arm=['R','L'].reduce((s,x)=>s+Math.hypot(...points['shoulder'+x].map((v,i)=>v-points['elbow'+x][i]))+Math.hypot(...points['elbow'+x].map((v,i)=>v-points['wrist'+x][i])),0)/2;
+  if(arms.hand){const f=cutFrame(c.neutral)(points),arm=['R','L'].reduce((s,x)=>s+Math.hypot(...points['shoulder'+x].map((v,i)=>v-points['elbow'+x][i]))+Math.hypot(...points['elbow'+x].map((v,i)=>v-points['wrist'+x][i])),0)/2;
    const w=(g,o)=>[0,1,2].map(i=>o[i]+(f.x[i]*g[0]+f.up[i]*g[1]+f.forward[i]*g[2]));
    const grip=w(arms.hand.grip.map(v=>v*arm),f.origin),tip=w(arms.hand.axis.map(v=>v*arm*1.75),grip);
    bladeGeo.setFromPoints([V().fromArray(at(grip)),V().fromArray(at(tip))]);blade.computeLineDistances();blade.visible=true;}
@@ -112,8 +115,8 @@ async function init(bytes){
   $('#time').value=String(Math.round(time/c.duration*1000));$('#out').value=time.toFixed(2)+' с';
   const m=pawn.measureWorld(),bio=pawn.biomechanics(),kn=knees(),clear=bladeClearance(m);
   const shield=m.effectiveShield!=='none'?pawn.shieldHit(m.weaponGripWorld.R,m.tip):null;
-  return{t:time,knees:kn,elbow:{R:bio.R.elbowFlexDeg,L:bio.L.elbowFlexDeg},wrist:{R:bio.R.wristBendDeg,L:bio.L.wristBendDeg},
-   forearmTwist:{R:bio.R.forearmTwistDeg,L:bio.L.forearmTwistDeg},grip:{R:m.rightGripErrorM,L:m.leftGripErrorM},reach:m.reachErrors,blade:clear,shieldHit:shield,tip:m.tip};
+  return{t:time,source:points,hand:arms.hand||null,knees:kn,elbow:{R:bio.R.elbowFlexDeg,L:bio.L.elbowFlexDeg},wrist:{R:bio.R.wristBendDeg,L:bio.L.wristBendDeg},
+   forearmTwist:{R:bio.R.forearmTwistDeg,L:bio.L.forearmTwistDeg},grip:{R:m.rightGripErrorM,L:m.leftGripErrorM},reach:m.reachErrors,wristMissM:m.wristMissM??null,blade:clear,shieldHit:shield,tip:m.tip};
  }
  function resize(){const w=innerWidth,h=innerHeight;renderer.setSize(w,h);camera.aspect=w/h;camera.updateProjectionMatrix();render();}
  addEventListener('resize',resize);

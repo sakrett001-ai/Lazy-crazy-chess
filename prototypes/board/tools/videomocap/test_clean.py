@@ -260,6 +260,34 @@ class MotionFileTest(unittest.TestCase):
         pelvis = pts[:, M.POINTS.index('pelvis')]
         self.assertLess(np.abs(pelvis - C.pelvis(P)).max(), 1e-3)
 
+    def test_neutral_stance_is_written(self):
+        raw, _ = synthetic_take()
+        P, fps, report = C.clean(raw)
+        out = M.motion_file(P, fps, name='squat', source=raw['source'], report=report)
+        i = out['source']['neutralFrame']
+        bent = np.maximum(np.abs(C.knee_flexion(P, 'L')), np.abs(C.knee_flexion(P, 'R')))
+        # The squat never straightens past 24°: the least bent frame stands in.
+        self.assertGreater(bent.min(), M.STRAIGHT_KNEE_DEG)
+        self.assertEqual(i, int(np.argmin(bent)))
+        # Three frames walking past with dead straight legs, then three still
+        # ones with the knees bent 10°: the still stance is the neutral.
+        flat = np.r_[P[:1].repeat(6, 0), P]
+        for k in range(6):
+            flat[k] += [0.15 * k if k < 3 else 0.45, 0, 0]
+            for s in C.SIDES:
+                h, a = flat[k, C.I['hip' + s]], flat[k, C.I['ankle' + s]]
+                fwd = flat[k, C.I['toe' + s]] - flat[k, C.I['heel' + s]]
+                fwd[1] = 0
+                flat[k, C.I['knee' + s]] = (h + a) / 2 + (0 if k < 3 else 0.04) * fwd / np.linalg.norm(fwd)
+        bent6 = np.abs(C.knee_flexion(flat[:6], 'L'))
+        self.assertTrue((bent6[:3] < 1).all() and (bent6[3:] > 5).all() and (bent6[3:] < M.STRAIGHT_KNEE_DEG).all(), bent6)
+        self.assertIn(M.neutral_frame(flat, fps), (4, 5), 'the still straight-legged stance')
+        pts = np.array(out['clips'][0]['data']).reshape(T, len(M.POINTS), 3)
+        self.assertEqual(len(out['neutral']), len(M.POINTS) * 3)
+        self.assertLess(np.abs(np.array(out['neutral']).reshape(-1, 3) - pts[i]).max(), 1e-3)
+        self.assertEqual(M.motion_file(P, fps, name='squat', neutral=5)['source']['neutralFrame'], 5)
+        self.assertNotIn('neutral', M.motion_file(P, fps, name='squat', neutral=None))
+
 
 if __name__ == '__main__':
     unittest.main()

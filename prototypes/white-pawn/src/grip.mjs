@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import {TWO_HANDED as twoHanded,gripRadiusOf} from './weapons.mjs';
 
 // Relative corrections to the exported, already flexed MakeHuman fingers.
 // Each digit stores [MCP flex, MCP abduction, PIP flex, DIP flex]; the thumb
@@ -14,8 +15,7 @@ const FITS={"0":{"14":{"1":[-27.67,-18.33,-50,-20.65,-16.48],"2":[16.5,17,-11.5,
 const norm=s=>String(s||'').replace(/[._\-\s]/g,'').toLowerCase();
 const vector=x=>x?.isVector3?x.clone():new THREE.Vector3().fromArray(x);
 const Q=()=>new THREE.Quaternion(),V=()=>new THREE.Vector3();
-const twoHanded=new Set(['pike','greatsword']);
-export function gripRadiusM(weaponType){return weaponType==='pike'?.016:.014;}
+export function gripRadiusM(weaponType){return gripRadiusOf(weaponType);}
 
 export function createGrip({model,bones={},frames}){
   const lookup=new Map(),meshes=[];

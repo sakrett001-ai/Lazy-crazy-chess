@@ -54,7 +54,7 @@ function fader(holder){
 
 export function createPawnFactory({gltf}){
  const caches={w:new Map(),b:new Map()};
- return function createPawn({id,color}){
+ return function createPawn({id,color,weapons=[]}){
   const model=cloneSkinned(gltf.scene),holder=new THREE.Group();
   holder.name=id;holder.add(model);
   const bones={},meshes=[];
@@ -62,7 +62,7 @@ export function createPawnFactory({gltf}){
   holder.updateMatrixWorld(true);
   const rest=Object.entries(bones).map(([,b])=>[b,b.position.clone(),b.quaternion.clone(),b.scale.clone()]);
   const restore=()=>{for(const [b,p,q,s]of rest){b.position.copy(p);b.quaternion.copy(q);b.scale.copy(s);}};
-  const loadout=createLoadout({model,bones});
+  const loadout=createLoadout({model,bones,extraWeapons:weapons});
   loadout.apply({});
   const rig=createBodyRig({bones});
   const mocap=createMocapDriver({bones,holder});

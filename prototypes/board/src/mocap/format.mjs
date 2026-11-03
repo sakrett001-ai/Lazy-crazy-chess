@@ -101,8 +101,9 @@ export function sampleArms(clip,t){
  const v=Object.fromEntries(a.fields.map((f,j)=>[f,a.data[i*F+j]*(1-w)+a.data[k*F+j]*w]));
  const out={action:a.action,phase:{aim:v.aim??0,thrust:v.thrust??0,turn:v.turn??0},shield:{swing:v.swing??0,raise:v.raise??0,reach:v.reach??0,lift:v.lift??0}};
  // A strike taken from a recording leads the weapon hand itself (strike.mjs):
- // grip, blade axis and elbow pole in the trunk frame, the grip in arm lengths.
- if(a.fields.includes('gx'))out.hand={grip:[v.gx,v.gy,v.gz],axis:[v.ax,v.ay,v.az],pole:[v.px??0,v.py??0,v.pz??0]};
+ // grip, blade axis and elbow pole in the trunk frame, the grip in arm lengths,
+ // and the middle of the recorded wrists, which the fighter's wrists follow.
+ if(a.fields.includes('gx'))out.hand={grip:[v.gx,v.gy,v.gz],axis:[v.ax,v.ay,v.az],pole:[v.px??0,v.py??0,v.pz??0],...(a.fields.includes('wx')?{wrists:[v.wx,v.wy,v.wz]}:{})};
  return out;
 }
 
