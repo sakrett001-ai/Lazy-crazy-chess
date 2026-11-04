@@ -303,7 +303,12 @@ async function init(bytes){
   const ways=new Map();
   const approach=(stop=FULL_REACH)=>{const key=stop.toFixed(3);if(!ways.has(key))ways.set(key,WAY_IN.map(d=>{const armsA=exchangeArms(A,r-d,{stop}),{tip,grip}=P.probe(armsA.action,armsA.time,null,pose(A,armsA,r-d)),arms=exchangeArms(B,r-d);
    return{shaft:[grip,tip],dS:pairTravel(r)-pairTravel(r-d),poses:[{arms,motion:pose(B,arms,r-d)}]};}));return ways.get(key);};
-  const m={shield,shields,axis,sweep,full,travel,k,partner,struck,approach};blows.set(key,m);return m;
+  // Both at any moment after the reach, for the thrust pressed on the shield
+  // (pressOn): the partner as it stands, and the attacker's shaft for a
+  // Spear_Study time, the attacker's trunk as the recording has it then.
+  const after=t=>{const arms=exchangeArms(B,t);return{partner:[{arms,motion:pose(B,arms,t)}],
+   shaft:u=>{const arms={action:'Spear_Study',time:u},{tip,grip}=P.probe(arms.action,u,null,pose(A,arms,t));return[grip,tip];},dS:pairTravel(t)-pairTravel(r)};};
+  const m={shield,shields,axis,sweep,full,travel,k,partner,struck,approach,after,pairTravel,r};blows.set(key,m);return m;
  }
  // Where the thrust goes at a gap (pelvis to pelvis at the reach): the aim
  // point and how far the tip may come out (attacker's frame, z forward).
@@ -361,6 +366,38 @@ async function init(bytes){
    if(clear({swing:d*w,lift,reach,raise}))return{swing:d*w,lift,reach,raise,clear:true};
   return{swing:dir*SWING_MAX,lift:DROPS.at(-1)[0],reach:DROPS.at(-1)[1],raise:0,clear:false};
  }
+ // The full thrust aimed at the partner's shield centre at a gap.
+ function fullAim(m,gap){
+  const cx=-m.shield.centerX,aim=[cx,gap-m.shield.centerZ],at=m.full;
+  return{yaw:Math.atan2(aim[0],aim[1])-Math.atan2(at.x,at.z),stop:FULL_REACH,target:aim,tip:[at.x,at.z],limit:Math.hypot(...aim),over:0,short:0,shaft:[at.grip,at.tip]};
+ }
+ // The gap at which the full thrust, aimed at the shield, just meets the
+ // partner's shield as it stands at the reach (the least gap at which the
+ // shaft is clear of it, bisection).
+ const CONTACT=.02,STEP_DOWN=.3;
+ function shieldGap(m,distance){
+  const clear=g=>shaftClear(m,g,fullAim(m,g),0,[m.partner[0]]);
+  let lo=.5,hi=distance;if(!clear(hi))return null;
+  for(let i=0;i<30;i++){const g=(lo+hi)/2;if(clear(g))hi=g;else lo=g;}
+  return hi;
+ }
+ // The thrust pressed on the shield: from the reach on the pair still closes
+ // (the defender comes on behind the shield) and the attacker's arm gives
+ // way, so the point stays on the shield, CONTACT off its surface, instead of
+ // going into it; when the recovery draws the spear back further, it goes
+ // back. Measured on the posed shield every half frame (60 Hz): the latest Spear_Study
+ // time on the thrust (1 drawn back … FULL_REACH) whose shaft, CONTACT
+ // longer, is clear of the shield. [[local time, Spear_Study time], …].
+ const PRESS_FOR=1.35;
+ function pressOn(m,l,aim){
+  const out=[],steps=Math.round(PRESS_FOR*60);
+  for(let i=0;i<=steps;i++){const t=m.r+i/60,q=m.after(t),gap=l.gapAt(t),a={...aim,yaw:aim.yaw*(1-smooth(t,m.r+.25,m.r+.95))};
+   const clear=u=>{const [g,tip]=q.shaft(u);if(!g)return true;const d=tip.map((x,j)=>x-g[j]),n=Math.hypot(...d)||1;
+    return shaftClear(m,gap,a,0,q.partner,[g,tip.map((x,j)=>x+d[j]/n*CONTACT)]);};
+   let u=FULL_REACH;if(!clear(u)){let lo=1,hi=FULL_REACH;for(let k=0;k<8;k++){const c=(lo+hi)/2;if(clear(c))lo=c;else hi=c;}u=lo;}
+   out.push([+t.toFixed(4),+u.toFixed(4)]);}
+  return out;
+ }
  function duelLayout(pair,k,distance,flesh=false){
   const key=`${pair.attack.name}|${k.toFixed(4)}|${distance.toFixed(3)}|${flesh}`;
   if(!layouts.has(key)){
@@ -369,22 +406,48 @@ async function init(bytes){
    // with the gap), and the approach scale that gives it: the gap at the
    // reach is distance − scale·S.
    let lo=0,hi=distance;for(let i=0;i<40;i++){const g=(lo+hi)/2;if(blowTarget(m,g,flesh,base.scale).limit>m.full.R)hi=g;else lo=g;}
-   const want=S>1e-6?(distance-(lo+hi)/2)/S:base.scale;
-   let scale=flesh?clamp(want,0,PRESS_MAX):clamp(Math.min(base.scale,want),0,1);
-   while(scale>base.scale&&exchangeLayout(pair,k,distance,scale).closest<CLOSEST)scale-=.02;
+   // A fencing thrust is fitted to the shield itself: the gap at which the
+   // full thrust's shaft, aimed at the shield, meets the partner's shield at
+   // the reach. The shield's foremost point (blowTarget) is its rim, not
+   // where the spear meets it, so a fit to it left the thrust 0.6 m short of
+   // the shield, in the air, and the brace met nothing (pair_check.py, rule
+   // place). Over the hold the pair still closes; the spear gives way by as
+   // much (aim.press), so the tip stays on the shield.
+   // The shield meets the thrust at the recorded answer (events.parry.at),
+   // and not before the step that carries the thrust is down (a plant of the
+   // attacker's feet begun within STEP_DOWN after the recorded reach,
+   // events.plants): the blow lands with the step, on a standing foot
+   // (pair_check.py, rule footing). The approach is scaled so that the pair
+   // is that gap apart then.
+   const steps=Object.values(pair.attack.events?.plants||{}).flat().map(([a])=>a).filter(a=>a>r&&a<=r+STEP_DOWN);
+   // The closing holds until the exchange is over and is then given back
+   // by a step out before the cycle ends (approachAt): the next cycle starts
+   // where the squares' fit starts it, so no foot is dragged back.
+   const meet=Math.max(pair.defend.events?.parry?.at??r,...steps),Smeet=m.pairTravel(meet)*k,fit=flesh?null:shieldGap(m,distance);
+   const cycleEnd=Math.min(pair.attack.duration,pair.defend.duration)-CROSSFADE;
+   const closing=w=>fit!=null&&w>base.scale?{base:base.scale,more:w-base.scale,meet,back:[Math.min(meet+.6,cycleEnd-.3),cycleEnd]}:w;
+   let want=clamp(fit!=null&&Smeet>1e-6?(distance-(fit+CONTACT))/Smeet:S>1e-6?(distance-(lo+hi)/2)/S:base.scale,0,PRESS_MAX);
+   while(want>base.scale&&exchangeLayout(pair,k,distance,closing(want)).closest<CLOSEST)want-=.02;
+   const scale=closing(want);
    const l=exchangeLayout(pair,k,distance,scale),gap=l.gapAt(r);
-   layouts.set(key,{...l,gap,aim:flesh?openAim(m,gap,scale):blowAim(m,gap,flesh,scale)});
+   let aim;
+   if(flesh)aim=openAim(m,gap,scale);
+   else if(fit!=null){aim=fullAim(m,gap);aim.press=pressOn(m,l,aim);const c=aim.press.find(([,u])=>u<FULL_REACH-1e-3);aim.contact=c?c[0]:null;aim.short=c?0:Math.max(0,l.gapAt(meet)-fit);}
+   else aim=blowAim(m,gap,flesh,scale);
+   layouts.set(key,{...l,gap,aim});
   }
   return layouts.get(key);
  }
+ const duelInfo=new Map();
  function duelExchange(actor,piece,target){
   const pair=motion.duel?.exchange;if(!pair)return null;
   const k=actor.mocap.retarget.leg/pair.attack.leg,[x,z]=world(piece.square),[tx,tz]=world(target.square);
   const l=duelLayout(pair,k,Math.hypot(tx-x,tz-z)),role=eng.get(piece.id).role;
   const ex=exchangeAt(pair,role,clock,k,l.scale),s=ex.clip.events.strike;
   fenceStates.set(piece.id,{target:target.id,role,clock});
+  duelInfo.set(piece.id,{side:ex.side,cycle:ex.cycle,local:+ex.local.toFixed(3),clock:+clock.toFixed(3),gap:+l.gap.toFixed(3),scale:typeof l.scale==='number'?+l.scale.toFixed(3):+(l.scale.base+l.scale.more).toFixed(3),stop:+l.aim.stop.toFixed(3),limit:+l.aim.limit.toFixed(3),short:+l.aim.short.toFixed(3),contact:l.aim.contact??null});
   const aimYaw=ex.side==='attack'?l.aim.yaw*smooth(ex.local,s.start-.25,s.reach)*(1-smooth(ex.local,s.reach+.25,s.reach+.95)):0;
-  return{...ex,k,aimYaw,arms:exchangeArms(ex.clip,ex.local,{stop:ex.side==='attack'?l.aim.stop:1.95})};
+  return{...ex,k,aimYaw,arms:exchangeArms(ex.clip,ex.local,ex.side==='attack'?{stop:l.aim.stop,press:l.aim.press,reach:l.aim.contact}:{})};
  }
  const pingpong=(t,d)=>{if(!(d>0))return 0;const u=t%(2*d);return u<d?u:2*d-u;};
  function standMotion(piece,weight){
@@ -484,7 +547,7 @@ async function init(bytes){
    const sw=b.layout?.aim?.swing,s=b.clip.events?.strike;if(f?.shield&&sw&&b.clip.side==='defend'&&b.clip.decisive&&s){const g=b.layout.aim.struckSwing,u=smooth(b.local+after,s.reach,s.reach+STRUCK_IN);
     f.shield.swing=sw*smooth(b.local,s.start,s.start+.6*(s.reach-s.start))+(g.swing-sw)*u;f.shield.lift=(f.shield.lift||0)+g.lift*u;f.shield.reach=(f.shield.reach||0)+g.reach*u;f.shield.raise=(f.shield.raise||0)+(g.raise||0)*u;}
    return f;};
-  const armsOf=b=>exchangeArms(b.clip,b.local,{stop:b.clip.side==='attack'?b.layout.aim.stop:1.95});
+  const armsOf=b=>exchangeArms(b.clip,b.local,b.clip.side==='attack'?{stop:b.layout.aim.stop,press:b.layout.aim.press,reach:b.layout.aim.contact}:{});
   const at=(p,o,heading,w)=>{const [x,z]=rotate([o.x*w,o.z*w],heading);return{x:p[0]+x,z:p[1]+z};};
   let stand=null,walk=null;
   return{duration:walkAt+1.1+.7*D/SQUARE,update(t){
@@ -722,6 +785,8 @@ async function init(bytes){
   points(id,names){return actors.get(id)?.points?.(names)||null;},
   pointsWorld(id,names){const a=actors.get(id);if(!a?.points)return null;a.object.updateMatrixWorld(true);return Object.fromEntries(Object.entries(a.points(names)).map(([k,v])=>[k,v&&new THREE.Vector3(...v).applyMatrix4(a.object.matrixWorld).toArray()]));},
   pose(id,action,time,layer){const a=actors.get(id);a.pose(action,time,layer);renderer.render(scene,camera);return a.points(['root','foot.L','foot.R','lowerleg01.L','lowerleg01.R','head','upperarm01.L','upperarm01.R']);},
+  duelInfo(id){return duelInfo.get(id)||null;},
+  shieldPlane(id){return actors.get(id)?.shieldPlane?.()||null;},
   shieldHit(id,a,b){const a_=actors.get(id);return a_?.shieldHit?a_.shieldHit(a,b):null;},
   tip(id){const a=actors.get(id);return a?.kind==='pawn'?a.measureWorld().tip:null;},
   grip(id){const a=actors.get(id);return a?.kind==='pawn'?a.measureWorld().weaponGripWorld.R:null;},
