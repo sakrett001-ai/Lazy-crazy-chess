@@ -131,9 +131,40 @@ export function createPawnFactory({gltf}){
     if(hit&&(best===null||hit.distance<best))best=hit.distance;}
    return best;
   }
+  // The visible shield as a plate in the world (metres): its middle, the
+  // normal pointing to the side it faces (away from the bearer's pelvis),
+  // two axes in its face (u the longer one) and the half sizes along them.
+  // Vertices of the current (skinned) pose, every 3rd; the axes are the
+  // principal axes of those points. For the coherence checks of a duel
+  // (Lazy-skills-lab strike-principles, pair_check.py), not for drawing.
+  function shieldPlane(){
+   holder.updateMatrixWorld(true);
+   const visible=o=>{for(let n=o;n;n=n.parent)if(!n.visible)return false;return true;};
+   const inShield=o=>{for(let n=o;n;n=n.parent)if(n.userData?.equipmentSlot==='shield')return true;return false;};
+   const pts=[],v=new THREE.Vector3();
+   for(const mesh of meshes){if(!inShield(mesh)||!visible(mesh))continue;mesh.updateMatrixWorld(true);const positions=mesh.geometry.attributes.position;
+    for(let i=0;i<positions.count;i+=3){mesh.getVertexPosition(i,v);v.applyMatrix4(mesh.matrixWorld);pts.push([v.x,v.y,v.z]);}}
+   if(pts.length<8)return null;
+   const c=[0,1,2].map(k=>pts.reduce((s,p)=>s+p[k],0)/pts.length),C=[[0,0,0],[0,0,0],[0,0,0]];
+   for(const p of pts){const d=p.map((x,k)=>x-c[k]);for(let a=0;a<3;a++)for(let b=0;b<3;b++)C[a][b]+=d[a]*d[b]/pts.length;}
+   // Jacobi eigen decomposition of the 3×3 covariance.
+   const A=C.map(r=>[...r]),V=[[1,0,0],[0,1,0],[0,0,1]];
+   for(let it=0;it<40;it++){let p=0,q=1;for(const [a,b] of [[0,1],[0,2],[1,2]])if(Math.abs(A[a][b])>Math.abs(A[p][q])){p=a;q=b;}
+    if(Math.abs(A[p][q])<1e-12)break;const th=.5*Math.atan2(2*A[p][q],A[q][q]-A[p][p]),cs=Math.cos(th),sn=Math.sin(th);
+    for(let k=0;k<3;k++){const akp=A[k][p],akq=A[k][q];A[k][p]=cs*akp-sn*akq;A[k][q]=sn*akp+cs*akq;}
+    for(let k=0;k<3;k++){const apk=A[p][k],aqk=A[q][k];A[p][k]=cs*apk-sn*aqk;A[q][k]=sn*apk+cs*aqk;}
+    for(let k=0;k<3;k++){const vkp=V[k][p],vkq=V[k][q];V[k][p]=cs*vkp-sn*vkq;V[k][q]=sn*vkp+cs*vkq;}}
+   const order=[0,1,2].sort((a,b)=>A[b][b]-A[a][a]),axis=i=>[V[0][order[i]],V[1][order[i]],V[2][order[i]]];
+   const u=axis(0),w=axis(1);let n=axis(2);
+   const pelvis=bones.root?bones.root.getWorldPosition(new THREE.Vector3()).toArray():c;
+   if((c[0]-pelvis[0])*n[0]+(c[2]-pelvis[2])*n[2]<0)n=n.map(x=>-x);
+   const half=[u,w].map(a=>Math.max(...pts.map(p=>Math.abs((p[0]-c[0])*a[0]+(p[1]-c[1])*a[1]+(p[2]-c[2])*a[2]))));
+   const r=x=>+x.toFixed(4);
+   return{center:c.map(r),normal:n.map(r),u:u.map(r),v:w.map(r),half:half.map(r)};
+  }
   // Bone positions in the model frame for the current pose.
   function points(names){holder.updateMatrixWorld(true);const inverse=holder.matrixWorld.clone().invert();const norm=x=>String(x).replace(/[._\-\s]/g,'').toLowerCase(),by=new Map(Object.entries(bones).map(([k,b])=>[norm(k),b]));return Object.fromEntries(names.map(n=>[n,by.get(norm(n))?by.get(norm(n)).getWorldPosition(new THREE.Vector3()).applyMatrix4(inverse).toArray().map(v=>+v.toFixed(3)):null]));}
-  return{id,kind:'pawn',color,object:holder,pose:solve,equip:settings=>loadout.apply(settings),loadout:()=>loadout.summary(),biomechanics:()=>loadout.biomechanics(),mocap,feet,points,rig,probe,shieldFront,shieldHit,measureWorld:()=>loadout.measure(),place:place.set,placement:place.get,fade,current:()=>({...pose}),dispose(){holder.removeFromParent();}};
+  return{id,kind:'pawn',color,object:holder,pose:solve,equip:settings=>loadout.apply(settings),loadout:()=>loadout.summary(),biomechanics:()=>loadout.biomechanics(),mocap,feet,points,rig,probe,shieldFront,shieldHit,shieldPlane,measureWorld:()=>loadout.measure(),place:place.set,placement:place.get,fade,current:()=>({...pose}),dispose(){holder.removeFromParent();}};
  };
 }
 
