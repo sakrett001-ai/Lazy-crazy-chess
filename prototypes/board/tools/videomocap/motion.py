@@ -4,6 +4,7 @@ way from a video in one command.
 
     python3 motion.py take.clean.json -o take.motion.json --name lunge --role strike
     python3 motion.py --video take.mp4 -o take.motion.json [--model heavy]
+    python3 motion.py --pair duel.pair.json -o duel.motion.json --by A --frames 40:70   # двое: strike + struck
 
 The motion file ("lazy-chess.motion", src/mocap/format.mjs) holds the
 anatomical key points of src/mocap/profiles.mjs per frame; the board and the
@@ -94,6 +95,49 @@ def motion_file(P, fps, *, name, label=None, role='other', loop=False, source=No
     return out
 
 
+def pair_motion_file(pair, *, by='A', first=0, last=None, name='duel', label=None, loop=False, fade=None):
+    """A duel (duel.py, vmocap.pair) → two clips of one motion file that play
+    together: `by` strikes (role strike), the other one is struck (role
+    struck). Both stay in one frame (frame 'shared'): the striker's pelvis
+    at the first frame on the origin, the striker facing +Z, y up. Each clip
+    carries its own neutral stance, because the two are different people."""
+    other = 'B' if by == 'A' else 'A'
+    fps = pair['fps']
+    P = {n: np.asarray(pair['people'][n]['frames'], float) for n in (by, other)}
+    last = len(P[by]) - 1 if last is None else last
+    P = {n: X[first:last + 1] for n, X in P.items()}
+    # Pair frame: A faces +x, B faces -x. Turn the striker's facing onto +Z.
+    th = np.radians(-90.0 if by == 'A' else 90.0)
+    R = np.array([[np.cos(th), 0, np.sin(th)], [0, 1, 0], [-np.sin(th), 0, np.cos(th)]])
+    o = C.pelvis(P[by][:1])[0] * [1, 0, 1]
+    P = {n: (X - o) @ R.T for n, X in P.items()}
+    clips, neutral = [], {}
+    for n, role in ((by, 'strike'), (other, 'struck')):
+        pts = key_points(P[n])
+        clip = {'name': f'{name}.{role}', 'label': f"{label or name}: {'атакующий' if role == 'strike' else 'защитник'}",
+                'role': role, 'loop': bool(loop), 'fps': fps, 'frames': len(P[n]), 'frame': 'shared',
+                'partner': f"{name}.{'struck' if role == 'strike' else 'strike'}", 'person': n,
+                'data': np.stack([pts[k] for k in POINTS], 1).round(4).reshape(-1).tolist()}
+        if role == 'struck' and fade:
+            clip['fade'] = list(fade)
+        full = np.asarray(pair['people'][n]['frames'], float)
+        ni = neutral_frame(full, fps)
+        if ni is not None:
+            fp = key_points(full[ni:ni + 1])
+            clip['neutral'] = np.stack([fp[k][0] for k in POINTS]).round(4).reshape(-1).tolist()
+            neutral[n] = ni
+        clips.append(clip)
+    src = {'kind': 'video', 'name': pair['source'].get('video', name),
+           'license': 'зависит от видео; поза — MediaPipe Pose (Apache-2.0)',
+           'note': 'Одна камера, двое: поза очищена tools/videomocap (duel.py — общая сцена, общий верх, расстояние между бойцами по камере).',
+           'frames': [pair['source'].get('firstFrame', 0) + first, pair['source'].get('firstFrame', 0) + last],
+           'distance': pair.get('distance'), 'neutralFrames': neutral}
+    out = {'format': 'lazy-chess.motion', 'version': 1, 'source': src, 'points': POINTS, 'clips': clips}
+    if by in neutral:  # the file-wide stance, for readers that know no per-clip one: the striker's
+        out['neutral'] = clips[0]['neutral']
+    return out
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument('clean', nargs='?')
@@ -109,7 +153,20 @@ def main():
     ap.add_argument('--fov', type=float, default=C.DEFAULTS['fov'], help='угол обзора камеры по длинной стороне кадра, градусы')
     ap.add_argument('--keep', help='папка, куда сохранить сырые и очищенные точки')
     ap.add_argument('--neutral', default='auto', help="кадр, где человек стоит вольно: номер, auto (самый спокойный кадр с прямыми ногами) или none")
+    ap.add_argument('--pair', help='поединок из duel.py (vmocap.pair): два клипа, атакующий и защитник, в общей сцене')
+    ap.add_argument('--by', default='A', choices=['A', 'B'], help='кто атакует (для --pair)')
+    ap.add_argument('--frames', help='кадры сцены для --pair: первый:последний')
+    ap.add_argument('--fade', help='для --pair: секунды, за которые защитник уходит с доски, начало:конец')
     a = ap.parse_args()
+    if a.pair:
+        pair = json.load(open(a.pair))
+        first, last = (int(x) for x in a.frames.split(':')) if a.frames else (0, None)
+        name = a.name or os.path.splitext(os.path.basename(a.pair))[0].split('.')[0]
+        out = pair_motion_file(pair, by=a.by, first=first, last=last, name=name, label=a.label, loop=a.loop,
+                               fade=[float(x) for x in a.fade.split(':')] if a.fade else None)
+        json.dump(out, open(a.out, 'w'), ensure_ascii=False, separators=(',', ':'))
+        print(f"{name}: {out['clips'][0]['frames']} кадров, атакует {a.by}; дистанция {(out['source'].get('distance') or {}).get('median')} м → {a.out}")
+        return
     if a.video:
         import capture
         raw = capture.capture(a.video, a.model, a.model_path, a.rotate)

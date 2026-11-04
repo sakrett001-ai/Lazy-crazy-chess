@@ -1,0 +1,174 @@
+{
+  "status": "passed",
+  "failures": [],
+  "checks": [
+    {
+      "name": "page loads with WebGL",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "the board takes the recorded exchange and the decisive blow",
+      "ok": true,
+      "detail": {
+        "stand": null,
+        "walk": null,
+        "capture": null,
+        "pair": false,
+        "duel": {
+          "exchange": "duel516.exchange.attack",
+          "decisive": "duel516.decisive.attack"
+        },
+        "weight": 1
+      }
+    },
+    {
+      "name": "fencing: neither spear goes into the other body (spear ≥ 17 cm from the trunk axis)",
+      "ok": true,
+      "detail": {
+        "closestM": 0.904
+      }
+    },
+    {
+      "name": "fencing: no body or spear passes through a shield",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "fencing: the two never walk into each other (pelvises ≥ 1.2 m apart)",
+      "ok": true,
+      "detail": {
+        "closestM": 2.93
+      }
+    },
+    {
+      "name": "fencing: the attacker changes each cycle (the one thrusting reaches ≥ 40 cm further)",
+      "ok": true,
+      "detail": [
+        {
+          "e4": 2.12,
+          "d5": 1.2
+        },
+        {
+          "e4": 1.2,
+          "d5": 2.12
+        }
+      ]
+    },
+    {
+      "name": "fencing: knees within 0–140° and bent forwards",
+      "ok": true,
+      "detail": {
+        "maxFlexDeg": 93.7,
+        "first": []
+      }
+    },
+    {
+      "name": "fencing: soles do not sink into the board",
+      "ok": true,
+      "detail": {
+        "minM": 0.074,
+        "first": []
+      }
+    },
+    {
+      "name": "fencing: no jumps (pelvis < 10 cm per frame)",
+      "ok": true,
+      "detail": 0.055
+    },
+    {
+      "name": "e4 takes d5 is accepted by the rules",
+      "ok": true,
+      "detail": true
+    },
+    {
+      "name": "the capture ends (under 20 s)",
+      "ok": true,
+      "detail": {
+        "frames": 212
+      }
+    },
+    {
+      "name": "the decisive blow lands: the spear reaches the defender body (≤ 25 cm from its trunk axis)",
+      "ok": true,
+      "detail": {
+        "atHitM": 0.124,
+        "time": 3.833
+      }
+    },
+    {
+      "name": "the blow does not run the spear through (≥ 5 cm from the trunk axis)",
+      "ok": true,
+      "detail": {
+        "atHitM": 0.124
+      }
+    },
+    {
+      "name": "before the decisive blow the defender attacks and does not wound (its spear ≥ 17 cm from the attacker body)",
+      "ok": true,
+      "detail": {
+        "closestM": 1.598
+      }
+    },
+    {
+      "name": "capture: no body or spear passes through a shield",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "capture: the attacker moves without jumps (< 10 cm per frame)",
+      "ok": true,
+      "detail": 0.066
+    },
+    {
+      "name": "capture: knees within 0–140° and bent forwards",
+      "ok": true,
+      "detail": {
+        "maxFlexDeg": 97.6,
+        "first": []
+      }
+    },
+    {
+      "name": "capture: soles do not sink into the board",
+      "ok": true,
+      "detail": {
+        "minM": 0.074,
+        "first": []
+      }
+    },
+    {
+      "name": "the defender falls",
+      "ok": true,
+      "detail": {
+        "fall": 1.47
+      }
+    },
+    {
+      "name": "after the scene the attacker stands on d5 and the defender is gone",
+      "ok": true,
+      "detail": "4k3/8/8/3P4/8/8/8/4K3 b - - 0 1"
+    },
+    {
+      "name": "the attacker ends on the middle of d5 (≤ 10 cm)",
+      "ok": true,
+      "detail": {
+        "x": -1.25,
+        "z": -1.25
+      }
+    },
+    {
+      "name": "no page errors",
+      "ok": true,
+      "detail": []
+    }
+  ],
+  "images": {
+    "duel-fence-1.png": 0.733,
+    "duel-fence-2.png": 3.1,
+    "duel-take-2.png": "0.033 s, обмен ударами",
+    "duel-take-69.png": "2.267 s, обмен: решающий удар",
+    "duel-take-116.png": "3.833 s, защитник проиграл схватку",
+    "duel-take-164.png": "5.433 s, занятие клетки"
+  },
+  "scope": "Sampled at 30 Hz with a fixed clock on the skinned pawns. Bodies from the recorded exchange (ролик 516); arms, spear and shield from the loadout timed to the recorded blows. Not a physics or continuous collision check."
+}

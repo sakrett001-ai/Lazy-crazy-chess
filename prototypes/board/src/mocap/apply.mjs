@@ -33,6 +33,15 @@ export function createMocapDriver({bones,holder}){
   if(weight<1){
    affected.forEach((b,i)=>b.quaternion.slerpQuaternions(saved[i],b.quaternion.clone(),weight));
    root.position.lerpVectors(savedRoot,root.position.clone(),weight);
+   // Each end stands on the floor, but blended joint by joint a bent stance
+   // and a straight one sink the feet between them: the pelvis comes down
+   // in a straight line while the legs straighten along arcs. The blend
+   // never puts the lowest ankle or toe under its rest height.
+   root.updateMatrixWorld(true);
+   let low=Infinity;
+   for(const s of ['L','R']){const c=PAWN.legs[s];
+    low=Math.min(low,bone(c.ankle).getWorldPosition(p).y-retarget.ankleHeight,bone(c.toe).getWorldPosition(p).y-retarget.toeHeight);}
+   if(low<0){const w=root.getWorldPosition(V());w.y-=low;root.position.copy(root.parent.worldToLocal(w));}
   }
   root.updateMatrixWorld(true);
   return pose;
