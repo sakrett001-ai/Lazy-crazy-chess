@@ -35,8 +35,8 @@ await page.evaluate(()=>window.livingChess.camera([3.4,1.7,-2.6],[-.4,.95,-.3]))
 
 // One frame of measures: bone chains of both, both spears (butt to tip),
 // crossings of either shield, the spear's nearest approach to the other's
-// trunk axis, both pelvises.
-const measure=t=>page.evaluate(([t,A,V])=>{const L=window.livingChess,ids=[A,V].filter(id=>L.points(id,['root'])),touch=[];
+// trunk axis, both pelvises. A piece taken off the board (hidden) is not measured.
+const measure=t=>page.evaluate(([t,A,V])=>{const L=window.livingChess,ids=[A,V].filter(id=>L.points(id,['root'])&&L.shown(id)),touch=[];
  const chains={legL:['upperleg01.L','lowerleg01.L','foot.L','toe3-1.L'],legR:['upperleg01.R','lowerleg01.R','foot.R','toe3-1.R'],trunk:['root','spine03','spine05','neck01','head'],armL:['upperarm01.L','lowerarm01.L','wrist.L'],armR:['upperarm01.R','lowerarm01.R','wrist.R']};
  const spear=id=>{const g=L.grip(id),p=L.tip(id);if(!g||!p)return null;const d=p.map((x,i)=>x-g[i]),k=1.004/1.566;return[g.map((x,i)=>x-d[i]*k),p];};
  const out={t,ids,spear:{},trunk:{},root:{},body:{},touch};

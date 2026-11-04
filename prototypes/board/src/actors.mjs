@@ -91,7 +91,7 @@ export function createPawnFactory({gltf}){
    holder.position.set(0,0,0);holder.quaternion.identity();holder.updateMatrixWorld(true);
    const m=loadout.measure();
    place.set(saved);
-   return{tip:m.tip,shieldGrip:m.shieldGripWorld};
+   return{tip:m.tip,shieldGrip:m.shieldGripWorld,grip:m.weaponGripWorld?.R||null};
   }
   // Foremost point of the visible shield along the figure's forward axis.
   function shieldFront(action,time,motion=null){
