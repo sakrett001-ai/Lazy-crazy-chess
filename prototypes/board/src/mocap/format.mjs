@@ -32,7 +32,7 @@ export function buildMotionFile({source,clips,neutral=null}){
  return{format:FORMAT,version:1,source,points:used,...(neutral?{neutral:used.flatMap(p=>(neutral[p]||neutral.pelvis).map(v=>+v.toFixed(4)))}:{}),clips:clips.map(c=>{
   const data=[];
   for(const f of c.frames)for(const p of used){const v=f[p]||f.pelvis;data.push(+v[0].toFixed(4),+v[1].toFixed(4),+v[2].toFixed(4));}
-  return{name:c.name,label:c.label||c.name,role:c.role||'other',loop:!!c.loop,fps:c.fps,frames:c.frames.length,...(c.partner?{partner:c.partner}:{}),...(c.frame?{frame:c.frame}:{}),...(c.arms?{arms:c.arms}:{}),...(c.exchange?c.exchange:{}),data};
+  return{name:c.name,label:c.label||c.name,role:c.role||'other',loop:!!c.loop,fps:c.fps,frames:c.frames.length,...(c.partner?{partner:c.partner}:{}),...(c.frame?{frame:c.frame}:{}),...(c.forward?{forward:c.forward}:{}),...(c.arms?{arms:c.arms}:{}),...(c.exchange?c.exchange:{}),data};
  })};
 }
 
@@ -66,8 +66,10 @@ export function prepareClip(file,clip){
  const f0=raw[0],stand=sub(f0.head,mid(f0.ankleL,f0.ankleR)),axis=[0,1,2].reduce((a,b)=>Math.abs(stand[b])>Math.abs(stand[a])?b:a,1),sign=Math.sign(stand[axis])||1;
  const toYUp=v=>axis===1?[v[0],v[1]*sign,v[2]*sign]:axis===2?[v[0],v[2]*sign,-v[1]*sign]:[-v[1]*sign,v[0]*sign,v[2]];
  let frames=raw.map(o=>Object.fromEntries(Object.entries(o).map(([k,v])=>[k,toYUp(v)])));
- // Facing at the first frame: forward = left × up, with left from the hips.
- const left=sub(frames[0].hipL,frames[0].hipR),fwd=normalize([-left[2],0,left[0]]);
+ // Facing at the first frame: forward = left × up, with left from the hips;
+ // or the clip's own `forward` [x, z], the way to the opponent, when the hips
+ // stand bladed to it (a fencing guard: vom Tag's hips are turned off the line).
+ const left=sub(frames[0].hipL,frames[0].hipR),fwd=clip.forward?normalize([clip.forward[0],0,clip.forward[1]]):normalize([-left[2],0,left[0]]);
  const shared=clip.frame==='shared',turn=shared?0:Math.atan2(fwd[0],fwd[2]),origin=shared?[0,0,0]:[frames[0].pelvis[0],0,frames[0].pelvis[2]];
  frames=frames.map(o=>Object.fromEntries(Object.entries(o).map(([k,v])=>[k,rotateY(sub(v,origin),-turn)])));
  const legOf=(o,s)=>distance(o['hip'+s],o['knee'+s])+distance(o['knee'+s],o['ankle'+s]);

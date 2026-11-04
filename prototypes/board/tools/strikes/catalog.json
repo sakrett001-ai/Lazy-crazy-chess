@@ -73,5 +73,80 @@
    },
    "note": "Прямой удар правой с разворотом таза и переносом веса — та же механика, что у укола копьём из-за щита. Тело и время укола из записи, руки ставит мастерская по своим линиям копья и щита."
   }
+ ],
+ "storyboard": [
+  {
+   "id": "bishop-vom-tag-cut",
+   "figure": "Офицер",
+   "label": "Прямой удар сверху из «вом Таг» (Тальхоффер, 1443)",
+   "motion": "storyboard/talhoffer-cut.lazy-chess.json",
+   "clip": "talhoffer-vom-tag-cut",
+   "out": "../../motions/bishop-vom-tag-cut.motion.json",
+   "hold": [
+    0.5,
+    0.6
+   ],
+   "track": "recorded",
+   "hands": "two",
+   "loadout": {
+    "weaponType": "bastard"
+   },
+   "source": {
+    "work": "Hans Talhoffer, Fechtbuch, 1443, Gotha, Forschungsbibliothek, Chart. A 558",
+    "license": "рукопись — общественное достояние",
+    "tool": "Lazy-skills-lab, skills/storyboard-motion"
+   },
+   "note": "Поза стойки и конца удара подняты с листа трактата вместе с мечом: линия клинка, гарда и место каждого кулака на рукояти из раскадровки, между ключами — сплайн навыка. Стойка и опускание таза сверены с живой записью (группа «Расфехтовки», VK); темп 0,2 с настроен по ней, а не проверен."
+  },
+  {
+   "id": "bishop-vom-tag-thrust",
+   "figure": "Офицер",
+   "label": "Укол из «вом Таг» через «быка» (Тальхоффер, 1443)",
+   "motion": "storyboard/talhoffer-thrust.lazy-chess.json",
+   "clip": "talhoffer-vom-tag-thrust",
+   "out": "../../motions/bishop-vom-tag-thrust.motion.json",
+   "hold": [
+    0.5,
+    0.6
+   ],
+   "track": "recorded",
+   "hands": "two",
+   "loadout": {
+    "weaponType": "bastard"
+   },
+   "source": {
+    "work": "Hans Talhoffer, Fechtbuch, 1443, Gotha, Forschungsbibliothek, Chart. A 558",
+    "license": "рукопись — общественное достояние",
+    "tool": "Lazy-skills-lab, skills/storyboard-motion",
+    "live": "Feder & Pell, Pell Zettel Part 1 и Part 2 (William Buschur, 2017): живые уколы, вид сбоку"
+   },
+   "note": "«Вом Таг» и «бык» подняты с листа трактата вместе с мечом. Конца укола на листе нет: он достроен по живым уколам Feder & Pell — в «быке» грудь боком к острию (60–90°), в конце укола грудь довёрнута за остриём (34°, у живых 3–54°), кисти на 0,22 роста впереди плеч. Эти числа и время 0,6 с от «быка» до конца укола настроены по живым записям, а не проверены ими."
+  },
+  {
+   "id": "bishop-zornhau-ort",
+   "figure": "Офицер",
+   "label": "Удар гнева в остриё из «вом Таг» с шагом и возвратом (Zornhau Ort, Feder & Pell)",
+   "motion": "storyboard/feder-pell-zornhau-ort.lazy-chess.json",
+   "clip": "zornhau-ort",
+   "hands": "two",
+   "loadout": {
+    "weaponType": "bastard"
+   },
+   "hold": [
+    0.3,
+    0.3
+   ],
+   "blow": 1.08,
+   "out": "../../motions/bishop-zornhau-ort.motion.json",
+   "track": "recorded",
+   "note": "Четыре позы подняты с кадров живой записи Zornhau Ort (вид сбоку): «вом Таг», удар без шага с остриём в линию к лицу, шаг правой, выпад; время ключей — время тех же кадров. Это Zornhau Ort из мягкого связывания (рукоять не выходит перед головой, «винден» нет), а не Zornort. Опорная левая стопа поворачивается на подушечке. Возврат в «вом Таг» — экономный, без нового замаха. Сверка с той же записью (настроено): темп 0,97, путь кистей 0,073 роста («частично»), стойка и таз в пределах ±30 %. Независимо — Zornhau Ort внутри Oben Abgenomen той же серии: темп 0,97, путь 0,092 («частично», в конце руки там уходят в следующий приём). Проверка суставов: 0 ошибок, 3 предупреждения — разгибание правого бедра в шаге (−28°, прямая мышца бедра) и отведение левого бедра у предела (45°). Удар по листу Тальхоффера — отдельный вариант.",
+   "source": {
+    "work": "William Buschur, «Pell Zettel Part 1: Zornhau Ort», Feder & Pell, 2017, гифки «Zornhau Ort — Side View» и «Oben Abgenomen — Side View»",
+    "page": "https://www.federandpell.com/blog/2017/4/19/training-the-zettle-with-pells-part-1-zornhau-ort",
+    "license": "лицензия на странице не указана; кадры в репозиторий не копируются, записан источник; движение — наша сборка по четырём измеренным позам",
+    "frames": "Zornhau Ort, вид сбоку, 120 мс на кадр: верх замаха — кадр 8 (0,96 с, начало отсчёта), позы — кадры 9 (1,08 с), 12 (1,44 с), 14 (1,68 с), 17 (2,04 с), снова «вом Таг» — кадр 29 (3,48 с); независимая сверка — Oben Abgenomen, кадры 20–29",
+    "tool": "Lazy-skills-lab, skills/storyboard-motion (поза) и skills/video-motion-capture (суставы, MediaPipe Pose heavy на процессоре)"
+   }
+  }
  ]
 }

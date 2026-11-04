@@ -26,7 +26,7 @@
       "name": "fencing: neither spear goes into the other body (spear ≥ 17 cm from the trunk axis)",
       "ok": true,
       "detail": {
-        "closestM": 0.904
+        "closestM": 0.443
       }
     },
     {
@@ -38,7 +38,7 @@
       "name": "fencing: the two never walk into each other (pelvises ≥ 1.2 m apart)",
       "ok": true,
       "detail": {
-        "closestM": 2.93
+        "closestM": 2.34
       }
     },
     {
@@ -46,12 +46,12 @@
       "ok": true,
       "detail": [
         {
-          "e4": 2.12,
+          "e4": 2.11,
           "d5": 1.2
         },
         {
           "e4": 1.2,
-          "d5": 2.12
+          "d5": 2.11
         }
       ]
     },
@@ -59,7 +59,7 @@
       "name": "fencing: knees within 0–140° and bent forwards",
       "ok": true,
       "detail": {
-        "maxFlexDeg": 93.7,
+        "maxFlexDeg": 93.5,
         "first": []
       }
     },
@@ -74,7 +74,7 @@
     {
       "name": "fencing: no jumps (pelvis < 10 cm per frame)",
       "ok": true,
-      "detail": 0.055
+      "detail": 0.093
     },
     {
       "name": "e4 takes d5 is accepted by the rules",
@@ -118,7 +118,7 @@
     {
       "name": "capture: the attacker moves without jumps (< 10 cm per frame)",
       "ok": true,
-      "detail": 0.066
+      "detail": 0.088
     },
     {
       "name": "capture: knees within 0–140° and bent forwards",

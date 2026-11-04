@@ -328,3 +328,54 @@ test('weapon weight: a light blade keeps the line, a heavy head runs on past a s
  // Without a weapon the track is unchanged.
  const plain=cutTrack(frames,{smooth:0}),again=cutTrack(frames,{smooth:0});assert.deepEqual(plain.data,again.data);assert.equal(plain.dynamics,undefined);
 });
+
+for(const name of ['talhoffer-cut','talhoffer-thrust'])test(`a storyboard strike carries its own blade: the arms track follows the recorded weapon (${name})`,async()=>{
+ const {readFile}=await import('node:fs/promises');
+ const {weaponTrack,cutFrame,toTrunk}=await import('../src/mocap/strike.mjs');
+ const {RUNTIME_WEAPONS}=await import('../../white-pawn/src/weapons.mjs');
+ const src=JSON.parse(await readFile(new URL(`../tools/strikes/storyboard/${name}.lazy-chess.json`,import.meta.url),'utf8')),c=src.clips[0],P=src.points,J=P.length;
+ const frames=Array.from({length:c.frames},(_,f)=>Object.fromEntries(P.map((p,j)=>[p,c.data.slice((f*J+j)*3,(f*J+j)*3+3)])));
+ const neutral=Object.fromEntries(P.map((p,j)=>[p,src.neutral.slice(j*3,j*3+3)]));
+ const W=c.weapon,F=W.fields.length,shift=-RUNTIME_WEAPONS.bastard.secondS/2/.54;
+ const t=weaponTrack(frames,W,{neutral,shift}),T=t.fields.length,frameOf=cutFrame(neutral);
+ assert.equal(t.data.length,c.frames*T);
+ const dist=(a,b)=>Math.hypot(a[0]-b[0],a[1]-b[1],a[2]-b[2]);
+ for(const i of [0,Math.floor(c.frames/2),c.frames-1]){
+  const row=t.data.slice(i*T,i*T+T),w=W.data.slice(i*F,i*F+F),f=frameOf(frames[i]),d=w.slice(3,6);
+  const axis=[0,1,2].map(k=>[f.x,f.up,f.forward][k].reduce((s,v,n)=>s+v*d[n],0));
+  near(row[3]*axis[0]+row[4]*axis[1]+row[5]*axis[2],1,1e-3,'the blade is the recorded one, not the pivot model');
+  // The fighter's fists: their middle where the recorded fists' middle was.
+  const p=frames[i],arm=(dist(p.shoulderR,p.elbowR)+dist(p.elbowR,p.wristR)+dist(p.shoulderL,p.elbowL)+dist(p.elbowL,p.wristL))/2;
+  const u=(w[9]+w[10])/2,hands=[0,1,2].map(k=>w[k]+d[k]*u*W.length),g=toTrunk(f,hands).map(v=>v/arm);
+  near(dist(row.slice(0,3).map((v,k)=>v-row[3+k]*shift),g),0,2e-2,'hands middle on the recorded fists');
+ }
+ // The point of the cut ends forward and lower than in the guard.
+ const first=t.data.slice(3,6),last=t.data.slice((c.frames-1)*T+3,(c.frames-1)*T+6);
+ assert.ok(last[1]<first[1]&&last[2]>first[2],'the blade comes down and forward: '+first+' → '+last);
+ // The built strike file is the same track with the guard and the end held.
+ const {parseMotionFile}=await import('../src/mocap/format.mjs');
+ const built=parseMotionFile(await readFile(new URL('../motions/bishop-vom-tag-cut.motion.json',import.meta.url),'utf8'));
+ assert.equal(built.strikes[0].loadout.weaponType,'bastard');
+ assert.ok(built.clips[0].frames>c.frames&&built.clips[0].arms.fields.includes('gx'));
+});
+
+test('Zornhau Ort: the point ends in line after the step, and the fighter comes back to the same guard without a new wind-up',async()=>{
+ const {readFile}=await import('node:fs/promises');
+ const {parseMotionFile}=await import('../src/mocap/format.mjs');
+ const src=JSON.parse(await readFile(new URL('../tools/strikes/storyboard/feder-pell-zornhau-ort.lazy-chess.json',import.meta.url),'utf8')),c=src.clips[0],P=src.points,J=P.length;
+ const at=(f,n)=>{const j=P.indexOf(n);return c.data.slice((f*J+j)*3,(f*J+j)*3+3);};
+ const W=c.weapon,F=W.fields.length,dir=f=>W.data.slice(f*F+3,f*F+6);
+ const dist=(a,b)=>Math.hypot(a[0]-b[0],a[1]-b[1],a[2]-b[2]),deg=(a,b)=>Math.acos(Math.min(1,a[0]*b[0]+a[1]*b[1]+a[2]*b[2]))*180/Math.PI;
+ const hit=Math.round(1.08*c.fps),last=c.frames-1;
+ // vom Tag: the blade up over the shoulder; Ort: the point in line, the blade near level
+ assert.ok(dir(0)[1]>.5,'guard: the blade points up '+dir(0));
+ assert.ok(Math.abs(dir(hit)[1])<.45,'Ort: the blade near level '+dir(hit));
+ assert.ok(deg(dir(0),dir(hit))>60,'the blade turns down into the line');
+ // the passing step: the right foot goes from behind to in front
+ assert.ok(dist(at(0,'ankleR'),at(hit,'ankleR'))>.8,'the right foot steps through');
+ // the way back is the same guard: blade, fists and feet where they started
+ assert.ok(deg(dir(0),dir(last))<10,'back to the same blade line');
+ for(const n of ['wristR','wristL','ankleL','ankleR'])assert.ok(dist(at(0,n),at(last,n))<.08,`${n} back where it started`);
+ const built=parseMotionFile(await readFile(new URL('../motions/bishop-zornhau-ort.motion.json',import.meta.url),'utf8')),ph=built.strikes[0].phases;
+ assert.ok(Math.abs(ph.blow-ph.top-1.08)<.02&&ph.blow<ph.followThrough,'the blow lands at the end of the step, not at the end of the clip: '+JSON.stringify(ph));
+});

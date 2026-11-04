@@ -36,11 +36,22 @@ export const travelAt=(clip,t)=>{const p=sampleClip(clip,t).pelvis,o=clip.frames
 // gap over the cycle (board units). The recorded closest gap is kept.
 // A given scale (the board's fit of the blow, board.mjs) replaces the one
 // that keeps the recorded closest gap.
+// The scale may also be a closing for one meeting ({base, more, meet,
+// back: [t1, t2]}): up to the meeting the approach is scaled by base+more,
+// so the pair stands closer where blow and defence meet; after it the extra
+// closing is given back over back (a step out, Abzug), so the cycle ends
+// where the base scale ends it and the next one starts without dragging the
+// feet back (approachAt, plantShift).
+export function approachAt(scale,clip,t){
+ const F=travelAt(clip,t).forward;if(typeof scale==='number')return scale*F;
+ const {base,more,meet,back}=scale;
+ return base*F+more*travelAt(clip,Math.min(t,meet)).forward*(1-smooth(t,back[0],back[1]));
+}
 export function exchangeLayout(pair,k,distance,given=null){
  const {attack,defend}=pair,D=Math.max(attack.duration,defend.duration),gap0=(attack.events?.gap??distance/k);
  let close=0;for(let t=0;t<=D+1e-9;t+=1/30)close=Math.max(close,travelAt(attack,t).forward+travelAt(defend,t).forward);
  const closest=(gap0-close)*k,scale=given??(close>1e-6?clamp((distance-closest)/(close*k),0,1):1);
- const gapAt=t=>distance-scale*k*(travelAt(attack,t).forward+travelAt(defend,t).forward);
+ const gapAt=t=>distance-k*(approachAt(scale,attack,t)+approachAt(scale,defend,t));
  let min=Infinity;for(let t=0;t<=D+1e-9;t+=1/30)min=Math.min(min,gapAt(t));
  return{scale,closest:min,recordedClosest:closest,gapAt};
 }
@@ -53,8 +64,8 @@ export function exchangeLayout(pair,k,distance,given=null){
 // across the camera at an angle), and two figures on their squares would
 // walk off the line of the fight.
 export function cyclePose(clip,t,k,scale){
- const p=sampleClip(clip,t),{forward}=travelAt(clip,t);
- return{points:plantFeet(clip,t,scale,holdThrust(clip,t,centerPoints(p))),offset:{x:0,z:forward*k*scale}};
+ const p=sampleClip(clip,t);
+ return{points:plantFeet(clip,t,scale,holdThrust(clip,t,centerPoints(p))),offset:{x:0,z:approachAt(scale,clip,t)*k}};
 }
 
 // The figure's pelvis does not travel as the recorded one: the approach is
@@ -68,7 +79,7 @@ export function cyclePose(clip,t,k,scale){
 const FOOT_POINTS=s=>['ankle'+s,'heel'+s,'toe'+s];
 function plantShift(clip,t,scale){
  const plants=clip.events?.plants;if(!plants)return null;
- const gap=u=>{const {forward,side}=travelAt(clip,u);return[side,(1-scale)*forward];};
+ const gap=u=>{const {forward,side}=travelAt(clip,u);return[side,forward-approachAt(scale,clip,u)];};
  const out={};
  for(const s of ['L','R']){const list=plants[s]||[];let d=[0,0];
   for(let i=0;i<list.length;i++){const [a,b]=list[i];
@@ -172,10 +183,25 @@ export function keyed(keys,t){
 // reach and stops at `stop` (the partner's shield, or flesh for a decisive
 // blow), then comes back to guard. The defender's shield (Shield_Brace:
 // 0 guard, 1 braced) is up by the answer, or late on a decisive blow.
-export function exchangeArms(clip,t,{stop=1.95}={}){
+// press: the thrust pressed on the partner's shield after the reach
+// ([[t, Spear_Study time], …], board.mjs pressOn): the spear goes no further
+// out than that, and comes back along the line of the thrust (drawn back,
+// then guard) instead of round through the recovery, so the point leaves the
+// shield the way it came; it is drawn back by the time the trunk lets go of
+// the thrust's line (holdThrust), so the turn of the shoulders does not
+// sweep the point across the shield. reach: when the point meets the shield. When the
+// pair is still closing at the recorded reach, the whole thrust (chamber,
+// extension, reach) comes that much later, with the recorded speed: a
+// thrust is timed to the measure; it does not stop out in the air and wait
+// for the shield, nor creep onto it.
+const pressAt=(table,t)=>{if(!table?.length||t<table[0][0])return Infinity;
+ for(let i=1;i<table.length;i++)if(t<=table[i][0]){const [t0,u0]=table[i-1],[t1,u1]=table[i];return u0+(u1-u0)*(t-t0)/(t1-t0);}
+ return Infinity;};
+export function exchangeArms(clip,t,{stop=1.95,press=null,reach=null}={}){
  const s=clip.events?.strike;if(!s)return clip.side==='attack'?{action:'Spear_Study',time:0}:{action:'Shield_Brace',time:0};
  if(clip.side==='attack'){
   const chamber=Math.max(0,s.start-.25),drawn=s.start+.6*(s.reach-s.start);
+  if(press){const d=Math.max(0,(reach??s.reach)-s.reach);return{action:'Spear_Study',time:Math.min(keyed([[chamber+d,0],[drawn+d,Math.min(1,stop)],[s.reach+d,stop],[s.reach+d+.15,stop],[s.reach+d+.6,1],[s.reach+1.35,0]],t),pressAt(press,t))};}
   return{action:'Spear_Study',time:keyed([[chamber,0],[drawn,Math.min(1,stop)],[s.reach,stop],[s.reach+.25,stop],[s.reach+.95,4]],t)};
  }
  const answer=clip.events.parry?.at??s.reach;
