@@ -15,6 +15,7 @@
         "walk": null,
         "capture": "pawn-capture-strike",
         "pair": true,
+        "duel": null,
         "weight": 1
       }
     },
@@ -117,15 +118,15 @@
     "heightM": 1.008
   },
   "images": {
-    "march": "capture-clip-above-march.png",
-    "counter": "capture-clip-above-counter.png",
-    "feint": "capture-clip-above-feint.png",
-    "strike": "capture-clip-above-strike.png",
-    "jolt": "capture-clip-above-jolt.png",
-    "knees-give": "capture-clip-above-knees-give.png",
-    "step-in": "capture-clip-above-step-in.png",
-    "end": "capture-clip-above-end.png"
+    "march": "capture-clip-march.png",
+    "counter": "capture-clip-counter.png",
+    "feint": "capture-clip-feint.png",
+    "strike": "capture-clip-strike.png",
+    "jolt": "capture-clip-jolt.png",
+    "knees-give": "capture-clip-knees-give.png",
+    "step-in": "capture-clip-step-in.png",
+    "end": "capture-clip-end.png"
   },
-  "frames": 202,
+  "frames": 0,
   "scope": "Sampled at 30 Hz with a fixed clock on the skinned pawns. Bodies come from the clip pair; arms, spear and shield from the loadout on the board timeline. Not a physics or continuous collision check."
 }

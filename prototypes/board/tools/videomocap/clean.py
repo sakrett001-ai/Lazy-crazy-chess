@@ -667,7 +667,9 @@ def clean(raw, **opts):
                 floor = to_mp(lines[0])
                 report['sceneLines'] = {'inliers': lines[1], 'segments': lines[2]}
     up, report['floorFrom'] = np.array([0, 1.0, 0]), 'camera'
-    if 'floor' in steps:
+    if o.get('up') is not None:  # one camera, two people: the same up for both (duel.py)
+        up, report['floorFrom'] = unit(np.asarray(o['up'], float)), o.get('up_from') or 'given'
+    elif 'floor' in steps:
         if floor is not None:
             up, report['floorFrom'] = floor, 'scene lines'
         else:
@@ -675,6 +677,8 @@ def clean(raw, **opts):
     R = rotation_to(up, [0, 1, 0])
     P = P @ R.T
     report['up'] = [round(float(v), 4) for v in up]
+    if floor is not None:
+        report['sceneUp'] = [round(float(v), 4) for v in floor]
     report['tiltDeg'] = round(float(np.degrees(np.arccos(np.clip(up[1], -1, 1)))), 2)
     if use_camera and 'root' in steps:
         P[:, :, 1] -= np.percentile(np.minimum(sole_height(P, 'L', rise), sole_height(P, 'R', rise)), 5)
