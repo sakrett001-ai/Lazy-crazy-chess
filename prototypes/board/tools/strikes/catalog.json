@@ -97,6 +97,30 @@
     "tool": "Lazy-skills-lab, skills/storyboard-motion"
    },
    "note": "Поза стойки и конца удара подняты с листа трактата вместе с мечом: линия клинка, гарда и место каждого кулака на рукояти из раскадровки, между ключами — сплайн навыка. Стойка и опускание таза сверены с живой записью (группа «Расфехтовки», VK); темп 0,2 с настроен по ней, а не проверен."
+  },
+  {
+   "id": "bishop-vom-tag-thrust",
+   "figure": "Офицер",
+   "label": "Укол из «вом Таг» через «быка» (Тальхоффер, 1443)",
+   "motion": "storyboard/talhoffer-thrust.lazy-chess.json",
+   "clip": "talhoffer-vom-tag-thrust",
+   "out": "../../motions/bishop-vom-tag-thrust.motion.json",
+   "hold": [
+    0.5,
+    0.6
+   ],
+   "track": "recorded",
+   "hands": "two",
+   "loadout": {
+    "weaponType": "bastard"
+   },
+   "source": {
+    "work": "Hans Talhoffer, Fechtbuch, 1443, Gotha, Forschungsbibliothek, Chart. A 558",
+    "license": "рукопись — общественное достояние",
+    "tool": "Lazy-skills-lab, skills/storyboard-motion",
+    "live": "Feder & Pell, Pell Zettel Part 1 и Part 2 (William Buschur, 2017): живые уколы, вид сбоку"
+   },
+   "note": "«Вом Таг» и «бык» подняты с листа трактата вместе с мечом. Конца укола на листе нет: он достроен по живым уколам Feder & Pell — в «быке» грудь боком к острию (60–90°), в конце укола грудь довёрнута за остриём (34°, у живых 3–54°), кисти на 0,22 роста впереди плеч. Эти числа и время 0,6 с от «быка» до конца укола настроены по живым записям, а не проверены ими."
   }
  ]
 }

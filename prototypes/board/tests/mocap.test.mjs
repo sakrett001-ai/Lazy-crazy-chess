@@ -329,11 +329,11 @@ test('weapon weight: a light blade keeps the line, a heavy head runs on past a s
  const plain=cutTrack(frames,{smooth:0}),again=cutTrack(frames,{smooth:0});assert.deepEqual(plain.data,again.data);assert.equal(plain.dynamics,undefined);
 });
 
-test('a storyboard strike carries its own blade: the arms track follows the recorded weapon',async()=>{
+for(const name of ['talhoffer-cut','talhoffer-thrust'])test(`a storyboard strike carries its own blade: the arms track follows the recorded weapon (${name})`,async()=>{
  const {readFile}=await import('node:fs/promises');
  const {weaponTrack,cutFrame,toTrunk}=await import('../src/mocap/strike.mjs');
  const {RUNTIME_WEAPONS}=await import('../../white-pawn/src/weapons.mjs');
- const src=JSON.parse(await readFile(new URL('../tools/strikes/storyboard/talhoffer-cut.lazy-chess.json',import.meta.url),'utf8')),c=src.clips[0],P=src.points,J=P.length;
+ const src=JSON.parse(await readFile(new URL(`../tools/strikes/storyboard/${name}.lazy-chess.json`,import.meta.url),'utf8')),c=src.clips[0],P=src.points,J=P.length;
  const frames=Array.from({length:c.frames},(_,f)=>Object.fromEntries(P.map((p,j)=>[p,c.data.slice((f*J+j)*3,(f*J+j)*3+3)])));
  const neutral=Object.fromEntries(P.map((p,j)=>[p,src.neutral.slice(j*3,j*3+3)]));
  const W=c.weapon,F=W.fields.length,shift=-RUNTIME_WEAPONS.bastard.secondS/2/.54;
