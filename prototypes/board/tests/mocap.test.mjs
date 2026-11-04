@@ -328,3 +328,33 @@ test('weapon weight: a light blade keeps the line, a heavy head runs on past a s
  // Without a weapon the track is unchanged.
  const plain=cutTrack(frames,{smooth:0}),again=cutTrack(frames,{smooth:0});assert.deepEqual(plain.data,again.data);assert.equal(plain.dynamics,undefined);
 });
+
+for(const name of ['talhoffer-cut','talhoffer-thrust'])test(`a storyboard strike carries its own blade: the arms track follows the recorded weapon (${name})`,async()=>{
+ const {readFile}=await import('node:fs/promises');
+ const {weaponTrack,cutFrame,toTrunk}=await import('../src/mocap/strike.mjs');
+ const {RUNTIME_WEAPONS}=await import('../../white-pawn/src/weapons.mjs');
+ const src=JSON.parse(await readFile(new URL(`../tools/strikes/storyboard/${name}.lazy-chess.json`,import.meta.url),'utf8')),c=src.clips[0],P=src.points,J=P.length;
+ const frames=Array.from({length:c.frames},(_,f)=>Object.fromEntries(P.map((p,j)=>[p,c.data.slice((f*J+j)*3,(f*J+j)*3+3)])));
+ const neutral=Object.fromEntries(P.map((p,j)=>[p,src.neutral.slice(j*3,j*3+3)]));
+ const W=c.weapon,F=W.fields.length,shift=-RUNTIME_WEAPONS.bastard.secondS/2/.54;
+ const t=weaponTrack(frames,W,{neutral,shift}),T=t.fields.length,frameOf=cutFrame(neutral);
+ assert.equal(t.data.length,c.frames*T);
+ const dist=(a,b)=>Math.hypot(a[0]-b[0],a[1]-b[1],a[2]-b[2]);
+ for(const i of [0,Math.floor(c.frames/2),c.frames-1]){
+  const row=t.data.slice(i*T,i*T+T),w=W.data.slice(i*F,i*F+F),f=frameOf(frames[i]),d=w.slice(3,6);
+  const axis=[0,1,2].map(k=>[f.x,f.up,f.forward][k].reduce((s,v,n)=>s+v*d[n],0));
+  near(row[3]*axis[0]+row[4]*axis[1]+row[5]*axis[2],1,1e-3,'the blade is the recorded one, not the pivot model');
+  // The fighter's fists: their middle where the recorded fists' middle was.
+  const p=frames[i],arm=(dist(p.shoulderR,p.elbowR)+dist(p.elbowR,p.wristR)+dist(p.shoulderL,p.elbowL)+dist(p.elbowL,p.wristL))/2;
+  const u=(w[9]+w[10])/2,hands=[0,1,2].map(k=>w[k]+d[k]*u*W.length),g=toTrunk(f,hands).map(v=>v/arm);
+  near(dist(row.slice(0,3).map((v,k)=>v-row[3+k]*shift),g),0,2e-2,'hands middle on the recorded fists');
+ }
+ // The point of the cut ends forward and lower than in the guard.
+ const first=t.data.slice(3,6),last=t.data.slice((c.frames-1)*T+3,(c.frames-1)*T+6);
+ assert.ok(last[1]<first[1]&&last[2]>first[2],'the blade comes down and forward: '+first+' → '+last);
+ // The built strike file is the same track with the guard and the end held.
+ const {parseMotionFile}=await import('../src/mocap/format.mjs');
+ const built=parseMotionFile(await readFile(new URL('../motions/bishop-vom-tag-cut.motion.json',import.meta.url),'utf8'));
+ assert.equal(built.strikes[0].loadout.weaponType,'bastard');
+ assert.ok(built.clips[0].frames>c.frames&&built.clips[0].arms.fields.includes('gx'));
+});

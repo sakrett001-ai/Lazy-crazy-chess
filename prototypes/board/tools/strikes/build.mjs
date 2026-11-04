@@ -14,15 +14,50 @@ import {fileURLToPath} from 'node:url';
 import path from 'node:path';
 import {bvhToClip} from '../../src/mocap/bvh.mjs';
 import {buildMotionFile} from '../../src/mocap/format.mjs';
-import {cutTrack,thrustTrack,mirrorFrames,ARM_M} from '../../src/mocap/strike.mjs';
+import {cutTrack,thrustTrack,weaponTrack,mirrorFrames,ARM_M} from '../../src/mocap/strike.mjs';
 import {LEVELS,applySkill} from '../../src/mocap/skill.mjs';
 import {RUNTIME_WEAPONS,massProperties} from '../../../white-pawn/src/weapons.mjs';
 
 const here=path.dirname(fileURLToPath(import.meta.url));
 const args=process.argv.slice(2),opt=(k,d)=>{const i=args.indexOf('--'+k);return i>=0?args[i+1]:d;};
-const dir=opt('bvh');if(!dir){console.error('Нужна папка с BVH: --bvh <папка data набора>');process.exit(2);}
+const dir=opt('bvh');
 const catalog=JSON.parse(await readFile(path.join(here,'catalog.json'),'utf8'));
 const only=opt('only');
+const round=v=>+v.toFixed(3);
+
+// Strikes from a storyboard (catalog.storyboard): poses lifted from treatise
+// plates (Lazy-skills-lab, skills/storyboard-motion), exported with their
+// weapon. The plates are public domain and the motion is ours, so the built
+// file is committed (motions/), unlike the dataset's. Each goes to a file of
+// its own: the retargeter turns the trunk from the file's neutral stance,
+// which is the storyboard skeleton's, not the dataset's.
+const fromFile=(file,clip)=>{const P=file.points,J=P.length;return Array.from({length:clip.frames},(_,f)=>Object.fromEntries(P.map((p,j)=>{const i=(f*J+j)*3;return[p,clip.data.slice(i,i+3)];})));};
+for(const s of catalog.storyboard||[]){
+ if(only&&s.id!==only)continue;
+ const src=JSON.parse(await readFile(path.join(here,s.motion),'utf8')),clip=src.clips.find(c=>c.name===s.clip);
+ if(!clip?.weapon)throw Error(`${s.id}: в ${s.motion} нет клипа ${s.clip} с оружием`);
+ const neutral=fromFile({points:src.points},{frames:1,data:src.neutral})[0];
+ // Hold the first and last frames: the plates give the guard and the end of
+ // the cut, the board needs a moment in each. Only frames are repeated.
+ const [before,after]=(s.hold||[0,0]).map(t=>Math.round(t*clip.fps));
+ const pad=(rows,w)=>[...Array(before).fill(rows[0]),...rows,...Array(after).fill(rows[rows.length-1])];
+ const frames=pad(fromFile(src,clip)),F=clip.weapon.fields.length,wrows=[];
+ for(let i=0;i<clip.frames;i++)wrows.push(clip.weapon.data.slice(i*F,i*F+F));
+ const weapon={...clip.weapon,data:pad(wrows).flat()};
+ const spec=RUNTIME_WEAPONS[s.loadout?.weaponType],spacing=spec?-spec.secondS:.13;
+ const arms=weaponTrack(frames,weapon,{shift:spacing/2/ARM_M,neutral});
+ const strike={...s,phases:{windup:0,top:round(before/clip.fps),blow:round((before+clip.frames-1)/clip.fps),followThrough:round((frames.length-1)/clip.fps)}};
+ delete strike.motion;delete strike.clip;delete strike.out;
+ const label=`${s.figure}: ${s.label}`;
+ const file=buildMotionFile({neutral,source:{...src.source,note:src.source.note+' Оружие поднято вместе с телом; дорожка рук — weaponTrack (src/mocap/strike.mjs).'},
+  clips:[{name:s.id,label,role:'strike',fps:clip.fps,frames,arms}]});
+ file.strikes=[strike];
+ const out=path.resolve(here,s.out);await mkdir(path.dirname(out),{recursive:true});await writeFile(out,JSON.stringify(file));
+ console.log(`${s.id}: ${clip.name}, ${clip.frames} кадров раскадровки + стойка ${s.hold?.[0]??0} с и конец ${s.hold?.[1]??0} с, ${(frames.length/clip.fps).toFixed(2)} с, руки — по записанному оружию → ${path.relative(process.cwd(),out)}`);
+}
+const wantsBvh=catalog.strikes.some(s=>!only||s.id===only),built=(catalog.storyboard||[]).some(s=>!only||s.id===only);
+if(!dir&&wantsBvh){if(built){console.log('Удары из набора пропущены: нужна папка с BVH (--bvh <папка data набора>).');process.exit(0);}console.error('Нужна папка с BVH: --bvh <папка data набора>');process.exit(2);}
+if(!wantsBvh)process.exit(0);
 // Neutral stance of the same skeleton: the trunk, head and feet turn from it
 // (retarget.mjs) and the cut's trunk frame stands upright at it (strike.mjs).
 const n=catalog.dataset.neutral,neutral=n?bvhToClip(await readFile(path.join(dir,n.file),'utf8'),{name:'neutral'}).clip.frames[n.frame||0]:null;
@@ -31,7 +66,6 @@ const n=catalog.dataset.neutral,neutral=n?bvhToClip(await readFile(path.join(dir
 // keeps the recording alone, as before.
 const levelArg=opt('levels',(catalog.skill?.levels||[]).join(','));
 const levels=levelArg&&levelArg!=='none'?levelArg.split(',').map(id=>{const l=LEVELS.find(x=>x.id===id);if(!l)throw Error('Нет уровня '+id);return l;}):[null];
-const round=v=>+v.toFixed(3);
 const clips=[];
 for(const s of catalog.strikes){
  if(only&&s.id!==only)continue;

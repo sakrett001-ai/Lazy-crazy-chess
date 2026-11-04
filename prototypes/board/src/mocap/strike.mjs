@@ -99,6 +99,35 @@ export function cutTrack(frames,{hands='two',pivot=BLADE_PIVOT,shift=.11,smooth:
  return{action:'strike',fields:['gx','gy','gz','ax','ay','az','px','py','pz','wx','wy','wz'],data:rows.flat().map(v=>+v.toFixed(4)),...(dynamics?{dynamics}:{})};
 }
 
+// arms track for a strike whose weapon was recorded with the body: a pose
+// lifted from a treatise plate (Lazy-skills-lab, skills/storyboard-motion)
+// carries the blade itself, its line, edge and where each fist holds it.
+// weapon: {fields, data} per frame, a (pommel end), d (axis to the point),
+// e (edge), gR, gL (fractions of the length from a to the fists), in the
+// clip's own units. Nothing is modelled: the blade is the recorded one. The
+// grip is the middle of the recorded fists moved along the blade by shift,
+// the fighter's own hand spacing, so the fighter's fists sit where the
+// recorded ones were whatever its weapon's spacing. The edge is not in the
+// track: the fighter's wrist turns the weapon by its own biomechanics, the
+// edge along the knuckles, which is the storyboard's default (the plates'
+// crossguards turn it 1–21° off that in the cut). The heavier weapon is not
+// simulated either (weaponDynamics): the timing is the storyboard's own.
+export function weaponTrack(frames,weapon,{shift=.11,smooth:r=0,neutral=null}={}){
+ const arm=(armLength(frames,'R')+armLength(frames,'L'))/2,frameOf=cutFrame(neutral),F=weapon.fields.length,L=weapon.length;
+ const col=(i,k)=>weapon.data[i*F+weapon.fields.indexOf(k)];
+ if(weapon.data.length!==frames.length*F)throw Error('Оружие не совпадает с числом кадров клипа');
+ let rows=frames.map((p,i)=>{
+  const f=frameOf(p),a=['ax','ay','az'].map(k=>col(i,k)),d=normalize(['dx','dy','dz'].map(k=>col(i,k)));
+  const held=['gR','gL'].map(k=>col(i,k)).filter(v=>v>=0),u=held.reduce((x,y)=>x+y,0)/held.length;
+  const hands=add(a,scale(d,u*L)),axis=dirToTrunk(f,d),g=scale(toTrunk(f,hands),1/arm);
+  const sh=p.shoulderR,line=sub(p.wristR,sh),pole=dirToTrunk(f,perp(sub(p.elbowR,sh),normalize(line)));
+  const two=held.length>1,wrists=scale(toTrunk(f,two?mid(p.wristR,p.wristL):p.wristR),1/arm);
+  return[...add(g,scale(axis,two?shift:0)),...axis,...pole,...wrists];
+ });
+ rows=smoothed(rows,r).map(row=>{const a=normalize(row.slice(3,6)),pl=row.slice(6,9),n=length(pl)||1;return[...row.slice(0,3),...a,...pl.map(v=>v/n),...row.slice(9)];});
+ return{action:'strike',fields:['gx','gy','gz','ax','ay','az','px','py','pz','wx','wy','wz'],data:rows.flat().map(v=>+v.toFixed(4))};
+}
+
 // Weight of the weapon. The blade model above is where the fighter wants the
 // weapon; the hands can only turn it as hard as they can push. The weapon is
 // a rigid body turning about the middle of the hands (pivot), with its mass
