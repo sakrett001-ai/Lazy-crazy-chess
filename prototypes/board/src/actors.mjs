@@ -4,6 +4,7 @@ import {createLoadout} from '../../white-pawn/src/loadout.mjs';
 import {deterministicClip} from '../../white-pawn/src/camera-rig.mjs';
 import {createBodyRig} from './motion.mjs';
 import {createMocapDriver} from './mocap/apply.mjs';
+import {createFootLock} from './mocap/footlock.mjs';
 import {sampleClip} from './mocap/format.mjs';
 
 // Faction finishes on the one shared pawn model. White keeps the workshop
@@ -66,6 +67,7 @@ export function createPawnFactory({gltf}){
   loadout.apply({});
   const rig=createBodyRig({bones});
   const mocap=createMocapDriver({bones,holder});
+  const feet=createFootLock({bones,holder,retarget:mocap.retarget});
   const samplers=Object.fromEntries(gltf.animations.map((clip,index)=>[clip.name,deterministicClip(model,gltf.animations,index)]));
   const place=placement(holder),fade=fader(holder);
   let pose={action:'rest',time:0};
@@ -82,7 +84,12 @@ export function createPawnFactory({gltf}){
    // A clip at full weight owns the legs and trunk, the thrust's body layer included.
    const clipBody=!!motion&&(motion.blend||[motion]).some(m=>m?.clip&&(m.weight??1)>=1);
    holder.updateMatrixWorld(true);rig.apply(layer);loadout.poseAt(action,time,{body:!clipBody,...(motion?.arms||{})});
-   place.set(saved);pose={action,time,layered:!!layer,motion:(motion?.blend||[motion]).filter(m=>m?.clip).map(m=>m.clip.name).join('+')||null};
+   place.set(saved);
+   // motion.feet (the board's clock): the clip's feet are held where they
+   // stand (mocap/footlock.mjs) while the clip owns the legs on its feet.
+   // A pause in the poses or a jump in place starts the hold over.
+   if(motion?.feet!=null&&clipBody&&!saved.fall&&!saved.lift)feet.apply(motion.feet);
+   pose={action,time,layered:!!layer,motion:(motion?.blend||[motion]).filter(m=>m?.clip).map(m=>m.clip.name).join('+')||null};
   }
   // Spear tip and shield face in the model frame for one pose (metres);
   // motion as in solve, for a pose from a clip.
@@ -126,7 +133,7 @@ export function createPawnFactory({gltf}){
   }
   // Bone positions in the model frame for the current pose.
   function points(names){holder.updateMatrixWorld(true);const inverse=holder.matrixWorld.clone().invert();const norm=x=>String(x).replace(/[._\-\s]/g,'').toLowerCase(),by=new Map(Object.entries(bones).map(([k,b])=>[norm(k),b]));return Object.fromEntries(names.map(n=>[n,by.get(norm(n))?by.get(norm(n)).getWorldPosition(new THREE.Vector3()).applyMatrix4(inverse).toArray().map(v=>+v.toFixed(3)):null]));}
-  return{id,kind:'pawn',color,object:holder,pose:solve,equip:settings=>loadout.apply(settings),loadout:()=>loadout.summary(),biomechanics:()=>loadout.biomechanics(),mocap,points,rig,probe,shieldFront,shieldHit,measureWorld:()=>loadout.measure(),place:place.set,placement:place.get,fade,current:()=>({...pose}),dispose(){holder.removeFromParent();}};
+  return{id,kind:'pawn',color,object:holder,pose:solve,equip:settings=>loadout.apply(settings),loadout:()=>loadout.summary(),biomechanics:()=>loadout.biomechanics(),mocap,feet,points,rig,probe,shieldFront,shieldHit,measureWorld:()=>loadout.measure(),place:place.set,placement:place.get,fade,current:()=>({...pose}),dispose(){holder.removeFromParent();}};
  };
 }
 

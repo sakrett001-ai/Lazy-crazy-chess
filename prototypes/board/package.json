@@ -13,10 +13,11 @@
     "verify:capture": "node scripts/verify-capture.mjs",
     "test:take": "cd tools/motionbricks && python3 -m unittest test_take.py",
     "capture:blender": "python3 tools/blender/pawn_capture.py",
-    "test:videomocap": "cd tools/videomocap && python3 -m unittest test_clean.py test_pair.py",
+    "test:videomocap": "cd tools/videomocap && python3 -m unittest test_clean.py test_pair.py test_footwork.py",
     "preview:video": "node scripts/preview-video-motion.mjs",
     "build:strikes": "node scripts/build-strikes.mjs",
-    "verify:strikes": "node scripts/verify-strikes.mjs"
+    "verify:strikes": "node scripts/verify-strikes.mjs",
+    "verify:smooth": "node scripts/verify-smooth.mjs"
   },
   "dependencies": {
     "chess.js": "1.4.0"

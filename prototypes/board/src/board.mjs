@@ -10,7 +10,7 @@ import {createLandscape} from './landscape.mjs';
 import {readMotionSource} from './mocap/library.mjs';
 import {sampleAlong,sampleClip,sampleArms,scaleLayer,centerPoints,turnHead} from './mocap/format.mjs';
 import {rotateY} from './mocap/math.mjs';
-import {exchangePairs,exchangeLayout,exchangeAt,exchangeArms,cyclePose,travelAt,trunkLean,levelSpear,shieldAt,SHIELD_WINDOW,CROSSFADE} from './mocap/exchange.mjs';
+import {exchangePairs,exchangeLayout,exchangeAt,exchangeArms,cyclePose,bodyMotion,travelAt,trunkLean,levelSpear,shieldAt,SHIELD_WINDOW,CROSSFADE} from './mocap/exchange.mjs';
 import {loadoutPhases} from '../../white-pawn/src/loadout.mjs';
 
 // One square is 2.6 m. A 1.8 m soldier with a tower shield and a 2.4 m
@@ -154,7 +154,7 @@ async function init(bytes){
   let yaw=yaws.get(piece.id);const diff=wrapAngle(desired-yaw),step=3.2*dt;
   yaw=Math.abs(diff)<=step?desired:yaw+Math.sign(diff)*step;yaws.set(piece.id,yaw);
   if(ex){const w=motion.weight,[ox,oz]=rotate([ex.offset.x*w,ex.offset.z*w],line);actor.place({x:x+ox,z:z+oz,yaw});
-   actor.pose(ex.arms.action,ex.arms.time,null,{clip:ex.clip,points:turnHead(ex.points,wrapAngle(line-yaw)),weight:w,arms:spearArms(ex.arms,ex.points,ex.clip,ex.k,ex.local)});return;}
+   actor.pose(ex.arms.action,ex.arms.time,null,{...bodyMotion(ex,w,p=>turnHead(p,wrapAngle(line-yaw)),spearArms(ex.arms,ex.points,ex.clip,ex.k,ex.local)),feet:clock});return;}
   actor.place({x,z,yaw});
   if(actor.kind!=='pawn')return;
   // Calm figures are re-posed less often; engaged ones every frame.
@@ -263,6 +263,7 @@ async function init(bytes){
  // away from the shield and stops a hand's depth inside the near surface of
  // the trunk (DEPTH), not through it.
  const TRUNK_HALF=.15,OPEN_SIDE=.1,DEPTH=.08,FULL_REACH=1.95,PRESS_MAX=1.6,CLOSEST=1.25;
+ const WAY_IN=[...Array(12)].map((_,i)=>+(.25-i*.02).toFixed(3)); // s before the reach, .25 … .03
  let aimProbe=null;const blows=new Map();
  function measureBlow(pair,k){
   const key=`${pair.attack.name}|${k.toFixed(4)}`;if(blows.has(key))return blows.get(key);
@@ -290,12 +291,18 @@ async function init(bytes){
   // measured too.
   const struck=[.02,.04,.06,.08,.1,.12,.19,.26,.33,.4,.5,.6].map(d=>{const arms=exchangeArms(B,r),armsA=exchangeArms(A,r+d,{stop:FULL_REACH}),{tip,grip}=P.probe(armsA.action,armsA.time,null,pose(A,armsA,r+d));
    return{d,shaft:[grip,tip],dS:travelAt(A,r+d).forward-travelAt(A,r).forward,yawScale:1-smooth(d,.25,.95),poses:[{arms,motion:{...pose(B,arms,r),weight:1-smooth(d,...STRUCK_LET)},layer:victimHitLayer(d,[0,-1])}]};});
-  // The way in, a tenth and a twentieth of a second before the reach: the
+  // The way in, from a fifth of a second before the reach on: the
   // thrust's own shaft (the attacker's trunk still turning onto it, the spear
   // not yet out) against the partner then, the two that much further apart.
   const pairTravel=t=>travelAt(A,t).forward+travelAt(B,t).forward;
-  const approach=[.1,.05].map(d=>{const armsA=exchangeArms(A,r-d,{stop:FULL_REACH}),{tip,grip}=P.probe(armsA.action,armsA.time,null,pose(A,armsA,r-d)),arms=exchangeArms(B,r-d);
-   return{shaft:[grip,tip],dS:pairTravel(r)-pairTravel(r-d),poses:[{arms,motion:pose(B,arms,r-d)}]};});
+  // The tip sweeps round to its line on the way in (up to a quarter metre a
+  // frame across the shield's edge), so the way in is sampled finer than a
+  // frame: a shaft clear at every other frame can still cross the edge.
+  // The arms on the way in follow the thrust's stop (exchangeArms), so the
+  // shaft is measured for the stop the aim takes, as the board will pose it.
+  const ways=new Map();
+  const approach=(stop=FULL_REACH)=>{const key=stop.toFixed(3);if(!ways.has(key))ways.set(key,WAY_IN.map(d=>{const armsA=exchangeArms(A,r-d,{stop}),{tip,grip}=P.probe(armsA.action,armsA.time,null,pose(A,armsA,r-d)),arms=exchangeArms(B,r-d);
+   return{shaft:[grip,tip],dS:pairTravel(r)-pairTravel(r-d),poses:[{arms,motion:pose(B,arms,r-d)}]};}));return ways.get(key);};
   const m={shield,shields,axis,sweep,full,travel,k,partner,struck,approach};blows.set(key,m);return m;
  }
  // Where the thrust goes at a gap (pelvis to pelvis at the reach): the aim
@@ -335,7 +342,7 @@ async function init(bytes){
   let first=null;
   for(let swing=0;swing<=SWING_MAX+1e-9;swing+=SWING_STEP)for(const w of swing?[swing,-swing]:[0])
    for(const s of [side,-side])for(const o of OPENINGS){const a=blowAim(m,gap,true,scale,s*o);
-    if(!shaftClear(m,gap,a,w)||!m.approach.every(q=>shaftClear(m,gap+scale*m.k*q.dS,a,w,q.poses,q.shaft)))continue;
+    if(!shaftClear(m,gap,a,w)||!m.approach(a.stop).every(q=>shaftClear(m,gap+scale*m.k*q.dS,a,w,q.poses,q.shaft)))continue;
     const g=struckSwing(m,gap,a,w,scale),found={...a,open:s*o,swing:w,struckSwing:g};if(g.clear)return found;first??=found;}
   return first||{...blowAim(m,gap,true,scale),open:null,swing:0,struckSwing:{swing:0,lift:0,reach:0,raise:0}};
  }
@@ -450,7 +457,7 @@ async function init(bytes){
   // The lead-in before the decisive cycle: what is left of the cycle under
   // way, or one whole cycle the defender opens.
   const T=going?L-(c0-Math.floor(c0/L)*L):L,fadeIn=t=>going?1:smooth(t,0,.4);
-  const lead=going?(role=>t=>{const e=exchangeAt(exchange,role,c0+t,k,first.scale);return{clip:e.clip,local:e.local,points:e.points,offset:e.offset};})
+  const lead=going?(role=>t=>{const e=exchangeAt(exchange,role,c0+t,k,first.scale);return{clip:e.clip,local:e.local,points:e.points,cur:e.cur,offset:e.offset,fade:e.fade};})
    :(clip=>t=>({clip,local:t,...cyclePose(clip,t,k,first.scale)}));
   const leadA=first?lead(going?sa.role:exchange.defend):null,leadV=first?lead(going?sv.role:exchange.attack):null;
   const blow=decisive.attack.events.strike,hit=T+blow.reach;
@@ -463,7 +470,7 @@ async function init(bytes){
    if(!first||u>=CROSSFADE)return{clip:lastClip,local:u,layout:last,...cur};
    const end=leadOf(T-1e-6),tail=cyclePose(end.clip,end.local+u,k,first.scale),w=smooth(u,0,CROSSFADE),points={};
    for(const n of Object.keys(cur.points))points[n]=cur.points[n].map((x,i)=>tail.points[n][i]+(x-tail.points[n][i])*w);
-   return{clip:lastClip,local:u,layout:last,points,offset:{x:tail.offset.x+(cur.offset.x-tail.offset.x)*w,z:tail.offset.z+(cur.offset.z-tail.offset.z)*w},tail:{clip:end.clip,local:end.local+u}};
+   return{clip:lastClip,local:u,layout:last,points,cur:cur.points,fade:{clip:end.clip,points:tail.points,u:w},offset:{x:tail.offset.x+(cur.offset.x-tail.offset.x)*w,z:tail.offset.z+(cur.offset.z-tail.offset.z)*w},tail:{clip:end.clip,local:end.local+u}};
   };
   // A thrust into an opening is laid on its line before it goes out: the
   // decisive aim is taken while the spear is drawn back, not on the way in.
@@ -490,7 +497,7 @@ async function init(bytes){
     attacker.place({...(stand||o),yaw});yaws.set(attackerPiece.id,yaw);
     // Back to guard, the shield comes over to the walk's carry.
     const fitted=fitArms(arms,b);if(fitted?.shield)fitted.shield.raise=Math.max(fitted.shield.raise,measureWalkRaise()*smooth(t,settle,walkAt));
-    attacker.pose(arms.action,arms.time,null,{clip:b.clip,points:turnHead(b.points,wrapAngle(line-yaw)),weight:w,arms:fitted});
+    attacker.pose(arms.action,arms.time,null,{...bodyMotion(b,w,p=>turnHead(p,wrapAngle(line-yaw)),fitted),feet:clock});
    }else{
     if(!walk){const from=stand?[stand.x,stand.z]:a,L=Math.hypot(end[0]-from[0],end[1]-from[1]);walk={from,L,dir:[(end[0]-from[0])/L,(end[1]-from[1])/L],T:1.1+.7*D/SQUARE};}
     const m=travel(walk.L,t-walkAt,0,walk.T),yaw=line;
@@ -507,7 +514,7 @@ async function init(bytes){
     const yaw=lerpAngle(victimYaw,back+aimOf(b),smooth(t,0,.4)),o=at(v,b.offset,back,f),fallU=clamp((t-hit-.3)/.6,0,1);
     victim.place({...o,yaw,fall:1.47*fallU*fallU,fallHeading:line});
     const arms=armsOf(b);
-    victim.pose(arms.action,arms.time,tau>0?victimHitLayer(tau,rotate(dir,-yaw)):null,{clip:b.clip,points:turnHead(b.points,wrapAngle(back-yaw)),weight:w,arms:fitArms(arms,b,Math.max(0,tau))});
+    victim.pose(arms.action,arms.time,tau>0?victimHitLayer(tau,rotate(dir,-yaw)):null,{...bodyMotion(b,w,p=>turnHead(p,wrapAngle(back-yaw)),fitArms(arms,b,Math.max(0,tau))),feet:clock});
     victim.fade(1-smooth(t,hit+1.1,gone));
    }
    $('#phase').textContent=t<T?(going?'обмен ударами':'обмен: защитник атакует'):t<hit?'обмен: решающий удар':t<gone?'защитник проиграл схватку':'занятие клетки';

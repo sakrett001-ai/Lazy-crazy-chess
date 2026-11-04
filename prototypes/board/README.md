@@ -56,6 +56,7 @@ npm run verify:lab          # лаборатория движений
 npm run verify:strikes      # удары с записи (нужен tools/strikes/out, см. docs/STRIKES.md)
 npm run verify:capture      # взятие из клипов Blender: попадание, суставы, стопы
 npm run verify:duel         # обмен ударами с записи и взятие как выигранная схватка
+npm run verify:smooth       # плавность того же боя: дрожь суставов, стопы стоят или шагают, не скользят
 npm run capture:blender     # пересобрать клип взятия (нужен pip install bpy)
 npm run test:videomocap     # очистка движения с видео на синтетике (numpy)
 npm run preview:video -- take.motion.json --out review/take   # клип с видео на пешке, кадры и проверки

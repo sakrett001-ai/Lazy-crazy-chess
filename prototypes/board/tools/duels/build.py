@@ -20,6 +20,7 @@ import numpy as np
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, '..', 'videomocap'))
 import clean as C  # noqa: E402
+import footwork as W  # noqa: E402
 from motion import POINTS, key_points, neutral_frame  # noqa: E402
 
 # Ролик 516: группа ВКонтакте @hemafansing, папка владельца «Расфехтовки»,
@@ -214,7 +215,7 @@ def build(pair):
     full = {n: np.asarray(pair['people'][n]['frames'], float) for n in ('A', 'B')}
     # Only the bout's own frames: the track's first frames (the person found
     # by the detector) may jump by metres and would drag the whole path.
-    lo, hi, shift, twist, swaps, knees = min(c['frames'][0] for c in CYCLES), max(c['frames'][1] for c in CYCLES) + 1, {}, {}, {}, {}
+    lo, hi, shift, twist, swaps, knees, feet, plants = min(c['frames'][0] for c in CYCLES), max(c['frames'][1] for c in CYCLES) + 1, {}, {}, {}, {}, {}, {}
     for n in ('A', 'B'):
         full[n] = full[n].copy()
         Y, swaps[n] = steady_legs(full[n][lo:hi])
@@ -225,6 +226,13 @@ def build(pair):
         knees[n] = (kn, kmost)
         full[n][lo:hi] = Y
         full[n][lo:hi], shift[n] = steady_root(full[n][lo:hi], fps)
+        # Steady body and planted feet (footwork.py): without them the
+        # figure trembles and its feet shuffle over the floor.
+        full[n][lo:hi], stands, feet[n] = W.steady(full[n][lo:hi], fps)
+        # The legs re-solved to the planted feet bend in the knees' smoothed
+        # plane; it is kept within the hip's rotation again.
+        full[n][lo:hi], _, _ = steady_knees(full[n][lo:hi])
+        plants[n] = {s: [(lo + a, lo + b) for a, b in v] for s, v in stands.items()}
     neutral = {}
     for n, X in full.items():
         i = neutral_frame(X, fps)
@@ -242,7 +250,10 @@ def build(pair):
         for who, side in ((attacker, 'attack'), (defender, 'defend')):
             X = own_frame(full[who][a:b + 1], +1 if who == 'A' else -1)
             pts = key_points(X)
-            events = {'strike': strike, 'gap': gap}
+            # Stands of each foot within the cycle, seconds: the board keeps
+            # these feet where they stand while it fits the approach.
+            own = {s: [[sec(max(t0, a)), sec(min(t1, b))] for t0, t1 in plants[who][s] if t1 >= a and t0 <= b and min(t1, b) > max(t0, a)] for s in C.SIDES}
+            events = {'strike': strike, 'gap': gap, 'plants': own}
             if parry:
                 events['parry'] = {'at': sec(parry['reach']), 'start': sec(parry['start'])}
             clips.append({'name': f"{cyc['name']}.{side}", 'label': f"{cyc['label']}: {'атакующий' if side == 'attack' else 'защитник'}",
@@ -258,6 +269,9 @@ def build(pair):
            'legs': {'swapRatio': LEG_SWAP, 'swappedAt': swaps},
            'knees': {'hipRotationDegrees': HIP_ROT, 'correctedLegFrames': {n: v[0] for n, v in knees.items()},
                      'maxCorrectionDegrees': {n: round(v[1], 1) for n, v in knees.items()}},
+           'feet': {'bodySigmaFrames': W.BODY_SIGMA, 'pelvisSigmaFrames': W.PELVIS_SIGMA, 'plantCost': W.PLANT_COST, 'plantMinSeconds': W.PLANT_MIN,
+                    'steps': {n: v['steps'] for n, v in feet.items()}, 'maxDropM': {n: v['maxDropM'] for n, v in feet.items()},
+                    'standsMoved': {n: v['standsMoved'] for n, v in feet.items()}, 'shortFrames': {n: v['shortFrames'] for n, v in feet.items()}},
            'twist': {'maxDegrees': TWIST_MAX, 'rejectDegrees': TWIST_REJECT, 'sigmaFrames': TWIST_SIGMA,
                      'rejectedFrames': {n: v[0] for n, v in twist.items()}, 'maxCorrectionDegrees': {n: round(v[1], 1) for n, v in twist.items()}}}
     return {'format': 'lazy-chess.motion', 'version': 1, 'source': src, 'points': POINTS, 'neutral': clips[0]['neutral'], 'clips': clips}

@@ -17,3 +17,6 @@ prototypes/board/review/capture-frames-*/
 # phase stills of verify-capture.mjs are rebuilt on every run; three are kept in git
 prototypes/board/review/capture-clip-*.png
 prototypes/board/tools/strikes/out/
+prototypes/board/review/duel-frames/
+# joint track of verify-smooth.mjs, rebuilt on every run
+prototypes/board/review/duel-track.json

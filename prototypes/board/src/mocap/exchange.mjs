@@ -54,7 +54,47 @@ export function exchangeLayout(pair,k,distance,given=null){
 // walk off the line of the fight.
 export function cyclePose(clip,t,k,scale){
  const p=sampleClip(clip,t),{forward}=travelAt(clip,t);
- return{points:holdThrust(clip,t,centerPoints(p)),offset:{x:0,z:forward*k*scale}};
+ return{points:plantFeet(clip,t,scale,holdThrust(clip,t,centerPoints(p))),offset:{x:0,z:forward*k*scale}};
+}
+
+// The figure's pelvis does not travel as the recorded one: the approach is
+// scaled to the squares and the sideways drift is dropped (cyclePose). A
+// foot standing in the recording (events.plants, tools/videomocap/footwork.py)
+// would then slide over the board by the difference. While it stands, it is
+// moved back by that difference since the stand began, so it keeps its place
+// on the board; between stands the correction runs out smoothly, so a step
+// lands where the recording put it. The knee follows by two-bone IK in the
+// plane of the recorded knee.
+const FOOT_POINTS=s=>['ankle'+s,'heel'+s,'toe'+s];
+function plantShift(clip,t,scale){
+ const plants=clip.events?.plants;if(!plants)return null;
+ const gap=u=>{const {forward,side}=travelAt(clip,u);return[side,(1-scale)*forward];};
+ const out={};
+ for(const s of ['L','R']){const list=plants[s]||[];let d=[0,0];
+  for(let i=0;i<list.length;i++){const [a,b]=list[i];
+   if(t<a){if(i>0){const [pa,pb]=list[i-1],ga=gap(pa),gb=gap(pb),w=1-smooth(t,pb,a);d=[(gb[0]-ga[0])*w,(gb[1]-ga[1])*w];}break;}
+   if(t<=b){const ga=gap(a),gt=gap(t);d=[gt[0]-ga[0],gt[1]-ga[1]];break;}
+   if(i===list.length-1){const ga=gap(a),gb=gap(b);d=[gb[0]-ga[0],gb[1]-ga[1]];}}
+  out[s]=d;}
+ return out;
+}
+function plantFeet(clip,t,scale,points){
+ const shift=plantShift(clip,t,scale);if(!shift)return points;
+ const out={...points};
+ for(const s of ['L','R']){const [dx,dz]=shift[s];if(Math.abs(dx)+Math.abs(dz)<1e-6)continue;
+  for(const n of FOOT_POINTS(s))if(points[n])out[n]=[points[n][0]+dx,points[n][1],points[n][2]+dz];
+  const H=points['hip'+s],K=points['knee'+s],A=points['ankle'+s];if(!H||!K||!A)continue;
+  out['knee'+s]=kneeFor(H,K,A,out['ankle'+s]);}
+ return out;
+}
+// Knee for a hip and a moved ankle, thigh and shin keeping their lengths,
+// bending in the plane of the given knee.
+function kneeFor(H,K,A,goal){
+ const sub=(u,v)=>u.map((x,i)=>x-v[i]),dot=(u,v)=>u[0]*v[0]+u[1]*v[1]+u[2]*v[2],len=u=>Math.hypot(...u);
+ const l1=len(sub(K,H)),l2=len(sub(A,K)),d=sub(goal,H),dist=clamp(len(d),Math.abs(l1-l2)+1e-4,l1+l2-1e-4),axis=d.map(v=>v/(len(d)||1));
+ let pole=sub(K,H);pole=sub(pole,axis.map(v=>v*dot(pole,axis)));const n=len(pole);if(n<1e-6)return K;pole=pole.map(v=>v/n);
+ const c=clamp((l1*l1+dist*dist-l2*l2)/(2*l1*dist),-1,1),h=Math.sqrt(1-c*c);
+ return H.map((x,i)=>x+axis[i]*l1*c+pole[i]*l1*h);
 }
 
 // The spear hangs from the trunk (loadout.mjs), and two metres of it turn a
@@ -88,8 +128,22 @@ function holdThrust(clip,t,points){
   const x=v[0]-o[0],z=v[2]-o[2];out[name]=[o[0]+x*c+z*n,v[1],o[2]-x*n+z*c];}
  return out;
 }
-const blendPose=(a,b,w)=>{if(w<=0)return a;if(w>=1)return b;const points={};for(const n of Object.keys(b.points))points[n]=lerp(a.points[n],b.points[n],w);
- return{points,offset:{x:a.offset.x+(b.offset.x-a.offset.x)*w,z:a.offset.z+(b.offset.z-a.offset.z)*w}};};
+// Two cycles' bodies blended. The points blend for the arms' measures; the
+// body itself is blended pose against pose (fade, for bodyMotion): each clip
+// is retargeted with its own fighter's calibration (ground, neutral stance),
+// and a blend of points under one of them lifts the figure by the other's
+// foot height at the swap of roles.
+const blendPose=(a,b,w,clip)=>{if(w<=0)return{...a,fade:{clip,points:a.points,u:0}};if(w>=1)return b;const points={};for(const n of Object.keys(b.points))points[n]=lerp(a.points[n],b.points[n],w);
+ return{points,offset:{x:a.offset.x+(b.offset.x-a.offset.x)*w,z:a.offset.z+(b.offset.z-a.offset.z)*w},fade:{clip,points:a.points,u:w}};};
+// The motion for the pawn's pose (actors.mjs solve) of a body from
+// exchangeAt or the capture: the clip's own pose, or during a crossfade the
+// previous clip's pose blended into this one's. weight: the recording's share;
+// look(points): the head turned to the partner.
+export function bodyMotion(body,weight,look=p=>p,arms){
+ const own={clip:body.clip,points:look(body.cur||body.points),weight};
+ if(!body.fade)return{...own,arms};
+ return{blend:[{clip:body.fade.clip,points:look(body.fade.points),weight},{...own,weight:weight*body.fade.u}],arms};
+}
 
 // The endless exchange: which side a figure plays now and its body.
 // role is the board's fencing role (behavior.mjs): lead attacks in even
@@ -102,7 +156,7 @@ export function exchangeAt(pair,role,clock,k,scale){
  const side=sideOf(n),clip=pair[side],cur=cyclePose(clip,local,k,scale);
  if(local>=CROSSFADE)return{side,clip,local,cycle:n,...cur};
  const prev=pair[sideOf(n-1)],tail=cyclePose(prev,local+L,k,scale);
- return{side,clip,local,cycle:n,...blendPose(tail,cur,smooth(local,0,CROSSFADE))};
+ return{side,clip,local,cycle:n,cur:cur.points,...blendPose(tail,cur,smooth(local,0,CROSSFADE),prev)};
 }
 
 // Piecewise eased keys [[t,value],...]: the value at t, held at the ends.

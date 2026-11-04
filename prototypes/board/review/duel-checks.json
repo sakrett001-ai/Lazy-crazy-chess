@@ -26,7 +26,7 @@
       "name": "fencing: neither spear goes into the other body (spear ≥ 17 cm from the trunk axis)",
       "ok": true,
       "detail": {
-        "closestM": 0.866
+        "closestM": 0.904
       }
     },
     {
@@ -38,7 +38,7 @@
       "name": "fencing: the two never walk into each other (pelvises ≥ 1.2 m apart)",
       "ok": true,
       "detail": {
-        "closestM": 3.13
+        "closestM": 2.93
       }
     },
     {
@@ -46,12 +46,12 @@
       "ok": true,
       "detail": [
         {
-          "e4": 2.25,
-          "d5": 1.45
+          "e4": 2.12,
+          "d5": 1.2
         },
         {
-          "e4": 1.45,
-          "d5": 2.25
+          "e4": 1.2,
+          "d5": 2.12
         }
       ]
     },
@@ -59,7 +59,7 @@
       "name": "fencing: knees within 0–140° and bent forwards",
       "ok": true,
       "detail": {
-        "maxFlexDeg": 82.4,
+        "maxFlexDeg": 93.7,
         "first": []
       }
     },
@@ -74,7 +74,7 @@
     {
       "name": "fencing: no jumps (pelvis < 10 cm per frame)",
       "ok": true,
-      "detail": 0.045
+      "detail": 0.055
     },
     {
       "name": "e4 takes d5 is accepted by the rules",
@@ -92,7 +92,7 @@
       "name": "the decisive blow lands: the spear reaches the defender body (≤ 25 cm from its trunk axis)",
       "ok": true,
       "detail": {
-        "atHitM": 0.165,
+        "atHitM": 0.124,
         "time": 3.833
       }
     },
@@ -100,14 +100,14 @@
       "name": "the blow does not run the spear through (≥ 5 cm from the trunk axis)",
       "ok": true,
       "detail": {
-        "atHitM": 0.165
+        "atHitM": 0.124
       }
     },
     {
       "name": "before the decisive blow the defender attacks and does not wound (its spear ≥ 17 cm from the attacker body)",
       "ok": true,
       "detail": {
-        "closestM": 1.559
+        "closestM": 1.598
       }
     },
     {
@@ -118,13 +118,13 @@
     {
       "name": "capture: the attacker moves without jumps (< 10 cm per frame)",
       "ok": true,
-      "detail": 0.063
+      "detail": 0.066
     },
     {
       "name": "capture: knees within 0–140° and bent forwards",
       "ok": true,
       "detail": {
-        "maxFlexDeg": 82.4,
+        "maxFlexDeg": 97.6,
         "first": []
       }
     },
