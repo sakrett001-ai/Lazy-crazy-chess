@@ -46,11 +46,15 @@ for(const s of catalog.storyboard||[]){
  const weapon={...clip.weapon,data:pad(wrows).flat()};
  const spec=RUNTIME_WEAPONS[s.loadout?.weaponType],spacing=spec?-spec.secondS:.13;
  const arms=weaponTrack(frames,weapon,{shift:spacing/2/ARM_M,neutral});
- const strike={...s,phases:{windup:0,top:round(before/clip.fps),blow:round((before+clip.frames-1)/clip.fps),followThrough:round((frames.length-1)/clip.fps)}};
- delete strike.motion;delete strike.clip;delete strike.out;
+ // The blow lands on the clip's last frame, or at `blow` seconds into the clip
+ // when the clip goes on past it (a step after the cut, the way back to guard).
+ const hit=s.blow==null?clip.frames-1:Math.round(s.blow*clip.fps);
+ if(hit<0||hit>clip.frames-1)throw Error(`${s.id}: blow ${s.blow} с вне клипа (${((clip.frames-1)/clip.fps).toFixed(2)} с)`);
+ const strike={...s,phases:{windup:0,top:round(before/clip.fps),blow:round((before+hit)/clip.fps),followThrough:round((frames.length-1)/clip.fps)}};
+ delete strike.motion;delete strike.clip;delete strike.out;delete strike.blow;
  const label=`${s.figure}: ${s.label}`;
  const file=buildMotionFile({neutral,source:{...src.source,note:src.source.note+' Оружие поднято вместе с телом; дорожка рук — weaponTrack (src/mocap/strike.mjs).'},
-  clips:[{name:s.id,label,role:'strike',fps:clip.fps,frames,arms}]});
+  clips:[{name:s.id,label,role:'strike',fps:clip.fps,frames,arms,...(clip.forward?{forward:clip.forward}:{})}]});
  file.strikes=[strike];
  const out=path.resolve(here,s.out);await mkdir(path.dirname(out),{recursive:true});await writeFile(out,JSON.stringify(file));
  console.log(`${s.id}: ${clip.name}, ${clip.frames} кадров раскадровки + стойка ${s.hold?.[0]??0} с и конец ${s.hold?.[1]??0} с, ${(frames.length/clip.fps).toFixed(2)} с, руки — по записанному оружию → ${path.relative(process.cwd(),out)}`);
