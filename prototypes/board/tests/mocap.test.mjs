@@ -379,3 +379,34 @@ test('Zornhau Ort: the point ends in line after the step, and the fighter comes 
  const built=parseMotionFile(await readFile(new URL('../motions/bishop-zornhau-ort.motion.json',import.meta.url),'utf8')),ph=built.strikes[0].phases;
  assert.ok(Math.abs(ph.blow-ph.top-1.08)<.02&&ph.blow<ph.followThrough,'the blow lands at the end of the step, not at the end of the clip: '+JSON.stringify(ph));
 });
+
+test('Zornhau Ort, then take it down: hands up over the head with the point down, a step, the cut from above, and back to the same guard',async()=>{
+ const {readFile}=await import('node:fs/promises');
+ const {parseMotionFile}=await import('../src/mocap/format.mjs');
+ const src=JSON.parse(await readFile(new URL('../tools/strikes/storyboard/feder-pell-zornhau-take-down.lazy-chess.json',import.meta.url),'utf8')),c=src.clips[0],P=src.points,J=P.length;
+ const at=(f,n)=>{const j=P.indexOf(n);return c.data.slice((f*J+j)*3,(f*J+j)*3+3);};
+ const W=c.weapon,F=W.fields.length,dir=f=>W.data.slice(f*F+3,f*F+6),fr=t=>Math.round(t*c.fps);
+ const dist=(a,b)=>Math.hypot(a[0]-b[0],a[1]-b[1],a[2]-b[2]),deg=(a,b)=>Math.acos(Math.min(1,a[0]*b[0]+a[1]*b[1]+a[2]*b[2]))*180/Math.PI;
+ const [fx,fz]=c.forward,last=c.frames-1;
+ // ten frames of the recording, 120 ms apart; the source names each one
+ assert.match(src.source.note+JSON.stringify(src.source),/Feder & Pell|federandpell/i);
+ assert.ok(dir(0)[1]>.5,'vom Tag: the blade up '+dir(0));
+ // he sees the point and lifts: hands go up over the head, the point turns down
+ const over=fr(2.52),cut=fr(3.12);
+ assert.ok(dir(over)[1]<-.5,'taken over to the other side point down '+dir(over));
+ assert.ok(at(over,'wristR')[1]>at(over,'head')[1]&&at(over,'wristL')[1]>at(over,'head')[1],'hands over the head');
+ // the right foot steps forward under the hands, then stands for the cut
+ assert.ok(dist(at(fr(1.8),'ankleR'),at(over,'ankleR'))>.8,'the right foot steps in');
+ assert.ok(dist(at(over,'ankleR'),at(cut,'ankleR'))<.05&&dist(at(over,'ankleL'),at(cut,'ankleL'))<.05,'the feet stand through the cut');
+ // the cut from above lands forward, the blade near level
+ const d=dir(cut);
+ assert.ok(d[0]*fx+d[2]*fz>.8&&Math.abs(d[1])<.45,'the cut goes forward '+d);
+ // and the fencer comes back to where he started, within a centimetre
+ assert.ok(deg(dir(0),dir(last))<5,'back to the same blade line');
+ for(const n of ['wristR','wristL','ankleL','ankleR','pelvis'])assert.ok(dist(at(0,n),at(last,n))<.02,`${n} back where it started`);
+ // one blow is counted, the take-down cut: its own windup starts after the bind
+ const built=parseMotionFile(await readFile(new URL('../motions/bishop-zornhau-take-down.motion.json',import.meta.url),'utf8')),ph=built.strikes[0].phases;
+ assert.equal(built.strikes[0].loadout.weaponType,'bastard');
+ assert.ok(ph.windup<ph.top&&ph.top<ph.blow&&ph.blow<ph.followThrough,JSON.stringify(ph));
+ assert.ok(Math.abs(ph.top-ph.windup-1.08)<.02&&Math.abs(ph.blow-ph.top-.6)<.02,'windup from the bind, top when the blade is over: '+JSON.stringify(ph));
+});
