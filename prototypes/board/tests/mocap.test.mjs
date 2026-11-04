@@ -358,3 +358,24 @@ for(const name of ['talhoffer-cut','talhoffer-thrust'])test(`a storyboard strike
  assert.equal(built.strikes[0].loadout.weaponType,'bastard');
  assert.ok(built.clips[0].frames>c.frames&&built.clips[0].arms.fields.includes('gx'));
 });
+
+test('Zornhau Ort: the point ends in line after the step, and the fighter comes back to the same guard without a new wind-up',async()=>{
+ const {readFile}=await import('node:fs/promises');
+ const {parseMotionFile}=await import('../src/mocap/format.mjs');
+ const src=JSON.parse(await readFile(new URL('../tools/strikes/storyboard/feder-pell-zornhau-ort.lazy-chess.json',import.meta.url),'utf8')),c=src.clips[0],P=src.points,J=P.length;
+ const at=(f,n)=>{const j=P.indexOf(n);return c.data.slice((f*J+j)*3,(f*J+j)*3+3);};
+ const W=c.weapon,F=W.fields.length,dir=f=>W.data.slice(f*F+3,f*F+6);
+ const dist=(a,b)=>Math.hypot(a[0]-b[0],a[1]-b[1],a[2]-b[2]),deg=(a,b)=>Math.acos(Math.min(1,a[0]*b[0]+a[1]*b[1]+a[2]*b[2]))*180/Math.PI;
+ const hit=Math.round(1.08*c.fps),last=c.frames-1;
+ // vom Tag: the blade up over the shoulder; Ort: the point in line, the blade near level
+ assert.ok(dir(0)[1]>.5,'guard: the blade points up '+dir(0));
+ assert.ok(Math.abs(dir(hit)[1])<.45,'Ort: the blade near level '+dir(hit));
+ assert.ok(deg(dir(0),dir(hit))>60,'the blade turns down into the line');
+ // the passing step: the right foot goes from behind to in front
+ assert.ok(dist(at(0,'ankleR'),at(hit,'ankleR'))>.8,'the right foot steps through');
+ // the way back is the same guard: blade, fists and feet where they started
+ assert.ok(deg(dir(0),dir(last))<10,'back to the same blade line');
+ for(const n of ['wristR','wristL','ankleL','ankleR'])assert.ok(dist(at(0,n),at(last,n))<.08,`${n} back where it started`);
+ const built=parseMotionFile(await readFile(new URL('../motions/bishop-zornhau-ort.motion.json',import.meta.url),'utf8')),ph=built.strikes[0].phases;
+ assert.ok(Math.abs(ph.blow-ph.top-1.08)<.02&&ph.blow<ph.followThrough,'the blow lands at the end of the step, not at the end of the clip: '+JSON.stringify(ph));
+});
