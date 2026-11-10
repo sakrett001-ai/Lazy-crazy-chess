@@ -50,8 +50,14 @@ for(const s of catalog.storyboard||[]){
  // when the clip goes on past it (a step after the cut, the way back to guard).
  const hit=s.blow==null?clip.frames-1:Math.round(s.blow*clip.fps);
  if(hit<0||hit>clip.frames-1)throw Error(`${s.id}: blow ${s.blow} с вне клипа (${((clip.frames-1)/clip.fps).toFixed(2)} с)`);
- const strike={...s,phases:{windup:0,top:round(before/clip.fps),blow:round((before+hit)/clip.fps),followThrough:round((frames.length-1)/clip.fps)}};
- delete strike.motion;delete strike.clip;delete strike.out;delete strike.blow;
+ // A combination counts one blow; `windup` and `top` (seconds into the clip)
+ // say where that blow's own windup starts and peaks, so the moves before it
+ // (a first cut, a bind, a step) are not taken for its windup.
+ const at=(t,d)=>t==null?d:Math.round(t*clip.fps);
+ const from=at(s.windup,0),top=at(s.top,0);
+ if(!(from<=top&&top<=hit))throw Error(`${s.id}: замах ${s.windup} с, верх ${s.top} с и удар ${s.blow} с не по порядку`);
+ const strike={...s,phases:{windup:s.windup==null?0:round((before+from)/clip.fps),top:round((before+top)/clip.fps),blow:round((before+hit)/clip.fps),followThrough:round((frames.length-1)/clip.fps)}};
+ delete strike.motion;delete strike.clip;delete strike.out;delete strike.blow;delete strike.windup;delete strike.top;
  const label=`${s.figure}: ${s.label}`;
  const file=buildMotionFile({neutral,source:{...src.source,note:src.source.note+' Оружие поднято вместе с телом; дорожка рук — weaponTrack (src/mocap/strike.mjs).'},
   clips:[{name:s.id,label,role:'strike',fps:clip.fps,frames,arms,...(clip.forward?{forward:clip.forward}:{})}]});
