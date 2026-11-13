@@ -314,6 +314,20 @@ for variant in ('round','heater'):
  for original in shield_grip_parts:
   ob=duplicate(original,'SHIELD_'+variant+'_'+original.name.removeprefix('SHIELD_'));ob['equipmentSlot']='shield';ob['equipmentVariant']=variant
 
+# Seven trimmed quill feathers replace the strip of horsehair tubes on the crest.
+import plume
+for ob in [o for o in MODEL if o.name.startswith('HELMET_Horsehair')]:MODEL.remove(ob);bpy.data.objects.remove(ob)
+feather={'ivory':mat('plume.feather',(.78,.76,.70),0,.74),'teal':mat('plume.accent',(.02,.105,.125),0,.7)}
+barbs=normal_texture('feather-normal',plume.barb_height,128)
+for material in feather.values():
+ nodes=material.node_tree.nodes;links=material.node_tree.links;bsdf=nodes.get('Principled BSDF')
+ bsdf.inputs['Sheen Weight'].default_value=.25;bsdf.inputs['Sheen Tint'].default_value=tuple(min(1,c*1.6) for c in bsdf.inputs['Base Color'].default_value[:3])+(1,);material.use_backface_culling=False
+ uv=nodes.new('ShaderNodeUVMap');uv.uv_map='Surface metres'
+ tex=nodes.new('ShaderNodeTexImage');tex.image=barbs;tex.interpolation='Linear'
+ normal=nodes.new('ShaderNodeNormalMap');normal.inputs['Strength'].default_value=.6
+ links.new(uv.outputs['UV'],tex.inputs['Vector']);links.new(tex.outputs['Color'],normal.inputs['Color']);links.new(normal.outputs['Normal'],bsdf.inputs['Normal'])
+plume.build(mesh,tube,'head',feather)
+
 def classify(ob):
  if 'equipmentSlot' in ob:return ob['equipmentSlot'],ob.get('equipmentVariant','')
  if ob.name.startswith('ARMOR_'):return 'plate','plate'
@@ -390,6 +404,11 @@ for (slot,variant),parts in groups.items():
  ob=bpy.context.object;ob.name=slot.upper()+'_'+variant;ob['equipmentSlot']=slot;ob['equipmentVariant']=variant;ob['defaultVisible']=default_visible(slot,variant)
  merged.append(ob)
 
+# Padding fully under mail or plate is split off and hidden while that layer is worn.
+import layer_mask
+_masked,mask_report=layer_mask.apply(merged);merged.extend(_masked)
+(REVIEW/'layer-mask-build.json').write_text(json.dumps(mask_report,indent=2)+'\n')
+
 def gltf_vector(p):return [p.x,p.z,-p.y]
 for ob in merged:
  slot,variant=ob['equipmentSlot'],ob['equipmentVariant']
@@ -416,7 +435,7 @@ bpy.ops.wm.save_as_mainfile(filepath=str(OUT/'white-pawn.blend'),compress=True)
 def configure_render(kind='plate',build='regular',experience='recruit'):
  for ob in merged:
   slot=ob['equipmentSlot'];variant=ob['equipmentVariant']
-  ob.hide_render=not (slot in ('base','padding') or (slot=='plate' and kind=='plate') or (slot=='mail' and kind=='mail') or (slot in ('helmet','shield','weapon') and ob['defaultVisible']))
+  ob.hide_render=kind in ob.get('hiddenUnder','').split(',') or not (slot in ('base','padding') or (slot=='plate' and kind=='plate') or (slot=='mail' and kind=='mail') or (slot in ('helmet','shield','weapon') and ob['defaultVisible']))
   if ob.data.shape_keys:
    for k in ob.data.shape_keys.key_blocks:
     if k.name!='Basis':k.value=1 if k.name==build or k.name==experience else 0
@@ -461,7 +480,7 @@ for material in doc['materials']:
 jb=json.dumps(doc,separators=(',',':')).encode();jb+=b' '*((-len(jb))%4)
 raw=struct.pack('<III',0x46546c67,2,28+len(jb)+len(binary))+struct.pack('<II',len(jb),0x4e4f534a)+jb+struct.pack('<II',len(binary),0x004e4942)+binary
 (OUT/'white-pawn.glb').write_bytes(raw)
-info.update(version='0.3.1',glb_sha256=hashlib.sha256(raw).hexdigest(),source_commit=SOURCE,modular={'slots':sorted(groups),'bodyTargets':['lean','strong'],'experienceTarget':'veteran','surfaceTileMetres':.04,'mailOuterDiameterMetres':.0112,'quiltDiagonalSpacingMetres':.028284,'catalogueDownload':True,'runtimeWeaponIKBaked':False},limits=['Fantasy infantry equipment, not historical replica','New weapon IK is evaluated in the browser, not baked into the three original GLB clips','Catalogue GLB contains all variants; selected appearance is saved separately in JSON','No cloth simulation or full-board LOD'])
+info.update(version='0.3.2',glb_sha256=hashlib.sha256(raw).hexdigest(),source_commit=SOURCE,modular={'slots':sorted(groups),'bodyTargets':['lean','strong'],'experienceTarget':'veteran','surfaceTileMetres':.04,'mailOuterDiameterMetres':.0112,'quiltDiagonalSpacingMetres':.028284,'catalogueDownload':True,'runtimeWeaponIKBaked':False},limits=['Fantasy infantry equipment, not historical replica','New weapon IK is evaluated in the browser, not baked into the three original GLB clips','Catalogue GLB contains all variants; selected appearance is saved separately in JSON','No cloth simulation or full-board LOD'])
 (OUT/'model-info.json').write_text(json.dumps(info,indent=2,default=list)+'\n')
 report={'status':'built','glbSha256':info['glb_sha256'],'bytes':len(raw),'meshes':len(doc['meshes']),'groups':[{k:ob[k] for k in ('equipmentSlot','equipmentVariant','defaultVisible')} for ob in merged],'sourceCommit':SOURCE}
 (REVIEW/'modular-asset-build.json').write_text(json.dumps(report,indent=2)+'\n');print('MODULAR_GLB_READY',json.dumps(report),flush=True)

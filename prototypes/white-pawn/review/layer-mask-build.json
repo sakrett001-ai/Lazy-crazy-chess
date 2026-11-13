@@ -1,0 +1,12 @@
+{
+  "faces": 30256,
+  "reachMetres": 0.035,
+  "nearMetres": 0.016,
+  "marginMetres": 0.03,
+  "groups": {
+    "mail": 13540,
+    "mail,plate": 8754,
+    "plate": 2069,
+    "exposed": 5893
+  }
+}

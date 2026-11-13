@@ -1,7 +1,7 @@
 {
-  "version": "0.3.1",
+  "version": "0.3.2",
   "base_glb_sha256": "6f12aaa99ced53983ea3188493a755c46342c908055caf125c5b3576eb099962",
-  "glb_sha256": "0e5cf5ff21193216a693af7f2ee830e064eb6a8b7f909a0460dc70ea5b6236a0",
+  "glb_sha256": "0d55a5164472af5011eced148d1ef3e94ca95781e3668e75219cd1b5d66e57ca",
   "clips": [
     "Guard_Breath",
     "Shield_Brace",
