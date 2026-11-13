@@ -20,6 +20,7 @@ npm ci --prefix prototypes/board
 - Доска, правила и движения: `cd prototypes/board && npm test`
 - Сборка доски и лаборатории движений: `cd prototypes/board && npm run build`
 - Пешка, экипировка и биомеханика: `cd prototypes/white-pawn && npm run verify:equipment && npm run verify:biomechanics && npm run verify:grip && npm run verify:weapon-clearance && npm run verify:enarmes && npm run verify:body-contact && npm run verify:facial-hair`
+- Видео поединка на процессоре (нужен ffmpeg, около 10 минут на 4 ядрах): `cd prototypes/board && npm run render:duel` → `review/render/`: ролики «крупно» и «доска», лист кадров, замеры головы, стоп и копья
 
 С браузером (сначала `cd prototypes/human-base && npx playwright install chromium`; путь к Chrome можно задать в `CHROME_PATH`):
 
