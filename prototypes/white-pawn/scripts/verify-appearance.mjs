@@ -28,7 +28,10 @@ const materials=()=>page.evaluate(()=>{
  const result={};
  whitePawn.debug.model.traverse(object=>{if(!object.isMesh)return;for(const material of Array.isArray(object.material)?object.material:[object.material]){
   const slot=material.userData.customizationSlot||material.name;
-  const values={color:material.color.toArray(),srgb:material.color.getHexString(),metalness:material.metalness,roughness:material.roughness};
+  // Материал с картами кузницы (src/surfaces.mjs) хранит множитель к карте; видимое значение — множитель × среднее карты.
+  const mean=material.map&&material.userData.forgeMeanColor,meanRough=material.roughnessMap&&material.userData.forgeMeanRoughness;
+  const color=material.color.clone();if(mean){color.r*=mean[0];color.g*=mean[1];color.b*=mean[2];}
+  const values={color:color.toArray(),srgb:color.getHexString(),metalness:material.metalness,roughness:meanRough?material.roughness*meanRough:material.roughness};
   if(!result[slot])result[slot]=[];
   if(!result[slot].some(item=>JSON.stringify(item)===JSON.stringify(values)))result[slot].push(values);
  }});

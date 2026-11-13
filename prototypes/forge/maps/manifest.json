@@ -1,0 +1,112 @@
+{
+ "schema": "lazy-chess-forge/1",
+ "generator_sha256": "27247798628d651e6cb212b5ceaea562dabd8131d4cbe8793a657b8575b4cf67",
+ "fields_sha256": "8d0345aab223952527e630cf635d0d955601a2994667c6a5a00d51fce9a73fa7",
+ "normal_convention": "OpenGL, +Y вдоль возрастания v",
+ "surfaces": {
+  "steel": {
+   "surface": "steel",
+   "tile_mm": 250.0,
+   "size": 1024,
+   "wear": 0.5,
+   "pixel_mm": 0.244140625,
+   "mean_color": [
+    0.7737942337989807,
+    0.7727047204971313,
+    0.7714442014694214
+   ],
+   "mean_luminance": 0.7726329565048218,
+   "mean_roughness": 0.43297079205513,
+   "mean_metallic": 0.998781681060791,
+   "height_range_mm": 0.3119232952594757,
+   "seam_ratio": {
+    "height": 0.9718774031717615,
+    "roughness": 0.6361288644830891
+   },
+   "files": {
+    "base_color.jpg": "c09085bfd7af9200c2db83e9372f96622f107e6a890565c91929102734fd67be",
+    "normal.jpg": "eaaf990b1ec172bc83dd3bf4d85c7278eb1ac6ceb4c0e3dbf2e278d6c6f67d57",
+    "orm.jpg": "639f7ab9b62e63a17bb96fa4276b10f9d9d83d7049760a67a8739d78793f867f"
+   },
+   "seconds": 5.11
+  },
+  "wood": {
+   "surface": "wood",
+   "tile_mm": 200.0,
+   "size": 512,
+   "wear": 0.5,
+   "pixel_mm": 0.390625,
+   "mean_color": [
+    0.34148162603378296,
+    0.2152855098247528,
+    0.11135298758745193
+   ],
+   "mean_luminance": 0.2346101552248001,
+   "mean_roughness": 0.5384560227394104,
+   "mean_metallic": 0.0,
+   "height_range_mm": 0.09957312047481537,
+   "seam_ratio": {
+    "height": 0.7164970421504013,
+    "roughness": 0.9881265774114478
+   },
+   "files": {
+    "base_color.jpg": "6570eb9030cacee7fcbd049e069ab4e7fab7f9dcab9b94182adf547b9b93d024",
+    "normal.jpg": "db532884211ba940c6ff42328b17a0a270e1a7b5bcc917f0520c8fcd9e11c3f5",
+    "orm.jpg": "f8cf6ffc05ed3267e14f1f380d033300c591f26528eeaaa720a5a14293e9720b"
+   },
+   "seconds": 0.48
+  },
+  "paint": {
+   "surface": "paint",
+   "tile_mm": 400.0,
+   "size": 512,
+   "wear": 0.5,
+   "pixel_mm": 0.78125,
+   "mean_color": [
+    0.8939133286476135,
+    0.8883357644081116,
+    0.8812004923820496
+   ],
+   "mean_luminance": 0.8890071511268616,
+   "mean_roughness": 0.4488871693611145,
+   "mean_metallic": 0.0,
+   "height_range_mm": 0.47004514932632446,
+   "seam_ratio": {
+    "height": 0.610493785069886,
+    "roughness": 0.67188605681154
+   },
+   "files": {
+    "base_color.jpg": "01c3c22a4adc9d8100cb25346d6be531abd831288bcd78e8d3b6e3e9cad5ee35",
+    "normal.jpg": "7ce3349be204d590aa8b464f200c106705cf98935bcf86e3b992839a5483ddba",
+    "orm.jpg": "dca4435f77ef6c68a4b5d23397de0713697a979670dced4d8c82897b57a4ab87"
+   },
+   "seconds": 1.05
+  },
+  "leather": {
+   "surface": "leather",
+   "tile_mm": 120.0,
+   "size": 256,
+   "wear": 0.5,
+   "pixel_mm": 0.46875,
+   "mean_color": [
+    0.36658409237861633,
+    0.22402413189411163,
+    0.1323777139186859
+   ],
+   "mean_luminance": 0.24771538376808167,
+   "mean_roughness": 0.5356498956680298,
+   "mean_metallic": 0.0,
+   "height_range_mm": 0.14307817816734314,
+   "seam_ratio": {
+    "height": 0.8997805161634644,
+    "roughness": 0.8963501266409151
+   },
+   "files": {
+    "base_color.jpg": "5eff544b5097e4f2ad445e4a7be4404c6d920910a44f703a7eb5ba5a962c3480",
+    "normal.jpg": "c993294b5a451563fa2c4052fdb4f094b2a8932629528406645204b32a4c1bce",
+    "orm.jpg": "a894cc82acd715575a52ec0178c76fd9bd17dd0746dad1d2498840dd526fa713"
+   },
+   "seconds": 0.1
+  }
+ }
+}

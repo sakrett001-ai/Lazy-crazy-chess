@@ -1,9 +1,9 @@
 {
-  "date": "2026-10-23T07:50:14.147Z",
+  "date": "2026-11-13T15:28:02.554Z",
   "status": "passed",
-  "browser": "141.0.7390.37",
-  "glbSha256": "52f52e1c1ae832d1a61e1dac9e83dd39ff961fde1a9c402dec8a4a8f6dfce4e6",
-  "documentSha256": "4c5cc5aa277cd89c71ce78cdcffebe47898cb986c8eac1a4272e3f6b214b9deb",
+  "browser": "157.0.8103.50",
+  "glbSha256": "0e5cf5ff21193216a693af7f2ee830e064eb6a8b7f909a0460dc70ea5b6236a0",
+  "documentSha256": "5c1643668d3a062471c857ff80ce5e8dc34e96a3ad50e5a5ae04b6f239f15da5",
   "tests": [
     "Three genuinely different shields; independent plate/mail/padding geometry; visible textured mail and quilting; actual physique displacement and independent experience",
     "Four visible weapon geometries, deterministic reverse seek and planted feet; twohand weapons suppress shield and brace; singlehand restores choice; invalid review is atomic"
@@ -185,18 +185,18 @@
           "name": "HELMET_Ivory_open_helmet",
           "slot": "helmet",
           "variant": "on",
-          "vertices": 1680,
-          "checksum": 30.828361912380785,
+          "vertices": 2007,
+          "checksum": 37.21393580084126,
           "materials": [
             {
               "slot": "armor.main",
               "metalness": 1,
-              "roughness": 0.32,
-              "normalMap": false,
-              "uvChannel": 0,
+              "roughness": 0.7390798776081287,
+              "normalMap": true,
+              "uvChannel": 1,
               "uvSpan": [
-                0,
-                0
+                0.214694581925869,
+                2.0091453790664673
               ]
             }
           ],
@@ -206,18 +206,18 @@
           "name": "HELMET_Ivory_open_helmet_1",
           "slot": "helmet",
           "variant": "on",
-          "vertices": 1719,
-          "checksum": 30.700099244504194,
+          "vertices": 1779,
+          "checksum": 31.547558480563612,
           "materials": [
             {
               "slot": "armor.trim",
               "metalness": 1,
-              "roughness": 0.24,
-              "normalMap": false,
-              "uvChannel": 0,
+              "roughness": 0.5543099082060965,
+              "normalMap": true,
+              "uvChannel": 1,
               "uvSpan": [
-                1,
-                1
+                0.2199999988079071,
+                2.018746256828308
               ]
             }
           ],
@@ -227,8 +227,8 @@
           "name": "HELMET_Ivory_open_helmet_2",
           "slot": "helmet",
           "variant": "on",
-          "vertices": 140,
-          "checksum": 2.752574267131277,
+          "vertices": 168,
+          "checksum": 3.178904102933594,
           "materials": [
             {
               "slot": "Deep teal enamel",
@@ -248,8 +248,8 @@
           "name": "HELMET_Ivory_open_helmet_3",
           "slot": "helmet",
           "variant": "on",
-          "vertices": 315,
-          "checksum": 5.8604648697447566,
+          "vertices": 378,
+          "checksum": 7.239086131936639,
           "materials": [
             {
               "slot": "Teal horsehair",
@@ -293,18 +293,18 @@
           "name": "ARMOR_Breastplate",
           "slot": "plate",
           "variant": "plate",
-          "vertices": 14448,
-          "checksum": 144.06300018247765,
+          "vertices": 17722,
+          "checksum": 178.80924409766416,
           "materials": [
             {
               "slot": "armor.main",
               "metalness": 1,
-              "roughness": 0.32,
-              "normalMap": false,
-              "uvChannel": 0,
+              "roughness": 0.7390798776081287,
+              "normalMap": true,
+              "uvChannel": 1,
               "uvSpan": [
-                1,
-                1
+                1.0507657527923584,
+                1.7336260080337524
               ]
             }
           ],
@@ -317,18 +317,18 @@
           "name": "ARMOR_Breastplate_1",
           "slot": "plate",
           "variant": "plate",
-          "vertices": 13708,
-          "checksum": 158.9497184568263,
+          "vertices": 14988,
+          "checksum": 173.4770492454622,
           "materials": [
             {
               "slot": "armor.trim",
               "metalness": 1,
-              "roughness": 0.24,
-              "normalMap": false,
-              "uvChannel": 0,
+              "roughness": 0.5543099082060965,
+              "normalMap": true,
+              "uvChannel": 1,
               "uvSpan": [
-                1,
-                1
+                1.0578668117523193,
+                1.7345794439315796
               ]
             }
           ],
@@ -345,14 +345,14 @@
           "checksum": 113.858822385508,
           "materials": [
             {
-              "slot": "Dark leather",
-              "metalness": 0,
-              "roughness": 0.800000011920929,
-              "normalMap": false,
-              "uvChannel": 0,
+              "slot": "armor.leather",
+              "metalness": 1,
+              "roughness": 1,
+              "normalMap": true,
+              "uvChannel": 1,
               "uvSpan": [
-                0,
-                0
+                0.26238182187080383,
+                1.7152109146118164
               ]
             }
           ],
@@ -365,18 +365,18 @@
           "name": "SHIELD_Ivory_face",
           "slot": "shield",
           "variant": "tower",
-          "vertices": 1394,
-          "checksum": 37.59422877606471,
+          "vertices": 1630,
+          "checksum": 39.34503338800744,
           "materials": [
             {
               "slot": "shield.face",
               "metalness": 0,
-              "roughness": 0.42,
-              "normalMap": false,
-              "uvChannel": 0,
+              "roughness": 0.8551363349987813,
+              "normalMap": true,
+              "uvChannel": 1,
               "uvSpan": [
-                0,
-                0
+                1.5157045125961304,
+                2.1143826246261597
               ]
             }
           ],
@@ -386,18 +386,18 @@
           "name": "SHIELD_Ivory_face_1",
           "slot": "shield",
           "variant": "tower",
-          "vertices": 4266,
-          "checksum": 103.0308622304164,
+          "vertices": 5413,
+          "checksum": 130.75938245607546,
           "materials": [
             {
               "slot": "shield.trim",
               "metalness": 1,
-              "roughness": 0.27000001072883606,
-              "normalMap": false,
-              "uvChannel": 0,
+              "roughness": 1,
+              "normalMap": true,
+              "uvChannel": 1,
               "uvSpan": [
-                1,
-                1
+                1.5733698010444641,
+                2.133059501647949
               ]
             }
           ],
@@ -412,13 +412,13 @@
           "materials": [
             {
               "slot": "shield.leather",
-              "metalness": 0,
-              "roughness": 0.800000011920929,
-              "normalMap": false,
-              "uvChannel": 0,
+              "metalness": 1,
+              "roughness": 1,
+              "normalMap": true,
+              "uvChannel": 1,
               "uvSpan": [
-                0,
-                0
+                1.6356446146965027,
+                2.073308229446411
               ]
             }
           ],
@@ -428,18 +428,18 @@
           "name": "SHIELD_Ivory_face_3",
           "slot": "shield",
           "variant": "tower",
-          "vertices": 60,
-          "checksum": 1.4509922192431988,
+          "vertices": 132,
+          "checksum": 3.149473910667002,
           "materials": [
             {
               "slot": "shield.wood",
-              "metalness": 0,
-              "roughness": 0.6200000047683716,
-              "normalMap": false,
-              "uvChannel": 0,
+              "metalness": 1,
+              "roughness": 1,
+              "normalMap": true,
+              "uvChannel": 1,
               "uvSpan": [
-                0,
-                0
+                1.5542091131210327,
+                1.966101050376892
               ]
             }
           ],
@@ -455,12 +455,12 @@
             {
               "slot": "shield.emblem",
               "metalness": 0.28,
-              "roughness": 0.31,
-              "normalMap": false,
-              "uvChannel": 0,
+              "roughness": 0.6905967048272112,
+              "normalMap": true,
+              "uvChannel": 1,
               "uvSpan": [
-                0,
-                0
+                0.15342550724744797,
+                1.1813287734985352
               ]
             }
           ],
@@ -470,16 +470,19 @@
           "name": "SPEAR_Ash_shaft",
           "slot": "weapon",
           "variant": "spear",
-          "vertices": 32,
-          "checksum": 0.2242002940177918,
+          "vertices": 66,
+          "checksum": 0.4337536078691484,
           "materials": [
             {
               "slot": "weapon.wood",
               "metalness": 0,
-              "roughness": 0.62,
-              "normalMap": false,
+              "roughness": 1.1514403661894843,
+              "normalMap": true,
               "uvChannel": 0,
-              "uvSpan": null
+              "uvSpan": [
+                0.9518740214407444,
+                2.6052998304367065
+              ]
             }
           ],
           "morphs": {}
@@ -493,11 +496,14 @@
           "materials": [
             {
               "slot": "weapon.grip",
-              "metalness": 0,
-              "roughness": 0.800000011920929,
-              "normalMap": false,
+              "metalness": 1,
+              "roughness": 1,
+              "normalMap": true,
               "uvChannel": 0,
-              "uvSpan": null
+              "uvSpan": [
+                0.07953262329101562,
+                0.08723139762878418
+              ]
             }
           ],
           "morphs": {}
@@ -506,8 +512,8 @@
           "name": "SPEAR_Ash_shaft_2",
           "slot": "weapon",
           "variant": "spear",
-          "vertices": 320,
-          "checksum": 1.4830655260384087,
+          "vertices": 660,
+          "checksum": 3.032834151983262,
           "materials": [
             {
               "slot": "weapon.binding",
@@ -515,7 +521,10 @@
               "roughness": 0.6499999761581421,
               "normalMap": false,
               "uvChannel": 0,
-              "uvSpan": null
+              "uvSpan": [
+                0.6034270487725735,
+                1.1825482845306396
+              ]
             }
           ],
           "morphs": {}
@@ -524,16 +533,19 @@
           "name": "SPEAR_Ash_shaft_3",
           "slot": "weapon",
           "variant": "spear",
-          "vertices": 71,
-          "checksum": 0.8555664676427842,
+          "vertices": 142,
+          "checksum": 1.2888255971670153,
           "materials": [
             {
               "slot": "weapon.metal",
               "metalness": 1,
-              "roughness": 0.27,
-              "normalMap": false,
+              "roughness": 0.6235986467318586,
+              "normalMap": true,
               "uvChannel": 0,
-              "uvSpan": null
+              "uvSpan": [
+                0.9610683545470238,
+                2.654277205467224
+              ]
             }
           ],
           "morphs": {}
@@ -716,18 +728,18 @@
           "name": "HELMET_Ivory_open_helmet",
           "slot": "helmet",
           "variant": "on",
-          "vertices": 1680,
-          "checksum": 30.828361912380785,
+          "vertices": 2007,
+          "checksum": 37.21393580084126,
           "materials": [
             {
               "slot": "armor.main",
               "metalness": 1,
-              "roughness": 0.32,
-              "normalMap": false,
-              "uvChannel": 0,
+              "roughness": 0.7390798776081287,
+              "normalMap": true,
+              "uvChannel": 1,
               "uvSpan": [
-                0,
-                0
+                0.214694581925869,
+                2.0091453790664673
               ]
             }
           ],
@@ -737,18 +749,18 @@
           "name": "HELMET_Ivory_open_helmet_1",
           "slot": "helmet",
           "variant": "on",
-          "vertices": 1719,
-          "checksum": 30.700099244504194,
+          "vertices": 1779,
+          "checksum": 31.547558480563612,
           "materials": [
             {
               "slot": "armor.trim",
               "metalness": 1,
-              "roughness": 0.24,
-              "normalMap": false,
-              "uvChannel": 0,
+              "roughness": 0.5543099082060965,
+              "normalMap": true,
+              "uvChannel": 1,
               "uvSpan": [
-                1,
-                1
+                0.2199999988079071,
+                2.018746256828308
               ]
             }
           ],
@@ -758,8 +770,8 @@
           "name": "HELMET_Ivory_open_helmet_2",
           "slot": "helmet",
           "variant": "on",
-          "vertices": 140,
-          "checksum": 2.752574267131277,
+          "vertices": 168,
+          "checksum": 3.178904102933594,
           "materials": [
             {
               "slot": "Deep teal enamel",
@@ -779,8 +791,8 @@
           "name": "HELMET_Ivory_open_helmet_3",
           "slot": "helmet",
           "variant": "on",
-          "vertices": 315,
-          "checksum": 5.8604648697447566,
+          "vertices": 378,
+          "checksum": 7.239086131936639,
           "materials": [
             {
               "slot": "Teal horsehair",
@@ -872,18 +884,18 @@
           "name": "SHIELD_round_Face",
           "slot": "shield",
           "variant": "round",
-          "vertices": 130,
-          "checksum": 3.399929785504937,
+          "vertices": 290,
+          "checksum": 7.64324350990355,
           "materials": [
             {
               "slot": "shield.face",
               "metalness": 0,
-              "roughness": 0.42,
-              "normalMap": false,
-              "uvChannel": 0,
+              "roughness": 0.8208255047488714,
+              "normalMap": true,
+              "uvChannel": 1,
               "uvSpan": [
-                0,
-                0
+                1.4064990878105164,
+                1.9282801151275635
               ]
             }
           ],
@@ -893,18 +905,18 @@
           "name": "SHIELD_round_Face_1",
           "slot": "shield",
           "variant": "round",
-          "vertices": 2112,
-          "checksum": 51.826796769890926,
+          "vertices": 2870,
+          "checksum": 70.34846914825961,
           "materials": [
             {
               "slot": "shield.trim",
               "metalness": 1,
-              "roughness": 0.27000001072883606,
-              "normalMap": false,
-              "uvChannel": 0,
+              "roughness": 1,
+              "normalMap": true,
+              "uvChannel": 1,
               "uvSpan": [
-                1,
-                1
+                1.4442604780197144,
+                1.9253820180892944
               ]
             }
           ],
@@ -914,18 +926,18 @@
           "name": "SHIELD_round_Face_2",
           "slot": "shield",
           "variant": "round",
-          "vertices": 89,
-          "checksum": 2.4880782803986223,
+          "vertices": 115,
+          "checksum": 2.961449080863968,
           "materials": [
             {
               "slot": "shield.wood",
-              "metalness": 0,
-              "roughness": 0.6200000047683716,
-              "normalMap": false,
-              "uvChannel": 0,
+              "metalness": 1,
+              "roughness": 1,
+              "normalMap": true,
+              "uvChannel": 1,
               "uvSpan": [
-                0,
-                0
+                1.0858418941497803,
+                1.7221157550811768
               ]
             }
           ],
@@ -941,12 +953,12 @@
             {
               "slot": "shield.emblem",
               "metalness": 0.28,
-              "roughness": 0.31,
-              "normalMap": false,
-              "uvChannel": 0,
+              "roughness": 0.6905967048272112,
+              "normalMap": true,
+              "uvChannel": 1,
               "uvSpan": [
-                0,
-                0
+                0.4746260643005371,
+                0.3255106210708618
               ]
             }
           ],
@@ -961,13 +973,13 @@
           "materials": [
             {
               "slot": "shield.leather",
-              "metalness": 0,
-              "roughness": 0.800000011920929,
-              "normalMap": false,
-              "uvChannel": 0,
+              "metalness": 1,
+              "roughness": 1,
+              "normalMap": true,
+              "uvChannel": 1,
               "uvSpan": [
-                0,
-                0
+                0.8574021756649017,
+                1.6465699672698975
               ]
             }
           ],
@@ -983,10 +995,13 @@
             {
               "slot": "weapon.metal",
               "metalness": 1,
-              "roughness": 0.27,
-              "normalMap": false,
+              "roughness": 0.6235986467318586,
+              "normalMap": true,
               "uvChannel": 0,
-              "uvSpan": null
+              "uvSpan": [
+                0.20999999344348907,
+                0.9800002574920654
+              ]
             }
           ],
           "morphs": {}
@@ -1000,11 +1015,14 @@
           "materials": [
             {
               "slot": "weapon.grip",
-              "metalness": 0,
-              "roughness": 0.800000011920929,
-              "normalMap": false,
+              "metalness": 1,
+              "roughness": 1,
+              "normalMap": true,
               "uvChannel": 0,
-              "uvSpan": null
+              "uvSpan": [
+                0.0969017744064331,
+                0.10721540451049805
+              ]
             }
           ],
           "morphs": {}
@@ -1022,7 +1040,10 @@
               "roughness": 0.6499999761581421,
               "normalMap": false,
               "uvChannel": 0,
-              "uvSpan": null
+              "uvSpan": [
+                0.02880010288208723,
+                0.10800015926361084
+              ]
             }
           ],
           "morphs": {}
@@ -1205,18 +1226,18 @@
           "name": "HELMET_Ivory_open_helmet",
           "slot": "helmet",
           "variant": "on",
-          "vertices": 1680,
-          "checksum": 30.828361912380785,
+          "vertices": 2007,
+          "checksum": 37.21393580084126,
           "materials": [
             {
               "slot": "armor.main",
               "metalness": 1,
-              "roughness": 0.32,
-              "normalMap": false,
-              "uvChannel": 0,
+              "roughness": 0.7390798776081287,
+              "normalMap": true,
+              "uvChannel": 1,
               "uvSpan": [
-                0,
-                0
+                0.214694581925869,
+                2.0091453790664673
               ]
             }
           ],
@@ -1226,18 +1247,18 @@
           "name": "HELMET_Ivory_open_helmet_1",
           "slot": "helmet",
           "variant": "on",
-          "vertices": 1719,
-          "checksum": 30.700099244504194,
+          "vertices": 1779,
+          "checksum": 31.547558480563612,
           "materials": [
             {
               "slot": "armor.trim",
               "metalness": 1,
-              "roughness": 0.24,
-              "normalMap": false,
-              "uvChannel": 0,
+              "roughness": 0.5543099082060965,
+              "normalMap": true,
+              "uvChannel": 1,
               "uvSpan": [
-                1,
-                1
+                0.2199999988079071,
+                2.018746256828308
               ]
             }
           ],
@@ -1247,8 +1268,8 @@
           "name": "HELMET_Ivory_open_helmet_2",
           "slot": "helmet",
           "variant": "on",
-          "vertices": 140,
-          "checksum": 2.752574267131277,
+          "vertices": 168,
+          "checksum": 3.178904102933594,
           "materials": [
             {
               "slot": "Deep teal enamel",
@@ -1268,8 +1289,8 @@
           "name": "HELMET_Ivory_open_helmet_3",
           "slot": "helmet",
           "variant": "on",
-          "vertices": 315,
-          "checksum": 5.8604648697447566,
+          "vertices": 378,
+          "checksum": 7.239086131936639,
           "materials": [
             {
               "slot": "Teal horsehair",
@@ -1313,18 +1334,18 @@
           "name": "ARMOR_Breastplate",
           "slot": "plate",
           "variant": "plate",
-          "vertices": 14448,
-          "checksum": 144.06300018247765,
+          "vertices": 17722,
+          "checksum": 178.80924409766416,
           "materials": [
             {
               "slot": "armor.main",
               "metalness": 1,
-              "roughness": 0.32,
-              "normalMap": false,
-              "uvChannel": 0,
+              "roughness": 0.7390798776081287,
+              "normalMap": true,
+              "uvChannel": 1,
               "uvSpan": [
-                1,
-                1
+                1.0507657527923584,
+                1.7336260080337524
               ]
             }
           ],
@@ -1337,18 +1358,18 @@
           "name": "ARMOR_Breastplate_1",
           "slot": "plate",
           "variant": "plate",
-          "vertices": 13708,
-          "checksum": 158.9497184568263,
+          "vertices": 14988,
+          "checksum": 173.4770492454622,
           "materials": [
             {
               "slot": "armor.trim",
               "metalness": 1,
-              "roughness": 0.24,
-              "normalMap": false,
-              "uvChannel": 0,
+              "roughness": 0.5543099082060965,
+              "normalMap": true,
+              "uvChannel": 1,
               "uvSpan": [
-                1,
-                1
+                1.0578668117523193,
+                1.7345794439315796
               ]
             }
           ],
@@ -1365,14 +1386,14 @@
           "checksum": 113.858822385508,
           "materials": [
             {
-              "slot": "Dark leather",
-              "metalness": 0,
-              "roughness": 0.800000011920929,
-              "normalMap": false,
-              "uvChannel": 0,
+              "slot": "armor.leather",
+              "metalness": 1,
+              "roughness": 1,
+              "normalMap": true,
+              "uvChannel": 1,
               "uvSpan": [
-                0,
-                0
+                0.26238182187080383,
+                1.7152109146118164
               ]
             }
           ],
@@ -1385,18 +1406,18 @@
           "name": "SHIELD_heater_Face",
           "slot": "shield",
           "variant": "heater",
-          "vertices": 16,
-          "checksum": 0.4308792915940285,
+          "vertices": 38,
+          "checksum": 1.358735375702381,
           "materials": [
             {
               "slot": "shield.face",
               "metalness": 0,
-              "roughness": 0.42,
-              "normalMap": false,
-              "uvChannel": 0,
+              "roughness": 0.8434028254302366,
+              "normalMap": true,
+              "uvChannel": 1,
               "uvSpan": [
-                0,
-                0
+                1.3087422549724579,
+                1.948533058166504
               ]
             }
           ],
@@ -1406,18 +1427,18 @@
           "name": "SHIELD_heater_Face_1",
           "slot": "shield",
           "variant": "heater",
-          "vertices": 1428,
-          "checksum": 34.26944337576627,
+          "vertices": 1862,
+          "checksum": 45.138281796202065,
           "materials": [
             {
               "slot": "shield.trim",
               "metalness": 1,
-              "roughness": 0.27000001072883606,
-              "normalMap": false,
-              "uvChannel": 0,
+              "roughness": 1,
+              "normalMap": true,
+              "uvChannel": 1,
               "uvSpan": [
-                1,
-                1
+                1.3217333257198334,
+                1.9664331674575806
               ]
             }
           ],
@@ -1427,18 +1448,18 @@
           "name": "SHIELD_heater_Face_2",
           "slot": "shield",
           "variant": "heater",
-          "vertices": 32,
-          "checksum": 0.8831438714265822,
+          "vertices": 58,
+          "checksum": 1.6989466033875942,
           "materials": [
             {
               "slot": "shield.wood",
-              "metalness": 0,
-              "roughness": 0.6200000047683716,
-              "normalMap": false,
-              "uvChannel": 0,
+              "metalness": 1,
+              "roughness": 1,
+              "normalMap": true,
+              "uvChannel": 1,
               "uvSpan": [
-                0,
-                0
+                1.221120297908783,
+                1.7186503410339355
               ]
             }
           ],
@@ -1454,12 +1475,12 @@
             {
               "slot": "shield.emblem",
               "metalness": 0.28,
-              "roughness": 0.31,
-              "normalMap": false,
-              "uvChannel": 0,
+              "roughness": 0.6905967048272112,
+              "normalMap": true,
+              "uvChannel": 1,
               "uvSpan": [
-                0,
-                0
+                0.4745647758245468,
+                0.32538294792175293
               ]
             }
           ],
@@ -1474,13 +1495,13 @@
           "materials": [
             {
               "slot": "shield.leather",
-              "metalness": 0,
-              "roughness": 0.800000011920929,
-              "normalMap": false,
-              "uvChannel": 0,
+              "metalness": 1,
+              "roughness": 1,
+              "normalMap": true,
+              "uvChannel": 1,
               "uvSpan": [
-                0,
-                0
+                0.8574021756649017,
+                1.6465699672698975
               ]
             }
           ],
@@ -1490,16 +1511,19 @@
           "name": "SPEAR_Ash_shaft",
           "slot": "weapon",
           "variant": "spear",
-          "vertices": 32,
-          "checksum": 0.2242002940177918,
+          "vertices": 66,
+          "checksum": 0.4337536078691484,
           "materials": [
             {
               "slot": "weapon.wood",
               "metalness": 0,
-              "roughness": 0.62,
-              "normalMap": false,
+              "roughness": 1.1514403661894843,
+              "normalMap": true,
               "uvChannel": 0,
-              "uvSpan": null
+              "uvSpan": [
+                0.9518740214407444,
+                2.6052998304367065
+              ]
             }
           ],
           "morphs": {}
@@ -1513,11 +1537,14 @@
           "materials": [
             {
               "slot": "weapon.grip",
-              "metalness": 0,
-              "roughness": 0.800000011920929,
-              "normalMap": false,
+              "metalness": 1,
+              "roughness": 1,
+              "normalMap": true,
               "uvChannel": 0,
-              "uvSpan": null
+              "uvSpan": [
+                0.07953262329101562,
+                0.08723139762878418
+              ]
             }
           ],
           "morphs": {}
@@ -1526,8 +1553,8 @@
           "name": "SPEAR_Ash_shaft_2",
           "slot": "weapon",
           "variant": "spear",
-          "vertices": 320,
-          "checksum": 1.4830655260384087,
+          "vertices": 660,
+          "checksum": 3.032834151983262,
           "materials": [
             {
               "slot": "weapon.binding",
@@ -1535,7 +1562,10 @@
               "roughness": 0.6499999761581421,
               "normalMap": false,
               "uvChannel": 0,
-              "uvSpan": null
+              "uvSpan": [
+                0.6034270487725735,
+                1.1825482845306396
+              ]
             }
           ],
           "morphs": {}
@@ -1544,16 +1574,19 @@
           "name": "SPEAR_Ash_shaft_3",
           "slot": "weapon",
           "variant": "spear",
-          "vertices": 71,
-          "checksum": 0.8555664676427842,
+          "vertices": 142,
+          "checksum": 1.2888255971670153,
           "materials": [
             {
               "slot": "weapon.metal",
               "metalness": 1,
-              "roughness": 0.27,
-              "normalMap": false,
+              "roughness": 0.6235986467318586,
+              "normalMap": true,
               "uvChannel": 0,
-              "uvSpan": null
+              "uvSpan": [
+                0.9610683545470238,
+                2.654277205467224
+              ]
             }
           ],
           "morphs": {}
@@ -1563,14 +1596,14 @@
       "feetDelta": 3.369974873324022e-7,
       "runtimeMeasures": {
         "shieldGripWorld": [
-          -0.0021107352060491247,
+          -0.002110735206049111,
           1.1065906009486568,
-          0.28921952311599897
+          0.289219523115999
         ],
         "shieldAxis": [
-          -0.011869502104474447,
+          -0.0118695021044746,
           0.9928368367578783,
-          0.11888704932162365
+          0.11888704932162382
         ],
         "weaponGripAngleDeg": 35,
         "action": "Spear_Study",
@@ -1579,75 +1612,77 @@
         "effectiveShield": "heater",
         "handGripWorld": {
           "R": [
-            -0.42608746639873185,
-            1.1586675712984025,
-            0.4288775675893768
+            -0.42608746639873174,
+            1.1586675712984023,
+            0.4288775675893767
           ],
           "L": [
-            -0.0021107352060491247,
+            -0.002110735206049111,
             1.1065906009486568,
-            0.28921952311599897
+            0.289219523115999
           ]
         },
         "weaponGripWorld": {
           "R": [
-            -0.4260874663987317,
-            1.1586675712984025,
-            0.42887756758937673
+            -0.4260874663987316,
+            1.1586675712984023,
+            0.4288775675893767
           ],
           "L": null
         },
-        "rightGripErrorM": 1.7554167342883506e-16,
+        "rightGripErrorM": 1.6653345369377348e-16,
         "leftGripErrorM": null,
         "axis": [
-          -0.24769155973691243,
-          0.022903713193514297,
-          0.9685681757920013
+          -0.24769155973691265,
+          0.022903713193514075,
+          0.9685681757920012
         ],
         "tip": [
-          -0.8137246538438172,
-          1.194511821113736,
+          -0.8137246538438174,
+          1.1945118211137356,
           1.9446865339940413
         ],
+        "clearance": null,
         "footDriftM": {
-          "L": 2.2603987149659857e-7,
+          "L": 2.2603987150632134e-7,
           "R": 3.9717761209517705e-7
         },
         "reachErrors": {
           "R": {
             "elbowFlexDeg": 85.37181035689646,
             "wristBendDeg": 39.421740274856425,
-            "elbowHingeAlignment": 0.9999991831278402,
-            "upperLengthM": 0.26214311511757343,
+            "elbowHingeAlignment": 0.9999991831278405,
+            "upperLengthM": 0.2621431151175734,
             "forearmLengthM": 0.27823503020206725,
             "referenceLengthsM": [
               0.2621429885986164,
               0.27823521532246515
             ],
             "forearmTwistDeg": 86.39999999999999,
-            "wristAxialTwistDeg": 0.5875849107696232,
+            "wristAxialTwistDeg": 0.5875849107695634,
             "reachErrorM": 0,
-            "gripErrorM": 5.692989547243282e-7
+            "gripErrorM": 5.692989547461683e-7
           },
           "L": {
             "elbowFlexDeg": 98.08932310102499,
             "wristBendDeg": 24.23569336781159,
-            "elbowHingeAlignment": 0.9999998200516598,
-            "upperLengthM": 0.2621428861778378,
-            "forearmLengthM": 0.2782353706434072,
+            "elbowHingeAlignment": 0.9999998200516595,
+            "upperLengthM": 0.2621428861778379,
+            "forearmLengthM": 0.27823537064340725,
             "referenceLengthsM": [
               0.2621429872779313,
               0.27823518060107694
             ],
             "forearmTwistDeg": -41.28584993835022,
-            "wristAxialTwistDeg": -0.000014640066366123353,
+            "wristAxialTwistDeg": -0.00001464006634969718,
             "reachErrorM": 0,
-            "gripErrorM": 3.9290465382740817e-7
+            "gripErrorM": 3.9290465380851055e-7
           }
         },
+        "wristMissM": null,
         "scope": "Attachment frames and wrist/foot joints; not a skin collision or anatomical comfort proof."
       },
-      "thrustAdvanceM": 0.29667885044261305
+      "thrustAdvanceM": 0.29667885044261266
     },
     {
       "name": "sword-thrust",
@@ -1825,18 +1860,18 @@
           "name": "HELMET_Ivory_open_helmet",
           "slot": "helmet",
           "variant": "on",
-          "vertices": 1680,
-          "checksum": 30.828361912380785,
+          "vertices": 2007,
+          "checksum": 37.21393580084126,
           "materials": [
             {
               "slot": "armor.main",
               "metalness": 1,
-              "roughness": 0.32,
-              "normalMap": false,
-              "uvChannel": 0,
+              "roughness": 0.7390798776081287,
+              "normalMap": true,
+              "uvChannel": 1,
               "uvSpan": [
-                0,
-                0
+                0.214694581925869,
+                2.0091453790664673
               ]
             }
           ],
@@ -1846,18 +1881,18 @@
           "name": "HELMET_Ivory_open_helmet_1",
           "slot": "helmet",
           "variant": "on",
-          "vertices": 1719,
-          "checksum": 30.700099244504194,
+          "vertices": 1779,
+          "checksum": 31.547558480563612,
           "materials": [
             {
               "slot": "armor.trim",
               "metalness": 1,
-              "roughness": 0.24,
-              "normalMap": false,
-              "uvChannel": 0,
+              "roughness": 0.5543099082060965,
+              "normalMap": true,
+              "uvChannel": 1,
               "uvSpan": [
-                1,
-                1
+                0.2199999988079071,
+                2.018746256828308
               ]
             }
           ],
@@ -1867,8 +1902,8 @@
           "name": "HELMET_Ivory_open_helmet_2",
           "slot": "helmet",
           "variant": "on",
-          "vertices": 140,
-          "checksum": 2.752574267131277,
+          "vertices": 168,
+          "checksum": 3.178904102933594,
           "materials": [
             {
               "slot": "Deep teal enamel",
@@ -1888,8 +1923,8 @@
           "name": "HELMET_Ivory_open_helmet_3",
           "slot": "helmet",
           "variant": "on",
-          "vertices": 315,
-          "checksum": 5.8604648697447566,
+          "vertices": 378,
+          "checksum": 7.239086131936639,
           "materials": [
             {
               "slot": "Teal horsehair",
@@ -1933,18 +1968,18 @@
           "name": "ARMOR_Breastplate",
           "slot": "plate",
           "variant": "plate",
-          "vertices": 14448,
-          "checksum": 144.06300018247765,
+          "vertices": 17722,
+          "checksum": 178.80924409766416,
           "materials": [
             {
               "slot": "armor.main",
               "metalness": 1,
-              "roughness": 0.32,
-              "normalMap": false,
-              "uvChannel": 0,
+              "roughness": 0.7390798776081287,
+              "normalMap": true,
+              "uvChannel": 1,
               "uvSpan": [
-                1,
-                1
+                1.0507657527923584,
+                1.7336260080337524
               ]
             }
           ],
@@ -1957,18 +1992,18 @@
           "name": "ARMOR_Breastplate_1",
           "slot": "plate",
           "variant": "plate",
-          "vertices": 13708,
-          "checksum": 158.9497184568263,
+          "vertices": 14988,
+          "checksum": 173.4770492454622,
           "materials": [
             {
               "slot": "armor.trim",
               "metalness": 1,
-              "roughness": 0.24,
-              "normalMap": false,
-              "uvChannel": 0,
+              "roughness": 0.5543099082060965,
+              "normalMap": true,
+              "uvChannel": 1,
               "uvSpan": [
-                1,
-                1
+                1.0578668117523193,
+                1.7345794439315796
               ]
             }
           ],
@@ -1985,14 +2020,14 @@
           "checksum": 113.858822385508,
           "materials": [
             {
-              "slot": "Dark leather",
-              "metalness": 0,
-              "roughness": 0.800000011920929,
-              "normalMap": false,
-              "uvChannel": 0,
+              "slot": "armor.leather",
+              "metalness": 1,
+              "roughness": 1,
+              "normalMap": true,
+              "uvChannel": 1,
               "uvSpan": [
-                0,
-                0
+                0.26238182187080383,
+                1.7152109146118164
               ]
             }
           ],
@@ -2005,18 +2040,18 @@
           "name": "SHIELD_heater_Face",
           "slot": "shield",
           "variant": "heater",
-          "vertices": 16,
-          "checksum": 0.4308792915940285,
+          "vertices": 38,
+          "checksum": 1.358735375702381,
           "materials": [
             {
               "slot": "shield.face",
               "metalness": 0,
-              "roughness": 0.42,
-              "normalMap": false,
-              "uvChannel": 0,
+              "roughness": 0.8434028254302366,
+              "normalMap": true,
+              "uvChannel": 1,
               "uvSpan": [
-                0,
-                0
+                1.3087422549724579,
+                1.948533058166504
               ]
             }
           ],
@@ -2026,18 +2061,18 @@
           "name": "SHIELD_heater_Face_1",
           "slot": "shield",
           "variant": "heater",
-          "vertices": 1428,
-          "checksum": 34.26944337576627,
+          "vertices": 1862,
+          "checksum": 45.138281796202065,
           "materials": [
             {
               "slot": "shield.trim",
               "metalness": 1,
-              "roughness": 0.27000001072883606,
-              "normalMap": false,
-              "uvChannel": 0,
+              "roughness": 1,
+              "normalMap": true,
+              "uvChannel": 1,
               "uvSpan": [
-                1,
-                1
+                1.3217333257198334,
+                1.9664331674575806
               ]
             }
           ],
@@ -2047,18 +2082,18 @@
           "name": "SHIELD_heater_Face_2",
           "slot": "shield",
           "variant": "heater",
-          "vertices": 32,
-          "checksum": 0.8831438714265822,
+          "vertices": 58,
+          "checksum": 1.6989466033875942,
           "materials": [
             {
               "slot": "shield.wood",
-              "metalness": 0,
-              "roughness": 0.6200000047683716,
-              "normalMap": false,
-              "uvChannel": 0,
+              "metalness": 1,
+              "roughness": 1,
+              "normalMap": true,
+              "uvChannel": 1,
               "uvSpan": [
-                0,
-                0
+                1.221120297908783,
+                1.7186503410339355
               ]
             }
           ],
@@ -2074,12 +2109,12 @@
             {
               "slot": "shield.emblem",
               "metalness": 0.28,
-              "roughness": 0.31,
-              "normalMap": false,
-              "uvChannel": 0,
+              "roughness": 0.6905967048272112,
+              "normalMap": true,
+              "uvChannel": 1,
               "uvSpan": [
-                0,
-                0
+                0.4745647758245468,
+                0.32538294792175293
               ]
             }
           ],
@@ -2094,13 +2129,13 @@
           "materials": [
             {
               "slot": "shield.leather",
-              "metalness": 0,
-              "roughness": 0.800000011920929,
-              "normalMap": false,
-              "uvChannel": 0,
+              "metalness": 1,
+              "roughness": 1,
+              "normalMap": true,
+              "uvChannel": 1,
               "uvSpan": [
-                0,
-                0
+                0.8574021756649017,
+                1.6465699672698975
               ]
             }
           ],
@@ -2116,10 +2151,13 @@
             {
               "slot": "weapon.metal",
               "metalness": 1,
-              "roughness": 0.27,
-              "normalMap": false,
+              "roughness": 0.6235986467318586,
+              "normalMap": true,
               "uvChannel": 0,
-              "uvSpan": null
+              "uvSpan": [
+                0.20999999344348907,
+                0.9800002574920654
+              ]
             }
           ],
           "morphs": {}
@@ -2133,11 +2171,14 @@
           "materials": [
             {
               "slot": "weapon.grip",
-              "metalness": 0,
-              "roughness": 0.800000011920929,
-              "normalMap": false,
+              "metalness": 1,
+              "roughness": 1,
+              "normalMap": true,
               "uvChannel": 0,
-              "uvSpan": null
+              "uvSpan": [
+                0.0969017744064331,
+                0.10721540451049805
+              ]
             }
           ],
           "morphs": {}
@@ -2155,7 +2196,10 @@
               "roughness": 0.6499999761581421,
               "normalMap": false,
               "uvChannel": 0,
-              "uvSpan": null
+              "uvSpan": [
+                0.02880010288208723,
+                0.10800015926361084
+              ]
             }
           ],
           "morphs": {}
@@ -2165,14 +2209,14 @@
       "feetDelta": 3.369974873324022e-7,
       "runtimeMeasures": {
         "shieldGripWorld": [
-          -0.0021107352060491247,
+          -0.002110735206049111,
           1.1065906009486568,
-          0.28921952311599897
+          0.289219523115999
         ],
         "shieldAxis": [
-          -0.011869502104474447,
+          -0.0118695021044746,
           0.9928368367578783,
-          0.11888704932162365
+          0.11888704932162382
         ],
         "weaponGripAngleDeg": 35,
         "action": "Spear_Study",
@@ -2181,75 +2225,77 @@
         "effectiveShield": "heater",
         "handGripWorld": {
           "R": [
-            -0.42608746639873185,
-            1.1586675712984025,
-            0.4288775675893768
+            -0.42608746639873174,
+            1.1586675712984023,
+            0.4288775675893767
           ],
           "L": [
-            -0.0021107352060491247,
+            -0.002110735206049111,
             1.1065906009486568,
-            0.28921952311599897
+            0.289219523115999
           ]
         },
         "weaponGripWorld": {
           "R": [
-            -0.4260874663987317,
-            1.1586675712984025,
-            0.42887756758937673
+            -0.4260874663987316,
+            1.1586675712984023,
+            0.4288775675893767
           ],
           "L": null
         },
-        "rightGripErrorM": 1.7554167342883506e-16,
+        "rightGripErrorM": 1.6653345369377348e-16,
         "leftGripErrorM": null,
         "axis": [
-          -0.24769155973691243,
-          0.022903713193514297,
-          0.9685681757920013
+          -0.24769155973691265,
+          0.022903713193514075,
+          0.9685681757920012
         ],
         "tip": [
-          -0.6391021262610312,
-          1.1783647554267311,
-          1.261846080219669
+          -0.6391021262610314,
+          1.1783647554267307,
+          1.2618460802196687
         ],
+        "clearance": null,
         "footDriftM": {
-          "L": 2.2603987149659857e-7,
+          "L": 2.2603987150632134e-7,
           "R": 3.9717761209517705e-7
         },
         "reachErrors": {
           "R": {
             "elbowFlexDeg": 85.37181035689646,
             "wristBendDeg": 39.421740274856425,
-            "elbowHingeAlignment": 0.9999991831278402,
-            "upperLengthM": 0.26214311511757343,
+            "elbowHingeAlignment": 0.9999991831278405,
+            "upperLengthM": 0.2621431151175734,
             "forearmLengthM": 0.27823503020206725,
             "referenceLengthsM": [
               0.2621429885986164,
               0.27823521532246515
             ],
             "forearmTwistDeg": 86.39999999999999,
-            "wristAxialTwistDeg": 0.5875849107696232,
+            "wristAxialTwistDeg": 0.5875849107695634,
             "reachErrorM": 0,
-            "gripErrorM": 5.692989547243282e-7
+            "gripErrorM": 5.692989547461683e-7
           },
           "L": {
             "elbowFlexDeg": 98.08932310102499,
             "wristBendDeg": 24.23569336781159,
-            "elbowHingeAlignment": 0.9999998200516598,
-            "upperLengthM": 0.2621428861778378,
-            "forearmLengthM": 0.2782353706434072,
+            "elbowHingeAlignment": 0.9999998200516595,
+            "upperLengthM": 0.2621428861778379,
+            "forearmLengthM": 0.27823537064340725,
             "referenceLengthsM": [
               0.2621429872779313,
               0.27823518060107694
             ],
             "forearmTwistDeg": -41.28584993835022,
-            "wristAxialTwistDeg": -0.000014640066366123353,
+            "wristAxialTwistDeg": -0.00001464006634969718,
             "reachErrorM": 0,
-            "gripErrorM": 3.9290465382740817e-7
+            "gripErrorM": 3.9290465380851055e-7
           }
         },
+        "wristMissM": null,
         "scope": "Attachment frames and wrist/foot joints; not a skin collision or anatomical comfort proof."
       },
-      "thrustAdvanceM": 0.2928659876289265
+      "thrustAdvanceM": 0.29286598762892635
     },
     {
       "name": "pike-thrust",
@@ -2427,18 +2473,18 @@
           "name": "HELMET_Ivory_open_helmet",
           "slot": "helmet",
           "variant": "on",
-          "vertices": 1680,
-          "checksum": 30.828361912380785,
+          "vertices": 2007,
+          "checksum": 37.21393580084126,
           "materials": [
             {
               "slot": "armor.main",
               "metalness": 1,
-              "roughness": 0.32,
-              "normalMap": false,
-              "uvChannel": 0,
+              "roughness": 0.7390798776081287,
+              "normalMap": true,
+              "uvChannel": 1,
               "uvSpan": [
-                0,
-                0
+                0.214694581925869,
+                2.0091453790664673
               ]
             }
           ],
@@ -2448,18 +2494,18 @@
           "name": "HELMET_Ivory_open_helmet_1",
           "slot": "helmet",
           "variant": "on",
-          "vertices": 1719,
-          "checksum": 30.700099244504194,
+          "vertices": 1779,
+          "checksum": 31.547558480563612,
           "materials": [
             {
               "slot": "armor.trim",
               "metalness": 1,
-              "roughness": 0.24,
-              "normalMap": false,
-              "uvChannel": 0,
+              "roughness": 0.5543099082060965,
+              "normalMap": true,
+              "uvChannel": 1,
               "uvSpan": [
-                1,
-                1
+                0.2199999988079071,
+                2.018746256828308
               ]
             }
           ],
@@ -2469,8 +2515,8 @@
           "name": "HELMET_Ivory_open_helmet_2",
           "slot": "helmet",
           "variant": "on",
-          "vertices": 140,
-          "checksum": 2.752574267131277,
+          "vertices": 168,
+          "checksum": 3.178904102933594,
           "materials": [
             {
               "slot": "Deep teal enamel",
@@ -2490,8 +2536,8 @@
           "name": "HELMET_Ivory_open_helmet_3",
           "slot": "helmet",
           "variant": "on",
-          "vertices": 315,
-          "checksum": 5.8604648697447566,
+          "vertices": 378,
+          "checksum": 7.239086131936639,
           "materials": [
             {
               "slot": "Teal horsehair",
@@ -2535,18 +2581,18 @@
           "name": "ARMOR_Breastplate",
           "slot": "plate",
           "variant": "plate",
-          "vertices": 14448,
-          "checksum": 144.06300018247765,
+          "vertices": 17722,
+          "checksum": 178.80924409766416,
           "materials": [
             {
               "slot": "armor.main",
               "metalness": 1,
-              "roughness": 0.32,
-              "normalMap": false,
-              "uvChannel": 0,
+              "roughness": 0.7390798776081287,
+              "normalMap": true,
+              "uvChannel": 1,
               "uvSpan": [
-                1,
-                1
+                1.0507657527923584,
+                1.7336260080337524
               ]
             }
           ],
@@ -2559,18 +2605,18 @@
           "name": "ARMOR_Breastplate_1",
           "slot": "plate",
           "variant": "plate",
-          "vertices": 13708,
-          "checksum": 158.9497184568263,
+          "vertices": 14988,
+          "checksum": 173.4770492454622,
           "materials": [
             {
               "slot": "armor.trim",
               "metalness": 1,
-              "roughness": 0.24,
-              "normalMap": false,
-              "uvChannel": 0,
+              "roughness": 0.5543099082060965,
+              "normalMap": true,
+              "uvChannel": 1,
               "uvSpan": [
-                1,
-                1
+                1.0578668117523193,
+                1.7345794439315796
               ]
             }
           ],
@@ -2587,14 +2633,14 @@
           "checksum": 113.858822385508,
           "materials": [
             {
-              "slot": "Dark leather",
-              "metalness": 0,
-              "roughness": 0.800000011920929,
-              "normalMap": false,
-              "uvChannel": 0,
+              "slot": "armor.leather",
+              "metalness": 1,
+              "roughness": 1,
+              "normalMap": true,
+              "uvChannel": 1,
               "uvSpan": [
-                0,
-                0
+                0.26238182187080383,
+                1.7152109146118164
               ]
             }
           ],
@@ -2607,16 +2653,19 @@
           "name": "WEAPON_pike_Shaft",
           "slot": "weapon",
           "variant": "pike",
-          "vertices": 32,
-          "checksum": 0.44674452543258675,
+          "vertices": 66,
+          "checksum": 0.8759125876426698,
           "materials": [
             {
               "slot": "weapon.wood",
               "metalness": 0,
-              "roughness": 0.62,
-              "normalMap": false,
+              "roughness": 1.1514403661894843,
+              "normalMap": true,
               "uvChannel": 0,
-              "uvSpan": null
+              "uvSpan": [
+                1.1775433421134949,
+                3.040123462677002
+              ]
             }
           ],
           "morphs": {}
@@ -2625,16 +2674,19 @@
           "name": "WEAPON_pike_Shaft_1",
           "slot": "weapon",
           "variant": "pike",
-          "vertices": 41,
-          "checksum": 0.34231143593788155,
+          "vertices": 82,
+          "checksum": 0.09701031684875494,
           "materials": [
             {
               "slot": "weapon.metal",
               "metalness": 1,
-              "roughness": 0.27,
-              "normalMap": false,
+              "roughness": 0.6235986467318586,
+              "normalMap": true,
               "uvChannel": 0,
-              "uvSpan": null
+              "uvSpan": [
+                1.1816895008087158,
+                3.200000047683716
+              ]
             }
           ],
           "morphs": {}
@@ -2648,11 +2700,14 @@
           "materials": [
             {
               "slot": "weapon.grip",
-              "metalness": 0,
-              "roughness": 0.800000011920929,
-              "normalMap": false,
+              "metalness": 1,
+              "roughness": 1,
+              "normalMap": true,
               "uvChannel": 0,
-              "uvSpan": null
+              "uvSpan": [
+                0.3318203538656235,
+                1.5911173820495605
+              ]
             }
           ],
           "morphs": {}
@@ -2670,79 +2725,81 @@
         "effectiveShield": "none",
         "handGripWorld": {
           "R": [
-            -0.24406271853076272,
+            -0.2440627185307629,
             1.084919069283649,
-            0.2726545433298904
+            0.2726545433298903
           ],
           "L": [
-            -0.06774608710156232,
+            -0.06774608710156257,
             1.0936493997374674,
-            0.6091599379408008
+            0.6091599379408004
           ]
         },
         "weaponGripWorld": {
           "R": [
-            -0.24406271853076256,
+            -0.24406271853076272,
             1.084919069283649,
-            0.27265454332989025
+            0.2726545433298902
           ],
           "L": [
-            -0.06774557172949275,
+            -0.06774557172949314,
             1.0936491288518713,
-            0.6091600523721877
+            0.6091600523721876
           ]
         },
-        "rightGripErrorM": 2.3551386880256624e-16,
-        "leftGripErrorM": 5.933649118609805e-7,
+        "rightGripErrorM": 2.0014830212433605e-16,
+        "leftGripErrorM": 5.933649118046763e-7,
         "axis": [
-          0.46399254655110184,
-          0.022973836006121247,
+          0.46399254655110156,
+          0.022973836006121254,
           0.8855411450656528
         ],
         "tip": [
-          0.8231201842519269,
-          1.137758891918013,
+          0.8231201842519255,
+          1.1377588919180128,
           2.309398925112081
         ],
+        "clearance": null,
         "footDriftM": {
-          "L": 2.2603987149659857e-7,
+          "L": 2.2603987150632134e-7,
           "R": 3.9717761209517705e-7
         },
         "reachErrors": {
           "R": {
-            "elbowFlexDeg": 111.1408338664369,
-            "wristBendDeg": 21.11902804453233,
+            "elbowFlexDeg": 111.14083386643688,
+            "wristBendDeg": 21.119028044532296,
             "elbowHingeAlignment": 0.9999993798523037,
             "upperLengthM": 0.2621431249337148,
-            "forearmLengthM": 0.27823495941199183,
+            "forearmLengthM": 0.2782349594119917,
             "referenceLengthsM": [
               0.2621429885986164,
               0.27823521532246515
             ],
-            "forearmTwistDeg": 67.70487077724347,
-            "wristAxialTwistDeg": 0.000007732189395331683,
+            "forearmTwistDeg": 67.7048707772435,
+            "wristAxialTwistDeg": 0.000007732189390140477,
             "reachErrorM": 0,
-            "gripErrorM": 8.740294859781097e-7
+            "gripErrorM": 8.740294860214168e-7
           },
           "L": {
-            "elbowFlexDeg": 31.983305772695893,
-            "wristBendDeg": 24.125654479099314,
-            "elbowHingeAlignment": 0.9999995588673313,
-            "upperLengthM": 0.262142851769532,
-            "forearmLengthM": 0.27823537994398617,
+            "elbowFlexDeg": 31.983305772695903,
+            "wristBendDeg": 24.1256544790993,
+            "elbowHingeAlignment": 0.9999995588673312,
+            "upperLengthM": 0.26214285176953195,
+            "forearmLengthM": 0.27823537994398606,
             "referenceLengthsM": [
               0.2621429872779313,
               0.27823518060107694
             ],
-            "forearmTwistDeg": -84.05538975540748,
-            "wristAxialTwistDeg": 0.000005315202650562335,
+            "forearmTwistDeg": -84.05538975540745,
+            "wristAxialTwistDeg": 0.000005315202662098191,
             "reachErrorM": 0,
-            "gripErrorM": 5.933649118609805e-7
+            "gripErrorM": 5.933649118046763e-7
           }
         },
+        "wristMissM": null,
         "scope": "Attachment frames and wrist/foot joints; not a skin collision or anatomical comfort proof."
       },
-      "thrustAdvanceM": 0.2386372122375371
+      "thrustAdvanceM": 0.23863721223753834
     },
     {
       "name": "greatsword-thrust",
@@ -2920,18 +2977,18 @@
           "name": "HELMET_Ivory_open_helmet",
           "slot": "helmet",
           "variant": "on",
-          "vertices": 1680,
-          "checksum": 30.828361912380785,
+          "vertices": 2007,
+          "checksum": 37.21393580084126,
           "materials": [
             {
               "slot": "armor.main",
               "metalness": 1,
-              "roughness": 0.32,
-              "normalMap": false,
-              "uvChannel": 0,
+              "roughness": 0.7390798776081287,
+              "normalMap": true,
+              "uvChannel": 1,
               "uvSpan": [
-                0,
-                0
+                0.214694581925869,
+                2.0091453790664673
               ]
             }
           ],
@@ -2941,18 +2998,18 @@
           "name": "HELMET_Ivory_open_helmet_1",
           "slot": "helmet",
           "variant": "on",
-          "vertices": 1719,
-          "checksum": 30.700099244504194,
+          "vertices": 1779,
+          "checksum": 31.547558480563612,
           "materials": [
             {
               "slot": "armor.trim",
               "metalness": 1,
-              "roughness": 0.24,
-              "normalMap": false,
-              "uvChannel": 0,
+              "roughness": 0.5543099082060965,
+              "normalMap": true,
+              "uvChannel": 1,
               "uvSpan": [
-                1,
-                1
+                0.2199999988079071,
+                2.018746256828308
               ]
             }
           ],
@@ -2962,8 +3019,8 @@
           "name": "HELMET_Ivory_open_helmet_2",
           "slot": "helmet",
           "variant": "on",
-          "vertices": 140,
-          "checksum": 2.752574267131277,
+          "vertices": 168,
+          "checksum": 3.178904102933594,
           "materials": [
             {
               "slot": "Deep teal enamel",
@@ -2983,8 +3040,8 @@
           "name": "HELMET_Ivory_open_helmet_3",
           "slot": "helmet",
           "variant": "on",
-          "vertices": 315,
-          "checksum": 5.8604648697447566,
+          "vertices": 378,
+          "checksum": 7.239086131936639,
           "materials": [
             {
               "slot": "Teal horsehair",
@@ -3028,18 +3085,18 @@
           "name": "ARMOR_Breastplate",
           "slot": "plate",
           "variant": "plate",
-          "vertices": 14448,
-          "checksum": 144.06300018247765,
+          "vertices": 17722,
+          "checksum": 178.80924409766416,
           "materials": [
             {
               "slot": "armor.main",
               "metalness": 1,
-              "roughness": 0.32,
-              "normalMap": false,
-              "uvChannel": 0,
+              "roughness": 0.7390798776081287,
+              "normalMap": true,
+              "uvChannel": 1,
               "uvSpan": [
-                1,
-                1
+                1.0507657527923584,
+                1.7336260080337524
               ]
             }
           ],
@@ -3052,18 +3109,18 @@
           "name": "ARMOR_Breastplate_1",
           "slot": "plate",
           "variant": "plate",
-          "vertices": 13708,
-          "checksum": 158.9497184568263,
+          "vertices": 14988,
+          "checksum": 173.4770492454622,
           "materials": [
             {
               "slot": "armor.trim",
               "metalness": 1,
-              "roughness": 0.24,
-              "normalMap": false,
-              "uvChannel": 0,
+              "roughness": 0.5543099082060965,
+              "normalMap": true,
+              "uvChannel": 1,
               "uvSpan": [
-                1,
-                1
+                1.0578668117523193,
+                1.7345794439315796
               ]
             }
           ],
@@ -3080,14 +3137,14 @@
           "checksum": 113.858822385508,
           "materials": [
             {
-              "slot": "Dark leather",
-              "metalness": 0,
-              "roughness": 0.800000011920929,
-              "normalMap": false,
-              "uvChannel": 0,
+              "slot": "armor.leather",
+              "metalness": 1,
+              "roughness": 1,
+              "normalMap": true,
+              "uvChannel": 1,
               "uvSpan": [
-                0,
-                0
+                0.26238182187080383,
+                1.7152109146118164
               ]
             }
           ],
@@ -3106,10 +3163,13 @@
             {
               "slot": "weapon.metal",
               "metalness": 1,
-              "roughness": 0.27,
-              "normalMap": false,
+              "roughness": 0.6235986467318586,
+              "normalMap": true,
               "uvChannel": 0,
-              "uvSpan": null
+              "uvSpan": [
+                0.2600000202655792,
+                1.4799998998641968
+              ]
             }
           ],
           "morphs": {}
@@ -3123,11 +3183,14 @@
           "materials": [
             {
               "slot": "weapon.grip",
-              "metalness": 0,
-              "roughness": 0.800000011920929,
-              "normalMap": false,
+              "metalness": 1,
+              "roughness": 1,
+              "normalMap": true,
               "uvChannel": 0,
-              "uvSpan": null
+              "uvSpan": [
+                0.15479910373687744,
+                0.17382854223251343
+              ]
             }
           ],
           "morphs": {}
@@ -3145,7 +3208,10 @@
               "roughness": 0.6499999761581421,
               "normalMap": false,
               "uvChannel": 0,
-              "uvSpan": null
+              "uvSpan": [
+                0.028800107538700104,
+                0.2130001187324524
+              ]
             }
           ],
           "morphs": {}
@@ -3163,86 +3229,88 @@
         "effectiveShield": "none",
         "handGripWorld": {
           "R": [
-            -0.10029539347087969,
+            -0.1002953934708797,
             1.1596488013911612,
-            0.5971637395652954
+            0.5971637395652956
           ],
           "L": [
-            -0.10296684371322117,
-            1.1581598599840714,
-            0.46719931163798756
+            -0.10296684371322101,
+            1.1581598599840717,
+            0.46719931163798767
           ]
         },
         "weaponGripWorld": {
           "R": [
             -0.10029539347087954,
-            1.1596488013911612,
+            1.1596488013911614,
             0.5971637395652954
           ],
           "L": [
-            -0.10296633161922818,
+            -0.10296633161922814,
             1.1581596799235438,
-            0.46719970283833184
+            0.4671997028383319
           ]
         },
-        "rightGripErrorM": 1.5265566588595902e-16,
-        "leftGripErrorM": 6.691036994537453e-7,
+        "rightGripErrorM": 2.9893669801409083e-16,
+        "leftGripErrorM": 6.691036993960735e-7,
         "axis": [
-          0.020546395861122006,
-          0.011454919474038339,
+          0.020546395861121638,
+          0.011454919474038113,
           0.9997232769306521
         ],
         "tip": [
-          -0.07543424932096399,
+          -0.07543424932096451,
           1.1735092904172766,
-          1.8068285583524095
+          1.80682855835241
         ],
+        "clearance": null,
         "footDriftM": {
-          "L": 2.2603987149659857e-7,
+          "L": 2.2603987150632134e-7,
           "R": 3.9717761209517705e-7
         },
         "reachErrors": {
           "R": {
-            "elbowFlexDeg": 48.94605649068065,
-            "wristBendDeg": 41.002352204475635,
-            "elbowHingeAlignment": 0.9999988961888424,
-            "upperLengthM": 0.26214281094137293,
+            "elbowFlexDeg": 48.94605649068073,
+            "wristBendDeg": 41.00235220447562,
+            "elbowHingeAlignment": 0.9999988961888425,
+            "upperLengthM": 0.26214281094137315,
             "forearmLengthM": 0.27823509957207515,
             "referenceLengthsM": [
               0.2621429885986164,
               0.27823521532246515
             ],
             "forearmTwistDeg": 86.39999999999999,
-            "wristAxialTwistDeg": 0.017410444825258508,
+            "wristAxialTwistDeg": 0.01741044482528911,
             "reachErrorM": 0,
-            "gripErrorM": 4.606921070360001e-7
+            "gripErrorM": 4.6069210696243975e-7
           },
           "L": {
-            "elbowFlexDeg": 80.6525949163053,
-            "wristBendDeg": 27.85574787817642,
-            "elbowHingeAlignment": 0.9999992585893026,
+            "elbowFlexDeg": 80.65259491630535,
+            "wristBendDeg": 27.855747878176498,
+            "elbowHingeAlignment": 0.9999992585893027,
             "upperLengthM": 0.26214273112925934,
             "forearmLengthM": 0.2782353848198555,
             "referenceLengthsM": [
               0.2621429872779313,
               0.27823518060107694
             ],
-            "forearmTwistDeg": -83.81494065934908,
-            "wristAxialTwistDeg": -0.000043356732340522924,
+            "forearmTwistDeg": -83.81494065934906,
+            "wristAxialTwistDeg": -0.00004335673240437624,
             "reachErrorM": 0,
-            "gripErrorM": 6.691036994537453e-7
+            "gripErrorM": 6.691036993960735e-7
           }
         },
+        "wristMissM": null,
         "scope": "Attachment frames and wrist/foot joints; not a skin collision or anatomical comfort proof."
       },
-      "thrustAdvanceM": 0.2996462129101825
+      "thrustAdvanceM": 0.2996462129101817
     }
   ],
   "errors": [],
   "network": [],
   "morphology": {
     "meshes": 12,
-    "maxDelta": 0.04498396727516039
+    "maxDelta": 0.045030653729938586
   },
   "scope": "Actual visible equipment meshes and PBR/UV assignment, sampled morphed vertex displacement, deterministic sampled poses and foot support, review/profile compatibility, 390px software browser. Full collision freedom and real-phone performance are not asserted."
 }

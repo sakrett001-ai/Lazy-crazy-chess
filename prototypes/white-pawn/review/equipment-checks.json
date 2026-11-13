@@ -1,6 +1,6 @@
 {
   "status": "passed",
-  "glbSha256": "52f52e1c1ae832d1a61e1dac9e83dd39ff961fde1a9c402dec8a4a8f6dfce4e6",
+  "glbSha256": "0e5cf5ff21193216a693af7f2ee830e064eb6a8b7f909a0460dc70ea5b6236a0",
   "glbPath": "/home/user/lazy-crazy-chess/prototypes/white-pawn/assets/white-pawn.glb",
   "limits": {
     "footDriftM": 0.006,
@@ -584,35 +584,35 @@
     {
       "name": "Spear: axial attack after horizontal preparation",
       "passed": true,
-      "advanceM": 0.21994384182782648,
+      "advanceM": 0.21994384182782745,
       "forwardAdvanceM": 0.2191061710760589,
-      "lateralM": 0.000009397260550127653,
-      "lateralRatio": 0.000042725727040286456,
-      "readyElevationDeg": 4.999694576059645,
-      "attackElevationDeg": 4.999993703057126,
-      "readyForwardAxis": 0.9961951626742841,
-      "attackForwardAxis": 0.996194707670358,
-      "shaftRotationDeg": 0.0003021466213673015
+      "lateralM": 0.000009397237119926889,
+      "lateralRatio": 0.000042725620512180865,
+      "readyElevationDeg": 4.999694581524482,
+      "attackElevationDeg": 4.999993708521977,
+      "readyForwardAxis": 0.996195162665972,
+      "attackForwardAxis": 0.9961947076620451,
+      "shaftRotationDeg": 0.00030214541511371047
     },
     {
       "name": "Spear: attack phase stays horizontal and advances without reversal",
       "passed": true,
       "samples": 22,
-      "maxElevationDeg": 5.001223726954558,
-      "maxShaftRotationDeg": 0.0040745197639422154,
+      "maxElevationDeg": 5.001223732419312,
+      "maxShaftRotationDeg": 0.004074519674492478,
       "minAxialStepM": 0
     },
     {
       "name": "Shield: upper middle and lower face advance together",
       "passed": true,
       "bandAdvanceM": {
-        "upper": 0.16837149373250473,
-        "middle": 0.16859986240266878,
-        "lower": 0.16830789625802348
+        "upper": 0.16859475576179628,
+        "middle": 0.16838116590443666,
+        "lower": 0.16809926126869898
       },
       "minVertexAdvanceM": 0.10629394145239845,
       "forwardVertexFraction": 1,
-      "centroidAdvanceM": 0.1684985443867595
+      "centroidAdvanceM": 0.1682749409078421
     },
     {
       "name": "All imported bone quaternions are finite and unit length",
@@ -630,15 +630,15 @@
       "name": "Verticalized exported spear is rejected",
       "passed": true,
       "observed": {
-        "advanceM": 0.2633378410774142,
-        "forwardAdvanceM": -1.2901304332650558,
-        "lateralM": 1.9911679852573703,
-        "lateralRatio": 7.5612679784673285,
-        "readyElevationDeg": 4.999694576059645,
+        "advanceM": 0.2633378412695264,
+        "forwardAdvanceM": -1.29013043311692,
+        "lateralM": 1.9911679851329147,
+        "lateralRatio": 7.561267972478567,
+        "readyElevationDeg": 4.999694581524482,
         "attackElevationDeg": 89.99999716835316,
-        "readyForwardAxis": 0.9961951626742841,
-        "attackForwardAxis": 3.4297049302571595e-8,
-        "shaftRotationDeg": 85.0003034588625
+        "readyForwardAxis": 0.996195162665972,
+        "attackForwardAxis": 3.4297049569100386e-8,
+        "shaftRotationDeg": 85.00030345339766
       }
     },
     {
@@ -646,13 +646,13 @@
       "passed": true,
       "observed": {
         "bandAdvanceM": {
-          "upper": 1.2653277118889651e-17,
-          "middle": 0.21396140159129035,
-          "lower": 0.4270443915074008
+          "upper": -2.1378401694418937e-16,
+          "middle": 0.21821606360824,
+          "lower": 0.435411814921506
         },
-        "minVertexAdvanceM": -0.04717911235580363,
-        "forwardVertexFraction": 0.8780487804878049,
-        "centroidAdvanceM": 0.21379036109447255
+        "minVertexAdvanceM": -0.043016376866596095,
+        "forwardVertexFraction": 0.8650306748466258,
+        "centroidAdvanceM": 0.21770497059182214
       }
     }
   ],
@@ -681,19 +681,20 @@
       }
     },
     "spear": {
-      "low": 16,
-      "high": 16,
+      "low": 33,
+      "high": 33,
       "tip": [
-        "SPEAR_Ash_shaft_3:70"
+        "SPEAR_Ash_shaft_3:140",
+        "SPEAR_Ash_shaft_3:141"
       ],
       "grip": 32
     },
     "shield": {
-      "count": 1394,
+      "count": 1630,
       "bands": {
-        "upper": 272,
-        "middle": 306,
-        "lower": 272
+        "upper": 336,
+        "middle": 344,
+        "lower": 336
       }
     }
   }

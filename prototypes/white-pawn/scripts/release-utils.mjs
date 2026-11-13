@@ -3,7 +3,7 @@ import {createHash} from 'node:crypto';
 
 export const REPOSITORY='sakrett001-ai/Lazy-crazy-chess';
 export const MAX_DOCUMENT_BYTES=2_000_000;
-export const MODEL_VERSION='0.3.0';
+export const MODEL_VERSION='0.3.1';
 export const sha256=data=>createHash('sha256').update(data).digest('hex');
 export function sourceCommit(value) {
   assert.match(value??'',/^[a-f0-9]{40}$/,'A full immutable source commit is required');

@@ -1,8 +1,8 @@
 {
-  "date": "2026-10-23T07:48:48.990Z",
-  "browser": "141.0.7390.37",
-  "glbSha256": "52f52e1c1ae832d1a61e1dac9e83dd39ff961fde1a9c402dec8a4a8f6dfce4e6",
-  "documentSha256": "4c5cc5aa277cd89c71ce78cdcffebe47898cb986c8eac1a4272e3f6b214b9deb",
+  "date": "2026-11-13T15:26:00.703Z",
+  "browser": "157.0.8103.50",
+  "glbSha256": "0e5cf5ff21193216a693af7f2ee830e064eb6a8b7f909a0460dc70ea5b6236a0",
+  "documentSha256": "5c1643668d3a062471c857ff80ce5e8dc34e96a3ad50e5a5ae04b6f239f15da5",
   "tests": [
     "Default armor is metallic steel; shield face remains white dielectric; appearance panel starts collapsed",
     "Material-only finish/paint changes preserve a user-adjusted camera position, target and zoom",
@@ -43,6 +43,18 @@
         "roughness": 0.24
       }
     ],
+    "armor.leather": [
+      {
+        "color": [
+          0.07500000490924297,
+          0.055000000378777614,
+          0.037999998397151735
+        ],
+        "srgb": "4d4237",
+        "metalness": 1,
+        "roughness": 0.5356498956680298
+      }
+    ],
     "shield.face": [
       {
         "color": [
@@ -53,30 +65,40 @@
         "srgb": "eaeae5",
         "metalness": 0,
         "roughness": 0.42
+      },
+      {
+        "color": [
+          0.8199999999999998,
+          0.8200000000000001,
+          0.78
+        ],
+        "srgb": "eaeae5",
+        "metalness": 0,
+        "roughness": 0.42
       }
     ],
     "shield.trim": [
       {
         "color": [
-          0.5,
-          0.5699999928474426,
-          0.6200000047683716
+          0.5000000066711898,
+          0.5699999891811913,
+          0.620000025618836
         ],
         "srgb": "bcc7ce",
         "metalness": 1,
-        "roughness": 0.27000001072883606
+        "roughness": 0.43297079205513
       }
     ],
     "shield.wood": [
       {
         "color": [
-          0.23999999463558197,
-          0.13500000536441803,
-          0.061000000685453415
+          0.2399999953213232,
+          0.13500001064106293,
+          0.061000003381084245
         ],
         "srgb": "866746",
-        "metalness": 0,
-        "roughness": 0.6200000047683716
+        "metalness": 1,
+        "roughness": 0.5384560227394104
       }
     ],
     "shield.emblem": [
@@ -94,13 +116,13 @@
     "shield.leather": [
       {
         "color": [
-          0.07500000298023224,
-          0.054999999701976776,
-          0.03799999877810478
+          0.07500000490924297,
+          0.055000000378777614,
+          0.037999998397151735
         ],
         "srgb": "4d4237",
-        "metalness": 0,
-        "roughness": 0.800000011920929
+        "metalness": 1,
+        "roughness": 0.5356498956680298
       }
     ],
     "weapon.metal": [
@@ -118,13 +140,13 @@
     "weapon.grip": [
       {
         "color": [
-          0.07500000298023224,
-          0.054999999701976776,
-          0.03799999877810478
+          0.07500000490924297,
+          0.055000000378777614,
+          0.037999998397151735
         ],
         "srgb": "4d4237",
-        "metalness": 0,
-        "roughness": 0.800000011920929
+        "metalness": 1,
+        "roughness": 0.5356498956680298
       }
     ],
     "weapon.binding": [
@@ -142,7 +164,7 @@
     "weapon.wood": [
       {
         "color": [
-          0.24,
+          0.23999999999999996,
           0.135,
           0.061
         ],
