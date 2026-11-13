@@ -54,7 +54,7 @@ export function createGrounding({bones,holder}){
   holder.updateMatrixWorld(true);
   inv.copy(holder.matrixWorld).invert();
   const before={L:flat('L'),R:flat('R')};
-  if(fall>.01){const y=ground.height(holder.position.x,holder.position.z);holder.position.y+=y;holder.updateMatrixWorld(true);last={base:y,lift:{L:0,R:0},grounds:{L:y,R:y},flat:before,fall:true};return last;}
+  if(fall>.01){const y=ground.height(holder.position.x,holder.position.z);holder.position.y+=y;holder.updateMatrixWorld(true);last={base:y,rel:0,lift:{L:0,R:0},grounds:{L:y,R:y},flat:before,fall:true};return last;}
   const feet=Object.fromEntries(SIDES.map(s=>{const p=legs[s].foot.getWorldPosition(V());return[s,{p,h:ground.height(p.x,p.z),air:local.copy(p).applyMatrix4(inv).y-rest,q:legs[s].foot.getWorldQuaternion(Q())}];}));
   const base=Math.min(feet.L.h,feet.R.h);
   holder.position.y+=base;holder.updateMatrixWorld(true);
@@ -68,9 +68,13 @@ export function createGrounding({bones,holder}){
    fq.copy(tq).multiply(f.q);
    if(dy>1e-5||angle>1e-5)raise(s,dy,fq);
   }
-  last={base,lift,grounds:{L:feet.L.h,R:feet.R.h},flat:before,fall:false};
+  last={base,rel:base-ground.height(holder.position.x,holder.position.z),lift,grounds:{L:feet.L.h,R:feet.R.h},flat:before,fall:false};
   return last;
  }
+ // A figure moved without a new pose (calm figures are re-posed every few
+ // frames) keeps its last pose on the field: the holder follows the ground
+ // under it by the last pose's height above that ground.
+ function follow(ground,{fall=0}={}){holder.position.y+=ground.height(holder.position.x,holder.position.z)+(fall>.01?0:last.rel||0);holder.updateMatrixWorld(true);}
  // The pose on the field against the same pose on the flat (m), per foot:
  // ankle and toe height above the ground under each, less their height
  // above the flat floor. 0 is a foot standing on the field exactly as it
@@ -81,5 +85,5 @@ export function createGrounding({bones,holder}){
   return Object.fromEntries(SIDES.map(s=>{const a=legs[s].foot.getWorldPosition(V()),t=legs[s].toe.getWorldPosition(V()),f=last.flat[s];
    return[s,{ankle:a.y-ground.height(a.x,a.z)-f.ankle,toe:t.y-ground.height(t.x,t.z)-f.toe,air:f.ankle-rest,fall:!!last.fall}];}));
  }
- return{apply,gaps,rest,last:()=>last};
+ return{apply,follow,gaps,rest,last:()=>last};
 }
