@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import {clone as cloneSkinned} from 'three/addons/utils/SkeletonUtils.js';
 import {createLoadout} from '../../white-pawn/src/loadout.mjs';
+import {paintSurface} from '../../white-pawn/src/surfaces.mjs';
 import {deterministicClip} from '../../white-pawn/src/camera-rig.mjs';
 import {createBodyRig} from './motion.mjs';
 import {createMocapDriver} from './mocap/apply.mjs';
@@ -20,7 +21,7 @@ const slotOf=m=>m.userData?.customizationSlot||m.name;
 function factionMaterial(cache,material,color){
  if(!cache.has(material)){
   const copy=material.clone(),paint=PALETTES[color][slotOf(material)];
-  if(paint){copy.color.setRGB(...paint[0]);copy.metalness=paint[1];copy.roughness=paint[2];}
+  if(paint)paintSurface(copy,...paint);
   cache.set(material,copy);
  }
  return cache.get(material);

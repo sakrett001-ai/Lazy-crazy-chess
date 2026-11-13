@@ -401,6 +401,12 @@ for ob in merged:
   inv=(rig.pose.bones['wrist.L'].matrix@rig.data.bones['wrist.L'].matrix_local.inverted()).inverted()
   ob['gripBind']=gltf_vector(inv@sg);ob['handleAxisBind']=gltf_vector(inv.to_3x3()@Vector(frames['shield_handle_axis']))
 
+# Surfaces from the CPU forge: wear UVs in bind space, tiled PBR maps.
+import surfaces_blender
+_inv=(rig.pose.bones['wrist.L'].matrix@rig.data.bones['wrist.L'].matrix_local.inverted()).inverted().to_3x3()
+surface_report=surfaces_blender.apply(merged,hints={'shield_up':(_inv@Vector(frames['shield_up'])).normalized(),'shield_right':(_inv@Vector(frames['shield_right'])).normalized()})
+(REVIEW/'surface-build.json').write_text(json.dumps(surface_report,indent=2,ensure_ascii=False)+'\n')
+
 # Save the exact catalogue before export. Default visibility is app metadata;
 # Blender render selection below uses the same settings.
 for ob in merged:ob.hide_render=not ob['defaultVisible'];ob.hide_viewport=False
@@ -449,10 +455,13 @@ for channel in clip['channels']:
  sample=clip['samplers'][channel['sampler']];accessor=doc['accessors'][sample['output']];view=doc['bufferViews'][accessor['bufferView']];n=4 if path=='rotation' else 3
  offset=view.get('byteOffset',0)+accessor.get('byteOffset',0)+(n*4 if sample.get('interpolation')=='CUBICSPLINE' else 0)
  node=doc['nodes'][target['node']];node.pop('matrix',None);node[path]=list(struct.unpack_from('<'+'f'*n,binary,offset))
+# Each shield carries its own face map, but runtime code and audits address the face by its slot name.
+for material in doc['materials']:
+ if material.get('extras',{}).get('customizationSlot')=='shield.face':material['name']='shield.face'
 jb=json.dumps(doc,separators=(',',':')).encode();jb+=b' '*((-len(jb))%4)
 raw=struct.pack('<III',0x46546c67,2,28+len(jb)+len(binary))+struct.pack('<II',len(jb),0x4e4f534a)+jb+struct.pack('<II',len(binary),0x004e4942)+binary
 (OUT/'white-pawn.glb').write_bytes(raw)
-info.update(version='0.3.0',glb_sha256=hashlib.sha256(raw).hexdigest(),source_commit=SOURCE,modular={'slots':sorted(groups),'bodyTargets':['lean','strong'],'experienceTarget':'veteran','surfaceTileMetres':.04,'mailOuterDiameterMetres':.0112,'quiltDiagonalSpacingMetres':.028284,'catalogueDownload':True,'runtimeWeaponIKBaked':False},limits=['Fantasy infantry equipment, not historical replica','New weapon IK is evaluated in the browser, not baked into the three original GLB clips','Catalogue GLB contains all variants; selected appearance is saved separately in JSON','No cloth simulation or full-board LOD'])
+info.update(version='0.3.1',glb_sha256=hashlib.sha256(raw).hexdigest(),source_commit=SOURCE,modular={'slots':sorted(groups),'bodyTargets':['lean','strong'],'experienceTarget':'veteran','surfaceTileMetres':.04,'mailOuterDiameterMetres':.0112,'quiltDiagonalSpacingMetres':.028284,'catalogueDownload':True,'runtimeWeaponIKBaked':False},limits=['Fantasy infantry equipment, not historical replica','New weapon IK is evaluated in the browser, not baked into the three original GLB clips','Catalogue GLB contains all variants; selected appearance is saved separately in JSON','No cloth simulation or full-board LOD'])
 (OUT/'model-info.json').write_text(json.dumps(info,indent=2,default=list)+'\n')
 report={'status':'built','glbSha256':info['glb_sha256'],'bytes':len(raw),'meshes':len(doc['meshes']),'groups':[{k:ob[k] for k in ('equipmentSlot','equipmentVariant','defaultVisible')} for ob in merged],'sourceCommit':SOURCE}
 (REVIEW/'modular-asset-build.json').write_text(json.dumps(report,indent=2)+'\n');print('MODULAR_GLB_READY',json.dumps(report),flush=True)
