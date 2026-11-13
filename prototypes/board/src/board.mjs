@@ -563,7 +563,9 @@ async function init(bytes){
    // Attacker: the duel on its square, back to guard, then the step in.
    if(t<walkAt){
     const b=body(leadA,decisive.attack,Math.min(t,settle)),f=fadeIn(t)*mw,w=f*(1-smooth(t,settle,walkAt));
-    const yaw=lerpAngle(startYaw,line+aimOf(b),smooth(t,0,.4)),o=at(a,b.offset,line,f);
+    // The aim is let go with the clip, so the step-in starts on the line
+    // (the walk below faces it) without a turn of the whole figure.
+    const yaw=lerpAngle(startYaw,line+aimOf(b)*(1-smooth(t,settle,walkAt)),smooth(t,0,.4)),o=at(a,b.offset,line,f);
     if(t>=settle&&!stand)stand=o;
     const arms=armsOf(b);
     attacker.place({...(stand||o),yaw});yaws.set(attackerPiece.id,yaw);

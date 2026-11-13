@@ -5,7 +5,7 @@ import {fileURLToPath} from 'node:url';
 import {qMul,qConj,qRotate} from '../src/mocap/math.mjs';
 import {parseMotionFile,prepareClip,turnHead} from '../src/mocap/format.mjs';
 import {createRetargeter,PAWN} from '../src/mocap/retarget.mjs';
-import {NECK,neckAngles,fromNeckAngles,limitNeck} from '../src/mocap/neck.mjs';
+import {NECK,neckAngles,fromNeckAngles,limitNeck,leadWithChest,TWIST,createNeckFollower,NECK_SPEED,NECK_ACCEL,GAP} from '../src/mocap/neck.mjs';
 import {shake,LIMITS} from '../src/mocap/smoothness.mjs';
 
 import {pawnRest} from './pawn-rest.mjs';
@@ -54,3 +54,39 @@ for(const f of files){
   });
  }
 }
+
+// The head through time (neck.mjs, createNeckFollower): a head the
+// recording flips round is followed no faster than a person turns the
+// head at most (Röijezon et al. 2010: 348°/s), with the speed changing
+// smoothly, and a head that moves within those limits is followed exactly.
+const angleDeg=(a,b)=>2*Math.acos(Math.min(1,Math.abs(a[0]*b[0]+a[1]*b[1]+a[2]*b[2]+a[3]*b[3])))*180/Math.PI;
+test('the head turns on the neck at the neck\'s pace and follows an easy turn exactly',()=>{
+ const f=createNeckFollower(),dt=1/30,from=fromNeckAngles({yaw:-50,pitch:0,roll:0}),to=fromNeckAngles({yaw:50,pitch:10,roll:0});
+ let q=f.step(from,0),v=0,t=0,frames=0;
+ assert.deepEqual(q,from,'первый кадр — как есть');
+ while(angleDeg(q,to)>.5&&frames<60){t+=dt;frames++;const n=f.step(to,t),s=angleDeg(q,n)/dt;
+  assert.ok(s<=NECK_SPEED+1,`кадр ${frames}: ${s.toFixed(0)}°/с`);
+  assert.ok(Math.abs(s-v)/dt<=NECK_ACCEL*1.05+1,`кадр ${frames}: разгон ${((s-v)/dt).toFixed(0)}°/с²`);
+  v=s;q=n;}
+ assert.ok(frames<30,`голова дошла за ${frames} кадров`);
+ // A slow sway, 40° each way at 0.5 Hz (≤126°/s): no lag once the head has
+ // picked up the sway's speed from rest.
+ const g=createNeckFollower();
+ for(let i=0;i<90;i++){const want=fromNeckAngles({yaw:40*Math.sin(Math.PI*i*dt),pitch:0,roll:0}),got=g.step(want,i*dt);
+  if(i>8)assert.ok(angleDeg(got,want)<1.5,`кадр ${i}: отстаёт на ${angleDeg(got,want).toFixed(1)}°`);}
+ // The same frame posed twice gives the same head; a pause starts it over.
+ const h=createNeckFollower();h.step(from,0);const a=h.step(to,dt),b=h.step(to,dt);
+ assert.ok(angleDeg(a,b)<1e-6,'второй вызов в том же кадре');
+ assert.deepEqual(h.step(from,dt+GAP+.01),from,'после паузы — как есть');
+});
+
+test('shoulders swung away from the eyes come back to the trunk\'s twist',()=>{
+ // Pelvis on the line, chest twisted 67° to the left, head held 68° to the right of the chest.
+ const dP=[0,0,0,1],dC=fromNeckAngles({yaw:67,pitch:0,roll:0}),dH=fromNeckAngles({yaw:-1,pitch:0,roll:0});
+ const c=leadWithChest(dP,dC,dH),twist=neckAngles(c).yaw,neck=neckAngles(qMul(qConj(c),dH)).yaw;
+ assert.ok(Math.abs(twist-TWIST)<.5,`грудь повернута на ${twist.toFixed(1)}°`);
+ assert.ok(Math.abs(neck)<=TWIST+2,`голова на шее ${neck.toFixed(1)}°`);
+ // Twisted towards the eyes, a recorded wind-up stays.
+ const wind=fromNeckAngles({yaw:60,pitch:0,roll:0}),look=fromNeckAngles({yaw:90,pitch:0,roll:0});
+ assert.ok(Math.abs(neckAngles(leadWithChest(dP,wind,look)).yaw-60)<.5,'замах к взгляду не трогаем');
+});

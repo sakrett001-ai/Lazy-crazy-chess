@@ -94,15 +94,23 @@ export function createPawnFactory({gltf,ground=null}){
    const saved=place.get();
    holder.position.set(0,0,0);holder.quaternion.identity();holder.updateMatrixWorld(true);
    restore();samplers[action]?.seek(time);holder.updateMatrixWorld(true);
+   // The stance a clip fades into: the feet of the pose under it (holder frame).
+   const fading=motion?.feet!=null&&(motion.blend||[motion]).some(m=>m?.clip&&(m.weight??1)<1);
+   const stance=fading?feet.capture():null;
    if(motion&&(motion.clip||motion.blend))for(const m of motion.blend||[motion])if(m?.clip)mocap.apply(m.points||sampleClip(m.clip,m.time,{inPlace:m.inPlace}),m.clip,m.weight??1);
    // A clip at full weight owns the legs and trunk, the thrust's body layer included.
-   const clipBody=!!motion&&(motion.blend||[motion]).some(m=>m?.clip&&(m.weight??1)>=1);
-   holder.updateMatrixWorld(true);rig.apply(layer);loadout.poseAt(action,time,{body:!clipBody,...(motion?.arms||{})});
+   const clipWeight=motion?Math.max(0,...(motion.blend||[motion]).filter(m=>m?.clip).map(m=>m.weight??1)):0,clipBody=clipWeight>=1;
+   holder.updateMatrixWorld(true);rig.apply(layer);
+   // The board's frames (motion.feet, its clock) carry the head at the neck's pace.
+   mocap.steady(motion?.feet!=null&&clipWeight>0?motion.feet:null);
+   loadout.poseAt(action,time,{body:!clipBody,...(motion?.arms||{})});
    place.set(saved);
    // motion.feet (the board's clock): the clip's feet are held where they
-   // stand (mocap/footlock.mjs) while the clip owns the legs on its feet.
-   // A pause in the poses or a jump in place starts the hold over.
-   if(motion?.feet!=null&&clipBody&&!saved.fall&&!saved.lift)feet.apply(motion.feet);
+   // stand (mocap/footlock.mjs) while the clip moves the legs, and while it
+   // hands them over to the stance it fades into (the feet step onto that
+   // stance instead of sliding into it). A pause in the poses or a jump in
+   // place starts the hold over.
+   if(motion?.feet!=null&&clipWeight>0&&!saved.fall&&!saved.lift)feet.apply(motion.feet,{hold:clipWeight,stance});
    // Last: the pose solved on the flat goes onto the field.
    if(field)grounding.apply(field,{fall:saved.fall});
    pose={action,time,layered:!!layer,motion:(motion?.blend||[motion]).filter(m=>m?.clip).map(m=>m.clip.name).join('+')||null};

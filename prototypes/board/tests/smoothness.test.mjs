@@ -43,3 +43,15 @@ test('a foot that drags over the floor slides; a lift in place is no step', ()=>
  const creep=[...Array(T)].map((_,t)=>[t*.003,.07,0]);
  assert.ok(footwork(creep,fps).standing<.1,'a foot creeping 9 cm/s never stands');
 });
+
+test('a step that drags its foot over the floor at lift-off skids; a clean step does not',()=>{
+ // A 40 cm step lifting 5 cm: clean, or lifting only after its first 6.5 cm
+ // have gone over the floor.
+ const step=drag=>[...Array(T)].map((_,t)=>{if(t<=30)return[0,.07,0];if(t>=50)return[.4,.07,0];
+  const u=(t-30)/20,v=drag?Math.max(0,(u-.3)/.7):u;
+  return[.4*minJerk(u),.07+.05*Math.sin(Math.PI*v),0];});
+ const clean=footwork(step(false),fps),dragged=footwork(step(true),fps);
+ assert.ok(clean.skid<.01,`чистый шаг: ${clean.skid.toFixed(3)} м`);
+ assert.ok(dragged.skid>.05,`шаг со скольжением: ${dragged.skid.toFixed(3)} м`);
+ assert.equal(clean.steps.length,1);assert.equal(clean.slides,0);
+});
