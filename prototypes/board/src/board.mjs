@@ -814,7 +814,10 @@ async function init(bytes){
   // The recorded exchange's fit to the squares: scale, gap at the blow, aim.
   duelLayouts:()=>[...layouts].map(([key,l])=>({key,scale:l.scale,gap:l.gap,closest:l.closest,aim:l.aim})),
   // Checks drive the board themselves: the start window steps aside for them.
-  manual(on=true){if(on&&titleOpen)closeTitle();manual=on;last=null;},
+  // Hand stepping starts the board clock from zero: fencing cycles are timed
+  // by it, so a check must not depend on how long the page ran before (the
+  // start window, a slow machine).
+  manual(on=true){if(on&&titleOpen)closeTitle();if(on&&!manual){clock=0;frameIndex=0;}manual=on;last=null;},
   title:()=>({open:titleOpen,flying:!!fly,economy,pixelRatio:renderer.getPixelRatio(),shadow:key.shadow.mapSize.x,calls:renderer.info.render.calls,triangles:renderer.info.render.triangles}),
   // Draws only the last frame: the checks need the motion, not every picture.
   step(seconds,fps=30,draw=true){const n=Math.max(1,Math.round(seconds*fps));for(let i=0;i<n;i++)advance(1/fps,draw&&i===n-1);},
