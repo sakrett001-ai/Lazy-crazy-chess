@@ -201,6 +201,148 @@ def steady_knees(X, limit=HIP_ROT):
     return Y, count, most
 
 
+# Голова у одной камеры, снимающей бойцов сбоку, оценена хуже всего тела:
+# лицо видно в профиль, и MediaPipe путает, где глаза и уши, а их глубину
+# берёт наугад. В ролике 516 голова атакующего по меткам повёрнута к груди
+# на 110–180° и за кадр перескакивает на 171°: на доске она выворачивалась
+# назад и болталась. Шея так не поворачивается: нормы подвижности шейного
+# отдела — сгибание 50°, разгибание 60°, наклон вбок 45°, поворот 80° в
+# каждую сторону (AMA Guides to the Evaluation of Permanent Impairment,
+# 5-е изд., 2000). Направление головы поэтому берётся не из меток лица, а из
+# того, что делает фехтовальщик: смотрит в глаза противнику (взгляд пары
+# известен — оба в одной сцене), глаза держит ровно по горизонтали — голова
+# стабилизирована по крену и против раскачки корпуса (Pozzo, Berthoz,
+# Lefort, Exp Brain Res 1990). Поворот, наклон и крен головы относительно
+# груди ограничиваются нормами (от стойки «вольно», от которой их мерит
+# перенос на пешку) и сглаживаются, и точки лица (глаза, уши,
+# нос, рот) ставятся по этой голове с пропорциями лица этого же бойца.
+NECK_YAW = 80.0        # градусов, поворот головы к груди в каждую сторону
+NECK_FLEX = 50.0       # градусов, наклон вперёд (подбородок к груди)
+NECK_EXT = 60.0        # градусов, разгибание назад
+NECK_ROLL = 45.0       # градусов, наклон вбок
+HEAD_SIGMA = 2.0       # кадров
+FACE = ['nose', 'eyeInnerL', 'eyeL', 'eyeOuterL', 'eyeInnerR', 'eyeR', 'eyeOuterR', 'earL', 'earR', 'mouthL', 'mouthR']
+
+
+def chest_axes(X):
+    """Chest frame as the retargeter has it (src/mocap/retarget.mjs, FRAMES.chest):
+    left along the shoulder line, up from the chest to the neck, forward = left × up."""
+    sl, sr = X[:, C.I['shoulderL']], X[:, C.I['shoulderR']]
+    neck = (sl + sr) / 2
+    pel = C.pelvis(X)
+    chest = pel + (neck - pel) * 0.7
+    left = unit(sl - sr)
+    up = neck - chest
+    up = unit(up - left * np.sum(up * left, axis=1, keepdims=True))
+    return neck, left, up, np.cross(left, up)
+
+
+def head_axes(yaw, pitch, roll, left, up, fwd):
+    """Head forward, up and left from its yaw (to the left), pitch (forward,
+    chin down) and roll (left ear down), degrees, against the chest frame."""
+    y, p, r = (np.radians(a)[:, None] for a in (yaw, pitch, roll))
+    f1 = fwd * np.cos(y) + left * np.sin(y)
+    l1 = left * np.cos(y) - fwd * np.sin(y)
+    f2 = f1 * np.cos(p) - up * np.sin(p)
+    u2 = up * np.cos(p) + f1 * np.sin(p)
+    u3 = u2 * np.cos(r) + l1 * np.sin(r)
+    l3 = l1 * np.cos(r) - u2 * np.sin(r)
+    return f2, u3, l3
+
+
+def smooth(a, sigma):
+    r = int(np.ceil(3 * sigma))
+    w = np.exp(-0.5 * (np.arange(-r, r + 1) / sigma) ** 2)
+    return np.convolve(np.pad(a, r, mode='edge'), w / w.sum(), mode='valid')
+
+
+def face_shape(X):
+    """The fighter's face in head coordinates (forward, up, left from the ear
+    midpoint), from the face's own proportions: ear-to-ear width (median over
+    the clip, the steadiest face measure) and the share of each point."""
+    w = float(np.median(np.linalg.norm(X[:, C.I['earL']] - X[:, C.I['earR']], axis=1)))
+    # Face points in shares of the ear-to-ear width (an adult head: ears 15 cm
+    # apart, eyes 6.3 cm apart and 9 cm before the ear line, nose tip 11 cm).
+    s = {'nose': (0.75, -0.05, 0), 'eyeInner': (0.62, 0.05, 0.11), 'eye': (0.6, 0.05, 0.21), 'eyeOuter': (0.55, 0.05, 0.31),
+         'ear': (0, 0, 0.5), 'mouth': (0.62, -0.4, 0.15)}
+    out = {}
+    for n in FACE:
+        base, side = (n[:-1], n[-1]) if n[-1] in 'LR' and n != 'nose' else (n, '')
+        f, u, l = s[base]
+        out[n] = np.array([f, u, l if side == 'L' else -l if side == 'R' else 0.0]) * w
+    return out
+
+
+def place_face(X, f, u, l, offset, shape):
+    """Face points of each frame from the head axes; the ear midpoint sits at
+    the neck plus `offset` (forward, up in the head frame)."""
+    Y = X.copy()
+    neck = (X[:, C.I['shoulderL']] + X[:, C.I['shoulderR']]) / 2
+    head = neck + f * offset[0] + u * offset[1]
+    for n, (a, b, c) in shape.items():
+        Y[:, C.I[n]] = head + f * a + u * b + l * c
+    return Y
+
+
+def head_offset(X):
+    """Ear midpoint from the neck in the chest frame (forward, up): median
+    over the clip — where this fighter carries the head over the shoulders."""
+    neck, left, up, fwd = chest_axes(X)
+    d = (X[:, C.I['earL']] + X[:, C.I['earR']]) / 2 - neck
+    return np.array([float(np.median(np.sum(d * fwd, axis=1))), float(np.median(np.sum(d * up, axis=1)))])
+
+
+def neutral_head(N):
+    """Yaw and pitch of the neutral stance's head (straight ahead over the
+    hips, level: straight_head) against its chest, degrees. The retargeter
+    measures every turn from the neutral, and the figure's head sits straight
+    over its chest at rest, so the figure's neck turns by the recorded turn
+    less this one: the limits apply to that."""
+    neck, left, up, fwd = chest_axes(N)
+    lat = N[:, C.I['hipL']] - N[:, C.I['hipR']]
+    g = np.cross(unit(lat * [1, 0, 1]), [0.0, 1.0, 0.0])
+    return (float(np.degrees(np.arctan2(np.sum(g * left), np.sum(g * fwd)))),
+            float(-np.degrees(np.arcsin(np.clip(np.sum(g * up), -1, 1)))))
+
+
+def steady_head(X, partner, zero=(0.0, 0.0), sigma=HEAD_SIGMA):
+    """The head looking into the partner's eyes, eyes level, within the neck's
+    range and smoothed. Returns the frames, the face's shape and offset (for
+    the neutral stance) and the largest turn of the tracked face that was
+    replaced against the chest, degrees."""
+    neck, left, up, fwd = chest_axes(X)
+    off = head_offset(X)
+    head = neck + fwd * off[0] + up * off[1]
+    eyes = (partner[:, C.I['eyeL']] + partner[:, C.I['eyeR']]) / 2
+    g = unit(eyes - head)
+    yaw = np.degrees(np.arctan2(np.sum(g * left, axis=1), np.sum(g * fwd, axis=1)))
+    pitch = -np.degrees(np.arcsin(np.clip(np.sum(g * up, axis=1), -1, 1)))
+    # Eyes level: the roll that brings the head's left axis to the horizontal.
+    f0, u0, l0 = head_axes(yaw, pitch, np.zeros_like(yaw), left, up, fwd)
+    roll = np.degrees(np.arctan2(-l0[:, 1], u0[:, 1]))
+    y0, p0 = zero
+    yaw = smooth(np.clip(yaw, y0 - NECK_YAW, y0 + NECK_YAW), sigma)
+    pitch = smooth(np.clip(pitch, p0 - NECK_EXT, p0 + NECK_FLEX), sigma)
+    roll = smooth(np.clip(roll, -NECK_ROLL, NECK_ROLL), sigma)
+    f, u, l = head_axes(yaw, pitch, roll, left, up, fwd)
+    tracked = unit(X[:, C.I['eyeL']] + X[:, C.I['eyeR']] - X[:, C.I['earL']] - X[:, C.I['earR']])
+    was = np.degrees(np.arctan2(np.sum(tracked * left, axis=1), np.sum(tracked * fwd, axis=1)))
+    shape = face_shape(X)
+    return place_face(X, f, u, l, off, shape), shape, off, float(np.abs(wrap(was)).max())
+
+
+def straight_head(X, shape, offset):
+    """A standing frame looking straight ahead over the hips, eyes level: the
+    neutral stance the retargeter measures every head turn from. The figure's
+    own rest looks that way (forward over the hips, level), so a head the
+    recording turns by some angle from it turns the figure's head by the same."""
+    lat = X[:, C.I['hipL']] - X[:, C.I['hipR']]
+    l = unit(lat * [1, 0, 1])
+    u = np.tile([0.0, 1.0, 0.0], (len(X), 1))
+    f = np.cross(l, u)
+    return place_face(X, f, u, l, offset, shape)
+
+
 def own_frame(X, facing):
     """Pair frame (x from A to B) → the fighter's frame: facing +x (A) or -x (B) onto +Z."""
     th = np.radians(-90.0 if facing > 0 else 90.0)
@@ -233,10 +375,19 @@ def build(pair):
         # plane; it is kept within the hip's rotation again.
         full[n][lo:hi], _, _ = steady_knees(full[n][lo:hi])
         plants[n] = {s: [(lo + a, lo + b) for a, b in v] for s, v in stands.items()}
+    # The heads last: they look at the partner's eyes, which must be placed first.
+    # The neutral stance is chosen on the body before the heads change: the
+    # limits are measured from it.
+    faces, heads, pick = {}, {}, {n: neutral_frame(full[n], fps) for n in full}
+    body = {n: full[n].copy() for n in full}
+    for n, other in (('A', 'B'), ('B', 'A')):
+        full[n][lo:hi], shape, off, heads[n] = steady_head(body[n][lo:hi], body[other][lo:hi], neutral_head(body[n][pick[n]:pick[n] + 1]))
+        faces[n] = (shape, off)
     neutral = {}
     for n, X in full.items():
-        i = neutral_frame(X, fps)
-        neutral[n] = (i, np.stack([key_points(X[i:i + 1])[k][0] for k in POINTS]).round(4).reshape(-1).tolist())
+        i = pick[n]
+        N = straight_head(X[i:i + 1], *faces[n])
+        neutral[n] = (i, np.stack([key_points(N)[k][0] for k in POINTS]).round(4).reshape(-1).tolist())
     clips = []
     for cyc in CYCLES:
         a, b = cyc['frames']
@@ -272,6 +423,9 @@ def build(pair):
            'feet': {'bodySigmaFrames': W.BODY_SIGMA, 'pelvisSigmaFrames': W.PELVIS_SIGMA, 'plantCost': W.PLANT_COST, 'plantMinSeconds': W.PLANT_MIN,
                     'steps': {n: v['steps'] for n, v in feet.items()}, 'maxDropM': {n: v['maxDropM'] for n, v in feet.items()},
                     'standsMoved': {n: v['standsMoved'] for n, v in feet.items()}, 'shortFrames': {n: v['shortFrames'] for n, v in feet.items()}},
+           'head': {'yawDegrees': NECK_YAW, 'flexionDegrees': NECK_FLEX, 'extensionDegrees': NECK_EXT, 'rollDegrees': NECK_ROLL,
+                    'sigmaFrames': HEAD_SIGMA, 'gaze': 'partner eyes, eyes level',
+                    'trackedFaceTurnMaxDegrees': {n: round(v, 1) for n, v in heads.items()}},
            'twist': {'maxDegrees': TWIST_MAX, 'rejectDegrees': TWIST_REJECT, 'sigmaFrames': TWIST_SIGMA,
                      'rejectedFrames': {n: v[0] for n, v in twist.items()}, 'maxCorrectionDegrees': {n: round(v[1], 1) for n, v in twist.items()}}}
     return {'format': 'lazy-chess.motion', 'version': 1, 'source': src, 'points': POINTS, 'neutral': clips[0]['neutral'], 'clips': clips}
