@@ -116,15 +116,10 @@ export function createPawnFactory({gltf,ground=null}){
    place.set(saved);
    return{tip:m.tip,shieldGrip:m.shieldGripWorld,grip:m.weaponGripWorld?.R||null};
   }
-  // Skinned vertices are read through the skeletons' bone matrices, which the
-  // renderer refreshes only when it draws a frame. A measure taken between
-  // frames (checks step the board without drawing, probes are never drawn)
-  // refreshes them, or it reads the pose of whatever frame was drawn last.
-  const skinned=()=>{holder.updateMatrixWorld(true);for(const mesh of meshes)if(mesh.isSkinnedMesh)mesh.skeleton.update();};
   // Foremost point of the visible shield along the figure's forward axis.
   function shieldFront(action,time,motion=null){
    const saved=place.get();solve(action,time,null,motion);
-   holder.position.set(0,0,0);holder.quaternion.identity();skinned();
+   holder.position.set(0,0,0);holder.quaternion.identity();holder.updateMatrixWorld(true);
    const point=new THREE.Vector3();let front=-Infinity,sx=0,sz=0,n=0;
    const visible=o=>{for(let n=o;n;n=n.parent)if(!n.visible)return false;return true;};
    const inShield=o=>{for(let n=o;n;n=n.parent)if(n.userData?.equipmentSlot==='shield')return true;return false;};
@@ -138,7 +133,7 @@ export function createPawnFactory({gltf,ground=null}){
   // their current pose and from both sides, for the contact checks.
   const ray=new THREE.Raycaster();
   function shieldHit(a,b){
-   skinned();
+   holder.updateMatrixWorld(true);
    const from=new THREE.Vector3(...a),dir=new THREE.Vector3(...b).sub(from),far=dir.length();
    const visible=o=>{for(let n=o;n;n=n.parent)if(!n.visible)return false;return true;};
    const inShield=o=>{for(let n=o;n;n=n.parent)if(n.userData?.equipmentSlot==='shield')return true;return false;};
@@ -159,7 +154,7 @@ export function createPawnFactory({gltf,ground=null}){
   // principal axes of those points. For the coherence checks of a duel
   // (Lazy-skills-lab strike-principles, pair_check.py), not for drawing.
   function shieldPlane(){
-   skinned();
+   holder.updateMatrixWorld(true);
    const visible=o=>{for(let n=o;n;n=n.parent)if(!n.visible)return false;return true;};
    const inShield=o=>{for(let n=o;n;n=n.parent)if(n.userData?.equipmentSlot==='shield')return true;return false;};
    const pts=[],v=new THREE.Vector3();
