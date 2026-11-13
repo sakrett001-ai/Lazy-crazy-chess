@@ -132,7 +132,7 @@ async function init(bytes){
   return actor;
  }
  function load(name){
-  scene_=null;clearTimeout(autoTimer);for(const a of actors.values())a.dispose();actors.clear();yaws.clear();
+  scene_=null;clearTimeout(autoTimer);for(const a of actors.values())a.dispose();actors.clear();yaws.clear();turnedAt.clear();
   game=createGame(PRESETS[name].fen);for(const p of game.pieces)spawn(p);
   selected=null;legal=[];lastMove=null;history=[];refresh();
   $('#hint').textContent=PRESETS[name].hint||'';
@@ -150,6 +150,7 @@ async function init(bytes){
 
  // Idle presentation of a figure from its relation to enemies.
  function thrustTime(u,stop){if(u<stop)return u;if(u<stop+.3)return stop;return stop*(1-clamp((u-stop-.3)/(4-stop-.3),0,1));}
+ const turnedAt=new Map();
  function idle(piece,actor,dt,force){
   const e=eng.get(piece.id),target=e?.target?byId(e.target):null;
   const [x,z]=world(piece.square);
@@ -161,6 +162,9 @@ async function init(bytes){
   else if(e?.state==='fencing'){const q=coords(target.square),p=coords(piece.square);fence=q.file!==p.file&&q.rank!==p.rank?contact.diagonal:contact.straight;
    const f=fencingAction(e.role,clock);if(f.attacking)desired+=fence.yaw*smooth(f.time,.3,1)*(1-smooth(f.time,3,3.8));}
   let yaw=yaws.get(piece.id);const diff=wrapAngle(desired-yaw),step=3.2*dt;
+  if(Math.abs(diff)>1e-6)turnedAt.set(piece.id,clock);
+  // Its last step comes down up to STEP_TIME after the turn (footlock.mjs).
+  const turning=clock-(turnedAt.get(piece.id)??-Infinity)<.6;
   yaw=Math.abs(diff)<=step?desired:yaw+Math.sign(diff)*step;yaws.set(piece.id,yaw);
   if(ex){const w=motion.weight,[ox,oz]=rotate([ex.offset.x*w,ex.offset.z*w],line);actor.place({x:x+ox,z:z+oz,yaw});
    actor.pose(ex.arms.action,ex.arms.time,null,{...bodyMotion(ex,w,p=>turnHead(p,wrapAngle(line-yaw)),spearArms(ex.arms,ex.points,ex.clip,ex.k,ex.local)),feet:clock});return;}
@@ -168,15 +172,20 @@ async function init(bytes){
   if(actor.kind!=='pawn')return;
   // Calm figures are re-posed less often; engaged ones every frame.
   const calm=e.state==='rest'||e.state==='alert';
-  if(calm&&!force&&(frameIndex+Math.floor(hash(piece.id)*4))%4!==0)return;
+  // The board's clock holds the feet: a figure turning in place (back to
+  // its facing after a capture, onto a new threat) pivots over its planted
+  // feet and steps round, it does not spin on its soles (footlock.mjs). A
+  // turning figure is re-posed every frame for that.
+  if(calm&&!force&&!turning&&(frameIndex+Math.floor(hash(piece.id)*4))%4!==0)return;
   const offset=hash(piece.id)*6;
   if(e.state==='defense')actor.pose('Shield_Brace',2.05+.7*Math.sin(clock*1.1+offset));
   else if(e.state==='fencing'){
    const f=fencingAction(e.role,clock);
    if(f.attacking)actor.pose('Spear_Study',thrustTime(f.time,fence.stop));
    else actor.pose('Shield_Brace',f.time);
-  }else if(motion.stand){const w=motion.weight;actor.pose('Guard_Breath',(clock+offset)%6,scaleLayer(idleLayer(clock,hash(piece.id)),1-w),standMotion(piece,w));}
-  else actor.pose('Guard_Breath',(clock+offset)%6,idleLayer(clock,hash(piece.id)));
+  }else if(motion.stand){const w=motion.weight;
+   actor.pose('Guard_Breath',(clock+offset)%6,scaleLayer(idleLayer(clock,hash(piece.id)),1-w),{...standMotion(piece,w),feet:clock});}
+  else actor.pose('Guard_Breath',(clock+offset)%6,idleLayer(clock,hash(piece.id)),{feet:clock});
  }
 
  // Imported motion clips (mocap/): a stance for figures at rest and a walk

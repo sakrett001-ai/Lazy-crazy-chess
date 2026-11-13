@@ -102,7 +102,9 @@ export function createPawnFactory({gltf,ground=null}){
    const clipWeight=motion?Math.max(0,...(motion.blend||[motion]).filter(m=>m?.clip).map(m=>m.weight??1)):0,clipBody=clipWeight>=1;
    holder.updateMatrixWorld(true);rig.apply(layer);
    // The board's frames (motion.feet, its clock) carry the head at the neck's pace.
-   mocap.steady(motion?.feet!=null&&clipWeight>0?motion.feet:null);
+   // A pose with no clip at all (the board's own stance) is held the same way.
+   const held=motion?.feet!=null&&(clipWeight>0||!(motion.clip||motion.blend)),hold=clipWeight>0?clipWeight:1;
+   mocap.steady(held?motion.feet:null);
    loadout.poseAt(action,time,{body:!clipBody,...(motion?.arms||{})});
    place.set(saved);
    // motion.feet (the board's clock): the clip's feet are held where they
@@ -110,7 +112,7 @@ export function createPawnFactory({gltf,ground=null}){
    // hands them over to the stance it fades into (the feet step onto that
    // stance instead of sliding into it). A pause in the poses or a jump in
    // place starts the hold over.
-   if(motion?.feet!=null&&clipWeight>0&&!saved.fall&&!saved.lift)feet.apply(motion.feet,{hold:clipWeight,stance});
+   if(held&&!saved.fall&&!saved.lift)feet.apply(motion.feet,{hold,stance});
    // Last: the pose solved on the flat goes onto the field.
    if(field)grounding.apply(field,{fall:saved.fall});
    pose={action,time,layered:!!layer,motion:(motion?.blend||[motion]).filter(m=>m?.clip).map(m=>m.clip.name).join('+')||null};
