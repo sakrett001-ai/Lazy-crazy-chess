@@ -1,9 +1,9 @@
 {
-  "date": "2026-11-13T16:26:27.931Z",
+  "date": "2026-11-13T17:09:30.938Z",
   "status": "passed",
   "browser": "157.0.8103.50",
-  "glbSha256": "0d55a5164472af5011eced148d1ef3e94ca95781e3668e75219cd1b5d66e57ca",
-  "documentSha256": "0709d35aac39a2c1c7a8d8d22a2562e44dda79f40fbaddafd975ffdde5101840",
+  "glbSha256": "d8438e9bcc458cec5d307c04618d8c113d63193cf3577131bb188114fe153d93",
+  "documentSha256": "fcc1573904fc2c1427866522b56c3dca820aa87ab4c49a392ac42479d3cb5b2c",
   "tests": [
     "Three genuinely different shields; independent plate/mail/padding geometry; visible textured mail and quilting; actual physique displacement and independent experience",
     "Four visible weapon geometries, deterministic reverse seek and planted feet; twohand weapons suppress shield and brace; singlehand restores choice; invalid review is atomic"
@@ -60,7 +60,7 @@
         "fps": null,
         "display": "surface",
         "renderCalls": 26,
-        "triangles": 207188,
+        "triangles": 216912,
         "bones": 163,
         "clips": [
           {
@@ -185,8 +185,8 @@
           "name": "HELMET_Ivory_open_helmet",
           "slot": "helmet",
           "variant": "on",
-          "vertices": 1825,
-          "checksum": 33.629788289270955,
+          "vertices": 3523,
+          "checksum": 64.5220937882102,
           "materials": [
             {
               "slot": "armor.main",
@@ -196,11 +196,13 @@
               "uvChannel": 2,
               "uvSpan": [
                 0.214694581925869,
-                1.9570894241333008
+                1.9692903757095337
               ]
             }
           ],
-          "morphs": {}
+          "morphs": {
+            "veteran": 0
+          }
         },
         {
           "name": "HELMET_Ivory_open_helmet_1",
@@ -221,7 +223,9 @@
               ]
             }
           ],
-          "morphs": {}
+          "morphs": {
+            "veteran": 0
+          }
         },
         {
           "name": "HELMET_Ivory_open_helmet_2",
@@ -242,7 +246,9 @@
               ]
             }
           ],
-          "morphs": {}
+          "morphs": {
+            "veteran": 0
+          }
         },
         {
           "name": "HELMET_Ivory_open_helmet_3",
@@ -263,7 +269,9 @@
               ]
             }
           ],
-          "morphs": {}
+          "morphs": {
+            "veteran": 0
+          }
         },
         {
           "name": "PADDING_padded",
@@ -317,8 +325,8 @@
           "name": "ARMOR_Breastplate",
           "slot": "plate",
           "variant": "plate",
-          "vertices": 17722,
-          "checksum": 178.80924409766416,
+          "vertices": 21330,
+          "checksum": 227.0858309190226,
           "materials": [
             {
               "slot": "armor.main",
@@ -328,21 +336,22 @@
               "uvChannel": 1,
               "uvSpan": [
                 1.0507657527923584,
-                1.7336260080337524
+                1.7336275577545166
               ]
             }
           ],
           "morphs": {
             "lean": 0,
-            "strong": 0
+            "strong": 0,
+            "veteran": 0
           }
         },
         {
           "name": "ARMOR_Breastplate_1",
           "slot": "plate",
           "variant": "plate",
-          "vertices": 14988,
-          "checksum": 173.4770492454622,
+          "vertices": 14987,
+          "checksum": 173.28899795821604,
           "materials": [
             {
               "slot": "armor.trim",
@@ -358,7 +367,8 @@
           ],
           "morphs": {
             "lean": 0,
-            "strong": 0
+            "strong": 0,
+            "veteran": 0
           }
         },
         {
@@ -375,14 +385,15 @@
               "normalMap": true,
               "uvChannel": 1,
               "uvSpan": [
-                0.26238182187080383,
-                1.7152109146118164
+                0.27755720913410187,
+                1.6569632291793823
               ]
             }
           ],
           "morphs": {
             "lean": 0,
-            "strong": 0
+            "strong": 0,
+            "veteran": 0
           }
         },
         {
@@ -627,7 +638,7 @@
         "fps": null,
         "display": "surface",
         "renderCalls": 24,
-        "triangles": 151358,
+        "triangles": 154506,
         "bones": 163,
         "clips": [
           {
@@ -752,8 +763,8 @@
           "name": "HELMET_Ivory_open_helmet",
           "slot": "helmet",
           "variant": "on",
-          "vertices": 1825,
-          "checksum": 33.629788289270955,
+          "vertices": 3523,
+          "checksum": 64.5220937882102,
           "materials": [
             {
               "slot": "armor.main",
@@ -763,11 +774,13 @@
               "uvChannel": 2,
               "uvSpan": [
                 0.214694581925869,
-                1.9570894241333008
+                1.9692903757095337
               ]
             }
           ],
-          "morphs": {}
+          "morphs": {
+            "veteran": 0
+          }
         },
         {
           "name": "HELMET_Ivory_open_helmet_1",
@@ -788,7 +801,9 @@
               ]
             }
           ],
-          "morphs": {}
+          "morphs": {
+            "veteran": 0
+          }
         },
         {
           "name": "HELMET_Ivory_open_helmet_2",
@@ -809,7 +824,9 @@
               ]
             }
           ],
-          "morphs": {}
+          "morphs": {
+            "veteran": 0
+          }
         },
         {
           "name": "HELMET_Ivory_open_helmet_3",
@@ -830,7 +847,9 @@
               ]
             }
           ],
-          "morphs": {}
+          "morphs": {
+            "veteran": 0
+          }
         },
         {
           "name": "CLOTH_Underarm_and_leggings001",
@@ -1149,7 +1168,7 @@
         "fps": null,
         "display": "surface",
         "renderCalls": 26,
-        "triangles": 198121,
+        "triangles": 207845,
         "bones": 163,
         "clips": [
           {
@@ -1274,8 +1293,8 @@
           "name": "HELMET_Ivory_open_helmet",
           "slot": "helmet",
           "variant": "on",
-          "vertices": 1825,
-          "checksum": 33.629788289270955,
+          "vertices": 3523,
+          "checksum": 64.5220937882102,
           "materials": [
             {
               "slot": "armor.main",
@@ -1285,11 +1304,13 @@
               "uvChannel": 2,
               "uvSpan": [
                 0.214694581925869,
-                1.9570894241333008
+                1.9692903757095337
               ]
             }
           ],
-          "morphs": {}
+          "morphs": {
+            "veteran": 0
+          }
         },
         {
           "name": "HELMET_Ivory_open_helmet_1",
@@ -1310,7 +1331,9 @@
               ]
             }
           ],
-          "morphs": {}
+          "morphs": {
+            "veteran": 0
+          }
         },
         {
           "name": "HELMET_Ivory_open_helmet_2",
@@ -1331,7 +1354,9 @@
               ]
             }
           ],
-          "morphs": {}
+          "morphs": {
+            "veteran": 0
+          }
         },
         {
           "name": "HELMET_Ivory_open_helmet_3",
@@ -1352,7 +1377,9 @@
               ]
             }
           ],
-          "morphs": {}
+          "morphs": {
+            "veteran": 0
+          }
         },
         {
           "name": "PADDING_padded",
@@ -1406,8 +1433,8 @@
           "name": "ARMOR_Breastplate",
           "slot": "plate",
           "variant": "plate",
-          "vertices": 17722,
-          "checksum": 178.80924409766416,
+          "vertices": 21330,
+          "checksum": 227.0858309190226,
           "materials": [
             {
               "slot": "armor.main",
@@ -1417,21 +1444,22 @@
               "uvChannel": 1,
               "uvSpan": [
                 1.0507657527923584,
-                1.7336260080337524
+                1.7336275577545166
               ]
             }
           ],
           "morphs": {
             "lean": 0,
-            "strong": 0
+            "strong": 0,
+            "veteran": 0
           }
         },
         {
           "name": "ARMOR_Breastplate_1",
           "slot": "plate",
           "variant": "plate",
-          "vertices": 14988,
-          "checksum": 173.4770492454622,
+          "vertices": 14987,
+          "checksum": 173.28899795821604,
           "materials": [
             {
               "slot": "armor.trim",
@@ -1447,7 +1475,8 @@
           ],
           "morphs": {
             "lean": 0,
-            "strong": 0
+            "strong": 0,
+            "veteran": 0
           }
         },
         {
@@ -1464,14 +1493,15 @@
               "normalMap": true,
               "uvChannel": 1,
               "uvSpan": [
-                0.26238182187080383,
-                1.7152109146118164
+                0.27755720913410187,
+                1.6569632291793823
               ]
             }
           ],
           "morphs": {
             "lean": 0,
-            "strong": 0
+            "strong": 0,
+            "veteran": 0
           }
         },
         {
@@ -1807,7 +1837,7 @@
         "fps": null,
         "display": "surface",
         "renderCalls": 25,
-        "triangles": 197625,
+        "triangles": 207349,
         "bones": 163,
         "clips": [
           {
@@ -1932,8 +1962,8 @@
           "name": "HELMET_Ivory_open_helmet",
           "slot": "helmet",
           "variant": "on",
-          "vertices": 1825,
-          "checksum": 33.629788289270955,
+          "vertices": 3523,
+          "checksum": 64.5220937882102,
           "materials": [
             {
               "slot": "armor.main",
@@ -1943,11 +1973,13 @@
               "uvChannel": 2,
               "uvSpan": [
                 0.214694581925869,
-                1.9570894241333008
+                1.9692903757095337
               ]
             }
           ],
-          "morphs": {}
+          "morphs": {
+            "veteran": 0
+          }
         },
         {
           "name": "HELMET_Ivory_open_helmet_1",
@@ -1968,7 +2000,9 @@
               ]
             }
           ],
-          "morphs": {}
+          "morphs": {
+            "veteran": 0
+          }
         },
         {
           "name": "HELMET_Ivory_open_helmet_2",
@@ -1989,7 +2023,9 @@
               ]
             }
           ],
-          "morphs": {}
+          "morphs": {
+            "veteran": 0
+          }
         },
         {
           "name": "HELMET_Ivory_open_helmet_3",
@@ -2010,7 +2046,9 @@
               ]
             }
           ],
-          "morphs": {}
+          "morphs": {
+            "veteran": 0
+          }
         },
         {
           "name": "PADDING_padded",
@@ -2064,8 +2102,8 @@
           "name": "ARMOR_Breastplate",
           "slot": "plate",
           "variant": "plate",
-          "vertices": 17722,
-          "checksum": 178.80924409766416,
+          "vertices": 21330,
+          "checksum": 227.0858309190226,
           "materials": [
             {
               "slot": "armor.main",
@@ -2075,21 +2113,22 @@
               "uvChannel": 1,
               "uvSpan": [
                 1.0507657527923584,
-                1.7336260080337524
+                1.7336275577545166
               ]
             }
           ],
           "morphs": {
             "lean": 0,
-            "strong": 0
+            "strong": 0,
+            "veteran": 0
           }
         },
         {
           "name": "ARMOR_Breastplate_1",
           "slot": "plate",
           "variant": "plate",
-          "vertices": 14988,
-          "checksum": 173.4770492454622,
+          "vertices": 14987,
+          "checksum": 173.28899795821604,
           "materials": [
             {
               "slot": "armor.trim",
@@ -2105,7 +2144,8 @@
           ],
           "morphs": {
             "lean": 0,
-            "strong": 0
+            "strong": 0,
+            "veteran": 0
           }
         },
         {
@@ -2122,14 +2162,15 @@
               "normalMap": true,
               "uvChannel": 1,
               "uvSpan": [
-                0.26238182187080383,
-                1.7152109146118164
+                0.27755720913410187,
+                1.6569632291793823
               ]
             }
           ],
           "morphs": {
             "lean": 0,
-            "strong": 0
+            "strong": 0,
+            "veteran": 0
           }
         },
         {
@@ -2444,7 +2485,7 @@
         "fps": null,
         "display": "surface",
         "renderCalls": 20,
-        "triangles": 194716,
+        "triangles": 204440,
         "bones": 163,
         "clips": [
           {
@@ -2569,8 +2610,8 @@
           "name": "HELMET_Ivory_open_helmet",
           "slot": "helmet",
           "variant": "on",
-          "vertices": 1825,
-          "checksum": 33.629788289270955,
+          "vertices": 3523,
+          "checksum": 64.5220937882102,
           "materials": [
             {
               "slot": "armor.main",
@@ -2580,11 +2621,13 @@
               "uvChannel": 2,
               "uvSpan": [
                 0.214694581925869,
-                1.9570894241333008
+                1.9692903757095337
               ]
             }
           ],
-          "morphs": {}
+          "morphs": {
+            "veteran": 0
+          }
         },
         {
           "name": "HELMET_Ivory_open_helmet_1",
@@ -2605,7 +2648,9 @@
               ]
             }
           ],
-          "morphs": {}
+          "morphs": {
+            "veteran": 0
+          }
         },
         {
           "name": "HELMET_Ivory_open_helmet_2",
@@ -2626,7 +2671,9 @@
               ]
             }
           ],
-          "morphs": {}
+          "morphs": {
+            "veteran": 0
+          }
         },
         {
           "name": "HELMET_Ivory_open_helmet_3",
@@ -2647,7 +2694,9 @@
               ]
             }
           ],
-          "morphs": {}
+          "morphs": {
+            "veteran": 0
+          }
         },
         {
           "name": "PADDING_padded",
@@ -2701,8 +2750,8 @@
           "name": "ARMOR_Breastplate",
           "slot": "plate",
           "variant": "plate",
-          "vertices": 17722,
-          "checksum": 178.80924409766416,
+          "vertices": 21330,
+          "checksum": 227.0858309190226,
           "materials": [
             {
               "slot": "armor.main",
@@ -2712,21 +2761,22 @@
               "uvChannel": 1,
               "uvSpan": [
                 1.0507657527923584,
-                1.7336260080337524
+                1.7336275577545166
               ]
             }
           ],
           "morphs": {
             "lean": 0,
-            "strong": 0
+            "strong": 0,
+            "veteran": 0
           }
         },
         {
           "name": "ARMOR_Breastplate_1",
           "slot": "plate",
           "variant": "plate",
-          "vertices": 14988,
-          "checksum": 173.4770492454622,
+          "vertices": 14987,
+          "checksum": 173.28899795821604,
           "materials": [
             {
               "slot": "armor.trim",
@@ -2742,7 +2792,8 @@
           ],
           "morphs": {
             "lean": 0,
-            "strong": 0
+            "strong": 0,
+            "veteran": 0
           }
         },
         {
@@ -2759,14 +2810,15 @@
               "normalMap": true,
               "uvChannel": 1,
               "uvSpan": [
-                0.26238182187080383,
-                1.7152109146118164
+                0.27755720913410187,
+                1.6569632291793823
               ]
             }
           ],
           "morphs": {
             "lean": 0,
-            "strong": 0
+            "strong": 0,
+            "veteran": 0
           }
         },
         {
@@ -2972,7 +3024,7 @@
         "fps": null,
         "display": "surface",
         "renderCalls": 20,
-        "triangles": 194948,
+        "triangles": 204672,
         "bones": 163,
         "clips": [
           {
@@ -3097,8 +3149,8 @@
           "name": "HELMET_Ivory_open_helmet",
           "slot": "helmet",
           "variant": "on",
-          "vertices": 1825,
-          "checksum": 33.629788289270955,
+          "vertices": 3523,
+          "checksum": 64.5220937882102,
           "materials": [
             {
               "slot": "armor.main",
@@ -3108,11 +3160,13 @@
               "uvChannel": 2,
               "uvSpan": [
                 0.214694581925869,
-                1.9570894241333008
+                1.9692903757095337
               ]
             }
           ],
-          "morphs": {}
+          "morphs": {
+            "veteran": 0
+          }
         },
         {
           "name": "HELMET_Ivory_open_helmet_1",
@@ -3133,7 +3187,9 @@
               ]
             }
           ],
-          "morphs": {}
+          "morphs": {
+            "veteran": 0
+          }
         },
         {
           "name": "HELMET_Ivory_open_helmet_2",
@@ -3154,7 +3210,9 @@
               ]
             }
           ],
-          "morphs": {}
+          "morphs": {
+            "veteran": 0
+          }
         },
         {
           "name": "HELMET_Ivory_open_helmet_3",
@@ -3175,7 +3233,9 @@
               ]
             }
           ],
-          "morphs": {}
+          "morphs": {
+            "veteran": 0
+          }
         },
         {
           "name": "PADDING_padded",
@@ -3229,8 +3289,8 @@
           "name": "ARMOR_Breastplate",
           "slot": "plate",
           "variant": "plate",
-          "vertices": 17722,
-          "checksum": 178.80924409766416,
+          "vertices": 21330,
+          "checksum": 227.0858309190226,
           "materials": [
             {
               "slot": "armor.main",
@@ -3240,21 +3300,22 @@
               "uvChannel": 1,
               "uvSpan": [
                 1.0507657527923584,
-                1.7336260080337524
+                1.7336275577545166
               ]
             }
           ],
           "morphs": {
             "lean": 0,
-            "strong": 0
+            "strong": 0,
+            "veteran": 0
           }
         },
         {
           "name": "ARMOR_Breastplate_1",
           "slot": "plate",
           "variant": "plate",
-          "vertices": 14988,
-          "checksum": 173.4770492454622,
+          "vertices": 14987,
+          "checksum": 173.28899795821604,
           "materials": [
             {
               "slot": "armor.trim",
@@ -3270,7 +3331,8 @@
           ],
           "morphs": {
             "lean": 0,
-            "strong": 0
+            "strong": 0,
+            "veteran": 0
           }
         },
         {
@@ -3287,14 +3349,15 @@
               "normalMap": true,
               "uvChannel": 1,
               "uvSpan": [
-                0.26238182187080383,
-                1.7152109146118164
+                0.27755720913410187,
+                1.6569632291793823
               ]
             }
           ],
           "morphs": {
             "lean": 0,
-            "strong": 0
+            "strong": 0,
+            "veteran": 0
           }
         },
         {
@@ -3454,7 +3517,7 @@
   "network": [],
   "morphology": {
     "meshes": 15,
-    "maxDelta": 0.045030653729938586
+    "maxDelta": 0.04498396727516039
   },
   "scope": "Actual visible equipment meshes and PBR/UV assignment, sampled morphed vertex displacement, deterministic sampled poses and foot support, review/profile compatibility, 390px software browser. Full collision freedom and real-phone performance are not asserted."
 }
