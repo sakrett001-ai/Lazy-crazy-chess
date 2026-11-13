@@ -1,6 +1,6 @@
 {
   "status": "passed",
-  "glbSha256": "0d55a5164472af5011eced148d1ef3e94ca95781e3668e75219cd1b5d66e57ca",
+  "glbSha256": "d8438e9bcc458cec5d307c04618d8c113d63193cf3577131bb188114fe153d93",
   "runtimeSha256": "147e7e0b07fc734fcd2ba9018876a5503bb624bf9e684dd4320b77b51e0bf0ac",
   "auditSha256": "13b83ce4c765485b2700cbbac1873e13c679dae5e56f04fd43e702a064b9e346",
   "limits": {
@@ -35,7 +35,7 @@
             "innerMesh": "PADDING_padded_under_mail",
             "innerTriangle": 15720,
             "outerMesh": "ARMOR_Breastplate",
-            "outerTriangle": 25047,
+            "outerTriangle": 31103,
             "barycentric": [
               0.7055569443689391,
               0.12484573017986739,
@@ -67,7 +67,7 @@
               "innerMesh": "PADDING_padded_under_mail",
               "innerTriangle": 15720,
               "outerMesh": "ARMOR_Breastplate",
-              "outerTriangle": 25047,
+              "outerTriangle": 31103,
               "barycentric": [
                 0.7055569443689391,
                 0.12484573017986739,
@@ -95,7 +95,7 @@
               "nearestPaddingCenterToSurface": {
                 "distanceM": 0.01584717651730965,
                 "mesh": "ARMOR_Breastplate",
-                "triangle": 25429,
+                "triangle": 31485,
                 "pointWorld": [
                   -0.40742987475612735,
                   1.1623307019878484,
@@ -108,7 +108,7 @@
           "invalidSourcePatches": [],
           "outerValidation": {
             "nonfiniteTriangles": 0,
-            "unassessedDegenerateTriangles": 93
+            "unassessedDegenerateTriangles": 94
           }
         }
       ],
@@ -497,7 +497,7 @@
             "innerMesh": "PADDING_padded_under_mail",
             "innerTriangle": 15720,
             "outerMesh": "ARMOR_Breastplate",
-            "outerTriangle": 25047,
+            "outerTriangle": 31103,
             "barycentric": [
               0.7055569443689391,
               0.12484573017986739,
@@ -529,7 +529,7 @@
               "innerMesh": "PADDING_padded_under_mail",
               "innerTriangle": 15720,
               "outerMesh": "ARMOR_Breastplate",
-              "outerTriangle": 25047,
+              "outerTriangle": 31103,
               "barycentric": [
                 0.7055569443689391,
                 0.12484573017986739,
@@ -557,7 +557,7 @@
               "nearestPaddingCenterToSurface": {
                 "distanceM": 0.016456044236856517,
                 "mesh": "ARMOR_Breastplate",
-                "triangle": 25429,
+                "triangle": 31485,
                 "pointWorld": [
                   -0.26824002162712957,
                   1.1987468595847524,
@@ -570,7 +570,7 @@
           "invalidSourcePatches": [],
           "outerValidation": {
             "nonfiniteTriangles": 0,
-            "unassessedDegenerateTriangles": 93
+            "unassessedDegenerateTriangles": 94
           }
         }
       ],
@@ -633,7 +633,7 @@
             "innerMesh": "PADDING_padded_under_mail",
             "innerTriangle": 15720,
             "outerMesh": "ARMOR_Breastplate",
-            "outerTriangle": 25047,
+            "outerTriangle": 31103,
             "barycentric": [
               0.7055569443689391,
               0.12484573017986739,
@@ -665,7 +665,7 @@
               "innerMesh": "PADDING_padded_under_mail",
               "innerTriangle": 15720,
               "outerMesh": "ARMOR_Breastplate",
-              "outerTriangle": 25047,
+              "outerTriangle": 31103,
               "barycentric": [
                 0.7055569443689391,
                 0.12484573017986739,
@@ -693,7 +693,7 @@
               "nearestPaddingCenterToSurface": {
                 "distanceM": 0.016763317694298202,
                 "mesh": "ARMOR_Breastplate",
-                "triangle": 25429,
+                "triangle": 31485,
                 "pointWorld": [
                   -0.41000639697909436,
                   1.1610094584543038,
@@ -706,7 +706,7 @@
           "invalidSourcePatches": [],
           "outerValidation": {
             "nonfiniteTriangles": 0,
-            "unassessedDegenerateTriangles": 93
+            "unassessedDegenerateTriangles": 106
           }
         }
       ],
@@ -1095,7 +1095,7 @@
             "innerMesh": "PADDING_padded_under_mail",
             "innerTriangle": 15720,
             "outerMesh": "ARMOR_Breastplate",
-            "outerTriangle": 25047,
+            "outerTriangle": 31103,
             "barycentric": [
               0.7055569443689391,
               0.12484573017986739,
@@ -1127,7 +1127,7 @@
               "innerMesh": "PADDING_padded_under_mail",
               "innerTriangle": 15720,
               "outerMesh": "ARMOR_Breastplate",
-              "outerTriangle": 25047,
+              "outerTriangle": 31103,
               "barycentric": [
                 0.7055569443689391,
                 0.12484573017986739,
@@ -1155,7 +1155,7 @@
               "nearestPaddingCenterToSurface": {
                 "distanceM": 0.017410236709505953,
                 "mesh": "ARMOR_Breastplate",
-                "triangle": 25429,
+                "triangle": 31485,
                 "pointWorld": [
                   -0.2710148524553273,
                   1.1973954452273132,
@@ -1168,7 +1168,7 @@
           "invalidSourcePatches": [],
           "outerValidation": {
             "nonfiniteTriangles": 0,
-            "unassessedDegenerateTriangles": 93
+            "unassessedDegenerateTriangles": 106
           }
         }
       ],
@@ -1231,7 +1231,7 @@
             "innerMesh": "PADDING_padded_under_mail",
             "innerTriangle": 15720,
             "outerMesh": "ARMOR_Breastplate",
-            "outerTriangle": 25047,
+            "outerTriangle": 31103,
             "barycentric": [
               0.7055569443689391,
               0.12484573017986739,
@@ -1263,7 +1263,7 @@
               "innerMesh": "PADDING_padded_under_mail",
               "innerTriangle": 15720,
               "outerMesh": "ARMOR_Breastplate",
-              "outerTriangle": 25047,
+              "outerTriangle": 31103,
               "barycentric": [
                 0.7055569443689391,
                 0.12484573017986739,
@@ -1291,7 +1291,7 @@
               "nearestPaddingCenterToSurface": {
                 "distanceM": 0.01801729218345449,
                 "mesh": "ARMOR_Breastplate",
-                "triangle": 25429,
+                "triangle": 31485,
                 "pointWorld": [
                   -0.41354174979920316,
                   1.1591997975733643,
@@ -1693,7 +1693,7 @@
             "innerMesh": "PADDING_padded_under_mail",
             "innerTriangle": 15720,
             "outerMesh": "ARMOR_Breastplate",
-            "outerTriangle": 25047,
+            "outerTriangle": 31103,
             "barycentric": [
               0.7055569443689391,
               0.12484573017986739,
@@ -1725,7 +1725,7 @@
               "innerMesh": "PADDING_padded_under_mail",
               "innerTriangle": 15720,
               "outerMesh": "ARMOR_Breastplate",
-              "outerTriangle": 25047,
+              "outerTriangle": 31103,
               "barycentric": [
                 0.7055569443689391,
                 0.12484573017986739,
@@ -1753,7 +1753,7 @@
               "nearestPaddingCenterToSurface": {
                 "distanceM": 0.01871632865556972,
                 "mesh": "ARMOR_Breastplate",
-                "triangle": 25429,
+                "triangle": 31485,
                 "pointWorld": [
                   -0.2748444570878353,
                   1.1955464555978028,
@@ -1910,7 +1910,7 @@
       "invalidSourcePatches": 0,
       "outerValidation": {
         "nonfiniteTriangles": 0,
-        "unassessedDegenerateTriangles": 93
+        "unassessedDegenerateTriangles": 94
       },
       "intersectingPaddingTriangles": 0,
       "inconclusiveTrackedPatches": 1,
@@ -1921,7 +1921,7 @@
         "innerMesh": "PADDING_padded_under_mail",
         "innerTriangle": 15720,
         "outerMesh": "ARMOR_Breastplate",
-        "outerTriangle": 25047,
+        "outerTriangle": 31103,
         "barycentric": [
           0.7055569443689391,
           0.12484573017986739,
@@ -2532,7 +2532,7 @@
       "invalidSourcePatches": 0,
       "outerValidation": {
         "nonfiniteTriangles": 0,
-        "unassessedDegenerateTriangles": 93
+        "unassessedDegenerateTriangles": 94
       },
       "intersectingPaddingTriangles": 0,
       "inconclusiveTrackedPatches": 1,
@@ -2543,7 +2543,7 @@
         "innerMesh": "PADDING_padded_under_mail",
         "innerTriangle": 15720,
         "outerMesh": "ARMOR_Breastplate",
-        "outerTriangle": 25047,
+        "outerTriangle": 31103,
         "barycentric": [
           0.7055569443689391,
           0.12484573017986739,
@@ -2665,7 +2665,7 @@
       "invalidSourcePatches": 0,
       "outerValidation": {
         "nonfiniteTriangles": 0,
-        "unassessedDegenerateTriangles": 93
+        "unassessedDegenerateTriangles": 106
       },
       "intersectingPaddingTriangles": 0,
       "inconclusiveTrackedPatches": 1,
@@ -2676,7 +2676,7 @@
         "innerMesh": "PADDING_padded_under_mail",
         "innerTriangle": 15720,
         "outerMesh": "ARMOR_Breastplate",
-        "outerTriangle": 25047,
+        "outerTriangle": 31103,
         "barycentric": [
           0.7055569443689391,
           0.12484573017986739,
@@ -3287,7 +3287,7 @@
       "invalidSourcePatches": 0,
       "outerValidation": {
         "nonfiniteTriangles": 0,
-        "unassessedDegenerateTriangles": 93
+        "unassessedDegenerateTriangles": 106
       },
       "intersectingPaddingTriangles": 0,
       "inconclusiveTrackedPatches": 1,
@@ -3298,7 +3298,7 @@
         "innerMesh": "PADDING_padded_under_mail",
         "innerTriangle": 15720,
         "outerMesh": "ARMOR_Breastplate",
-        "outerTriangle": 25047,
+        "outerTriangle": 31103,
         "barycentric": [
           0.7055569443689391,
           0.12484573017986739,
@@ -3431,7 +3431,7 @@
         "innerMesh": "PADDING_padded_under_mail",
         "innerTriangle": 15720,
         "outerMesh": "ARMOR_Breastplate",
-        "outerTriangle": 25047,
+        "outerTriangle": 31103,
         "barycentric": [
           0.7055569443689391,
           0.12484573017986739,
@@ -4053,7 +4053,7 @@
         "innerMesh": "PADDING_padded_under_mail",
         "innerTriangle": 15720,
         "outerMesh": "ARMOR_Breastplate",
-        "outerTriangle": 25047,
+        "outerTriangle": 31103,
         "barycentric": [
           0.7055569443689391,
           0.12484573017986739,
@@ -4408,24 +4408,24 @@
       },
       "outerGarment": {
         "outward-wall": {
-          "faces": 8358,
-          "areaM2": 0.7248396819892192
-        },
-        "inward-wall": {
-          "faces": 8117,
-          "areaM2": 0.7045318315887561
+          "faces": 10337,
+          "areaM2": 0.7259111547437975
         },
         "tangential-wall": {
-          "faces": 1692,
-          "areaM2": 0.020494414391526015
+          "faces": 1706,
+          "areaM2": 0.020500464287561485
         },
         "axial-hem-or-steep-fold": {
-          "faces": 8339,
-          "areaM2": 0.10352488207069359
+          "faces": 8525,
+          "areaM2": 0.10352112724265174
+        },
+        "inward-wall": {
+          "faces": 10227,
+          "areaM2": 0.7044754511008333
         },
         "outside-height-domain": {
-          "faces": 19274,
-          "areaM2": 1.341486973321484
+          "faces": 21561,
+          "areaM2": 1.3404390570778995
         },
         "outside-region-height-domain": {
           "faces": 7824,

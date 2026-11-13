@@ -2,7 +2,7 @@
   "status": "passed",
   "baseline": false,
   "sourceCommit": null,
-  "glbSha256": "0d55a5164472af5011eced148d1ef3e94ca95781e3668e75219cd1b5d66e57ca",
+  "glbSha256": "d8438e9bcc458cec5d307c04618d8c113d63193cf3577131bb188114fe153d93",
   "runtimeSha256": "147e7e0b07fc734fcd2ba9018876a5503bb624bf9e684dd4320b77b51e0bf0ac",
   "auditSha256": "1ae2bc3717a0e370b0781bafd2e86283a616ecf1c8deb140ead88c31cf056cfd",
   "limits": {
@@ -337,7 +337,7 @@
         "L": 11174,
         "R": 11174
       },
-      "torsoTriangles": 49084
+      "torsoTriangles": 52784
     },
     {
       "id": "spear/regular/plate/Spear_Study",
@@ -359,7 +359,7 @@
         "L": 11174,
         "R": 11174
       },
-      "torsoTriangles": 49084
+      "torsoTriangles": 52784
     },
     {
       "id": "spear/strong/plate/Spear_Study",
@@ -381,7 +381,7 @@
         "L": 11174,
         "R": 11174
       },
-      "torsoTriangles": 49084
+      "torsoTriangles": 52784
     },
     {
       "id": "sword/lean/plate/Spear_Study",
@@ -403,7 +403,7 @@
         "L": 11174,
         "R": 11174
       },
-      "torsoTriangles": 49084
+      "torsoTriangles": 52784
     },
     {
       "id": "sword/regular/plate/Spear_Study",
@@ -425,7 +425,7 @@
         "L": 11174,
         "R": 11174
       },
-      "torsoTriangles": 49084
+      "torsoTriangles": 52784
     },
     {
       "id": "sword/strong/plate/Spear_Study",
@@ -447,7 +447,7 @@
         "L": 11174,
         "R": 11174
       },
-      "torsoTriangles": 49084
+      "torsoTriangles": 52784
     },
     {
       "id": "pike/lean/plate/Spear_Study",
@@ -469,7 +469,7 @@
         "L": 11174,
         "R": 11174
       },
-      "torsoTriangles": 49084
+      "torsoTriangles": 52784
     },
     {
       "id": "pike/regular/plate/Spear_Study",
@@ -491,7 +491,7 @@
         "L": 11174,
         "R": 11174
       },
-      "torsoTriangles": 49084
+      "torsoTriangles": 52784
     },
     {
       "id": "pike/strong/plate/Spear_Study",
@@ -513,7 +513,7 @@
         "L": 11174,
         "R": 11174
       },
-      "torsoTriangles": 49084
+      "torsoTriangles": 52784
     },
     {
       "id": "greatsword/lean/plate/Spear_Study",
@@ -535,7 +535,7 @@
         "L": 11174,
         "R": 11174
       },
-      "torsoTriangles": 49084
+      "torsoTriangles": 52784
     },
     {
       "id": "greatsword/regular/plate/Spear_Study",
@@ -557,7 +557,7 @@
         "L": 11174,
         "R": 11174
       },
-      "torsoTriangles": 49084
+      "torsoTriangles": 52784
     },
     {
       "id": "greatsword/strong/plate/Spear_Study",
@@ -579,7 +579,7 @@
         "L": 11174,
         "R": 11174
       },
-      "torsoTriangles": 49084
+      "torsoTriangles": 52784
     },
     {
       "id": "greatsword/lean/mail/Spear_Study",
@@ -939,7 +939,7 @@
       "movementM": 0.5499180370532657,
       "beforeIntersectionPairs": 0,
       "beforeContainedVertices": 0,
-      "afterIntersectionPairs": 1802,
+      "afterIntersectionPairs": 1808,
       "afterContainedVertices": 4725,
       "beforeWristWorld": [
         -0.1893048624695397,
