@@ -57,14 +57,18 @@ async function init(bytes){
  // Board: 64 stone slabs inside a kerb, set in a generated landscape;
  // file and rank letters on the kerb. A new seed builds a new place.
  const half=4*SQUARE,board=new THREE.Group();scene.add(board);
- const squares=[];let landscape=null,landscapeSeed=1+Math.floor(Math.random()*1e6);
+ // ?seed=N in the page address fixes the place (checks, previews).
+ const squares=[],labels=[];let landscape=null,landscapeSeed=Math.floor(+new URLSearchParams(location.search).get('seed'))||1+Math.floor(Math.random()*1e6);
+ // The field the figures stand on; follows a rebuilt landscape.
+ const ground={height:(x,z)=>landscape?landscape.height(x,z):0,normal:(x,z)=>landscape?landscape.normal(x,z):[0,1,0]};
  function buildLandscape(seed){
   landscape?.dispose();landscape=createLandscape({seed,square:SQUARE,squareName:(f,r)=>FILES[f]+(r+1)});
   scene.add(landscape.group);squares.length=0;squares.push(...landscape.squares);landscapeSeed=seed;
+  for(const m of labels)m.position.y=landscape.kerbTop(m.position.x,m.position.z)+.012;
  }
  buildLandscape(landscapeSeed);
  function label(text,x,z,rot){const c=document.createElement('canvas');c.width=c.height=64;const g=c.getContext('2d');g.fillStyle='#efe6cf';g.font='bold 44px sans-serif';g.textAlign='center';g.textBaseline='middle';g.fillText(text,32,34);
-  const m=new THREE.Mesh(new THREE.PlaneGeometry(.42,.42),new THREE.MeshBasicMaterial({map:new THREE.CanvasTexture(c),transparent:true}));m.rotation.set(-Math.PI/2,0,rot);m.position.set(x,.075,z);board.add(m);}
+  const m=new THREE.Mesh(new THREE.PlaneGeometry(.42,.42),new THREE.MeshBasicMaterial({map:new THREE.CanvasTexture(c),transparent:true}));m.rotation.set(-Math.PI/2,0,rot);m.position.set(x,landscape.kerbTop(x,z)+.012,z);board.add(m);labels.push(m);}
  for(let i=0;i<8;i++){const c=(i-3.5)*SQUARE;label(FILES[i],c,half+.3,0);label(FILES[i],c,-half-.3,Math.PI);label(String(i+1),-half-.3,(3.5-i)*SQUARE,0);label(String(i+1),half+.3,(3.5-i)*SQUARE,Math.PI);}
  const markGroup=new THREE.Group();board.add(markGroup);
  const selectMat=new THREE.MeshBasicMaterial({color:0xf2c14e,transparent:true,opacity:.85});
@@ -73,9 +77,12 @@ async function init(bytes){
  function mark(square,kind){const [x,z]=world(square),k=SQUARE/2;let m;
   if(kind==='select')m=new THREE.Mesh(new THREE.RingGeometry(.78*k,.92*k,48),selectMat);
   else if(kind==='take')m=new THREE.Mesh(new THREE.RingGeometry(.7*k,.86*k,48),takeMat);
-  else if(kind==='last')m=new THREE.Mesh(new THREE.PlaneGeometry(SQUARE*.98,SQUARE*.98),lastMat);
+  else if(kind==='last')m=new THREE.Mesh(new THREE.PlaneGeometry(SQUARE*.98,SQUARE*.98,20,20),lastMat);
   else m=new THREE.Mesh(new THREE.CircleGeometry(.22*k,32),moveMat);
-  m.rotation.x=-Math.PI/2;m.position.set(x,.004+(kind==='last'?0:.002),z);markGroup.add(m);}
+  // Laid over the field: every vertex at the ground under it.
+  m.geometry.rotateX(-Math.PI/2);const gp=m.geometry.attributes.position,lift=.02+(kind==='last'?0:.004);
+  for(let i=0;i<gp.count;i++)gp.setY(i,ground.height(x+gp.getX(i),z+gp.getZ(i))+lift);
+  m.geometry.computeBoundingSphere();m.position.set(x,0,z);markGroup.add(m);}
  function clearMarks(){for(const m of [...markGroup.children]){m.geometry.dispose();markGroup.remove(m);}}
 
  const camera=new THREE.PerspectiveCamera(34,1,.1,900);camera.position.set(0,18.5,24.5);
@@ -90,7 +97,7 @@ async function init(bytes){
  const loader=new GLTFLoader();
  loader.register(parser=>{parser.textureLoader=new THREE.TextureLoader(parser.options.manager);return{name:'image-element-textures'};});
  const gltf=await new Promise((resolve,reject)=>loader.parse(bytes.buffer,'',resolve,reject));
- const createPawn=createPawnFactory({gltf});
+ const createPawn=createPawnFactory({gltf,ground});
 
  // Reach measurements on the real skinned model, once.
  const probe=createPawn({id:'probe',color:'w'});
@@ -113,10 +120,12 @@ async function init(bytes){
  const lungeProbe=createPawn({id:'probe',color:'w'});
  const lungeTip=lungeProbe.probe('Spear_Study',1.95,strikeLayer()).tip;lungeProbe.dispose();
  const reach={x:lungeTip[0],z:lungeTip[2],height:lungeTip[1]};
+ // Figures without a pose of their own stand on the new field (pawns follow it every frame).
+ const reground=()=>{for(const a of actors.values())if(a.kind==='token')a.place(a.placement());};
  let game,actors=new Map(),yaws=new Map(),eng=new Map(),scene_=null,clock=0,speed=1,selected=null,legal=[],lastMove=null,manual=false,autoTimer=null,frameIndex=0,history=[];
  const byId=id=>game.pieces.find(p=>p.id===id);
  function spawn(piece){
-  const actor=piece.type==='p'?createPawn({id:piece.id,color:piece.color}):createToken(piece);
+  const actor=piece.type==='p'?createPawn({id:piece.id,color:piece.color,grounded:true}):createToken(piece,ground);
   scene.add(actor.object);actors.set(piece.id,actor);
   const [x,z]=world(piece.square);yaws.set(piece.id,forwardYaw(piece.color));actor.place({x,z,yaw:forwardYaw(piece.color)});
   if(actor.kind==='pawn')actor.pose('Guard_Breath',hash(piece.id)*6);
@@ -708,7 +717,7 @@ async function init(bytes){
  $('#slow').onchange=()=>{speed=$('#slow').checked?.4:1;};
  $('#auto').onchange=()=>{if($('#auto').checked&&!scene_&&game.chess.turn()==='b')autoMove();};
  $('#home').onclick=()=>{moved=false;homeView();};
- $('#terrain').onclick=()=>buildLandscape(1+Math.floor(Math.random()*1e6));
+ $('#terrain').onclick=()=>{buildLandscape(1+Math.floor(Math.random()*1e6));reground();};
  // Motion files: opened locally, listed by role, picked for rest and walk.
  function addMotion(name,text){
   const source=readMotionSource(name,text);motion.sources.push(source);motion.clips.push(...source.clips);
@@ -777,7 +786,12 @@ async function init(bytes){
    const margin=.15,inside=root[0]>=Math.min(feet[0][0],feet[1][0])-margin&&root[0]<=Math.max(feet[0][0],feet[1][0])+margin&&root[2]>=Math.min(feet[0][2],feet[1][2])-margin&&root[2]<=Math.max(feet[0][2],feet[1][2])+margin;
    return{L,R,pelvisOverFeet:inside,fall:a.placement().fall};},
   feetWorld(id){const a=actors.get(id);if(a?.kind!=='pawn')return null;a.object.updateMatrixWorld(true);const P=a.points(['foot.L','foot.R']);return Object.fromEntries(Object.entries(P).map(([k,v])=>[k,new THREE.Vector3(...v).applyMatrix4(a.object.matrixWorld).toArray()]));},
-  landscape:seed=>{if(seed)buildLandscape(seed);renderer.render(scene,camera);return{seed:landscapeSeed,trees:landscape.trees.slice(0,4)};},
+  landscape:seed=>{if(seed){buildLandscape(seed);reground();}renderer.render(scene,camera);return{seed:landscapeSeed,trees:landscape.trees.slice(0,4)};},
+  // The field: its height at a point, and a pawn's feet on it against the
+  // same pose on the flat (grounding.mjs: 0 stands as on the flat).
+  groundAt:(x,z)=>ground.height(x,z),
+  ground(id){return actors.get(id)?.ground?.()||null;},
+  feetGround(id){const f=this.feetWorld(id);return f&&Object.fromEntries(Object.entries(f).map(([k,v])=>[k,[v[0],v[1]-ground.height(v[0],v[2]),v[2]]]));},
   hitTime:HIT_TIME,captureDuration:CAPTURE_DURATION,
   // Imported motion for the checks: add a file's text, then pick by index.
   motion:{add:(name,text)=>addMotion(name,text),list:()=>motion.clips.map(c=>c.name),use({stand=null,walk=null,capture=null,duel=null,weight=1}={}){$('#motion-duel').value=duel===null?'':String(duel);$('#motion-stand').value=stand===null?'':String(stand);$('#motion-walk').value=walk===null?'':String(walk);$('#motion-capture').value=capture===null?'':String(capture);$('#motion-weight').value=String(Math.round(weight*100));useMotion();return{stand:motion.stand?.name||null,walk:motion.walk?.name||null,capture:motion.capture?.name||null,pair:!!(motion.capture&&captureClips()),duel:motion.duel?{exchange:motion.duel.exchange?.attack.name||null,decisive:motion.duel.decisive?.attack.name||null}:null,weight:motion.weight};}},
