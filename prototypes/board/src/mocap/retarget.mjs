@@ -1,4 +1,5 @@
 import {add,sub,scale,mid,lerp,normalize,distance,qMul,qConj,qSlerp,qRotate,frame} from './math.mjs';
+import {limitNeck} from './neck.mjs';
 
 // Retargeting by anatomical frames. For each driven bone the source key
 // points and the figure's own rest pose give the same frame (for a thigh:
@@ -80,7 +81,10 @@ export function createRetargeter(rest){
   const delta=(name,q)=>qMul(q,qConj(restFrames[name]));
   const trunk=(name,q)=>N?qMul(q,qConj(N[name])):delta(name,q);
   const dP=trunk('pelvis',FRAMES.pelvis(src)),dC=trunk('chest',FRAMES.chest(src));
-  const dH=trunk('head',FRAMES.head(src));
+  // The head within the neck's range against the chest (neck.mjs): a turn
+  // the tracking got wrong, or the board's own turn onto the opponent on top
+  // of the recorded one, never twists it past what a neck does.
+  const dH=qMul(dC,limitNeck(qMul(qConj(dC),trunk('head',FRAMES.head(src)))));
   const world={},turned=(bone,d)=>{world[bone]=qMul(d,Q[bone]);};
   turned(PAWN.root,dP);
   PAWN.spine.forEach((b,i)=>turned(b,qSlerp(dP,dC,(i+1)/PAWN.spine.length)));
