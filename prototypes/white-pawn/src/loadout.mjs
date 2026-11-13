@@ -194,7 +194,9 @@ export function createLoadout({model,bones={},extraWeapons=[]}){
    else if(slot==='shield')object.visible=variant===state.effectiveShield;
    else if(slot==='armor'||slot==='plate')object.visible=current.armorType==='plate';
    else if(slot==='mail')object.visible=current.armorType==='mail';
-   else if(slot==='padding'||slot==='base'||slot==='body')object.visible=true;
+   // Padding split off under an opaque outer layer is hidden while that layer is worn.
+   else if(slot==='padding')object.visible=!String(object.userData?.hiddenUnder||'').split(',').includes(current.armorType);
+   else if(slot==='base'||slot==='body')object.visible=true;
    else if(slot==='helmet')object.visible=current.helmet!=='off';
    else if(slot==='hair')object.visible=current.helmet==='off';
    else if(slot==='facialHair'||slot==='beard')object.visible=variant===current.beard&&current.beard!=='none';

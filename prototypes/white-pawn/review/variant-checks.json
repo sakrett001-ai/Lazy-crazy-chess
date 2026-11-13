@@ -1,9 +1,9 @@
 {
-  "date": "2026-11-13T15:28:02.554Z",
+  "date": "2026-11-13T16:26:27.931Z",
   "status": "passed",
   "browser": "157.0.8103.50",
-  "glbSha256": "0e5cf5ff21193216a693af7f2ee830e064eb6a8b7f909a0460dc70ea5b6236a0",
-  "documentSha256": "5c1643668d3a062471c857ff80ce5e8dc34e96a3ad50e5a5ae04b6f239f15da5",
+  "glbSha256": "0d55a5164472af5011eced148d1ef3e94ca95781e3668e75219cd1b5d66e57ca",
+  "documentSha256": "0709d35aac39a2c1c7a8d8d22a2562e44dda79f40fbaddafd975ffdde5101840",
   "tests": [
     "Three genuinely different shields; independent plate/mail/padding geometry; visible textured mail and quilting; actual physique displacement and independent experience",
     "Four visible weapon geometries, deterministic reverse seek and planted feet; twohand weapons suppress shield and brace; singlehand restores choice; invalid review is atomic"
@@ -59,8 +59,8 @@
         "reviewLocked": false,
         "fps": null,
         "display": "surface",
-        "renderCalls": 25,
-        "triangles": 224036,
+        "renderCalls": 26,
+        "triangles": 207188,
         "bones": 163,
         "clips": [
           {
@@ -185,18 +185,18 @@
           "name": "HELMET_Ivory_open_helmet",
           "slot": "helmet",
           "variant": "on",
-          "vertices": 2007,
-          "checksum": 37.21393580084126,
+          "vertices": 1825,
+          "checksum": 33.629788289270955,
           "materials": [
             {
               "slot": "armor.main",
               "metalness": 1,
               "roughness": 0.7390798776081287,
               "normalMap": true,
-              "uvChannel": 1,
+              "uvChannel": 2,
               "uvSpan": [
                 0.214694581925869,
-                2.0091453790664673
+                1.9570894241333008
               ]
             }
           ],
@@ -206,18 +206,18 @@
           "name": "HELMET_Ivory_open_helmet_1",
           "slot": "helmet",
           "variant": "on",
-          "vertices": 1779,
-          "checksum": 31.547558480563612,
+          "vertices": 1763,
+          "checksum": 31.220893579912776,
           "materials": [
             {
               "slot": "armor.trim",
               "metalness": 1,
               "roughness": 0.5543099082060965,
               "normalMap": true,
-              "uvChannel": 1,
+              "uvChannel": 2,
               "uvSpan": [
                 0.2199999988079071,
-                2.018746256828308
+                1.8495657444000244
               ]
             }
           ],
@@ -227,18 +227,18 @@
           "name": "HELMET_Ivory_open_helmet_2",
           "slot": "helmet",
           "variant": "on",
-          "vertices": 168,
-          "checksum": 3.178904102933594,
+          "vertices": 1804,
+          "checksum": 33.626229500675116,
           "materials": [
             {
-              "slot": "Deep teal enamel",
-              "metalness": 0.2800000011920929,
-              "roughness": 0.3100000023841858,
-              "normalMap": false,
-              "uvChannel": 0,
+              "slot": "plume.feather",
+              "metalness": 0,
+              "roughness": 0.7400000095367432,
+              "normalMap": true,
+              "uvChannel": 1,
               "uvSpan": [
-                0,
-                0
+                1,
+                13.468976974487305
               ]
             }
           ],
@@ -248,18 +248,18 @@
           "name": "HELMET_Ivory_open_helmet_3",
           "slot": "helmet",
           "variant": "on",
-          "vertices": 378,
-          "checksum": 7.239086131936639,
+          "vertices": 1353,
+          "checksum": 25.09274917938499,
           "materials": [
             {
-              "slot": "Teal horsehair",
+              "slot": "plume.accent",
               "metalness": 0,
-              "roughness": 0.8199999928474426,
-              "normalMap": false,
-              "uvChannel": 0,
+              "roughness": 0.699999988079071,
+              "normalMap": true,
+              "uvChannel": 1,
               "uvSpan": [
-                0,
-                0
+                1,
+                14.466744422912598
               ]
             }
           ],
@@ -269,8 +269,32 @@
           "name": "PADDING_padded",
           "slot": "padding",
           "variant": "padded",
-          "vertices": 34438,
-          "checksum": 383.0023486099799,
+          "vertices": 7430,
+          "checksum": 51.758977339824646,
+          "materials": [
+            {
+              "slot": "padding",
+              "metalness": 0,
+              "roughness": 0.91,
+              "normalMap": true,
+              "uvChannel": 0,
+              "uvSpan": [
+                11.811772346496582,
+                28.633382320404053
+              ]
+            }
+          ],
+          "morphs": {
+            "lean": 0,
+            "strong": 0
+          }
+        },
+        {
+          "name": "PADDING_padded_under_mail",
+          "slot": "padding",
+          "variant": "padded",
+          "vertices": 16926,
+          "checksum": 214.60213136350913,
           "materials": [
             {
               "slot": "padding",
@@ -602,8 +626,8 @@
         "reviewLocked": false,
         "fps": null,
         "display": "surface",
-        "renderCalls": 23,
-        "triangles": 191148,
+        "renderCalls": 24,
+        "triangles": 151358,
         "bones": 163,
         "clips": [
           {
@@ -728,18 +752,18 @@
           "name": "HELMET_Ivory_open_helmet",
           "slot": "helmet",
           "variant": "on",
-          "vertices": 2007,
-          "checksum": 37.21393580084126,
+          "vertices": 1825,
+          "checksum": 33.629788289270955,
           "materials": [
             {
               "slot": "armor.main",
               "metalness": 1,
               "roughness": 0.7390798776081287,
               "normalMap": true,
-              "uvChannel": 1,
+              "uvChannel": 2,
               "uvSpan": [
                 0.214694581925869,
-                2.0091453790664673
+                1.9570894241333008
               ]
             }
           ],
@@ -749,18 +773,18 @@
           "name": "HELMET_Ivory_open_helmet_1",
           "slot": "helmet",
           "variant": "on",
-          "vertices": 1779,
-          "checksum": 31.547558480563612,
+          "vertices": 1763,
+          "checksum": 31.220893579912776,
           "materials": [
             {
               "slot": "armor.trim",
               "metalness": 1,
               "roughness": 0.5543099082060965,
               "normalMap": true,
-              "uvChannel": 1,
+              "uvChannel": 2,
               "uvSpan": [
                 0.2199999988079071,
-                2.018746256828308
+                1.8495657444000244
               ]
             }
           ],
@@ -770,18 +794,18 @@
           "name": "HELMET_Ivory_open_helmet_2",
           "slot": "helmet",
           "variant": "on",
-          "vertices": 168,
-          "checksum": 3.178904102933594,
+          "vertices": 1804,
+          "checksum": 33.626229500675116,
           "materials": [
             {
-              "slot": "Deep teal enamel",
-              "metalness": 0.2800000011920929,
-              "roughness": 0.3100000023841858,
-              "normalMap": false,
-              "uvChannel": 0,
+              "slot": "plume.feather",
+              "metalness": 0,
+              "roughness": 0.7400000095367432,
+              "normalMap": true,
+              "uvChannel": 1,
               "uvSpan": [
-                0,
-                0
+                1,
+                13.468976974487305
               ]
             }
           ],
@@ -791,18 +815,18 @@
           "name": "HELMET_Ivory_open_helmet_3",
           "slot": "helmet",
           "variant": "on",
-          "vertices": 378,
-          "checksum": 7.239086131936639,
+          "vertices": 1353,
+          "checksum": 25.09274917938499,
           "materials": [
             {
-              "slot": "Teal horsehair",
+              "slot": "plume.accent",
               "metalness": 0,
-              "roughness": 0.8199999928474426,
-              "normalMap": false,
-              "uvChannel": 0,
+              "roughness": 0.699999988079071,
+              "normalMap": true,
+              "uvChannel": 1,
               "uvSpan": [
-                0,
-                0
+                1,
+                14.466744422912598
               ]
             }
           ],
@@ -860,8 +884,8 @@
           "name": "PADDING_padded",
           "slot": "padding",
           "variant": "padded",
-          "vertices": 34438,
-          "checksum": 383.0023486099799,
+          "vertices": 7430,
+          "checksum": 51.758977339824646,
           "materials": [
             {
               "slot": "padding",
@@ -870,8 +894,32 @@
               "normalMap": true,
               "uvChannel": 0,
               "uvSpan": [
-                26.13144302368164,
-                44.42137336730957
+                11.811772346496582,
+                28.633382320404053
+              ]
+            }
+          ],
+          "morphs": {
+            "lean": 0,
+            "strong": 0
+          }
+        },
+        {
+          "name": "PADDING_padded_under_plate",
+          "slot": "padding",
+          "variant": "padded",
+          "vertices": 2714,
+          "checksum": 11.270626584601919,
+          "materials": [
+            {
+              "slot": "padding",
+              "metalness": 0,
+              "roughness": 0.91,
+              "normalMap": true,
+              "uvChannel": 0,
+              "uvSpan": [
+                11.790182113647461,
+                24.4428288936615
               ]
             }
           ],
@@ -1100,8 +1148,8 @@
         "reviewLocked": false,
         "fps": null,
         "display": "surface",
-        "renderCalls": 25,
-        "triangles": 214969,
+        "renderCalls": 26,
+        "triangles": 198121,
         "bones": 163,
         "clips": [
           {
@@ -1226,18 +1274,18 @@
           "name": "HELMET_Ivory_open_helmet",
           "slot": "helmet",
           "variant": "on",
-          "vertices": 2007,
-          "checksum": 37.21393580084126,
+          "vertices": 1825,
+          "checksum": 33.629788289270955,
           "materials": [
             {
               "slot": "armor.main",
               "metalness": 1,
               "roughness": 0.7390798776081287,
               "normalMap": true,
-              "uvChannel": 1,
+              "uvChannel": 2,
               "uvSpan": [
                 0.214694581925869,
-                2.0091453790664673
+                1.9570894241333008
               ]
             }
           ],
@@ -1247,18 +1295,18 @@
           "name": "HELMET_Ivory_open_helmet_1",
           "slot": "helmet",
           "variant": "on",
-          "vertices": 1779,
-          "checksum": 31.547558480563612,
+          "vertices": 1763,
+          "checksum": 31.220893579912776,
           "materials": [
             {
               "slot": "armor.trim",
               "metalness": 1,
               "roughness": 0.5543099082060965,
               "normalMap": true,
-              "uvChannel": 1,
+              "uvChannel": 2,
               "uvSpan": [
                 0.2199999988079071,
-                2.018746256828308
+                1.8495657444000244
               ]
             }
           ],
@@ -1268,18 +1316,18 @@
           "name": "HELMET_Ivory_open_helmet_2",
           "slot": "helmet",
           "variant": "on",
-          "vertices": 168,
-          "checksum": 3.178904102933594,
+          "vertices": 1804,
+          "checksum": 33.626229500675116,
           "materials": [
             {
-              "slot": "Deep teal enamel",
-              "metalness": 0.2800000011920929,
-              "roughness": 0.3100000023841858,
-              "normalMap": false,
-              "uvChannel": 0,
+              "slot": "plume.feather",
+              "metalness": 0,
+              "roughness": 0.7400000095367432,
+              "normalMap": true,
+              "uvChannel": 1,
               "uvSpan": [
-                0,
-                0
+                1,
+                13.468976974487305
               ]
             }
           ],
@@ -1289,18 +1337,18 @@
           "name": "HELMET_Ivory_open_helmet_3",
           "slot": "helmet",
           "variant": "on",
-          "vertices": 378,
-          "checksum": 7.239086131936639,
+          "vertices": 1353,
+          "checksum": 25.09274917938499,
           "materials": [
             {
-              "slot": "Teal horsehair",
+              "slot": "plume.accent",
               "metalness": 0,
-              "roughness": 0.8199999928474426,
-              "normalMap": false,
-              "uvChannel": 0,
+              "roughness": 0.699999988079071,
+              "normalMap": true,
+              "uvChannel": 1,
               "uvSpan": [
-                0,
-                0
+                1,
+                14.466744422912598
               ]
             }
           ],
@@ -1310,8 +1358,32 @@
           "name": "PADDING_padded",
           "slot": "padding",
           "variant": "padded",
-          "vertices": 34438,
-          "checksum": 383.0023486099799,
+          "vertices": 7430,
+          "checksum": 51.758977339824646,
+          "materials": [
+            {
+              "slot": "padding",
+              "metalness": 0,
+              "roughness": 0.91,
+              "normalMap": true,
+              "uvChannel": 0,
+              "uvSpan": [
+                11.811772346496582,
+                28.633382320404053
+              ]
+            }
+          ],
+          "morphs": {
+            "lean": 0,
+            "strong": 0
+          }
+        },
+        {
+          "name": "PADDING_padded_under_mail",
+          "slot": "padding",
+          "variant": "padded",
+          "vertices": 16926,
+          "checksum": 214.60213136350913,
           "materials": [
             {
               "slot": "padding",
@@ -1734,8 +1806,8 @@
         "reviewLocked": false,
         "fps": null,
         "display": "surface",
-        "renderCalls": 24,
-        "triangles": 214473,
+        "renderCalls": 25,
+        "triangles": 197625,
         "bones": 163,
         "clips": [
           {
@@ -1860,18 +1932,18 @@
           "name": "HELMET_Ivory_open_helmet",
           "slot": "helmet",
           "variant": "on",
-          "vertices": 2007,
-          "checksum": 37.21393580084126,
+          "vertices": 1825,
+          "checksum": 33.629788289270955,
           "materials": [
             {
               "slot": "armor.main",
               "metalness": 1,
               "roughness": 0.7390798776081287,
               "normalMap": true,
-              "uvChannel": 1,
+              "uvChannel": 2,
               "uvSpan": [
                 0.214694581925869,
-                2.0091453790664673
+                1.9570894241333008
               ]
             }
           ],
@@ -1881,18 +1953,18 @@
           "name": "HELMET_Ivory_open_helmet_1",
           "slot": "helmet",
           "variant": "on",
-          "vertices": 1779,
-          "checksum": 31.547558480563612,
+          "vertices": 1763,
+          "checksum": 31.220893579912776,
           "materials": [
             {
               "slot": "armor.trim",
               "metalness": 1,
               "roughness": 0.5543099082060965,
               "normalMap": true,
-              "uvChannel": 1,
+              "uvChannel": 2,
               "uvSpan": [
                 0.2199999988079071,
-                2.018746256828308
+                1.8495657444000244
               ]
             }
           ],
@@ -1902,18 +1974,18 @@
           "name": "HELMET_Ivory_open_helmet_2",
           "slot": "helmet",
           "variant": "on",
-          "vertices": 168,
-          "checksum": 3.178904102933594,
+          "vertices": 1804,
+          "checksum": 33.626229500675116,
           "materials": [
             {
-              "slot": "Deep teal enamel",
-              "metalness": 0.2800000011920929,
-              "roughness": 0.3100000023841858,
-              "normalMap": false,
-              "uvChannel": 0,
+              "slot": "plume.feather",
+              "metalness": 0,
+              "roughness": 0.7400000095367432,
+              "normalMap": true,
+              "uvChannel": 1,
               "uvSpan": [
-                0,
-                0
+                1,
+                13.468976974487305
               ]
             }
           ],
@@ -1923,18 +1995,18 @@
           "name": "HELMET_Ivory_open_helmet_3",
           "slot": "helmet",
           "variant": "on",
-          "vertices": 378,
-          "checksum": 7.239086131936639,
+          "vertices": 1353,
+          "checksum": 25.09274917938499,
           "materials": [
             {
-              "slot": "Teal horsehair",
+              "slot": "plume.accent",
               "metalness": 0,
-              "roughness": 0.8199999928474426,
-              "normalMap": false,
-              "uvChannel": 0,
+              "roughness": 0.699999988079071,
+              "normalMap": true,
+              "uvChannel": 1,
               "uvSpan": [
-                0,
-                0
+                1,
+                14.466744422912598
               ]
             }
           ],
@@ -1944,8 +2016,32 @@
           "name": "PADDING_padded",
           "slot": "padding",
           "variant": "padded",
-          "vertices": 34438,
-          "checksum": 383.0023486099799,
+          "vertices": 7430,
+          "checksum": 51.758977339824646,
+          "materials": [
+            {
+              "slot": "padding",
+              "metalness": 0,
+              "roughness": 0.91,
+              "normalMap": true,
+              "uvChannel": 0,
+              "uvSpan": [
+                11.811772346496582,
+                28.633382320404053
+              ]
+            }
+          ],
+          "morphs": {
+            "lean": 0,
+            "strong": 0
+          }
+        },
+        {
+          "name": "PADDING_padded_under_mail",
+          "slot": "padding",
+          "variant": "padded",
+          "vertices": 16926,
+          "checksum": 214.60213136350913,
           "materials": [
             {
               "slot": "padding",
@@ -2347,8 +2443,8 @@
         "reviewLocked": false,
         "fps": null,
         "display": "surface",
-        "renderCalls": 19,
-        "triangles": 211564,
+        "renderCalls": 20,
+        "triangles": 194716,
         "bones": 163,
         "clips": [
           {
@@ -2473,18 +2569,18 @@
           "name": "HELMET_Ivory_open_helmet",
           "slot": "helmet",
           "variant": "on",
-          "vertices": 2007,
-          "checksum": 37.21393580084126,
+          "vertices": 1825,
+          "checksum": 33.629788289270955,
           "materials": [
             {
               "slot": "armor.main",
               "metalness": 1,
               "roughness": 0.7390798776081287,
               "normalMap": true,
-              "uvChannel": 1,
+              "uvChannel": 2,
               "uvSpan": [
                 0.214694581925869,
-                2.0091453790664673
+                1.9570894241333008
               ]
             }
           ],
@@ -2494,18 +2590,18 @@
           "name": "HELMET_Ivory_open_helmet_1",
           "slot": "helmet",
           "variant": "on",
-          "vertices": 1779,
-          "checksum": 31.547558480563612,
+          "vertices": 1763,
+          "checksum": 31.220893579912776,
           "materials": [
             {
               "slot": "armor.trim",
               "metalness": 1,
               "roughness": 0.5543099082060965,
               "normalMap": true,
-              "uvChannel": 1,
+              "uvChannel": 2,
               "uvSpan": [
                 0.2199999988079071,
-                2.018746256828308
+                1.8495657444000244
               ]
             }
           ],
@@ -2515,18 +2611,18 @@
           "name": "HELMET_Ivory_open_helmet_2",
           "slot": "helmet",
           "variant": "on",
-          "vertices": 168,
-          "checksum": 3.178904102933594,
+          "vertices": 1804,
+          "checksum": 33.626229500675116,
           "materials": [
             {
-              "slot": "Deep teal enamel",
-              "metalness": 0.2800000011920929,
-              "roughness": 0.3100000023841858,
-              "normalMap": false,
-              "uvChannel": 0,
+              "slot": "plume.feather",
+              "metalness": 0,
+              "roughness": 0.7400000095367432,
+              "normalMap": true,
+              "uvChannel": 1,
               "uvSpan": [
-                0,
-                0
+                1,
+                13.468976974487305
               ]
             }
           ],
@@ -2536,18 +2632,18 @@
           "name": "HELMET_Ivory_open_helmet_3",
           "slot": "helmet",
           "variant": "on",
-          "vertices": 378,
-          "checksum": 7.239086131936639,
+          "vertices": 1353,
+          "checksum": 25.09274917938499,
           "materials": [
             {
-              "slot": "Teal horsehair",
+              "slot": "plume.accent",
               "metalness": 0,
-              "roughness": 0.8199999928474426,
-              "normalMap": false,
-              "uvChannel": 0,
+              "roughness": 0.699999988079071,
+              "normalMap": true,
+              "uvChannel": 1,
               "uvSpan": [
-                0,
-                0
+                1,
+                14.466744422912598
               ]
             }
           ],
@@ -2557,8 +2653,32 @@
           "name": "PADDING_padded",
           "slot": "padding",
           "variant": "padded",
-          "vertices": 34438,
-          "checksum": 383.0023486099799,
+          "vertices": 7430,
+          "checksum": 51.758977339824646,
+          "materials": [
+            {
+              "slot": "padding",
+              "metalness": 0,
+              "roughness": 0.91,
+              "normalMap": true,
+              "uvChannel": 0,
+              "uvSpan": [
+                11.811772346496582,
+                28.633382320404053
+              ]
+            }
+          ],
+          "morphs": {
+            "lean": 0,
+            "strong": 0
+          }
+        },
+        {
+          "name": "PADDING_padded_under_mail",
+          "slot": "padding",
+          "variant": "padded",
+          "vertices": 16926,
+          "checksum": 214.60213136350913,
           "materials": [
             {
               "slot": "padding",
@@ -2851,8 +2971,8 @@
         "reviewLocked": false,
         "fps": null,
         "display": "surface",
-        "renderCalls": 19,
-        "triangles": 211796,
+        "renderCalls": 20,
+        "triangles": 194948,
         "bones": 163,
         "clips": [
           {
@@ -2977,18 +3097,18 @@
           "name": "HELMET_Ivory_open_helmet",
           "slot": "helmet",
           "variant": "on",
-          "vertices": 2007,
-          "checksum": 37.21393580084126,
+          "vertices": 1825,
+          "checksum": 33.629788289270955,
           "materials": [
             {
               "slot": "armor.main",
               "metalness": 1,
               "roughness": 0.7390798776081287,
               "normalMap": true,
-              "uvChannel": 1,
+              "uvChannel": 2,
               "uvSpan": [
                 0.214694581925869,
-                2.0091453790664673
+                1.9570894241333008
               ]
             }
           ],
@@ -2998,18 +3118,18 @@
           "name": "HELMET_Ivory_open_helmet_1",
           "slot": "helmet",
           "variant": "on",
-          "vertices": 1779,
-          "checksum": 31.547558480563612,
+          "vertices": 1763,
+          "checksum": 31.220893579912776,
           "materials": [
             {
               "slot": "armor.trim",
               "metalness": 1,
               "roughness": 0.5543099082060965,
               "normalMap": true,
-              "uvChannel": 1,
+              "uvChannel": 2,
               "uvSpan": [
                 0.2199999988079071,
-                2.018746256828308
+                1.8495657444000244
               ]
             }
           ],
@@ -3019,18 +3139,18 @@
           "name": "HELMET_Ivory_open_helmet_2",
           "slot": "helmet",
           "variant": "on",
-          "vertices": 168,
-          "checksum": 3.178904102933594,
+          "vertices": 1804,
+          "checksum": 33.626229500675116,
           "materials": [
             {
-              "slot": "Deep teal enamel",
-              "metalness": 0.2800000011920929,
-              "roughness": 0.3100000023841858,
-              "normalMap": false,
-              "uvChannel": 0,
+              "slot": "plume.feather",
+              "metalness": 0,
+              "roughness": 0.7400000095367432,
+              "normalMap": true,
+              "uvChannel": 1,
               "uvSpan": [
-                0,
-                0
+                1,
+                13.468976974487305
               ]
             }
           ],
@@ -3040,18 +3160,18 @@
           "name": "HELMET_Ivory_open_helmet_3",
           "slot": "helmet",
           "variant": "on",
-          "vertices": 378,
-          "checksum": 7.239086131936639,
+          "vertices": 1353,
+          "checksum": 25.09274917938499,
           "materials": [
             {
-              "slot": "Teal horsehair",
+              "slot": "plume.accent",
               "metalness": 0,
-              "roughness": 0.8199999928474426,
-              "normalMap": false,
-              "uvChannel": 0,
+              "roughness": 0.699999988079071,
+              "normalMap": true,
+              "uvChannel": 1,
               "uvSpan": [
-                0,
-                0
+                1,
+                14.466744422912598
               ]
             }
           ],
@@ -3061,8 +3181,32 @@
           "name": "PADDING_padded",
           "slot": "padding",
           "variant": "padded",
-          "vertices": 34438,
-          "checksum": 383.0023486099799,
+          "vertices": 7430,
+          "checksum": 51.758977339824646,
+          "materials": [
+            {
+              "slot": "padding",
+              "metalness": 0,
+              "roughness": 0.91,
+              "normalMap": true,
+              "uvChannel": 0,
+              "uvSpan": [
+                11.811772346496582,
+                28.633382320404053
+              ]
+            }
+          ],
+          "morphs": {
+            "lean": 0,
+            "strong": 0
+          }
+        },
+        {
+          "name": "PADDING_padded_under_mail",
+          "slot": "padding",
+          "variant": "padded",
+          "vertices": 16926,
+          "checksum": 214.60213136350913,
           "materials": [
             {
               "slot": "padding",
@@ -3309,7 +3453,7 @@
   "errors": [],
   "network": [],
   "morphology": {
-    "meshes": 12,
+    "meshes": 15,
     "maxDelta": 0.045030653729938586
   },
   "scope": "Actual visible equipment meshes and PBR/UV assignment, sampled morphed vertex displacement, deterministic sampled poses and foot support, review/profile compatibility, 390px software browser. Full collision freedom and real-phone performance are not asserted."
