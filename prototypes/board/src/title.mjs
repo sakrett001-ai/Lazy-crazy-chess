@@ -55,7 +55,9 @@ export const writeSettings=(storage,s)=>write(storage,SETTINGS_KEY,s);
 // turns on the economy mode (pixel ratio 1, smaller shadow map).
 export const SLOW_FRAME=1/36;
 export function needsEconomy(frames){
- if(frames.length<30)return null;
+ // 30 frames, or 3 s of them on a machine too slow to show 30 soon.
+ const spent=frames.reduce((a,b)=>a+b,0);
+ if(frames.length<5||(frames.length<30&&spent<3))return null;
  const s=[...frames].sort((a,b)=>a-b);return s[Math.floor(s.length/2)]>SLOW_FRAME;
 }
 

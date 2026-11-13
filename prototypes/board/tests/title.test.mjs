@@ -65,4 +65,7 @@ test('auto graphics waits for enough frames and goes by the median',()=>{
  // A few hitches in a smooth run do not switch the economy mode on.
  assert.equal(needsEconomy([...Array(25).fill(1/60),...Array(5).fill(.2)]),false);
  assert.equal(needsEconomy(Array(30).fill(SLOW_FRAME)),false);
+ // A very slow machine is not kept waiting for thirty frames.
+ assert.equal(needsEconomy(Array(4).fill(1)),null);
+ assert.equal(needsEconomy(Array(16).fill(.2)),true);
 });

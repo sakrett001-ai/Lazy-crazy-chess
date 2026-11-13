@@ -779,7 +779,7 @@ async function init(bytes){
  }
  function cinema(dt){
   if(titleOpen){titleTime+=dt;view(titleCamera(titleTime));
-   // Auto graphics: the median of 30 frames after a 1.5 s warm-up.
+   // Auto graphics: the median of 30 frames (or of 3 s of them) after a 1.5 s warm-up.
    if(title.settings.graphics==='auto'&&!manual&&titleTime>1.5&&frames.length<30&&dt>0){frames.push(dt);const slow=needsEconomy(frames);
     if(slow!==null){economy=slow;title.noteAuto(slow);applySettings(title.settings);}}
   }else if(fly){fly.t+=dt;const u=Math.min(1,fly.t/FLIGHT_SECONDS);view(flight(INTRO_VIEW,homePose(),u));if(u>=1){fly=null;moved=false;controls.enabled=true;}}
@@ -815,7 +815,7 @@ async function init(bytes){
   duelLayouts:()=>[...layouts].map(([key,l])=>({key,scale:l.scale,gap:l.gap,closest:l.closest,aim:l.aim})),
   // Checks drive the board themselves: the start window steps aside for them.
   manual(on=true){if(on&&titleOpen)closeTitle();manual=on;last=null;},
-  title:()=>({open:titleOpen,flying:!!fly,economy}),
+  title:()=>({open:titleOpen,flying:!!fly,economy,pixelRatio:renderer.getPixelRatio(),shadow:key.shadow.mapSize.x,calls:renderer.info.render.calls,triangles:renderer.info.render.triangles}),
   // Draws only the last frame: the checks need the motion, not every picture.
   step(seconds,fps=30,draw=true){const n=Math.max(1,Math.round(seconds*fps));for(let i=0;i<n;i++)advance(1/fps,draw&&i===n-1);},
   render(){renderer.render(scene,camera);},
