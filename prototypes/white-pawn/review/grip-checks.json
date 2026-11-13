@@ -1,8 +1,8 @@
 {
   "status": "passed",
-  "date": "2026-11-03T15:32:07.833Z",
-  "glbSha256": "52f52e1c1ae832d1a61e1dac9e83dd39ff961fde1a9c402dec8a4a8f6dfce4e6",
-  "runtimeSha256": "df37e092b0f4d6339da0721be226393f5c25e6deb845385869c25441a906a49f",
+  "date": "2026-11-13T17:12:07.544Z",
+  "glbSha256": "d8438e9bcc458cec5d307c04618d8c113d63193cf3577131bb188114fe153d93",
+  "runtimeSha256": "147e7e0b07fc734fcd2ba9018876a5503bb624bf9e684dd4320b77b51e0bf0ac",
   "auditSha256": "d8a99b5654cd841e266146ddd21662197b83c9f2e5a5867c5c4692ea96098759",
   "limits": {
     "minimumPatchVertices": 50,

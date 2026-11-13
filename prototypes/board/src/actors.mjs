@@ -1,8 +1,10 @@
 import * as THREE from 'three';
 import {clone as cloneSkinned} from 'three/addons/utils/SkeletonUtils.js';
 import {createLoadout} from '../../white-pawn/src/loadout.mjs';
+import {paintSurface} from '../../white-pawn/src/surfaces.mjs';
 import {deterministicClip} from '../../white-pawn/src/camera-rig.mjs';
 import {createBodyRig} from './motion.mjs';
+import {createGrounding} from './grounding.mjs';
 import {createMocapDriver} from './mocap/apply.mjs';
 import {createFootLock} from './mocap/footlock.mjs';
 import {sampleClip} from './mocap/format.mjs';
@@ -20,7 +22,7 @@ const slotOf=m=>m.userData?.customizationSlot||m.name;
 function factionMaterial(cache,material,color){
  if(!cache.has(material)){
   const copy=material.clone(),paint=PALETTES[color][slotOf(material)];
-  if(paint){copy.color.setRGB(...paint[0]);copy.metalness=paint[1];copy.roughness=paint[2];}
+  if(paint)paintSurface(copy,...paint);
   cache.set(material,copy);
  }
  return cache.get(material);
@@ -28,8 +30,11 @@ function factionMaterial(cache,material,color){
 
 // Places a figure on the board. Poses are always solved with the holder at
 // the origin, because the workshop's motion layers work in model space;
-// the board transform is applied afterwards.
-function placement(holder){
+// the board transform is applied afterwards. ground ({height,normal}) puts
+// the holder on the field: at the ground's height when raise is set (a
+// stand-in), and a fall ends lying along the slope it falls on. A pawn's
+// height is set by its feet after the pose (grounding.mjs).
+function placement(holder,ground=null,raise=false){
  const yawQ=new THREE.Quaternion(),fallQ=new THREE.Quaternion(),up=new THREE.Vector3(0,1,0),axis=new THREE.Vector3();
  let last={x:0,z:0,yaw:0,fall:0,fallHeading:0,lift:0};
  return{
@@ -37,8 +42,14 @@ function placement(holder){
    last={x,z,yaw,fall,fallHeading,lift};
    yawQ.setFromAxisAngle(up,yaw);
    axis.set(Math.cos(fallHeading),0,-Math.sin(fallHeading));
-   fallQ.setFromAxisAngle(axis,fall);
-   holder.position.set(x,lift,z);holder.quaternion.copy(fallQ).multiply(yawQ);holder.updateMatrixWorld(true);
+   // The fall turns the figure about its feet towards (sin, cos) of its
+   // heading; ground rising that way stops it short, falling ground lets it
+   // go further, so the body comes to rest along the slope (1.47 rad: the
+   // board's full fall).
+   let f=fall;
+   if(ground&&fall>0){const d=1.5,s=(ground.height(x+Math.sin(fallHeading)*d,z+Math.cos(fallHeading)*d)-ground.height(x,z))/d;f=fall-Math.atan(s)*Math.min(1,fall/1.47);}
+   fallQ.setFromAxisAngle(axis,f);
+   holder.position.set(x,lift+(ground&&raise?ground.height(x,z):0),z);holder.quaternion.copy(fallQ).multiply(yawQ);holder.updateMatrixWorld(true);
   },
   get:()=>({...last})
  };
@@ -53,9 +64,11 @@ function fader(holder){
  };
 }
 
-export function createPawnFactory({gltf}){
+// ground: the field ({height,normal}) the board's pawns stand on; a pawn
+// created with grounded stands on it, the measuring probes on the flat.
+export function createPawnFactory({gltf,ground=null}){
  const caches={w:new Map(),b:new Map()};
- return function createPawn({id,color,weapons=[]}){
+ return function createPawn({id,color,weapons=[],grounded=false}){
   const model=cloneSkinned(gltf.scene),holder=new THREE.Group();
   holder.name=id;holder.add(model);
   const bones={},meshes=[];
@@ -68,8 +81,9 @@ export function createPawnFactory({gltf}){
   const rig=createBodyRig({bones});
   const mocap=createMocapDriver({bones,holder});
   const feet=createFootLock({bones,holder,retarget:mocap.retarget});
+  const field=grounded&&ground?ground:null,grounding=createGrounding({bones,holder});
   const samplers=Object.fromEntries(gltf.animations.map((clip,index)=>[clip.name,deterministicClip(model,gltf.animations,index)]));
-  const place=placement(holder),fade=fader(holder);
+  const place=placement(holder,field),fade=fader(holder);
   let pose={action:'rest',time:0};
   // layer: the procedural body layer of motion.mjs, applied over the clip
   // sample and before the arms are solved. motion: an imported motion clip
@@ -89,6 +103,8 @@ export function createPawnFactory({gltf}){
    // stand (mocap/footlock.mjs) while the clip owns the legs on its feet.
    // A pause in the poses or a jump in place starts the hold over.
    if(motion?.feet!=null&&clipBody&&!saved.fall&&!saved.lift)feet.apply(motion.feet);
+   // Last: the pose solved on the flat goes onto the field.
+   if(field)grounding.apply(field,{fall:saved.fall});
    pose={action,time,layered:!!layer,motion:(motion?.blend||[motion]).filter(m=>m?.clip).map(m=>m.clip.name).join('+')||null};
   }
   // Spear tip and shield face in the model frame for one pose (metres);
@@ -164,7 +180,7 @@ export function createPawnFactory({gltf}){
   }
   // Bone positions in the model frame for the current pose.
   function points(names){holder.updateMatrixWorld(true);const inverse=holder.matrixWorld.clone().invert();const norm=x=>String(x).replace(/[._\-\s]/g,'').toLowerCase(),by=new Map(Object.entries(bones).map(([k,b])=>[norm(k),b]));return Object.fromEntries(names.map(n=>[n,by.get(norm(n))?by.get(norm(n)).getWorldPosition(new THREE.Vector3()).applyMatrix4(inverse).toArray().map(v=>+v.toFixed(3)):null]));}
-  return{id,kind:'pawn',color,object:holder,pose:solve,equip:settings=>loadout.apply(settings),loadout:()=>loadout.summary(),biomechanics:()=>loadout.biomechanics(),mocap,feet,points,rig,probe,shieldFront,shieldHit,shieldPlane,measureWorld:()=>loadout.measure(),place:place.set,placement:place.get,fade,current:()=>({...pose}),dispose(){holder.removeFromParent();}};
+  return{id,kind:'pawn',color,object:holder,pose:solve,ground:()=>field?grounding.gaps(field):null,equip:settings=>loadout.apply(settings),loadout:()=>loadout.summary(),biomechanics:()=>loadout.biomechanics(),mocap,feet,points,rig,probe,shieldFront,shieldHit,shieldPlane,measureWorld:()=>loadout.measure(),place:o=>{place.set(o);if(field)grounding.follow(field,{fall:place.get().fall});},placement:place.get,fade,current:()=>({...pose}),dispose(){holder.removeFromParent();}};
  };
 }
 
@@ -187,7 +203,7 @@ function knightHead(material){
  g.rotateY(-Math.PI/2);
  const head=new THREE.Mesh(g,material);head.position.y=.58;return head;
 }
-export function createToken({id,type,color}){
+export function createToken({id,type,color},ground=null){
  const holder=new THREE.Group();holder.name=id;
  const palette=TOKEN_COLORS[color];
  const material=new THREE.MeshStandardMaterial({color:palette.main,roughness:color==='w'?.38:.16,metalness:color==='w'?0:.3});
@@ -199,6 +215,6 @@ export function createToken({id,type,color}){
  if(type==='k'){const c=new THREE.Mesh(new THREE.BoxGeometry(.08,.34,.08),band),h=new THREE.Mesh(new THREE.BoxGeometry(.26,.08,.08),band);c.position.y=2.3;h.position.y=2.34;holder.add(c,h);}
  if(type==='q'){const ball=new THREE.Mesh(new THREE.SphereGeometry(.08,16,12),band);ball.position.y=2.3;holder.add(ball);}
  holder.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;}});
- const place=placement(holder);
+ const place=placement(holder,ground,true);
  return{id,kind:'token',type,color,object:holder,pose(){},probe:()=>null,place:place.set,placement:place.get,fade:fader(holder),current:()=>({action:'rest',time:0}),dispose(){holder.removeFromParent();}};
 }

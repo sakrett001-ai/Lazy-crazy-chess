@@ -1,0 +1,72 @@
+{
+  "objects": [
+    "PLATE_plate",
+    "HELMET_on",
+    "WEAPON_spear",
+    "SHIELD_tower",
+    "WEAPON_sword",
+    "WEAPON_greatsword",
+    "WEAPON_pike",
+    "SHIELD_round",
+    "SHIELD_heater"
+  ],
+  "materials": {
+    "armor.trim": "steel",
+    "armor.main": "steel",
+    "armor.leather": "leather",
+    "weapon.wood": "wood",
+    "weapon.grip": "leather",
+    "weapon.metal": "steel",
+    "shield.trim": "steel",
+    "shield.leather": "leather",
+    "shield.wood": "wood",
+    "shield.emblem": "paint"
+  },
+  "shields": {
+    "tower": {
+      "tile_mm": 1377.4634331464767,
+      "mean_color": [
+        0.8263174295425415,
+        0.8081675171852112,
+        0.789807140827179
+      ],
+      "mean_roughness": 0.49114975333213806,
+      "size": 1024,
+      "wear": 0.5,
+      "origin_mm": [
+        -395.2530339360237,
+        -742.3165082931519
+      ]
+    },
+    "round": {
+      "tile_mm": 769.7709050960839,
+      "mean_color": [
+        0.7934811115264893,
+        0.7688849568367004,
+        0.7438195943832397
+      ],
+      "mean_roughness": 0.511680006980896,
+      "size": 512,
+      "wear": 0.5,
+      "origin_mm": [
+        -378.7965384311974,
+        -490.9327638801187
+      ]
+    },
+    "heater": {
+      "tile_mm": 985.3947686031461,
+      "mean_color": [
+        0.8128045201301575,
+        0.7941848635673523,
+        0.774858295917511
+      ],
+      "mean_roughness": 0.4979826807975769,
+      "size": 512,
+      "wear": 0.5,
+      "origin_mm": [
+        -486.57638635486364,
+        -518.3666009455919
+      ]
+    }
+  }
+}

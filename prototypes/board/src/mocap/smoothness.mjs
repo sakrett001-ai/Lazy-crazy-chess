@@ -20,6 +20,18 @@ export const LIFTED=.015;      // m, a step lifts the foot at least this much
 export const SLIDE=.01;        // m, a shorter move without a lift is the record's rounding
 export const MICRO=.1;         // m, shorter is no step
 
+// Limits of the duel on the board (scripts/verify-smooth.mjs), set between
+// the PR #9 board (fails each one) and the fix with planted feet.
+export const LIMITS={
+ standing:.5,   // share of frames each foot stands still (PR #9: 0.00–0.03)
+ slides:1,      // moves over the floor without a lift, per foot
+ micro:1,       // steps shorter than 10 cm per foot
+ perSecond:2,   // steps per second per foot
+ kneeShake:25,  // mm, a knee while both feet stand (PR #9: 26–92)
+ rootShake:12,  // mm, the pelvis (PR #9: 11–18)
+ zigzag:.2      // pelvis, knees, ankles: acceleration flipping twice running (PR #9: 0.27–0.54)
+};
+
 const sub=(a,b)=>a.map((v,i)=>v-b[i]),norm=a=>Math.hypot(...a);
 const SG=[-2,3,6,7,6,3,-2].map(v=>v/21); // cubic, 7 points, value at the centre
 // RMS shake (mm) of a path X [[x,y,z],...], over frames where mask is true.

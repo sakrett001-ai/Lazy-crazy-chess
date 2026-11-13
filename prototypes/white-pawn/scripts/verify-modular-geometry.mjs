@@ -14,7 +14,7 @@ const output=path.resolve(process.env.PAWN_GEOMETRY_REPORT||path.join(root,'revi
 const bytes=await readFile(input),runtimeBytes=await runtimeSource(root);
 const hash=value=>createHash('sha256').update(value).digest('hex');
 const limits={layerClearanceM:.0005,bindPairDistanceM:.045,thumbSurfaceDistanceM:.014,handFrameErrorM:.01,soleDriftM:.006,soleFloorGapM:.008,minimumRegionProbes:5,minimumAnatomicalWeight:.5,radialNormalAlignment:.3,maximumAxialNormalAlignment:.7,intersectionEpsilonM:1e-8};
-const report={status:'running',glbSha256:hash(bytes),runtimeSha256:hash(runtimeBytes),auditSha256:hash(await readFile(fileURLToPath(import.meta.url))),limits,cases:[],checks:[],failures:[],negativeControls:[],unassessed:[],scope:'Finite intersection gate for selected padding triangles against actual active mail/plate triangles, evaluated after skinning and morphs. Exported skin weights and bind-space radial/axial normals select garment walls; hems, steep folds, ambiguous anatomy and unmatched patches remain unassessed. Pairing and source patches are fixed from undeformed POSITION and inverse-bind joints independently of the measured gap. Signed tracked gaps are diagnostics: negative values without an actual intersection are inconclusive for layer ordering because patches can slide or fold. Thumb tests establish nearest surface reach only. This is not whole-body collision freedom, all-surface clearance, continuous collision detection, cloth simulation, thumb opposition, penetration volume, dynamic stability or a full animation sweep. Hidden torso skin is absent in this model and is not assessed.'};
+const report={status:'running',glbSha256:hash(bytes),runtimeSha256:hash(runtimeBytes),auditSha256:hash(await readFile(fileURLToPath(import.meta.url))),limits,cases:[],checks:[],failures:[],negativeControls:[],unassessed:[],scope:'Finite intersection gate for selected padding triangles against actual active mail/plate triangles, evaluated after skinning and morphs. Exported skin weights and bind-space radial/axial normals select garment walls; hems, steep folds, ambiguous anatomy and unmatched patches remain unassessed. Pairing and source patches are fixed from undeformed POSITION and inverse-bind joints independently of the measured gap. Signed tracked gaps are diagnostics: negative values without an actual intersection are inconclusive for layer ordering because patches can slide or fold. Thumb tests establish nearest surface reach only. This is not whole-body collision freedom, all-surface clearance, continuous collision detection, cloth simulation, thumb opposition, penetration volume, dynamic stability or a full animation sweep. Hidden torso skin is absent in this model and is not assessed. Padding the build hides under mail or plate is excluded from that layer\'s gate and is instead required to lie under it in bind space.'};
 const check=(name,passed,details={})=>{report.checks.push({name,passed:!!passed,...details});if(!passed)report.failures.push(name);};
 const norm=value=>String(value||'').replace(/[._\-\s]/g,'').toLowerCase();
 const loader=new GLTFLoader();
@@ -223,10 +223,35 @@ try{
  check('Required physical layer meshes exist',padding.length>0&&mail.length>0&&plate.length>0,{padding:padding.length,mail:mail.length,plate:plate.length});
  const identity=new THREE.Matrix4().elements,identityFrame=matrix=>matrix.elements.every((value,i)=>Math.abs(value-identity[i])<1e-6);
  check('Layer meshes use the audited identity bind/world frame',[...padding,...mail,...plate].every(mesh=>mesh.isSkinnedMesh&&[mesh.matrixWorld,mesh.bindMatrix,mesh.bindMatrixInverse].every(identityFrame)),{scope:'The current exported bind POSITION and inverse-bind joint origins must share an identity frame; transformed assets require adapted pairing.'});
- const inner=evaluated(padding,true),pairs={mail:pairPatches(inner,evaluated(mail,true),'padding/mail'),plate:pairPatches(inner,evaluated(plate,true),'padding/plate')};
+ // Padding split off under an opaque outer layer is not drawn while that layer is worn.
+ // Probes come from the padding actually drawn with each layer; the hidden part is
+ // instead required to lie under that layer within the build's reach.
+ const hiddenUnder=mesh=>String(tag(mesh,'hiddenUnder')||'').split(',').filter(Boolean);
+ const drawnWith=layer=>padding.filter(mesh=>!hiddenUnder(mesh).includes(layer));
+ const outerOf={mail:selected('mail'),plate:selected('plate')},hiddenCovered={};
+ for(const layer of ['mail','plate']){
+  const masked=evaluated(padding.filter(mesh=>hiddenUnder(mesh).includes(layer)),true),outer=evaluated(outerOf[layer],true),reach=.035,near=.016;
+  const ray=new THREE.Ray(),hitPoint=V();let uncovered=0,worst=0;
+  for(const face of masked){
+   let best=Infinity;
+   for(const o of outer){if(o.center.distanceToSquared(face.center)>(near+o.radius)**2)continue;triangle.set(...o.p);triangle.closestPointToPoint(face.center,hitPoint);const d=hitPoint.distanceTo(face.center);if(d<=near&&d<best)best=d;}
+   if(best<=near){worst=Math.max(worst,best);continue;}
+   for(const dir of [face.normal,face.normal.clone().negate()]){
+    ray.set(face.center.clone().addScaledVector(dir,.0005),dir);
+    for(const o of outer){if(o.center.distanceToSquared(face.center)>(reach+o.radius)**2)continue;if(ray.intersectTriangle(o.p[0],o.p[1],o.p[2],false,hitPoint)){const d=hitPoint.distanceTo(face.center);if(d<best)best=d;}}
+   }
+   if(!(best<=reach))uncovered++;else worst=Math.max(worst,best);
+  }
+  const regions={};for(const face of masked){const region=regionOf(face);if(region)regions[region]=(regions[region]||0)+1;}
+  hiddenCovered[layer]=uncovered===0?regions:{};
+  check('padding hidden under '+layer+' lies under it in bind space',masked.length>0&&uncovered===0,{hiddenRegions:regions,hiddenTriangles:masked.length,uncoveredTriangles:uncovered,reachM:reach,nearM:near,maxDistanceM:worst,drawnPaddingTriangles:evaluated(drawnWith(layer),true).length,scope:'Each hidden padding triangle must have the outer layer within near of its centre, or meet it within reach along either side of its normal, in bind space. The outer layers are opaque closed shells; hidden padding is excluded from the posed intersection gate for that layer.'});
+ }
+ const pairs={mail:pairPatches(evaluated(drawnWith('mail'),true),evaluated(mail,true),'padding/mail'),plate:pairPatches(evaluated(drawnWith('plate'),true),evaluated(plate,true),'padding/plate')};
  for(const [layer,list]of Object.entries(pairs)){
   const counts=Object.fromEntries(['torso','armL','armR','hipL','hipR'].map(region=>[region,list.filter(p=>p.region===region).length]));
-  check(layer+': local bind patch coverage',Object.values(counts).every(count=>count>=limits.minimumRegionProbes),{count:list.length,regions:counts});
+  // A region is covered by drawn-padding probes, or else entirely hidden under the layer and proven covered above.
+  const hiddenOnly=Object.keys(counts).filter(region=>counts[region]<limits.minimumRegionProbes&&(hiddenCovered[layer][region]||0)>=limits.minimumRegionProbes);
+  check(layer+': local bind patch coverage',Object.entries(counts).every(([region,count])=>count>=limits.minimumRegionProbes||hiddenOnly.includes(region)),{count:list.length,regions:counts,hiddenUnderLayer:hiddenOnly});
  }
  const thumbs=Object.fromEntries(['L','R'].map(side=>[side,thumbRefs(side)]));
  check('Thumb skin vertices exist on both hands',thumbs.L.length>10&&thumbs.R.length>10,{L:thumbs.L.length,R:thumbs.R.length});
@@ -269,7 +294,8 @@ try{
  }
  // Negative controls change the exported POSITION attributes, then reskin them.
  sample({armorType:'mail',weaponType:'spear',shieldType:'tower',bodyBuild:'regular'},'rest',0);
- const pair=pairs.mail.find(p=>p.region==='torso');if(!pair)throw Error('No torso patch for negative control');
+ // Torso padding under mail is hidden, so the control may use a hip patch at the hem.
+ const pair=pairs.mail.find(p=>p.region==='torso')||pairs.mail[0];if(!pair)throw Error('No mail patch for negative control');
  const before=posedPatch(pair),attribute=pair.outer.mesh.geometry.attributes.position;
  const saved=pair.outer.ids.map(i=>[i,attribute.getX(i),attribute.getY(i),attribute.getZ(i)]);
  for(const i of pair.outer.ids){const p=worldToPosition(pair.outer.mesh,i,vertex(pair.outer.mesh,i).addScaledVector(before.normal,-.06));attribute.setXYZ(i,p.x,p.y,p.z);}attribute.needsUpdate=true;

@@ -1,8 +1,8 @@
 {
-  "date": "2026-10-23T07:47:13.495Z",
-  "browser": "141.0.7390.37",
-  "glbSha256": "52f52e1c1ae832d1a61e1dac9e83dd39ff961fde1a9c402dec8a4a8f6dfce4e6",
-  "documentSha256": "4c5cc5aa277cd89c71ce78cdcffebe47898cb986c8eac1a4272e3f6b214b9deb",
+  "date": "2026-11-13T17:05:40.395Z",
+  "browser": "157.0.8103.50",
+  "glbSha256": "d8438e9bcc458cec5d307c04618d8c113d63193cf3577131bb188114fe153d93",
+  "documentSha256": "fcc1573904fc2c1427866522b56c3dca820aa87ab4c49a392ac42479d3cb5b2c",
   "tests": [
     "Offline load; expected clips and durations; no autoplay or HTTP requests",
     "Default GLB pose matches equipped guard at Guard_Breath t=0",
@@ -119,24 +119,24 @@
       "clip": "Spear_Study",
       "time": 1,
       "minY": 0.0010001501962312795,
-      "maxY": 1.8871080294252172,
-      "height": 1.8861078792289858,
+      "maxY": 1.892455761560354,
+      "height": 1.8914556113641228,
       "finite": true
     },
     {
       "clip": "Spear_Study",
       "time": 2,
       "minY": 0.0009997971458560637,
-      "maxY": 1.8637043541472347,
-      "height": 1.8627045570013787,
+      "maxY": 1.8690244740551423,
+      "height": 1.8680246769092863,
       "finite": true
     },
     {
       "clip": "Spear_Study",
       "time": 3,
       "minY": 0.0010001154276175525,
-      "maxY": 1.9049181215660143,
-      "height": 1.9039180061383967,
+      "maxY": 1.9103397021611224,
+      "height": 1.9093395867335048,
       "finite": true
     },
     {
@@ -155,7 +155,7 @@
   ],
   "errors": [],
   "network": [],
-  "loadMs": 9798,
+  "loadMs": 10125,
   "initial": {
     "pose": "rest",
     "time": 0,
@@ -167,8 +167,8 @@
     "reviewLocked": false,
     "fps": null,
     "display": "surface",
-    "renderCalls": 25,
-    "triangles": 224036,
+    "renderCalls": 26,
+    "triangles": 216912,
     "bones": 163,
     "clips": [
       {
@@ -190,11 +190,11 @@
   },
   "defaultPoseMaxError": 0,
   "modelStructure": {
-    "meshes": 45,
-    "skinnedMeshes": 45,
-    "objects": 221,
-    "materials": 22,
-    "vertices": 159794
+    "meshes": 48,
+    "skinnedMeshes": 48,
+    "objects": 224,
+    "materials": 27,
+    "vertices": 179282
   },
   "performance": {
     "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
@@ -202,10 +202,10 @@
       1440,
       1000
     ],
-    "drawCalls": 25,
-    "triangles": 224036,
-    "p50ReadbackMs": 482.30000000074506,
-    "p95ReadbackMs": 537.7000000011176,
+    "drawCalls": 26,
+    "triangles": 216912,
+    "p50ReadbackMs": 633,
+    "p95ReadbackMs": 783.5999999996275,
     "note": "Headless Chromium with software rendering; synchronous render and readback, not sustained real-device FPS."
   },
   "status": "passed",

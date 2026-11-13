@@ -1,3 +1,4 @@
+import {paintSurface} from './surfaces.mjs';
 import {installFacialHair} from './facial-hair.mjs';
 // Profiles keep equipment, physique and experience independent.
 export const APPEARANCE_KEY='lazy-crazy-chess.appearance.v1';
@@ -40,7 +41,7 @@ export function installAppearance({model,render,beforeChange=()=>{},onChange=()=
  let current={...DEFAULT_APPEARANCE},storageWarning='';
  try{const saved=localStorage.getItem(APPEARANCE_KEY);if(saved)current=normalizeAppearance(JSON.parse(saved));}
  catch{storageWarning='Сохранённый профиль недоступен или повреждён. Загружен стандартный вид.';}
- function paint(name,color,metalness,roughness){for(const material of slots.get(name)||[]){if(color!==null)Array.isArray(color)?material.color.setRGB(...color):material.color.set(color);material.metalness=metalness;material.roughness=roughness;}}
+ function paint(name,color,metalness,roughness){for(const material of slots.get(name)||[])paintSurface(material,color,metalness,roughness);}
  function apply(){
   const armor=ARMOR[current.armorFinish],twoHanded=['pike','greatsword'].includes(current.weaponType);
   paint('armor.main',armor.main,1,armor.roughness);paint('armor.trim',armor.trim,1,armor.trimRoughness);

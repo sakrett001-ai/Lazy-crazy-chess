@@ -1,7 +1,7 @@
 {
   "status": "passed",
-  "runtimeSha256": "1fad0631cf827dca0cafae0639c49b1bc2101283b7ca5e35e2896a78fe09ddcb",
-  "glbSha256": "52f52e1c1ae832d1a61e1dac9e83dd39ff961fde1a9c402dec8a4a8f6dfce4e6",
+  "runtimeSha256": "147e7e0b07fc734fcd2ba9018876a5503bb624bf9e684dd4320b77b51e0bf0ac",
+  "glbSha256": "d8438e9bcc458cec5d307c04618d8c113d63193cf3577131bb188114fe153d93",
   "auditSha256": "60a2030a08978b9b9e55a74cb6f7d8b7c907b59a5ab013e5a952a1ce27e26d29",
   "coverage": {
     "shields": [
@@ -29,7 +29,7 @@
     {
       "name": "Actual collision surfaces are present for every shield",
       "passed": true,
-      "plateTriangles": 2976,
+      "plateTriangles": 3424,
       "topology": [
         {
           "variant": "tower",
@@ -1263,7 +1263,7 @@
       "name": "Restore original wrist-bound strap geometry in the new arm pose",
       "passed": true,
       "beforeIntersections": 0,
-      "afterIntersections": 146,
+      "afterIntersections": 161,
       "examples": [
         [
           0.22052710529567504,

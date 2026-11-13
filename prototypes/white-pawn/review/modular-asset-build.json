@@ -1,8 +1,8 @@
 {
   "status": "built",
-  "glbSha256": "52f52e1c1ae832d1a61e1dac9e83dd39ff961fde1a9c402dec8a4a8f6dfce4e6",
-  "bytes": 16251900,
-  "meshes": 15,
+  "glbSha256": "d8438e9bcc458cec5d307c04618d8c113d63193cf3577131bb188114fe153d93",
+  "bytes": 19766312,
+  "meshes": 18,
   "groups": [
     {
       "equipmentSlot": "base",
@@ -77,6 +77,21 @@
     {
       "equipmentSlot": "shield",
       "equipmentVariant": "heater",
+      "defaultVisible": false
+    },
+    {
+      "equipmentSlot": "padding",
+      "equipmentVariant": "padded",
+      "defaultVisible": true
+    },
+    {
+      "equipmentSlot": "padding",
+      "equipmentVariant": "padded",
+      "defaultVisible": false
+    },
+    {
+      "equipmentSlot": "padding",
+      "equipmentVariant": "padded",
       "defaultVisible": false
     }
   ],

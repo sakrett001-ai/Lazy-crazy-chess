@@ -314,6 +314,20 @@ for variant in ('round','heater'):
  for original in shield_grip_parts:
   ob=duplicate(original,'SHIELD_'+variant+'_'+original.name.removeprefix('SHIELD_'));ob['equipmentSlot']='shield';ob['equipmentVariant']=variant
 
+# Seven trimmed quill feathers replace the strip of horsehair tubes on the crest.
+import plume
+for ob in [o for o in MODEL if o.name.startswith('HELMET_Horsehair')]:MODEL.remove(ob);bpy.data.objects.remove(ob)
+feather={'ivory':mat('plume.feather',(.78,.76,.70),0,.74),'teal':mat('plume.accent',(.02,.105,.125),0,.7)}
+barbs=normal_texture('feather-normal',plume.barb_height,128)
+for material in feather.values():
+ nodes=material.node_tree.nodes;links=material.node_tree.links;bsdf=nodes.get('Principled BSDF')
+ bsdf.inputs['Sheen Weight'].default_value=.25;bsdf.inputs['Sheen Tint'].default_value=tuple(min(1,c*1.6) for c in bsdf.inputs['Base Color'].default_value[:3])+(1,);material.use_backface_culling=False
+ uv=nodes.new('ShaderNodeUVMap');uv.uv_map='Surface metres'
+ tex=nodes.new('ShaderNodeTexImage');tex.image=barbs;tex.interpolation='Linear'
+ normal=nodes.new('ShaderNodeNormalMap');normal.inputs['Strength'].default_value=.6
+ links.new(uv.outputs['UV'],tex.inputs['Vector']);links.new(tex.outputs['Color'],normal.inputs['Color']);links.new(normal.outputs['Normal'],bsdf.inputs['Normal'])
+plume.build(mesh,tube,'head',feather)
+
 def classify(ob):
  if 'equipmentSlot' in ob:return ob['equipmentSlot'],ob.get('equipmentVariant','')
  if ob.name.startswith('ARMOR_'):return 'plate','plate'
@@ -329,6 +343,10 @@ def classify(ob):
 def default_visible(slot,variant):return slot not in ('mail','hair','beard') and (slot!='weapon' or variant=='spear') and (slot!='shield' or variant=='tower')
 for ob in MODEL:
  slot,variant=classify(ob);ob['equipmentSlot']=slot;ob['equipmentVariant']=variant;ob['defaultVisible']=default_visible(slot,variant)
+
+# Plates that take battle dents are subdivided around each dent before their shells are built.
+import dents
+dent_mesh=dents.subdivide([o for o in MODEL if o.name in dents.TARGETS])
 
 # Apply geometric modifiers in bind space, then add morphs to the actual exported
 # vertices. This keeps the skinned garment and plate envelopes together.
@@ -363,13 +381,23 @@ def physique_delta(co):
     delta+=radial*amount*math.sin(math.pi*t)**.6*support
  return delta
 
+dent_report=[]
 for ob in MODEL:
  slot=ob['equipmentSlot']
+ if ob.name in dents.TARGETS and slot=='helmet':
+  # The helmet carries only the veteran dents; it does not follow the body build.
+  ob.shape_key_add(name='Basis');offsets,found=dents.veteran_offsets(ob);dent_report+=found
+  target=ob.shape_key_add(name='veteran')
+  for i,p in enumerate(target.data):p.co=ob.data.vertices[i].co+offsets[i]
  if slot in ('shield','weapon','hair','beard','helmet'):continue
  ob.shape_key_add(name='Basis')
  for key,sign in [('lean',-.72),('strong',1)]:
   target=ob.shape_key_add(name=key)
   for i,p in enumerate(target.data):p.co=ob.data.vertices[i].co+physique_delta(ob.data.vertices[i].co)*sign
+ if ob.name in dents.TARGETS:
+  offsets,found=dents.veteran_offsets(ob);dent_report+=found
+  target=ob.shape_key_add(name='veteran')
+  for i,p in enumerate(target.data):p.co=ob.data.vertices[i].co+offsets[i]
  if ob.name.startswith('BODY_'):
   target=ob.shape_key_add(name='veteran')
   for i,p in enumerate(target.data):
@@ -377,6 +405,9 @@ for ob in MODEL:
    if 1.58<c.z<1.74 and c.y<-.04:
     cheek=math.exp(-((c.z-1.665)/.032)**2);c.x*=1-.035*cheek;c.y+=.0018*cheek
    p.co=c
+
+(REVIEW/'veteran-dents.json').write_text(json.dumps({'dents':dent_report,'subdivision':dent_mesh},indent=1)+'\n')
+assert len(dent_report)==len(dents.DENTS) and all(d['vertices']>=12 for d in dent_report),dent_report
 
 # Merge per slot/variant only. Common morph names are preserved by Blender join.
 groups={}
@@ -390,6 +421,11 @@ for (slot,variant),parts in groups.items():
  ob=bpy.context.object;ob.name=slot.upper()+'_'+variant;ob['equipmentSlot']=slot;ob['equipmentVariant']=variant;ob['defaultVisible']=default_visible(slot,variant)
  merged.append(ob)
 
+# Padding fully under mail or plate is split off and hidden while that layer is worn.
+import layer_mask
+_masked,mask_report=layer_mask.apply(merged);merged.extend(_masked)
+(REVIEW/'layer-mask-build.json').write_text(json.dumps(mask_report,indent=2)+'\n')
+
 def gltf_vector(p):return [p.x,p.z,-p.y]
 for ob in merged:
  slot,variant=ob['equipmentSlot'],ob['equipmentVariant']
@@ -401,6 +437,12 @@ for ob in merged:
   inv=(rig.pose.bones['wrist.L'].matrix@rig.data.bones['wrist.L'].matrix_local.inverted()).inverted()
   ob['gripBind']=gltf_vector(inv@sg);ob['handleAxisBind']=gltf_vector(inv.to_3x3()@Vector(frames['shield_handle_axis']))
 
+# Surfaces from the CPU forge: wear UVs in bind space, tiled PBR maps.
+import surfaces_blender
+_inv=(rig.pose.bones['wrist.L'].matrix@rig.data.bones['wrist.L'].matrix_local.inverted()).inverted().to_3x3()
+surface_report=surfaces_blender.apply(merged,hints={'shield_up':(_inv@Vector(frames['shield_up'])).normalized(),'shield_right':(_inv@Vector(frames['shield_right'])).normalized()})
+(REVIEW/'surface-build.json').write_text(json.dumps(surface_report,indent=2,ensure_ascii=False)+'\n')
+
 # Save the exact catalogue before export. Default visibility is app metadata;
 # Blender render selection below uses the same settings.
 for ob in merged:ob.hide_render=not ob['defaultVisible'];ob.hide_viewport=False
@@ -410,7 +452,7 @@ bpy.ops.wm.save_as_mainfile(filepath=str(OUT/'white-pawn.blend'),compress=True)
 def configure_render(kind='plate',build='regular',experience='recruit'):
  for ob in merged:
   slot=ob['equipmentSlot'];variant=ob['equipmentVariant']
-  ob.hide_render=not (slot in ('base','padding') or (slot=='plate' and kind=='plate') or (slot=='mail' and kind=='mail') or (slot in ('helmet','shield','weapon') and ob['defaultVisible']))
+  ob.hide_render=kind in ob.get('hiddenUnder','').split(',') or not (slot in ('base','padding') or (slot=='plate' and kind=='plate') or (slot=='mail' and kind=='mail') or (slot in ('helmet','shield','weapon') and ob['defaultVisible']))
   if ob.data.shape_keys:
    for k in ob.data.shape_keys.key_blocks:
     if k.name!='Basis':k.value=1 if k.name==build or k.name==experience else 0
@@ -437,6 +479,10 @@ bpy.ops.object.select_all(action='DESELECT');rig.select_set(True)
 for ob in merged:ob.select_set(True);ob.hide_render=False
 bpy.context.view_layer.objects.active=rig
 for tr in rig.animation_data.nla_tracks:tr.mute=False
+# The iris texture came at 1024 px for both eyes (610 KB); on the figure an iris spans
+# a few dozen screen pixels at most, so 512 px loses nothing and pays for the dents.
+for img in bpy.data.images:
+ if img.name.startswith('brown_eye') and img.size[0]>512:img.scale(512,512)
 bpy.ops.export_scene.gltf(filepath=str(OUT/'white-pawn.glb'),export_format='GLB',use_selection=True,export_apply=False,export_yup=True,export_animations=True,export_animation_mode='NLA_TRACKS',export_force_sampling=True,export_frame_range=False,export_skins=True,export_all_influences=False,export_extras=True,export_cameras=False,export_lights=False,export_morph=True)
 for tr in rig.animation_data.nla_tracks:tr.mute=True
 rig.animation_data.action=None;pawn_pose.apply_pose('rest',0);scene.frame_set(0);bpy.context.view_layer.update()
@@ -449,10 +495,13 @@ for channel in clip['channels']:
  sample=clip['samplers'][channel['sampler']];accessor=doc['accessors'][sample['output']];view=doc['bufferViews'][accessor['bufferView']];n=4 if path=='rotation' else 3
  offset=view.get('byteOffset',0)+accessor.get('byteOffset',0)+(n*4 if sample.get('interpolation')=='CUBICSPLINE' else 0)
  node=doc['nodes'][target['node']];node.pop('matrix',None);node[path]=list(struct.unpack_from('<'+'f'*n,binary,offset))
+# Each shield carries its own face map, but runtime code and audits address the face by its slot name.
+for material in doc['materials']:
+ if material.get('extras',{}).get('customizationSlot')=='shield.face':material['name']='shield.face'
 jb=json.dumps(doc,separators=(',',':')).encode();jb+=b' '*((-len(jb))%4)
 raw=struct.pack('<III',0x46546c67,2,28+len(jb)+len(binary))+struct.pack('<II',len(jb),0x4e4f534a)+jb+struct.pack('<II',len(binary),0x004e4942)+binary
 (OUT/'white-pawn.glb').write_bytes(raw)
-info.update(version='0.3.0',glb_sha256=hashlib.sha256(raw).hexdigest(),source_commit=SOURCE,modular={'slots':sorted(groups),'bodyTargets':['lean','strong'],'experienceTarget':'veteran','surfaceTileMetres':.04,'mailOuterDiameterMetres':.0112,'quiltDiagonalSpacingMetres':.028284,'catalogueDownload':True,'runtimeWeaponIKBaked':False},limits=['Fantasy infantry equipment, not historical replica','New weapon IK is evaluated in the browser, not baked into the three original GLB clips','Catalogue GLB contains all variants; selected appearance is saved separately in JSON','No cloth simulation or full-board LOD'])
+info.update(version='0.3.3',glb_sha256=hashlib.sha256(raw).hexdigest(),source_commit=SOURCE,modular={'slots':sorted(groups),'bodyTargets':['lean','strong'],'experienceTarget':'veteran','surfaceTileMetres':.04,'mailOuterDiameterMetres':.0112,'quiltDiagonalSpacingMetres':.028284,'catalogueDownload':True,'runtimeWeaponIKBaked':False},limits=['Fantasy infantry equipment, not historical replica','New weapon IK is evaluated in the browser, not baked into the three original GLB clips','Catalogue GLB contains all variants; selected appearance is saved separately in JSON','No cloth simulation or full-board LOD'])
 (OUT/'model-info.json').write_text(json.dumps(info,indent=2,default=list)+'\n')
 report={'status':'built','glbSha256':info['glb_sha256'],'bytes':len(raw),'meshes':len(doc['meshes']),'groups':[{k:ob[k] for k in ('equipmentSlot','equipmentVariant','defaultVisible')} for ob in merged],'sourceCommit':SOURCE}
 (REVIEW/'modular-asset-build.json').write_text(json.dumps(report,indent=2)+'\n');print('MODULAR_GLB_READY',json.dumps(report),flush=True)
