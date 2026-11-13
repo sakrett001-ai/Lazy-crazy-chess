@@ -12,7 +12,8 @@ const review=path.join(root,'review');await mkdir(review,{recursive:true});
 const browser=await chromium.launch({executablePath:process.env.CHROME_PATH||undefined,args:['--use-angle=swiftshader','--enable-unsafe-swiftshader','--ignore-gpu-blocklist']});
 const page=await browser.newPage({viewport:{width:1280,height:800}});
 const errors=[];page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error')errors.push(m.text());});
-await page.goto(pathToFileURL(path.join(root,'board.html')).href);
+// The field's relief is random per page; a fixed seed keeps a run repeatable (SEED=… for another).
+await page.goto(pathToFileURL(path.join(root,'board.html')).href+'?seed='+(process.env.SEED||7));
 await page.waitForFunction(()=>window.livingChess&&'ready' in window.livingChess,null,{timeout:300000});
 const failures=[],checks=[];
 const check=(name,ok,detail)=>{checks.push({name,ok:!!ok,detail});if(!ok)failures.push(name);};
@@ -101,12 +102,18 @@ check('after the scene the attacker stands on d5 and the victim is gone',state.a
 // 3b. A pawn walks two squares: a planted foot never slides on the board.
 await page.evaluate(()=>{const L=window.livingChess;L.load('start');L.play('e2','e4');});
 const walk=[];
-for(let i=0;i<=80;i++){walk.push(await page.evaluate(()=>window.livingChess.feetWorld('wp-e2')));await page.evaluate(()=>window.livingChess.step(1/30,30));}
+const gaps=[];
+for(let i=0;i<=80;i++){const f=await page.evaluate(()=>({feet:window.livingChess.feetGround('wp-e2'),gap:window.livingChess.ground('wp-e2')}));walk.push(f.feet);gaps.push(f.gap);await page.evaluate(()=>window.livingChess.step(1/30,30));}
 let slide=0,planted=0;
 for(let i=1;i<walk.length;i++)for(const f of ['foot.L','foot.R']){const a=walk[i-1][f],b=walk[i][f];if(a[1]<.08&&b[1]<.08){planted++;slide=Math.max(slide,Math.hypot(b[0]-a[0],b[2]-a[2]));}}
 const travelled=Math.hypot(walk.at(-1)['foot.L'][2]-walk[0]['foot.L'][2]);
 check('the pawn walks: feet travel with the body',travelled>4.5,+travelled.toFixed(2));
 check('planted feet do not slide (≤ 1 cm per frame)',planted>40&&slide<=.01,{plantedFrames:planted,maxSlideM:+slide.toFixed(4)});
+// On the uneven field a planted foot stands on the ground under it as it
+// stood on the flat: the ankle neither sinks nor floats, the toe not in it.
+const stood=gaps.flatMap(g=>['L','R'].map(s=>g[s])).filter(g=>g.air<.015);
+const sink=Math.max(...stood.map(g=>Math.abs(g.ankle))),toe=Math.min(...stood.map(g=>g.toe));
+check('planted feet stand on the uneven field (ankle within 1.5 cm, toe not below 1 cm)',stood.length>40&&sink<=.015&&toe>=-.01,{frames:stood.length,ankleM:+sink.toFixed(4),toeM:+toe.toFixed(4)});
 
 // 4. A short real game with the automatic reply, including castling.
 await page.evaluate(()=>{const L=window.livingChess;L.load('start');L.home();});
