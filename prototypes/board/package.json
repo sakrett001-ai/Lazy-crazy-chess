@@ -17,10 +17,16 @@
     "preview:video": "node scripts/preview-video-motion.mjs",
     "build:strikes": "node scripts/build-strikes.mjs",
     "verify:strikes": "node scripts/verify-strikes.mjs",
-    "verify:smooth": "node scripts/verify-smooth.mjs"
+    "verify:smooth": "node scripts/verify-smooth.mjs",
+    "render:duel": "node scripts/render-duel.mjs"
   },
   "dependencies": {
     "@fontsource/oswald": "5.3.0",
     "chess.js": "1.4.0"
+  },
+  "devDependencies": {
+    "jpeg-js": "^0.4.4",
+    "jsdom": "^26.1.0",
+    "pngjs": "^7.0.0"
   }
 }
