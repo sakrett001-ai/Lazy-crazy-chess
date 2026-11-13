@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Живые шахматы</title>
-<style>/*STYLE*/</style>
+<style>/*FONTS*//*STYLE*/</style>
 </head>
 <body>
 <main>
@@ -12,11 +12,48 @@
   <div id="loading">Собираем армии…</div>
   <div id="fallback" hidden></div>
   <div id="phase" aria-live="polite"></div>
+  <div id="title" hidden>
+   <div class="t-grade"></div>
+   <h1 class="t-name">Живые<i>шахматы</i></h1>
+   <section class="t-army" aria-labelledby="t-army-h">
+    <h2 id="t-army-h">Ваша армия · белые</h2>
+    <dl>
+     <dt>Бойцов в строю</dt><dd data-army="fighters">16</dd>
+     <dt>Ветеранов</dt><dd data-army="veterans">0</dd>
+     <dt>Партий сыграно</dt><dd data-army="games">0</dd>
+     <dt>Павших в летописи</dt><dd data-army="fallen">0</dd>
+    </dl>
+   </section>
+   <nav class="t-menu" aria-label="Главное меню">
+    <div id="t-modes" class="t-modes" hidden>
+     <button type="button" data-mode="duo">Вдвоём за одной доской</button>
+     <button type="button" data-mode="ai">Против компьютера <em>простой соперник</em></button>
+    </div>
+    <button type="button" id="t-go" class="t-go" aria-expanded="false" aria-controls="t-modes">В бой</button>
+    <a class="t-item" href="https://lazy-crazy-chess.floot.app" target="_blank" rel="noopener">Армия <em>мастерская пешки</em></a>
+    <button type="button" class="t-item" disabled>Летопись <em>скоро</em></button>
+    <button type="button" id="t-settings" class="t-item" aria-expanded="false" aria-controls="t-sheet">Настройки</button>
+   </nav>
+   <section id="t-sheet" class="t-sheet" aria-labelledby="t-sheet-h" hidden>
+    <h2 id="t-sheet-h">Настройки</h2>
+    <p class="t-label">Графика</p>
+    <div class="t-seg" role="group" aria-label="Графика">
+     <button type="button" data-graphics="auto">Сама</button>
+     <button type="button" data-graphics="full">Полная</button>
+     <button type="button" data-graphics="economy">Экономная</button>
+    </div>
+    <p class="t-note"><span id="t-auto-note"></span> Экономная снижает чёткость и тени, чтобы встроенная видеокарта держала плавность.</p>
+    <label class="t-check"><input type="checkbox" id="t-slow"> Замедлить бой в 2,5 раза</label>
+    <button type="button" id="t-sheet-close" class="t-close">Готово</button>
+   </section>
+  </div>
+  <div id="curtain" aria-hidden="true"></div>
  </section>
  <aside>
   <header>
    <h1>Живые шахматы</h1>
    <p class="sub">Доска 0.2 · пешки 0.4.2</p>
+   <button type="button" id="to-menu" class="to-menu">Главное меню</button>
   </header>
   <p id="status" aria-live="polite">Загрузка</p>
   <p id="hint"></p>

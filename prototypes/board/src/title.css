@@ -1,0 +1,52 @@
+/* Start window «Поединок» over the live board (src/title.mjs). One look,
+   dark over the scene: soot, parchment white, steel and the black side's
+   blood enamel. Oswald is built into the page (build.mjs), so it works
+   offline; system fonts stand in if it is missing. */
+#stage{--t-soot:#0e0c0b;--t-ink:#f2ede4;--t-muted:#a39b8d;--t-steel:#c9ccc8;--t-blood:#b0281f;--t-line:#3a3530;--t-display:"Oswald","Arial Narrow","Roboto Condensed",sans-serif}
+body.titled main{grid-template-columns:1fr;grid-template-rows:1fr;height:100%}
+body.titled aside{display:none}
+body.titled #stage{background:var(--t-soot)}
+body.titled #loading{color:var(--t-muted);font:600 20px/1.2 var(--t-display);letter-spacing:.12em;text-transform:uppercase}
+#title{position:absolute;inset:0;z-index:2;color:var(--t-ink);font:15px/1.4 system-ui,-apple-system,"Segoe UI",sans-serif;overflow:hidden}
+.t-grade{position:absolute;inset:0;pointer-events:none;background:
+ linear-gradient(0deg,rgba(8,6,6,.9) 0,rgba(8,6,6,0) 42%),
+ linear-gradient(90deg,rgba(8,6,6,.72) 0,rgba(8,6,6,0) 38%),
+ radial-gradient(ellipse at 55% 50%,rgba(0,0,0,0) 38%,rgba(0,0,0,.62))}
+.t-name{position:absolute;left:clamp(18px,4.5vw,64px);top:clamp(18px,4vw,56px);margin:0;font:700 clamp(46px,7.4vw,112px)/.86 var(--t-display);text-transform:uppercase;letter-spacing:.01em;color:var(--t-ink);text-shadow:0 2px 0 rgba(0,0,0,.6)}
+.t-name i{display:block;font-style:normal;color:var(--t-steel)}
+.t-name::after{content:"";display:block;width:1.5em;height:.12em;margin-top:.22em;background:var(--t-blood);transform:skewX(-18deg)}
+.t-army{position:absolute;left:clamp(18px,4.5vw,64px);bottom:clamp(18px,4vw,56px);width:min(340px,40vw);padding:16px 18px;background:rgba(14,12,11,.8);border:1px solid var(--t-line);border-left:3px solid var(--t-steel)}
+.t-army h2{margin:0 0 10px;font:600 13px/1 var(--t-display);letter-spacing:.16em;text-transform:uppercase;color:var(--t-muted)}
+.t-army dl{margin:0;display:grid;grid-template-columns:1fr auto;gap:6px 18px}
+.t-army dt{color:var(--t-muted)}
+.t-army dd{margin:0;text-align:right;font-variant-numeric:tabular-nums}
+.t-menu{position:absolute;right:clamp(18px,4.5vw,64px);bottom:clamp(18px,4vw,56px);display:grid;gap:6px;justify-items:end}
+.t-menu button,.t-menu a{font:600 clamp(18px,2vw,26px)/1 var(--t-display);text-transform:uppercase;letter-spacing:.08em;color:#ddd6ca;background:none;border:0;border-radius:0;padding:10px 16px;text-decoration:none;cursor:pointer;text-align:right}
+.t-menu button:hover:not(:disabled),.t-menu a:hover{color:#fff}
+.t-menu em{font:400 12px/1 system-ui,sans-serif;font-style:normal;letter-spacing:0;text-transform:none;color:var(--t-muted);margin-left:8px;vertical-align:middle}
+.t-menu button:disabled{cursor:default;color:#8a8378}
+.t-menu .t-go{font-size:clamp(28px,3.4vw,46px);color:#fff;background:var(--t-blood);clip-path:polygon(4% 0,100% 0,96% 100%,0 100%);padding:14px clamp(28px,3.2vw,48px);margin-bottom:6px;transition:background .15s}
+.t-menu .t-go:hover{background:#c63126}
+.t-menu .t-go[aria-expanded="true"]{background:#7d1d17}
+.t-modes{display:grid;gap:4px;justify-items:end;margin-bottom:4px}
+.t-modes button{font-size:clamp(16px,1.6vw,21px);color:#fff;background:rgba(14,12,11,.82);border-right:3px solid var(--t-blood)}
+.t-menu :focus-visible,.t-sheet :focus-visible{outline:2px solid var(--t-ink);outline-offset:3px}
+.t-sheet{position:absolute;right:clamp(18px,4.5vw,64px);top:clamp(18px,4vw,56px);width:min(360px,calc(100% - 36px));padding:18px 20px;background:rgba(14,12,11,.94);border:1px solid var(--t-line);border-top:3px solid var(--t-blood);display:grid;gap:10px}
+.t-sheet h2{margin:0;font:600 18px/1 var(--t-display);letter-spacing:.12em;text-transform:uppercase}
+.t-label{margin:4px 0 0;color:var(--t-muted);font-size:13px}
+.t-seg{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--t-line)}
+.t-seg button{font:inherit;padding:8px 6px;background:none;border:0;border-radius:0;color:var(--t-ink);text-align:center;cursor:pointer}
+.t-seg button+button{border-left:1px solid var(--t-line)}
+.t-seg button[aria-pressed="true"]{background:var(--t-ink);color:var(--t-soot);font-weight:600}
+.t-note{margin:0;font-size:12px;color:var(--t-muted)}
+.t-check{display:flex;gap:8px;align-items:center;margin:4px 0}
+.t-close{justify-self:end;font:600 14px/1 var(--t-display);letter-spacing:.1em;text-transform:uppercase;padding:9px 16px;border:1px solid var(--t-steel);border-radius:0;background:none;color:var(--t-ink);text-align:center;cursor:pointer}
+#curtain{position:absolute;inset:0;z-index:3;background:var(--t-soot);opacity:0;pointer-events:none;transition:opacity .9s ease}
+#curtain.down{opacity:1;transition-duration:.4s}
+.to-menu{margin:0 0 12px}
+@media (max-width:640px){
+ .t-army{width:auto;right:clamp(18px,4.5vw,64px);bottom:auto;top:calc(clamp(18px,4vw,56px) + 2.1 * clamp(46px,7.4vw,112px));padding:10px 14px;font-size:13px}
+ .t-army dl{grid-template-columns:repeat(2,1fr auto)}
+ .t-sheet{top:auto;bottom:18px}
+}
+@media (prefers-reduced-motion:reduce){#curtain,#curtain.down{transition:none}}

@@ -12,6 +12,7 @@ import {sampleAlong,sampleClip,sampleArms,scaleLayer,centerPoints,turnHead} from
 import {rotateY} from './mocap/math.mjs';
 import {exchangePairs,exchangeLayout,exchangeAt,exchangeArms,cyclePose,bodyMotion,travelAt,trunkLean,levelSpear,shieldAt,SHIELD_WINDOW,CROSSFADE} from './mocap/exchange.mjs';
 import {loadoutPhases} from '../../white-pawn/src/loadout.mjs';
+import {mountTitle,titleCamera,flight,INTRO_VIEW,FLIGHT_SECONDS,needsEconomy} from './title.mjs';
 
 // One square is 2.6 m. A 1.8 m soldier with a tower shield and a 2.4 m
 // spear fits inside it, and a full thrust from the next square reaches the
@@ -89,7 +90,9 @@ async function init(bytes){
  // Home view: the whole board with its frame fits the stage width; a narrow
  // stage moves the camera back along the same line of sight.
  let moved=false;
- const homeView=()=>{const k=Math.max(1,1.6/camera.aspect);camera.position.set(0,18.5*k,24.5*k);controls.target.set(0,.6,.8);controls.update();};
+ const homePose=()=>{const k=Math.max(1,1.6/camera.aspect);return{position:[0,18.5*k,24.5*k],target:[0,.6,.8]};};
+ const view=({position,target})=>{camera.position.fromArray(position);controls.target.fromArray(target);controls.update();};
+ const homeView=()=>view(homePose());
  const controls=new OrbitControls(camera,renderer.domElement);controls.target.set(0,.6,.8);controls.maxPolarAngle=1.38;controls.minDistance=3;controls.maxDistance=60;controls.enableDamping=false;controls.update();controls.addEventListener('start',()=>{moved=true;});
 
  // Embedded textures load through an image element, not fetch(): hosted
@@ -122,7 +125,7 @@ async function init(bytes){
  const reach={x:lungeTip[0],z:lungeTip[2],height:lungeTip[1]};
  // Figures without a pose of their own stand on the new field (pawns follow it every frame).
  const reground=()=>{for(const a of actors.values())if(a.kind==='token')a.place(a.placement());};
- let game,actors=new Map(),yaws=new Map(),eng=new Map(),scene_=null,clock=0,speed=1,selected=null,legal=[],lastMove=null,manual=false,autoTimer=null,frameIndex=0,history=[];
+ let game,actors=new Map(),yaws=new Map(),eng=new Map(),scene_=null,clock=0,speed=1,selected=null,legal=[],lastMove=null,manual=false,autoTimer=null,frameIndex=0,history=[],fromStart=false;
  const byId=id=>game.pieces.find(p=>p.id===id);
  function spawn(piece){
   const actor=piece.type==='p'?createPawn({id:piece.id,color:piece.color,grounded:true}):createToken(piece,ground);
@@ -133,7 +136,7 @@ async function init(bytes){
  }
  function load(name){
   scene_=null;clearTimeout(autoTimer);for(const a of actors.values())a.dispose();actors.clear();yaws.clear();
-  game=createGame(PRESETS[name].fen);for(const p of game.pieces)spawn(p);
+  game=createGame(PRESETS[name].fen);fromStart=name==='start';for(const p of game.pieces)spawn(p);
   selected=null;legal=[];lastMove=null;history=[];refresh();
   $('#hint').textContent=PRESETS[name].hint||'';
   $$('[data-preset]').forEach(b=>b.classList.toggle('active',b.dataset.preset===name));
@@ -670,6 +673,7 @@ async function init(bytes){
   if(s.promote){const old=actors.get(s.promote.id);old.dispose();actors.delete(s.promote.id);spawn(byId(s.promote.id));}
   for(const p of game.pieces)yaws.set(p.id,yaws.get(p.id)??forwardYaw(p.color));
   $('#phase').textContent='';refresh();
+  if(game.chess.isGameOver()&&fromStart)title.record(game.pieces.filter(p=>p.color==='w').length);
   if($('#auto').checked&&game.chess.turn()==='b'&&!game.chess.isGameOver())autoTimer=setTimeout(autoMove,manual?0:500);
  }
  function autoMove(){
@@ -684,6 +688,7 @@ async function init(bytes){
   if(scene_){scene_.t+=dt*speed;for(const p of scene_.parts)p.update(Math.min(scene_.t,p.duration));if(scene_.t>=scene_.duration)finishScene();}
   const driven=scene_?.driven||new Set();
   for(const piece of game.pieces){if(driven.has(piece.id))continue;const actor=actors.get(piece.id);if(actor)idle(piece,actor,dt,false);}
+  cinema(dt);
   if(draw)renderer.render(scene,camera);
  }
  let last=null;
@@ -714,7 +719,7 @@ async function init(bytes){
  renderer.domElement.addEventListener('pointerup',e=>{if(down&&Math.hypot(e.clientX-down[0],e.clientY-down[1])<6)click(squareAt(e));down=null;});
 
  $$('[data-preset]').forEach(b=>b.onclick=()=>load(b.dataset.preset));
- $('#slow').onchange=()=>{speed=$('#slow').checked?.4:1;};
+ $('#slow').onchange=()=>{speed=$('#slow').checked?.4:1;title.update({slow:$('#slow').checked});};
  $('#auto').onchange=()=>{if($('#auto').checked&&!scene_&&game.chess.turn()==='b')autoMove();};
  $('#home').onclick=()=>{moved=false;homeView();};
  $('#terrain').onclick=()=>{buildLandscape(1+Math.floor(Math.random()*1e6));reground();};
@@ -750,16 +755,67 @@ async function init(bytes){
  // like files opened by hand, so the select boxes show what is in use.
  for(const {name,text}of JSON.parse($('#motion-data')?.textContent||'[]'))try{addMotion(name,text);}catch(error){$('#motion-status').textContent=`${name}: ${error.message}`;}
  for(const sel of ['#motion-stand','#motion-walk','#motion-capture','#motion-duel','#motion-weight'])$(sel).oninput=useMotion;
- function resize(){const {width,height}=stage.getBoundingClientRect();renderer.setSize(width,height);camera.aspect=width/height;camera.updateProjectionMatrix();if(!moved)homeView();}
+ function resize(){const {width,height}=stage.getBoundingClientRect();renderer.setSize(width,height,false);camera.aspect=width/height;camera.updateProjectionMatrix();if(!moved)homeView();}
  new ResizeObserver(resize).observe(stage);resize();
  renderer.domElement.addEventListener('webglcontextlost',e=>{e.preventDefault();fallback('Контекст WebGL потерян');});
 
- load('start');$('#loading').hidden=true;requestAnimationFrame(loop);
+
+ // Start window «Поединок» (title.mjs): the menu over the live board. Behind
+ // it the «clash» position plays (a fencing pair, a pawn braced against a
+ // knight) and the camera circles the pair. «В бой» lowers a curtain, sets
+ // up a new game and flies the camera from behind the white line to the
+ // home view. `?title=0` opens the board directly.
+ const exposure=renderer.toneMappingExposure,pixelRatio=Math.min(devicePixelRatio,1.5);
+ let titleOpen=false,titleTime=0,fly=null,economy=false,mode=null;const frames=[];
+ const title=mountTitle($('#title'),{curtain:$('#curtain'),start:startGame,settings:applySettings});
+ function applySettings(s){
+  speed=s.slow?.4:1;$('#slow').checked=s.slow;
+  if(s.graphics==='auto'&&mode!=='auto')frames.length=0;mode=s.graphics;
+  economy=s.graphics==='economy'||(s.graphics==='auto'&&economy);
+  if(s.graphics!=='auto')title.noteAuto(economy);
+  renderer.setPixelRatio(economy?1:pixelRatio);
+  const size=economy?1024:2048;if(key.shadow.mapSize.x!==size){key.shadow.map?.dispose();key.shadow.map=null;key.shadow.mapSize.set(size,size);}
+  resize();
+ }
+ function cinema(dt){
+  if(titleOpen){titleTime+=dt;view(titleCamera(titleTime));
+   // Auto graphics: the median of 30 frames after a 1.5 s warm-up.
+   if(title.settings.graphics==='auto'&&!manual&&titleTime>1.5&&frames.length<30&&dt>0){frames.push(dt);const slow=needsEconomy(frames);
+    if(slow!==null){economy=slow;title.noteAuto(slow);applySettings(title.settings);}}
+  }else if(fly){fly.t+=dt;const u=Math.min(1,fly.t/FLIGHT_SECONDS);view(flight(INTRO_VIEW,homePose(),u));if(u>=1){fly=null;moved=false;controls.enabled=true;}}
+ }
+ function openTitle(){
+  titleOpen=true;titleTime=0;fly=null;controls.enabled=false;moved=true;
+  document.body.classList.add('titled');load('clash');renderer.toneMappingExposure=exposure*.9;
+  resize();view(titleCamera(0));title.open();
+ }
+ function closeTitle(){
+  titleOpen=false;title.close();document.body.classList.remove('titled');renderer.toneMappingExposure=exposure;controls.enabled=true;
+  load('start');moved=false;resize();homeView();
+ }
+ function startGame(mode){
+  title.curtain(()=>{closeTitle();$('#auto').checked=mode==='ai';
+   // The flight runs on the frame clock; checks that step the board by hand skip it.
+   if(!manual){moved=true;controls.enabled=false;fly={t:0};view(INTRO_VIEW);}
+  });
+ }
+ // Back to the menu from a game: a second press confirms if moves were made.
+ let leaving=null;
+ $('#to-menu').onclick=()=>{
+  const b=$('#to-menu');if(history.length&&!leaving){b.textContent='Прервать партию и выйти?';leaving=setTimeout(()=>{leaving=null;b.textContent='Главное меню';},4000);return;}
+  clearTimeout(leaving);leaving=null;b.textContent='Главное меню';title.curtain(openTitle);
+ };
+ const settings=title.settings;applySettings(settings);
+ if(new URLSearchParams(location.search).get('title')==='0'){load('start');$('#loading').hidden=true;}
+ else{openTitle();$('#loading').hidden=true;}
+ requestAnimationFrame(loop);
 
  window.livingChess={ready:true,load,click,play,
   // The recorded exchange's fit to the squares: scale, gap at the blow, aim.
   duelLayouts:()=>[...layouts].map(([key,l])=>({key,scale:l.scale,gap:l.gap,closest:l.closest,aim:l.aim})),
-  manual(on=true){manual=on;last=null;},
+  // Checks drive the board themselves: the start window steps aside for them.
+  manual(on=true){if(on&&titleOpen)closeTitle();manual=on;last=null;},
+  title:()=>({open:titleOpen,flying:!!fly,economy}),
   // Draws only the last frame: the checks need the motion, not every picture.
   step(seconds,fps=30,draw=true){const n=Math.max(1,Math.round(seconds*fps));for(let i=0;i<n;i++)advance(1/fps,draw&&i===n-1);},
   render(){renderer.render(scene,camera);},

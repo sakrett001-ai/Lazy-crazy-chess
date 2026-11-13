@@ -20,6 +20,7 @@
     "verify:smooth": "node scripts/verify-smooth.mjs"
   },
   "dependencies": {
+    "@fontsource/oswald": "5.3.0",
     "chess.js": "1.4.0"
   }
 }
