@@ -21,7 +21,8 @@ const file=path.join(root,'motions/pawn-capture.motion.json'),text=await readFil
 const browser=await chromium.launch({executablePath:process.env.CHROME_PATH||undefined,args:['--use-angle=swiftshader','--enable-unsafe-swiftshader','--ignore-gpu-blocklist']});
 const page=await browser.newPage({viewport:{width:1280,height:720}});
 const errors=[];page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error')errors.push(m.text());});
-await page.goto(pathToFileURL(path.join(root,'board.html')).href);
+// The field's relief is random per page; a fixed seed keeps a run repeatable (SEED=… for another).
+await page.goto(pathToFileURL(path.join(root,'board.html')).href+'?seed='+(process.env.SEED||7));
 await page.waitForFunction(()=>window.livingChess&&'ready' in window.livingChess,null,{timeout:300000});
 const failures=[],checks=[];
 const check=(name,ok,detail)=>{checks.push({name,ok:!!ok,detail});if(!ok)failures.push(name);};
@@ -62,7 +63,7 @@ for(let i=0;i<=Math.round((captureDuration+.1)*30);i++){
    const l=P['eye.L'].map((x,i)=>x-P['eye.R'][i]),u=P.head.map((x,i)=>x-P.neck01[i]),f=[l[1]*u[2]-l[2]*u[1],l[2]*u[0]-l[0]*u[2],l[0]*u[1]-l[1]*u[0]];
    const eye=P['eye.L'].map((x,i)=>(x+P['eye.R'][i])/2),to=Q['eye.L'].map((x,i)=>(x+Q['eye.R'][i])/2-eye[i]);
    let d=(Math.atan2(f[0],f[2])-Math.atan2(to[0],to[2]))*180/Math.PI;d=((d+540)%360)-180;gaze[me===v?'defender':'attacker']=d;}
-  return{t,tip:L.tip('wp-e4'),grip:L.grip?.('wp-e4'),attacker:a.place,body:L.biomech('wp-e4'),victim:L.biomech(v),trunk:L.pointsWorld(v,['root','spine03','spine05','neck01','head']),feet:L.feetWorld('wp-e4'),touch,gaze};},[t,victimId,FADE_SEEN]));
+  return{t,tip:L.tip('wp-e4'),grip:L.grip?.('wp-e4'),attacker:a.place,body:L.biomech('wp-e4'),victim:L.biomech(v),trunk:L.pointsWorld(v,['root','spine03','spine05','neck01','head']),feet:L.feetGround('wp-e4'),gap:L.ground('wp-e4'),touch,gaze};},[t,victimId,FADE_SEEN]));
  if(keepFrames)await writeFile(path.join(framesDir,`f${String(i).padStart(4,'0')}.png`),await png());
  const phase=phases.find(([,at])=>Math.round(at*30)===i);
  if(phase){images[phase[0]]=`capture-clip-${view==='side'?'':view+'-'}${phase[0]}.png`;await writeFile(path.join(review,images[phase[0]]),await png());}
@@ -96,6 +97,9 @@ check('pelvis over the feet while standing',bodies.filter(b=>!b.struck).every(b=
 let slide=0,planted=0;
 for(let i=1;i<capture.length;i++){const t=capture[i].t;if(t<.6||t>5.6)continue;for(const f of ['foot.L','foot.R']){const a=capture[i-1].feet[f],b=capture[i].feet[f];if(a[1]<.08&&b[1]<.08){planted++;slide=Math.max(slide,Math.hypot(b[0]-a[0],b[2]-a[2]));}}}
 check('planted feet do not slide (≤ 1.5 cm per frame)',planted>60&&slide<=.015,{plantedFrames:planted,maxSlideM:+slide.toFixed(4)});
+const stood=capture.filter(c=>c.gap).flatMap(c=>['L','R'].map(s=>c.gap[s])).filter(g=>g.air<.015&&!g.fall);
+const sink=Math.max(...stood.map(g=>Math.abs(g.ankle))),toe=Math.min(...stood.map(g=>g.toe));
+check('planted feet stand on the uneven field (ankle within 1.5 cm, toe not below 1 cm)',stood.length>60&&sink<=.015&&toe>=-.01,{frames:stood.length,ankleM:+sink.toFixed(4),toeM:+toe.toFixed(4)});
 // Nothing passes through a shield: neither body (legs while stepping and
 // going down included) nor a spear. The attacker's point may stop on the
 // defender's shield in the feint and the defender's on the attacker's shield
