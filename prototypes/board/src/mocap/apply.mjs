@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import {createRetargeter,PAWN,PAWN_BONES,DRIVEN} from './retarget.mjs';
-import {qMul,qConj,qSlerp} from './math.mjs';
+import {qMul,qConj,qSlerp,qAxisAngle} from './math.mjs';
 import {createNeckFollower,limitNeck} from './neck.mjs';
 
 // Puts retargeted key points on a pawn's three.js bones. Runs while the
@@ -55,10 +55,13 @@ export function createMocapDriver({bones,holder}){
  // be measured) leaves the head as posed and the follower as it was.
  const chest=bone(PAWN.spine.at(-1)),neckBones=PAWN.neck.map(bone),headBone=bone(PAWN.head),follower=createNeckFollower();
  const wq=b=>b.getWorldQuaternion(Q()).toArray(),turn=(b,n)=>qMul(wq(b),qConj(quat[n]));
- function steady(now){
+ // yaw: the figure's own heading on the board (rad). The head is held in
+ // the board's frame, so a figure turning in place does not add its own turn
+ // to the head's pace.
+ function steady(now,yaw=0){
   if(now==null)return;
   root.parent.updateMatrixWorld(true);
-  const dC=turn(chest,PAWN.spine.at(-1)),dH=turn(headBone,PAWN.head),h=follower.step(dH,now);
+  const Y=qAxisAngle([0,1,0],yaw||0),dC=turn(chest,PAWN.spine.at(-1)),dH=turn(headBone,PAWN.head),h=qMul(qConj(Y),follower.step(qMul(Y,dH),now));
   if(Math.abs(h[0]*dH[0]+h[1]*dH[1]+h[2]*dH[2]+h[3]*dH[3])>1-1e-12)return;
   const m=limitNeck(qMul(qConj(dC),h));
   const set=(b,name,d)=>{b.parent.updateWorldMatrix(true,false);target.fromArray(qMul(d,quat[name]));b.quaternion.copy(b.parent.getWorldQuaternion(parentQ).invert().multiply(target)).normalize();b.updateMatrixWorld(true);};

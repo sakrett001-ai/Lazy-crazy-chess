@@ -590,8 +590,8 @@ async function init(bytes){
     attacker.place({x:walk.from[0]+walk.dir[0]*m.s,z:walk.from[1]+walk.dir[1]*m.s,yaw});yaws.set(attackerPiece.id,yaw);
     const layer=walkLayer(walk.L,m.s,m.accel,walk.dir,yaw);
     const arms={shield:{raise:walkRaise(walk.L,m.s,{carried:true})}};
-    if(motion.walk){const mm=walkMotion(attacker,attackerPiece,walk.L,m.s,walk.dir,yaw);attacker.pose('Guard_Breath',(clock)%6,scaleLayer(layer,1-mm.share),{...mm,arms});}
-    else attacker.pose('Guard_Breath',clock%6,layer,{arms});
+    if(motion.walk){const mm=walkMotion(attacker,attackerPiece,walk.L,m.s,walk.dir,yaw);attacker.pose('Guard_Breath',(clock)%6,scaleLayer(layer,1-mm.share),{...mm,arms,head:clock});}
+    else attacker.pose('Guard_Breath',clock%6,layer,{arms,head:clock});
    }
    // Defender: fences on, then is struck by the decisive blow and falls.
    const removed=t>=gone;victim.object.visible=!removed;

@@ -104,7 +104,9 @@ export function createPawnFactory({gltf,ground=null}){
    // The board's frames (motion.feet, its clock) carry the head at the neck's pace.
    // A pose with no clip at all (the board's own stance) is held the same way.
    const held=motion?.feet!=null&&(clipWeight>0||!(motion.clip||motion.blend)),hold=clipWeight>0?clipWeight:1;
-   mocap.steady(held?motion.feet:null);
+   // motion.head: the board's clock for the head alone (a walk whose feet
+   // the clip places), so the head keeps its pace from the walk into the stance.
+   mocap.steady(held?motion.feet:motion?.head??null,saved.yaw);
    loadout.poseAt(action,time,{body:!clipBody,...(motion?.arms||{})});
    place.set(saved);
    // motion.feet (the board's clock): the clip's feet are held where they
