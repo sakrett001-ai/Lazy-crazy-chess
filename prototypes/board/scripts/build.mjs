@@ -9,17 +9,25 @@ const root=path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 const pawn=path.resolve(root,'../white-pawn'),human=path.resolve(root,'../human-base');
 const bundleOf=entry=>build({entryPoints:[path.join(root,entry)],nodePaths:[path.join(root,'node_modules'),path.join(pawn,'node_modules'),path.join(human,'node_modules')],bundle:true,minify:true,write:false,format:'iife',legalComments:'inline',target:'es2022'});
 const [bundle,labBundle]=await Promise.all([bundleOf('src/board.mjs'),bundleOf('src/lab.mjs')]);
-const [template,labTemplate,css,labCss,three,chess,model]=await Promise.all([
- readFile(path.join(root,'src/index.html'),'utf8'),readFile(path.join(root,'src/lab.html'),'utf8'),readFile(path.join(root,'src/style.css'),'utf8'),readFile(path.join(root,'src/lab.css'),'utf8'),
+const [template,labTemplate,css,titleCss,labCss,three,chess,model]=await Promise.all([
+ readFile(path.join(root,'src/index.html'),'utf8'),readFile(path.join(root,'src/lab.html'),'utf8'),readFile(path.join(root,'src/style.css'),'utf8'),readFile(path.join(root,'src/title.css'),'utf8'),readFile(path.join(root,'src/lab.css'),'utf8'),
  readFile(path.join(human,'licenses/three-MIT.txt'),'utf8'),readFile(path.join(root,'node_modules/chess.js/LICENSE'),'utf8'),
  readFile(path.join(pawn,'assets/white-pawn.glb'))
 ]);
+// Oswald (SIL OFL 1.1) for the start window, Cyrillic and Latin, built in
+// so the page needs no network.
+const oswald=path.join(root,'node_modules/@fontsource/oswald/files');
+const fonts=(await Promise.all(['cyrillic','latin'].flatMap(set=>[600,700].map(async w=>{
+ const data=(await readFile(path.join(oswald,`oswald-${set}-${w}-normal.woff2`))).toString('base64');
+ const range=set==='cyrillic'?'U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116':'U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD';
+ return`@font-face{font-family:"Oswald";font-style:normal;font-weight:${w};font-display:swap;src:url(data:font/woff2;base64,${data}) format("woff2");unicode-range:${range}}`;
+})))).join('\n')+'\n/* Oswald: SIL Open Font License 1.1, The Oswald Project Authors */\n';
 const script=`/* Three.js MIT license:\n${three}\nchess.js BSD-2-Clause license:\n${chess}\n*/\n`+bundle.outputFiles[0].text;
 // `--motion <file>` (repeatable) builds motion files into the board page; it
 // loads them at start as if opened by hand (src/board.mjs, #motion-data).
 const motions=await Promise.all(process.argv.flatMap((a,i)=>a==='--motion'?[process.argv[i+1]]:[]).map(async f=>({name:path.basename(f),text:await readFile(path.resolve(f),'utf8')})));
 const motionData=JSON.stringify(motions).replaceAll('</','<\\/');
-const html=template.replace('/*MOTIONS*/[]',()=>motionData).replace('/*STYLE*/',()=>css).replace('/*SCRIPT*/',()=>script.replaceAll('</script','<\\/script')).replace('/*MODEL*/',()=>model.toString('base64'));
+const html=template.replace('/*MOTIONS*/[]',()=>motionData).replace('/*FONTS*/',()=>fonts).replace('/*STYLE*/',()=>css+'\n'+titleCss).replace('/*SCRIPT*/',()=>script.replaceAll('</script','<\\/script')).replace('/*MODEL*/',()=>model.toString('base64'));
 const out=path.join(root,'board.html');
 await writeFile(out,html);
 console.log(`Standalone board: ${(Buffer.byteLength(html)/1048576).toFixed(1)} MiB, ${out}`+(motions.length?`, движения: ${motions.map(m=>m.name).join(', ')}`:''));

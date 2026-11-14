@@ -21,6 +21,7 @@
     "render:duel": "node scripts/render-duel.mjs"
   },
   "dependencies": {
+    "@fontsource/oswald": "5.3.0",
     "chess.js": "1.4.0"
   },
   "devDependencies": {
