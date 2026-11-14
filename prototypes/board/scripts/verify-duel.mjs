@@ -20,7 +20,9 @@ const file=path.join(root,'motions/duel-516.motion.json'),text=await readFile(fi
 const browser=await chromium.launch({executablePath:process.env.CHROME_PATH||undefined,args:['--use-angle=swiftshader','--enable-unsafe-swiftshader','--ignore-gpu-blocklist']});
 const page=await browser.newPage({viewport:{width:1280,height:720}});
 const errors=[];page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error')errors.push(m.text());});
-await page.goto(pathToFileURL(path.join(root,'board.html')).href);
+// The field's relief is random per page and moves the pawns' feet; a fixed
+// seed keeps a run repeatable (SEED=… for another), as in verify-capture.
+await page.goto(pathToFileURL(path.join(root,'board.html')).href+'?seed='+(process.env.SEED||7));
 await page.waitForFunction(()=>window.livingChess&&'ready' in window.livingChess,null,{timeout:300000});
 const failures=[],checks=[];
 const check=(name,ok,detail)=>{checks.push({name,ok:!!ok,detail});if(!ok)failures.push(name);};
