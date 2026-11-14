@@ -25,6 +25,7 @@ for(const [part,label] of parts)for(const [role,id] of Object.entries(d.ids)){
  for(const s of ['L','R']){const f=m.feet[s];
   check(`${who}: стопа ${s} стоит`,f.standing>=LIMITS.standing,{standing:+f.standing.toFixed(2)});
   check(`${who}: стопа ${s} не скользит`,f.slides<=LIMITS.slides,{slides:f.slides,slidM:+f.slid.toFixed(2)});
+  check(`${who}: стопа ${s} не проскальзывает на шаге`,f.skid<=LIMITS.skid,{skidM:+f.skid.toFixed(3)});
   check(`${who}: стопа ${s} не семенит`,f.micro<=LIMITS.micro&&f.perSecond<=LIMITS.perSecond,{micro:f.micro,perSecond:+f.perSecond.toFixed(2),steps:f.steps.map(x=>+x.length.toFixed(2))});}
  check(`${who}: колени не дрожат`,Math.max(m.kneeShake.L,m.kneeShake.R)<=LIMITS.kneeShake,m.kneeShake);
  check(`${who}: таз не дрожит`,m.shake.root<=LIMITS.rootShake,{root:m.shake.root});

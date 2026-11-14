@@ -19,12 +19,17 @@ export const STILL=.05;        // m/s, a standing foot (0.5 mm a frame on the re
 export const LIFTED=.015;      // m, a step lifts the foot at least this much
 export const SLIDE=.01;        // m, a shorter move without a lift is the record's rounding
 export const MICRO=.1;         // m, shorter is no step
+// m, a foot this close to the floor it stands on still touches it: what it
+// travels so low at a lift-off or a landing is a skid over the floor.
+export const CONTACT=.01;
 
 // Limits of the duel on the board (scripts/verify-smooth.mjs), set between
 // the PR #9 board (fails each one) and the fix with planted feet.
 export const LIMITS={
  standing:.5,   // share of frames each foot stands still (PR #9: 0.00–0.03)
  slides:1,      // moves over the floor without a lift, per foot
+ skid:.03,      // m, a step's travel on the floor at its lift-off and landing: up to 3 cm
+                // is the micro-slip of normal gait (Liberty Mutual 2004, after Strandberg & Lanshammar 1981)
  micro:1,       // steps shorter than 10 cm per foot
  perSecond:2,   // steps per second per foot
  kneeShake:25,  // mm, a knee while both feet stand (PR #9: 26–92)
@@ -59,10 +64,19 @@ export function footwork(A,fps){
  for(let t=1;t<A.length;t++){if(still[t])continue;let e=t;while(e<A.length&&!still[e])e++;
   const from=A[t-1],to=A[Math.min(e,A.length-1)],base=Math.min(from[1],to[1]);
   const lift=Math.max(...A.slice(t,e).map(p=>p[1]-base));
-  steps.push({from:t-1,to:e,length:Math.hypot(to[0]-from[0],to[2]-from[2]),lift});t=e;}
+  // Skid: the travel while still on the floor at the start (lift-off) and
+  // at the end (landing) of the move.
+  // On the floor: within CONTACT of the lowest the foot stands within a
+  // second around (a pause in the air is no stand on the floor).
+  const floor=k=>{let m=Infinity;for(let j=Math.max(0,k-fps);j<Math.min(A.length,k+fps);j++)m=Math.min(m,A[j][1]);return m;};
+  let skid=0;const low=(k,on)=>A[k][1]-on<CONTACT,hd=k=>Math.hypot(A[k][0]-A[k-1][0],A[k][2]-A[k-1][2]);
+  const f0=floor(t-1),f1=floor(Math.min(e,A.length-1));
+  if(low(t-1,f0))for(let k=t;k<Math.min(e,A.length)&&low(k,f0);k++)skid+=hd(k);
+  let land=0;if(low(Math.min(e,A.length-1),f1))for(let k=Math.min(e,A.length)-1;k>=t&&low(k,f1);k--)land+=hd(k);
+  steps.push({from:t-1,to:e,length:Math.hypot(to[0]-from[0],to[2]-from[2]),lift,skid:lift<LIFTED?0:Math.max(skid,land)});t=e;}
  const slides=steps.filter(s=>s.lift<LIFTED&&s.length>SLIDE);
  return{standing:still.filter(Boolean).length/A.length,steps,slides:slides.length,slid:slides.reduce((a,s)=>a+s.length,0),
-  micro:steps.filter(s=>s.length<MICRO).length,perSecond:steps.length/(A.length/fps)};
+  micro:steps.filter(s=>s.length<MICRO).length,skid:Math.max(0,...steps.map(s=>s.skid)),perSecond:steps.length/(A.length/fps)};
 }
 // All measures of one figure's frames [{joint:[x,y,z]}] (frames where it is
 // not shown left out). Joints by the pawn's bone names.
