@@ -1,9 +1,9 @@
 {
-  "date": "2026-11-15T00:08:52.774Z",
+  "date": "2026-11-15T11:29:15.363Z",
   "status": "passed",
   "browser": "157.0.8103.50",
-  "glbSha256": "f6a17bbdda97875fdcd45ac0e305c7b7ed175cb70d60034a7593b5ca16314931",
-  "documentSha256": "75027e3e9322f0172aeefe5e034d82d1b183e495e387eb963e751b967b682d26",
+  "glbSha256": "2664f63ca68a110a89080ea1abd2d6d7fedbdd70b91a1b440ac5245ef3e0cb07",
+  "documentSha256": "f3553678788f112d0831f344b18c4c3085588c85808f51c5ac9a0d4ee78bfa57",
   "tests": [
     "Three genuinely different shields; independent plate/mail/padding geometry; visible textured mail and quilting; actual physique displacement and independent experience",
     "Four visible weapon geometries, deterministic reverse seek and planted feet; twohand weapons suppress shield and brace; singlehand restores choice; invalid review is atomic"
@@ -60,7 +60,7 @@
         "fps": null,
         "display": "surface",
         "renderCalls": 26,
-        "triangles": 222752,
+        "triangles": 222776,
         "bones": 163,
         "clips": [
           {
@@ -325,8 +325,8 @@
           "name": "ARMOR_Breastplate",
           "slot": "plate",
           "variant": "plate",
-          "vertices": 24735,
-          "checksum": 266.82372210830096,
+          "vertices": 24751,
+          "checksum": 267.73484088574816,
           "materials": [
             {
               "slot": "armor.main",
@@ -336,7 +336,7 @@
               "uvChannel": 1,
               "uvSpan": [
                 1.0507657527923584,
-                1.7882128953933716
+                1.788490653038025
               ]
             }
           ],
@@ -350,8 +350,8 @@
           "name": "ARMOR_Breastplate_1",
           "slot": "plate",
           "variant": "plate",
-          "vertices": 15933,
-          "checksum": 188.12904420022414,
+          "vertices": 15931,
+          "checksum": 188.0388276742409,
           "materials": [
             {
               "slot": "armor.trim",
@@ -1168,7 +1168,7 @@
         "fps": null,
         "display": "surface",
         "renderCalls": 26,
-        "triangles": 213685,
+        "triangles": 213709,
         "bones": 163,
         "clips": [
           {
@@ -1433,8 +1433,8 @@
           "name": "ARMOR_Breastplate",
           "slot": "plate",
           "variant": "plate",
-          "vertices": 24735,
-          "checksum": 266.82372210830096,
+          "vertices": 24751,
+          "checksum": 267.73484088574816,
           "materials": [
             {
               "slot": "armor.main",
@@ -1444,7 +1444,7 @@
               "uvChannel": 1,
               "uvSpan": [
                 1.0507657527923584,
-                1.7882128953933716
+                1.788490653038025
               ]
             }
           ],
@@ -1458,8 +1458,8 @@
           "name": "ARMOR_Breastplate_1",
           "slot": "plate",
           "variant": "plate",
-          "vertices": 15933,
-          "checksum": 188.12904420022414,
+          "vertices": 15931,
+          "checksum": 188.0388276742409,
           "materials": [
             {
               "slot": "armor.trim",
@@ -1837,7 +1837,7 @@
         "fps": null,
         "display": "surface",
         "renderCalls": 25,
-        "triangles": 213189,
+        "triangles": 213213,
         "bones": 163,
         "clips": [
           {
@@ -2102,8 +2102,8 @@
           "name": "ARMOR_Breastplate",
           "slot": "plate",
           "variant": "plate",
-          "vertices": 24735,
-          "checksum": 266.82372210830096,
+          "vertices": 24751,
+          "checksum": 267.73484088574816,
           "materials": [
             {
               "slot": "armor.main",
@@ -2113,7 +2113,7 @@
               "uvChannel": 1,
               "uvSpan": [
                 1.0507657527923584,
-                1.7882128953933716
+                1.788490653038025
               ]
             }
           ],
@@ -2127,8 +2127,8 @@
           "name": "ARMOR_Breastplate_1",
           "slot": "plate",
           "variant": "plate",
-          "vertices": 15933,
-          "checksum": 188.12904420022414,
+          "vertices": 15931,
+          "checksum": 188.0388276742409,
           "materials": [
             {
               "slot": "armor.trim",
@@ -2485,7 +2485,7 @@
         "fps": null,
         "display": "surface",
         "renderCalls": 20,
-        "triangles": 210280,
+        "triangles": 210304,
         "bones": 163,
         "clips": [
           {
@@ -2750,8 +2750,8 @@
           "name": "ARMOR_Breastplate",
           "slot": "plate",
           "variant": "plate",
-          "vertices": 24735,
-          "checksum": 266.82372210830096,
+          "vertices": 24751,
+          "checksum": 267.73484088574816,
           "materials": [
             {
               "slot": "armor.main",
@@ -2761,7 +2761,7 @@
               "uvChannel": 1,
               "uvSpan": [
                 1.0507657527923584,
-                1.7882128953933716
+                1.788490653038025
               ]
             }
           ],
@@ -2775,8 +2775,8 @@
           "name": "ARMOR_Breastplate_1",
           "slot": "plate",
           "variant": "plate",
-          "vertices": 15933,
-          "checksum": 188.12904420022414,
+          "vertices": 15931,
+          "checksum": 188.0388276742409,
           "materials": [
             {
               "slot": "armor.trim",
@@ -3024,7 +3024,7 @@
         "fps": null,
         "display": "surface",
         "renderCalls": 20,
-        "triangles": 210512,
+        "triangles": 210536,
         "bones": 163,
         "clips": [
           {
@@ -3289,8 +3289,8 @@
           "name": "ARMOR_Breastplate",
           "slot": "plate",
           "variant": "plate",
-          "vertices": 24735,
-          "checksum": 266.82372210830096,
+          "vertices": 24751,
+          "checksum": 267.73484088574816,
           "materials": [
             {
               "slot": "armor.main",
@@ -3300,7 +3300,7 @@
               "uvChannel": 1,
               "uvSpan": [
                 1.0507657527923584,
-                1.7882128953933716
+                1.788490653038025
               ]
             }
           ],
@@ -3314,8 +3314,8 @@
           "name": "ARMOR_Breastplate_1",
           "slot": "plate",
           "variant": "plate",
-          "vertices": 15933,
-          "checksum": 188.12904420022414,
+          "vertices": 15931,
+          "checksum": 188.0388276742409,
           "materials": [
             {
               "slot": "armor.trim",

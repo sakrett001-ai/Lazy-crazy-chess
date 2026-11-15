@@ -147,11 +147,12 @@ def build(rig):
         if side == 'L':
             # haute-piece: a standing guard on the pauldron's inner top edge
             z0 = max(v.co.z for v in pa.data.vertices) - .02
-            xs = [sgn * x for x in (.13, .16, .20, .24, .27)]; hs = [.055, .085, .095, .08, .045]
+            # it stands off the neck and leans out, so a head bowed to that shoulder meets its face, not its edge
+            xs = [sgn * x for x in (.15, .175, .21, .245, .27)]; hs = [.04, .07, .085, .075, .045]
             vs = []
             for x, h in zip(xs, hs):
                 y = -.06 + .03 * abs(abs(x) - .2) / .07
-                vs += [Vector((x, y, z0)), Vector((x, y + .012, z0 + h))]
+                vs += [Vector((x, y, z0)), Vector((x + sgn * .25 * h, y + .012, z0 + h))]
             fs = [(2 * i, 2 * i + 2, 2 * i + 3, 2 * i + 1) for i in range(len(xs) - 1)]
             nm = 'ARMOR_Haute-piece ' + side
             plate(nm, vs, fs, pa, .004, 'upperarm01.' + side); names.append(nm); made.append(nm)
