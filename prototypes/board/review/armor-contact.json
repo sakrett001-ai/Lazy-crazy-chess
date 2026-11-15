@@ -1,0 +1,1114 @@
+{
+ "status": "failed",
+ "fps": 10,
+ "limits": {
+  "armorBodyDepthM": 0.003,
+  "legLegDepthM": 0.003
+ },
+ "glb": "white-pawn/assets/white-pawn.glb",
+ "scope": "CPU-skinned visible meshes of every pawn on the board, sampled at the given rate through scripted scenes; armour→body: soft surface seen through a hard one, rasterised from 12 views at 5 mm pixels; leg→leg: exact triangle edge crossings. Sampling misses contacts shorter than one frame.",
+ "scenes": [
+  {
+   "scene": "start",
+   "experience": "recruit",
+   "frames": 40,
+   "faults": 6451,
+   "seconds": 322.1
+  },
+  {
+   "scene": "start",
+   "experience": "veteran",
+   "frames": 40,
+   "faults": 6478,
+   "seconds": 311.5
+  },
+  {
+   "scene": "clash",
+   "experience": "recruit",
+   "frames": 80,
+   "faults": 3591,
+   "seconds": 165.8
+  },
+  {
+   "scene": "clash",
+   "experience": "veteran",
+   "frames": 80,
+   "faults": 3670,
+   "seconds": 165.7
+  },
+  {
+   "scene": "capture",
+   "experience": "recruit",
+   "frames": 102,
+   "faults": 2766,
+   "seconds": 139.4
+  },
+  {
+   "scene": "capture",
+   "experience": "veteran",
+   "frames": 117,
+   "faults": 3387,
+   "seconds": 121
+  }
+ ],
+ "totals": {
+  "armourBody": {
+   "поножи и наколенники R → стопы и сапоги": {
+    "frames": 1559,
+    "maxSize": 2.5,
+    "maxM": 0.0641,
+    "worstAt": {
+     "scene": "capture",
+     "experience": "veteran",
+     "stage": "обмен ударами",
+     "frame": 18,
+     "piece": "bp-d5",
+     "at": [
+      -0.842,
+      0.157,
+      -0.843
+     ],
+     "view": {
+      "az": 90,
+      "el": 10
+     }
+    }
+   },
+   "поножи и наколенники R → голени": {
+    "frames": 1663,
+    "maxSize": 11,
+    "maxM": 0.08,
+    "worstAt": {
+     "scene": "start",
+     "experience": "veteran",
+     "stage": "шаг e2–e4",
+     "frame": 30,
+     "piece": "bp-f7",
+     "at": [
+      3.793,
+      0.504,
+      -6.377
+     ],
+     "view": {
+      "az": 135,
+      "el": 10
+     }
+    }
+   },
+   "набедренники и пояс R → бёдра": {
+    "frames": 1661,
+    "maxSize": 9.5,
+    "maxM": 0.08,
+    "worstAt": {
+     "scene": "start",
+     "experience": "recruit",
+     "stage": "шаг e2–e4",
+     "frame": 22,
+     "piece": "bp-d7",
+     "at": [
+      -1.504,
+      0.819,
+      -6.447
+     ],
+     "view": {
+      "az": 0,
+      "el": 10
+     }
+    }
+   },
+   "набедренники и пояс R → корпус": {
+    "frames": 1188,
+    "maxSize": 8.8,
+    "maxM": 0.08,
+    "worstAt": {
+     "scene": "capture",
+     "experience": "veteran",
+     "stage": "обмен ударами",
+     "frame": 28,
+     "piece": "bp-d5",
+     "at": [
+      -0.95,
+      0.872,
+      -0.902
+     ],
+     "view": {
+      "az": 135,
+      "el": 10
+     }
+    }
+   },
+   "наруч L → руки": {
+    "frames": 1663,
+    "maxSize": 6.5,
+    "maxM": 0.08,
+    "worstAt": {
+     "scene": "capture",
+     "experience": "recruit",
+     "stage": "взятие",
+     "frame": 55,
+     "piece": "wp-e4",
+     "at": [
+      0.809,
+      1.292,
+      1.251
+     ],
+     "view": {
+      "az": 90,
+      "el": 10
+     }
+    }
+   },
+   "кираса и горжет → руки": {
+    "frames": 1647,
+    "maxSize": 4,
+    "maxM": 0.08,
+    "worstAt": {
+     "scene": "start",
+     "experience": "veteran",
+     "stage": "шаг e2–e4",
+     "frame": 38,
+     "piece": "wp-a2",
+     "at": [
+      -8.919,
+      1.338,
+      6.556
+     ],
+     "view": {
+      "az": 180,
+      "el": 50
+     }
+    }
+   },
+   "наплечник R → руки": {
+    "frames": 1663,
+    "maxSize": 8.8,
+    "maxM": 0.08,
+    "worstAt": {
+     "scene": "capture",
+     "experience": "recruit",
+     "stage": "взятие",
+     "frame": 56,
+     "piece": "wp-e4",
+     "at": [
+      1.215,
+      1.287,
+      0.936
+     ],
+     "view": {
+      "az": 45,
+      "el": 10
+     }
+    }
+   },
+   "наплечник R → корпус": {
+    "frames": 1663,
+    "maxSize": 4.3,
+    "maxM": 0.08,
+    "worstAt": {
+     "scene": "capture",
+     "experience": "veteran",
+     "stage": "обмен ударами",
+     "frame": 26,
+     "piece": "bp-d5",
+     "at": [
+      -1.22,
+      1.277,
+      -1.044
+     ],
+     "view": {
+      "az": 180,
+      "el": 50
+     }
+    }
+   },
+   "набедренники и пояс L → бёдра": {
+    "frames": 1654,
+    "maxSize": 12.5,
+    "maxM": 0.08,
+    "worstAt": {
+     "scene": "start",
+     "experience": "veteran",
+     "stage": "стойка",
+     "frame": 10,
+     "piece": "wp-d2",
+     "at": [
+      -1.494,
+      0.724,
+      6.468
+     ],
+     "view": {
+      "az": 45,
+      "el": 10
+     }
+    }
+   },
+   "наруч R → руки": {
+    "frames": 1663,
+    "maxSize": 6,
+    "maxM": 0.08,
+    "worstAt": {
+     "scene": "clash",
+     "experience": "veteran",
+     "stage": "схватка и оборона",
+     "frame": 0,
+     "piece": "bp-d5",
+     "at": [
+      -1.7,
+      1.188,
+      -1.185
+     ],
+     "view": {
+      "az": 135,
+      "el": 10
+     }
+    }
+   },
+   "поножи и наколенники L → голени": {
+    "frames": 1663,
+    "maxSize": 12,
+    "maxM": 0.08,
+    "worstAt": {
+     "scene": "clash",
+     "experience": "veteran",
+     "stage": "схватка и оборона",
+     "frame": 17,
+     "piece": "wp-d4",
+     "at": [
+      -1.421,
+      0.463,
+      1.099
+     ],
+     "view": {
+      "az": 225,
+      "el": 10
+     }
+    }
+   },
+   "наплечник L → руки": {
+    "frames": 1663,
+    "maxSize": 11,
+    "maxM": 0.08,
+    "worstAt": {
+     "scene": "start",
+     "experience": "veteran",
+     "stage": "шаг e2–e4",
+     "frame": 38,
+     "piece": "bp-c7",
+     "at": [
+      -3.649,
+      1.398,
+      -6.571
+     ],
+     "view": {
+      "az": 90,
+      "el": 10
+     }
+    }
+   },
+   "кираса и горжет → корпус": {
+    "frames": 1663,
+    "maxSize": 33.5,
+    "maxM": 0.08,
+    "worstAt": {
+     "scene": "clash",
+     "experience": "recruit",
+     "stage": "схватка и оборона",
+     "frame": 37,
+     "piece": "bp-d5",
+     "at": [
+      -1.433,
+      1.349,
+      -1.397
+     ],
+     "view": {
+      "az": 90,
+      "el": 50
+     }
+    }
+   },
+   "наплечник L → корпус": {
+    "frames": 1662,
+    "maxSize": 2.8,
+    "maxM": 0.08,
+    "worstAt": {
+     "scene": "capture",
+     "experience": "recruit",
+     "stage": "обмен ударами",
+     "frame": 42,
+     "piece": "wp-e4",
+     "at": [
+      0.913,
+      1.349,
+      0.924
+     ],
+     "view": {
+      "az": 270,
+      "el": 50
+     }
+    }
+   },
+   "набедренники и пояс L → корпус": {
+    "frames": 1103,
+    "maxSize": 7.8,
+    "maxM": 0.0799,
+    "worstAt": {
+     "scene": "clash",
+     "experience": "veteran",
+     "stage": "схватка и оборона",
+     "frame": 45,
+     "piece": "bp-d5",
+     "at": [
+      -1.127,
+      0.956,
+      -1.125
+     ],
+     "view": {
+      "az": 135,
+      "el": 10
+     }
+    }
+   },
+   "сабатоны R → стопы и сапоги": {
+    "frames": 205,
+    "maxSize": 8.3,
+    "maxM": 0.0784,
+    "worstAt": {
+     "scene": "start",
+     "experience": "recruit",
+     "stage": "шаг e2–e4",
+     "frame": 36,
+     "piece": "bp-c7",
+     "at": [
+      -4.184,
+      0.033,
+      -6.559
+     ],
+     "view": {
+      "az": 180,
+      "el": 10
+     }
+    }
+   },
+   "кираса и горжет → metacarpal4l": {
+    "frames": 16,
+    "maxSize": 0.3,
+    "maxM": 0.0794,
+    "worstAt": {
+     "scene": "start",
+     "experience": "recruit",
+     "stage": "шаг e2–e4",
+     "frame": 16,
+     "piece": "bp-f7",
+     "at": [
+      3.961,
+      1.116,
+      -6.259
+     ],
+     "view": {
+      "az": 0,
+      "el": 10
+     }
+    }
+   },
+   "поножи и наколенники R → бёдра": {
+    "frames": 222,
+    "maxSize": 5,
+    "maxM": 0.0799,
+    "worstAt": {
+     "scene": "clash",
+     "experience": "recruit",
+     "stage": "схватка и оборона",
+     "frame": 40,
+     "piece": "wp-d4",
+     "at": [
+      -1.221,
+      0.575,
+      1.07
+     ],
+     "view": {
+      "az": 90,
+      "el": 50
+     }
+    }
+   },
+   "сабатоны L → стопы и сапоги": {
+    "frames": 136,
+    "maxSize": 12,
+    "maxM": 0.0798,
+    "worstAt": {
+     "scene": "capture",
+     "experience": "recruit",
+     "stage": "взятие",
+     "frame": 63,
+     "piece": "wp-e4",
+     "at": [
+      0.627,
+      0.107,
+      0.943
+     ],
+     "view": {
+      "az": 0,
+      "el": 10
+     }
+    }
+   },
+   "кираса и горжет → metacarpal1l": {
+    "frames": 24,
+    "maxSize": 0.5,
+    "maxM": 0.0776,
+    "worstAt": {
+     "scene": "start",
+     "experience": "recruit",
+     "stage": "шаг e2–e4",
+     "frame": 29,
+     "piece": "bp-h7",
+     "at": [
+      9.154,
+      1.19,
+      -6.268
+     ],
+     "view": {
+      "az": 45,
+      "el": 10
+     }
+    }
+   },
+   "поножи и наколенники L → бёдра": {
+    "frames": 202,
+    "maxSize": 3,
+    "maxM": 0.0796,
+    "worstAt": {
+     "scene": "capture",
+     "experience": "veteran",
+     "stage": "обмен ударами",
+     "frame": 17,
+     "piece": "wp-e4",
+     "at": [
+      0.966,
+      0.709,
+      1.533
+     ],
+     "view": {
+      "az": 135,
+      "el": 10
+     }
+    }
+   },
+   "поножи и наколенники L → стопы и сапоги": {
+    "frames": 577,
+    "maxSize": 5,
+    "maxM": 0.0796,
+    "worstAt": {
+     "scene": "capture",
+     "experience": "veteran",
+     "stage": "обмен ударами",
+     "frame": 48,
+     "piece": "wp-e4",
+     "at": [
+      0.933,
+      0.209,
+      0.667
+     ],
+     "view": {
+      "az": 0,
+      "el": 10
+     }
+    }
+   },
+   "шлем → лицо и голова": {
+    "frames": 127,
+    "maxSize": 0.3,
+    "maxM": 0.0755,
+    "worstAt": {
+     "scene": "start",
+     "experience": "veteran",
+     "stage": "шаг e2–e4",
+     "frame": 39,
+     "piece": "bp-e7",
+     "at": [
+      1.38,
+      1.619,
+      -6.38
+     ],
+     "view": {
+      "az": 135,
+      "el": 10
+     }
+    }
+   },
+   "кираса и горжет → лицо и голова": {
+    "frames": 137,
+    "maxSize": 11.3,
+    "maxM": 0.08,
+    "worstAt": {
+     "scene": "capture",
+     "experience": "veteran",
+     "stage": "обмен ударами",
+     "frame": 5,
+     "piece": "bp-d5",
+     "at": [
+      -0.874,
+      1.485,
+      -0.988
+     ],
+     "view": {
+      "az": 90,
+      "el": 50
+     }
+    }
+   },
+   "кираса и горжет → бёдра": {
+    "frames": 107,
+    "maxSize": 3.3,
+    "maxM": 0.0569,
+    "worstAt": {
+     "scene": "capture",
+     "experience": "recruit",
+     "stage": "обмен ударами",
+     "frame": 44,
+     "piece": "bp-d5",
+     "at": [
+      -0.968,
+      0.842,
+      -0.681
+     ],
+     "view": {
+      "az": 225,
+      "el": 10
+     }
+    }
+   },
+   "шлем → корпус": {
+    "frames": 24,
+    "maxSize": 1,
+    "maxM": 0.0605,
+    "worstAt": {
+     "scene": "clash",
+     "experience": "veteran",
+     "stage": "схватка и оборона",
+     "frame": 70,
+     "piece": "wp-e4",
+     "at": [
+      1.358,
+      1.536,
+      1.288
+     ],
+     "view": {
+      "az": 135,
+      "el": 10
+     }
+    }
+   },
+   "сабатоны R → голени": {
+    "frames": 12,
+    "maxSize": 2.5,
+    "maxM": 0.0441,
+    "worstAt": {
+     "scene": "capture",
+     "experience": "veteran",
+     "stage": "обмен ударами",
+     "frame": 13,
+     "piece": "wp-e4",
+     "at": [
+      0.774,
+      0.162,
+      0.913
+     ],
+     "view": {
+      "az": 180,
+      "el": 50
+     }
+    }
+   },
+   "сабатоны L → голени": {
+    "frames": 10,
+    "maxSize": 0.7,
+    "maxM": 0.0121,
+    "worstAt": {
+     "scene": "capture",
+     "experience": "recruit",
+     "stage": "взятие",
+     "frame": 65,
+     "piece": "wp-e4",
+     "at": [
+      0.783,
+      0.092,
+      0.887
+     ],
+     "view": {
+      "az": 270,
+      "el": 10
+     }
+    }
+   },
+   "наплечник L → лицо и голова": {
+    "frames": 6,
+    "maxSize": 2.5,
+    "maxM": 0.0646,
+    "worstAt": {
+     "scene": "capture",
+     "experience": "veteran",
+     "stage": "обмен ударами",
+     "frame": 19,
+     "piece": "wp-e4",
+     "at": [
+      1.433,
+      1.597,
+      1.539
+     ],
+     "view": {
+      "az": 0,
+      "el": 10
+     }
+    }
+   }
+  },
+  "legLeg": {
+   "бёдра L → набедренники и пояс R": {
+    "frames": 98,
+    "maxSize": 617,
+    "maxM": 0.0216,
+    "worstAt": {
+     "scene": "capture",
+     "experience": "recruit",
+     "stage": "взятие",
+     "frame": 76,
+     "piece": "wp-e4",
+     "at": [
+      0.399,
+      0.67,
+      0.337
+     ]
+    }
+   },
+   "бёдра L → бёдра R": {
+    "frames": 109,
+    "maxSize": 1140,
+    "maxM": 0.0214,
+    "worstAt": {
+     "scene": "capture",
+     "experience": "recruit",
+     "stage": "взятие",
+     "frame": 68,
+     "piece": "wp-e4",
+     "at": [
+      0.629,
+      0.745,
+      0.502
+     ]
+    }
+   },
+   "набедренники и пояс L → набедренники и пояс R": {
+    "frames": 102,
+    "maxSize": 875,
+    "maxM": 0.08,
+    "worstAt": {
+     "scene": "capture",
+     "experience": "veteran",
+     "stage": "взятие",
+     "frame": 64,
+     "piece": "wp-e4",
+     "at": [
+      1.269,
+      0.757,
+      1.357
+     ]
+    }
+   },
+   "набедренники и пояс L → бёдра R": {
+    "frames": 105,
+    "maxSize": 552,
+    "maxM": 0.0797,
+    "worstAt": {
+     "scene": "capture",
+     "experience": "recruit",
+     "stage": "взятие",
+     "frame": 71,
+     "piece": "wp-e4",
+     "at": [
+      0.321,
+      0.555,
+      0.54
+     ]
+    }
+   },
+   "стопы и сапоги L → сабатоны R": {
+    "frames": 16,
+    "maxSize": 177,
+    "maxM": 0.0882,
+    "worstAt": {
+     "scene": "capture",
+     "experience": "veteran",
+     "stage": "взятие",
+     "frame": 70,
+     "piece": "wp-e4",
+     "at": [
+      1.016,
+      0.029,
+      1.176
+     ]
+    }
+   },
+   "голени L → голени R": {
+    "frames": 28,
+    "maxSize": 637,
+    "maxM": 0.0353,
+    "worstAt": {
+     "scene": "capture",
+     "experience": "veteran",
+     "stage": "обмен ударами",
+     "frame": 2,
+     "piece": "wp-e4",
+     "at": [
+      0.87,
+      0.124,
+      0.76
+     ]
+    }
+   },
+   "голени L → стопы и сапоги R": {
+    "frames": 26,
+    "maxSize": 602,
+    "maxM": 0.0468,
+    "worstAt": {
+     "scene": "capture",
+     "experience": "veteran",
+     "stage": "взятие",
+     "frame": 50,
+     "piece": "wp-e4",
+     "at": [
+      0.969,
+      0.117,
+      0.799
+     ]
+    }
+   },
+   "голени L → поножи и наколенники R": {
+    "frames": 29,
+    "maxSize": 488,
+    "maxM": 0.0331,
+    "worstAt": {
+     "scene": "capture",
+     "experience": "veteran",
+     "stage": "взятие",
+     "frame": 73,
+     "piece": "wp-e4",
+     "at": [
+      0.894,
+      0.486,
+      0.915
+     ]
+    }
+   },
+   "стопы и сапоги L → стопы и сапоги R": {
+    "frames": 31,
+    "maxSize": 903,
+    "maxM": 0.1436,
+    "worstAt": {
+     "scene": "capture",
+     "experience": "veteran",
+     "stage": "взятие",
+     "frame": 50,
+     "piece": "wp-e4",
+     "at": [
+      0.979,
+      0.019,
+      0.796
+     ]
+    }
+   },
+   "бёдра L → поножи и наколенники R": {
+    "frames": 20,
+    "maxSize": 252,
+    "maxM": 0.0169,
+    "worstAt": {
+     "scene": "capture",
+     "experience": "recruit",
+     "stage": "обмен ударами",
+     "frame": 13,
+     "piece": "wp-e4",
+     "at": [
+      0.779,
+      0.558,
+      0.658
+     ]
+    }
+   },
+   "бёдра L → голени R": {
+    "frames": 19,
+    "maxSize": 243,
+    "maxM": 0.0151,
+    "worstAt": {
+     "scene": "capture",
+     "experience": "recruit",
+     "stage": "обмен ударами",
+     "frame": 36,
+     "piece": "bp-d5",
+     "at": [
+      -0.84,
+      0.528,
+      -0.64
+     ]
+    }
+   },
+   "сабатоны L → стопы и сапоги R": {
+    "frames": 28,
+    "maxSize": 299,
+    "maxM": 0.0146,
+    "worstAt": {
+     "scene": "capture",
+     "experience": "veteran",
+     "stage": "обмен ударами",
+     "frame": 1,
+     "piece": "bp-d5",
+     "at": [
+      -1.249,
+      0.064,
+      -1.126
+     ]
+    }
+   },
+   "поножи и наколенники L → поножи и наколенники R": {
+    "frames": 39,
+    "maxSize": 770,
+    "maxM": 0.0242,
+    "worstAt": {
+     "scene": "capture",
+     "experience": "veteran",
+     "stage": "обмен ударами",
+     "frame": 1,
+     "piece": "wp-e4",
+     "at": [
+      0.905,
+      0.237,
+      0.74
+     ]
+    }
+   },
+   "поножи и наколенники L → голени R": {
+    "frames": 30,
+    "maxSize": 469,
+    "maxM": 0.0251,
+    "worstAt": {
+     "scene": "capture",
+     "experience": "recruit",
+     "stage": "взятие",
+     "frame": 61,
+     "piece": "wp-e4",
+     "at": [
+      0.837,
+      0.303,
+      0.889
+     ]
+    }
+   },
+   "поножи и наколенники L → стопы и сапоги R": {
+    "frames": 21,
+    "maxSize": 346,
+    "maxM": 0.0214,
+    "worstAt": {
+     "scene": "capture",
+     "experience": "veteran",
+     "stage": "взятие",
+     "frame": 72,
+     "piece": "wp-e4",
+     "at": [
+      1.024,
+      0.21,
+      1.117
+     ]
+    }
+   },
+   "голени L → бёдра R": {
+    "frames": 12,
+    "maxSize": 98,
+    "maxM": 0.0156,
+    "worstAt": {
+     "scene": "capture",
+     "experience": "veteran",
+     "stage": "обмен ударами",
+     "frame": 2,
+     "piece": "wp-e4",
+     "at": [
+      0.91,
+      0.549,
+      0.727
+     ]
+    }
+   },
+   "поножи и наколенники L → бёдра R": {
+    "frames": 7,
+    "maxSize": 115,
+    "maxM": 0.012,
+    "worstAt": {
+     "scene": "capture",
+     "experience": "veteran",
+     "stage": "обмен ударами",
+     "frame": 26,
+     "piece": "bp-d5",
+     "at": [
+      -0.903,
+      0.516,
+      -0.716
+     ]
+    }
+   },
+   "сабатоны L → сабатоны R": {
+    "frames": 10,
+    "maxSize": 59,
+    "maxM": 0.0111,
+    "worstAt": {
+     "scene": "capture",
+     "experience": "veteran",
+     "stage": "обмен ударами",
+     "frame": 1,
+     "piece": "bp-d5",
+     "at": [
+      -1.27,
+      0.062,
+      -1.001
+     ]
+    }
+   },
+   "голени L → сабатоны R": {
+    "frames": 9,
+    "maxSize": 285,
+    "maxM": 0.0237,
+    "worstAt": {
+     "scene": "capture",
+     "experience": "veteran",
+     "stage": "обмен ударами",
+     "frame": 0,
+     "piece": "bp-d5",
+     "at": [
+      -1.381,
+      0.115,
+      -1.134
+     ]
+    }
+   },
+   "стопы и сапоги L → голени R": {
+    "frames": 10,
+    "maxSize": 236,
+    "maxM": 0.046,
+    "worstAt": {
+     "scene": "capture",
+     "experience": "veteran",
+     "stage": "обмен ударами",
+     "frame": 2,
+     "piece": "wp-e4",
+     "at": [
+      0.868,
+      0.116,
+      0.757
+     ]
+    }
+   },
+   "сабатоны L → голени R": {
+    "frames": 2,
+    "maxSize": 153,
+    "maxM": 0.0116,
+    "worstAt": {
+     "scene": "capture",
+     "experience": "recruit",
+     "stage": "взятие",
+     "frame": 60,
+     "piece": "wp-e4",
+     "at": [
+      0.808,
+      0.131,
+      0.956
+     ]
+    }
+   },
+   "стопы и сапоги L → поножи и наколенники R": {
+    "frames": 4,
+    "maxSize": 124,
+    "maxM": 0.0226,
+    "worstAt": {
+     "scene": "capture",
+     "experience": "veteran",
+     "stage": "обмен ударами",
+     "frame": 0,
+     "piece": "bp-d5",
+     "at": [
+      -1.385,
+      0.136,
+      -1.19
+     ]
+    }
+   },
+   "поножи и наколенники L → сабатоны R": {
+    "frames": 5,
+    "maxSize": 149,
+    "maxM": 0.0167,
+    "worstAt": {
+     "scene": "capture",
+     "experience": "veteran",
+     "stage": "обмен ударами",
+     "frame": 37,
+     "piece": "bp-d5",
+     "at": [
+      -0.764,
+      0.207,
+      -0.926
+     ]
+    }
+   }
+  }
+ },
+ "failures": [
+  "поножи и наколенники R → стопы и сапоги: 2.5 см², до 64.1 мм",
+  "поножи и наколенники R → голени: 11 см², до 80.0 мм",
+  "набедренники и пояс R → бёдра: 9.5 см², до 80.0 мм",
+  "набедренники и пояс R → корпус: 8.8 см², до 80.0 мм",
+  "наруч L → руки: 6.5 см², до 80.0 мм",
+  "кираса и горжет → руки: 4 см², до 80.0 мм",
+  "наплечник R → руки: 8.8 см², до 80.0 мм",
+  "наплечник R → корпус: 4.3 см², до 80.0 мм",
+  "набедренники и пояс L → бёдра: 12.5 см², до 80.0 мм",
+  "наруч R → руки: 6 см², до 80.0 мм",
+  "поножи и наколенники L → голени: 12 см², до 80.0 мм",
+  "наплечник L → руки: 11 см², до 80.0 мм",
+  "кираса и горжет → корпус: 33.5 см², до 80.0 мм",
+  "наплечник L → корпус: 2.8 см², до 80.0 мм",
+  "набедренники и пояс L → корпус: 7.8 см², до 79.9 мм",
+  "сабатоны R → стопы и сапоги: 8.3 см², до 78.4 мм",
+  "кираса и горжет → metacarpal4l: 0.3 см², до 79.4 мм",
+  "поножи и наколенники R → бёдра: 5 см², до 79.9 мм",
+  "сабатоны L → стопы и сапоги: 12 см², до 79.8 мм",
+  "кираса и горжет → metacarpal1l: 0.5 см², до 77.6 мм",
+  "поножи и наколенники L → бёдра: 3 см², до 79.6 мм",
+  "поножи и наколенники L → стопы и сапоги: 5 см², до 79.6 мм",
+  "шлем → лицо и голова: 0.3 см², до 75.5 мм",
+  "кираса и горжет → лицо и голова: 11.3 см², до 80.0 мм",
+  "кираса и горжет → бёдра: 3.3 см², до 56.9 мм",
+  "шлем → корпус: 1 см², до 60.5 мм",
+  "сабатоны R → голени: 2.5 см², до 44.1 мм",
+  "сабатоны L → голени: 0.7 см², до 12.1 мм",
+  "наплечник L → лицо и голова: 2.5 см², до 64.6 мм",
+  "бёдра L → набедренники и пояс R: 617 пар, до 21.6 мм",
+  "бёдра L → бёдра R: 1140 пар, до 21.4 мм",
+  "набедренники и пояс L → набедренники и пояс R: 875 пар, до 80.0 мм",
+  "набедренники и пояс L → бёдра R: 552 пар, до 79.7 мм",
+  "стопы и сапоги L → сабатоны R: 177 пар, до 88.2 мм",
+  "голени L → голени R: 637 пар, до 35.3 мм",
+  "голени L → стопы и сапоги R: 602 пар, до 46.8 мм",
+  "голени L → поножи и наколенники R: 488 пар, до 33.1 мм",
+  "стопы и сапоги L → стопы и сапоги R: 903 пар, до 143.6 мм",
+  "бёдра L → поножи и наколенники R: 252 пар, до 16.9 мм",
+  "бёдра L → голени R: 243 пар, до 15.1 мм",
+  "сабатоны L → стопы и сапоги R: 299 пар, до 14.6 мм",
+  "поножи и наколенники L → поножи и наколенники R: 770 пар, до 24.2 мм",
+  "поножи и наколенники L → голени R: 469 пар, до 25.1 мм",
+  "поножи и наколенники L → стопы и сапоги R: 346 пар, до 21.4 мм",
+  "голени L → бёдра R: 98 пар, до 15.6 мм",
+  "поножи и наколенники L → бёдра R: 115 пар, до 12.0 мм",
+  "сабатоны L → сабатоны R: 59 пар, до 11.1 мм",
+  "голени L → сабатоны R: 285 пар, до 23.7 мм",
+  "стопы и сапоги L → голени R: 236 пар, до 46.0 мм",
+  "сабатоны L → голени R: 153 пар, до 11.6 мм",
+  "стопы и сапоги L → поножи и наколенники R: 124 пар, до 22.6 мм",
+  "поножи и наколенники L → сабатоны R: 149 пар, до 16.7 мм"
+ ]
+}

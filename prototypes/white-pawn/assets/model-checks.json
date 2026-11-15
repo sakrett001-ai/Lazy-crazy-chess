@@ -1,10 +1,10 @@
 {
   "status": "passed",
-  "sha256": "d8438e9bcc458cec5d307c04618d8c113d63193cf3577131bb188114fe153d93",
-  "glb_bytes": 19766312,
+  "sha256": "f6a17bbdda97875fdcd45ac0e305c7b7ed175cb70d60034a7593b5ca16314931",
+  "glb_bytes": 19378824,
   "meshes": 18,
   "material_primitives": 48,
-  "triangles": 299057,
+  "triangles": 307305,
   "joints": 163,
   "weight_sum_max_error": 1.7881393432617188e-07,
   "morphTargets": [
@@ -34,12 +34,12 @@
   "reimport_bone_display_helpers": false,
   "reimport_bounds_z_up_metres": [
     [
-      -0.37381768226623535,
+      -0.3884366750717163,
       -0.38570547103881836,
       0.0010001137852668762
     ],
     [
-      0.38051342964172363,
+      0.39231202006340027,
       0.1860009729862213,
       2.71368670463562
     ]

@@ -1,12 +1,13 @@
 {
   "faces": 30256,
+  "crossedByPlate": 849,
   "reachMetres": 0.035,
   "nearMetres": 0.016,
   "marginMetres": 0.03,
   "groups": {
-    "mail": 13540,
-    "mail,plate": 8754,
-    "plate": 2069,
-    "exposed": 5893
+    "mail": 12373,
+    "mail,plate": 9885,
+    "plate": 2142,
+    "exposed": 5856
   }
 }

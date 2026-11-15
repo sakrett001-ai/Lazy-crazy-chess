@@ -22,6 +22,9 @@ sys.path.insert(0,str(ROOT/'scripts')); import pawn_pose
 pawn_pose.configure(rig); pawn_pose.apply_pose('rest',0); bpy.context.view_layer.update()
 frames=pawn_pose.equipment_frames()
 info=json.loads(subprocess.check_output(['git','show',SOURCE+':prototypes/white-pawn/assets/model-info.json'],cwd=REPO))
+# Heavy infantry kit (heavy_kit.py): recruit pieces in the mesh, veteran ones in the 'veteran' morph.
+import heavy_kit
+kit_made=heavy_kit.build(rig);bpy.context.view_layer.update()
 MODEL=[o for o in scene.objects if o.type=='MESH' and not o.name.startswith('STUDIO_')]
 
 # The split padded skirt crosses the lateral edge of the fitted rear hip plates.
@@ -359,6 +362,14 @@ for ob in MODEL:
  for mod in ob.modifiers:
   if mod.type=='ARMATURE':mod.show_viewport=True;mod.show_render=True
 
+# Armour lies on the body: cops rebuilt on the surface under them, cloth kept
+# under each plate and moving with it (armor_fit.py; audited on the board by
+# board/scripts/verify-armor.mjs).
+import armor_fit
+fit_report={'cops':armor_fit.cop_shells(MODEL,rig),'greaves':armor_fit.trim_greaves(MODEL,rig)}
+fit_report['cloth']=armor_fit.fit(MODEL,rig)
+(REVIEW/'armor-fit.json').write_text(json.dumps(fit_report,indent=1)+'\n')
+
 def smoothstep(low,high,value):
  t=max(0.,min(1.,(value-low)/(high-low)))
  return t*t*(3-2*t)
@@ -382,22 +393,34 @@ def physique_delta(co):
  return delta
 
 dent_report=[]
+def veteran_target(ob):
+ # Veteran shape: the kit's growth (heavy_kit.VETERAN) plus battle dents. A
+ # piece only the veteran wears is shrunk to a speck in the basis.
+ global dent_report
+ full=[v.co.copy() for v in ob.data.vertices];shape=heavy_kit.veteran_shape(ob.name,full)
+ if ob.name in dents.TARGETS:
+  offsets,found=dents.veteran_offsets(ob);dent_report+=found
+  shape=[(shape[i] if shape else full[i])+offsets[i] for i in range(len(full))]
+ if heavy_kit.is_collapsed(ob.name):
+  for v,c in zip(ob.data.vertices,heavy_kit.collapse(full)):v.co=c
+ return shape
 for ob in MODEL:
  slot=ob['equipmentSlot']
- if ob.name in dents.TARGETS and slot=='helmet':
-  # The helmet carries only the veteran dents; it does not follow the body build.
-  ob.shape_key_add(name='Basis');offsets,found=dents.veteran_offsets(ob);dent_report+=found
-  target=ob.shape_key_add(name='veteran')
-  for i,p in enumerate(target.data):p.co=ob.data.vertices[i].co+offsets[i]
+ if slot=='helmet':
+  # The helmet carries only the veteran shape; it does not follow the body build.
+  shape=veteran_target(ob)
+  if shape:
+   ob.shape_key_add(name='Basis');target=ob.shape_key_add(name='veteran')
+   for i,p in enumerate(target.data):p.co=shape[i]
  if slot in ('shield','weapon','hair','beard','helmet'):continue
+ shape=veteran_target(ob)
  ob.shape_key_add(name='Basis')
  for key,sign in [('lean',-.72),('strong',1)]:
   target=ob.shape_key_add(name=key)
   for i,p in enumerate(target.data):p.co=ob.data.vertices[i].co+physique_delta(ob.data.vertices[i].co)*sign
- if ob.name in dents.TARGETS:
-  offsets,found=dents.veteran_offsets(ob);dent_report+=found
+ if shape:
   target=ob.shape_key_add(name='veteran')
-  for i,p in enumerate(target.data):p.co=ob.data.vertices[i].co+offsets[i]
+  for i,p in enumerate(target.data):p.co=shape[i]
  if ob.name.startswith('BODY_'):
   target=ob.shape_key_add(name='veteran')
   for i,p in enumerate(target.data):
@@ -498,6 +521,9 @@ for channel in clip['channels']:
 # Each shield carries its own face map, but runtime code and audits address the face by its slot name.
 for material in doc['materials']:
  if material.get('extras',{}).get('customizationSlot')=='shield.face':material['name']='shield.face'
+# Plates keep no normal deltas for the body-build targets (glb_slim.py): no visible change, a lighter page.
+import glb_slim
+doc,binary,slim_saved=glb_slim.slim(doc,binary)
 jb=json.dumps(doc,separators=(',',':')).encode();jb+=b' '*((-len(jb))%4)
 raw=struct.pack('<III',0x46546c67,2,28+len(jb)+len(binary))+struct.pack('<II',len(jb),0x4e4f534a)+jb+struct.pack('<II',len(binary),0x004e4942)+binary
 (OUT/'white-pawn.glb').write_bytes(raw)
