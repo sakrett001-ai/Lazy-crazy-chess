@@ -3,74 +3,74 @@
   {
    "object": "ARMOR_Breastplate",
    "centreM": [
-    0.0589,
-    -0.1683,
-    1.3502
+    0.062,
+    -0.1772,
+    1.3513
    ],
    "radiusM": 0.034,
    "depthM": 0.008,
    "stretch": 1,
-   "vertices": 445
+   "vertices": 184
   },
   {
    "object": "ARMOR_Breastplate",
    "centreM": [
-    -0.0698,
-    -0.1661,
-    1.2501
+    -0.0724,
+    -0.1724,
+    1.249
    ],
    "radiusM": 0.024,
    "depthM": 0.006,
    "stretch": 1,
-   "vertices": 108
+   "vertices": 217
   },
   {
    "object": "ARMOR_Breastplate",
    "centreM": [
-    0.0117,
-    -0.1458,
-    1.4067
+    0.0127,
+    -0.1591,
+    1.4109
    ],
    "radiusM": 0.018,
    "depthM": 0.005,
    "stretch": 3.2,
-   "vertices": 502
+   "vertices": 219
   },
   {
    "object": "ARMOR_Backplate",
    "centreM": [
-    -0.0319,
-    0.1063,
-    1.3606
+    -0.0335,
+    0.1117,
+    1.3612
    ],
    "radiusM": 0.03,
    "depthM": 0.007,
    "stretch": 1,
-   "vertices": 420
+   "vertices": 392
   },
   {
    "object": "ARMOR_Pauldron R",
    "centreM": [
-    -0.2398,
-    -0.0698,
-    1.5296
+    -0.2481,
+    -0.0781,
+    1.5462
    ],
    "radiusM": 0.022,
    "depthM": 0.005,
    "stretch": 2.2,
-   "vertices": 287
+   "vertices": 245
   },
   {
    "object": "ARMOR_Pauldron L",
    "centreM": [
-    0.2378,
-    -0.0572,
-    1.5363
+    0.2458,
+    -0.0634,
+    1.5541
    ],
    "radiusM": 0.028,
    "depthM": 0.007,
    "stretch": 1,
-   "vertices": 258
+   "vertices": 227
   },
   {
    "object": "ARMOR_Vambrace L",
@@ -136,18 +136,18 @@
  "subdivision": [
   {
    "object": "ARMOR_Breastplate",
-   "edgeM": 0.0243,
+   "edgeM": 0.0248,
    "cuts": 1
   },
   {
    "object": "ARMOR_Breastplate",
    "edgeM": 0.024,
-   "cuts": 1
+   "cuts": 2
   },
   {
    "object": "ARMOR_Breastplate",
-   "edgeM": 0.0184,
-   "cuts": 2
+   "edgeM": 0.0177,
+   "cuts": 1
   },
   {
    "object": "ARMOR_Backplate",
@@ -156,12 +156,12 @@
   },
   {
    "object": "ARMOR_Pauldron R",
-   "edgeM": 0.0187,
+   "edgeM": 0.0214,
    "cuts": 1
   },
   {
    "object": "ARMOR_Pauldron L",
-   "edgeM": 0.0191,
+   "edgeM": 0.0219,
    "cuts": 1
   },
   {

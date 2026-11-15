@@ -1,6 +1,6 @@
 {
   "status": "passed",
-  "glbSha256": "d8438e9bcc458cec5d307c04618d8c113d63193cf3577131bb188114fe153d93",
+  "glbSha256": "f6a17bbdda97875fdcd45ac0e305c7b7ed175cb70d60034a7593b5ca16314931",
   "runtimeSha256": "147e7e0b07fc734fcd2ba9018876a5503bb624bf9e684dd4320b77b51e0bf0ac",
   "auditSha256": "13b83ce4c765485b2700cbbac1873e13c679dae5e56f04fd43e702a064b9e346",
   "limits": {
@@ -27,79 +27,208 @@
       "bodyBuild": "lean",
       "layers": [
         {
-          "probes": 113,
-          "minTrackedGapM": -0.018709449910952906,
+          "probes": 119,
+          "minTrackedGapM": -0.030443904832549863,
           "worstTrackedPatch": {
             "layer": "padding/plate",
-            "region": "armR",
+            "region": "hipL",
             "innerMesh": "PADDING_padded_under_mail",
-            "innerTriangle": 15720,
+            "innerTriangle": 10577,
             "outerMesh": "ARMOR_Breastplate",
-            "outerTriangle": 31103,
+            "outerTriangle": 26742,
             "barycentric": [
-              0.7055569443689391,
-              0.12484573017986739,
-              0.1695973254511934
+              0.5760423442128004,
+              0.18700989483789165,
+              0.23694776094930792
             ],
             "paddingWorld": [
-              -0.3933387956259655,
-              1.168311993342728,
-              0.005713719076518924
+              0.08555407628821676,
+              0.9578918615441749,
+              0.11956547455730149
             ],
             "outerWallWorld": [
-              -0.40692288005585603,
-              1.1558849574997696,
-              -0.00008175889825193933
+              0.08147603765785252,
+              0.9928813582643145,
+              0.13591457976962762
             ],
             "paddingNormal": [
-              0.8563893785723373,
-              0.46060818312961815,
-              0.23331809596025394
+              0.0035486257513343213,
+              -0.4531464610911427,
+              -0.8914290168352446
             ],
-            "lateralDistanceM": 0.004743692509655704,
-            "bindDistanceM": 0.020216750559787822
+            "lateralDistanceM": 0.02411134960116819,
+            "bindDistanceM": 0.028827376217122214
           },
           "intersectionPatches": [],
           "inconclusivePatches": [
             {
               "layer": "padding/plate",
-              "region": "armR",
+              "region": "hipR",
               "innerMesh": "PADDING_padded_under_mail",
-              "innerTriangle": 15720,
+              "innerTriangle": 10274,
               "outerMesh": "ARMOR_Breastplate",
-              "outerTriangle": 31103,
+              "outerTriangle": 31395,
               "barycentric": [
-                0.7055569443689391,
-                0.12484573017986739,
-                0.1695973254511934
+                0.5229359763703467,
+                0.20739652745114762,
+                0.26966749617850566
               ],
               "paddingWorld": [
-                -0.3933387956259655,
-                1.168311993342728,
-                0.005713719076518924
+                -0.0943894943552053,
+                0.9487438147732324,
+                0.12278916365063959
               ],
               "outerWallWorld": [
-                -0.40692288005585603,
-                1.1558849574997696,
-                -0.00008175889825193933
+                -0.09271581147038213,
+                0.9622958813500746,
+                0.1443229543462176
               ],
               "paddingNormal": [
-                0.8563893785723373,
-                0.46060818312961815,
-                0.23331809596025394
+                -0.16175412620407748,
+                -0.9589916155921266,
+                -0.23274596426137678
               ],
-              "lateralDistanceM": 0.004743692509655704,
-              "bindDistanceM": 0.020216750559787822,
-              "trackedGapM": -0.018709449910952906,
+              "lateralDistanceM": 0.0177776261056464,
+              "bindDistanceM": 0.02502173316051244,
+              "trackedGapM": -0.018278946213360184,
               "intersections": [],
               "nearestPaddingCenterToSurface": {
-                "distanceM": 0.01584717651730965,
+                "distanceM": 0.023746739852256435,
                 "mesh": "ARMOR_Breastplate",
-                "triangle": 31485,
+                "triangle": 31395,
                 "pointWorld": [
-                  -0.40742987475612735,
-                  1.1623307019878484,
-                  0.0016151039145000444
+                  -0.09404754040142309,
+                  0.953277195579123,
+                  0.14609665557004223
+                ]
+              },
+              "reason": "Tracked gap does not establish layer ordering after sliding/folding; actual sampled triangle has no detected intersection."
+            },
+            {
+              "layer": "padding/plate",
+              "region": "hipL",
+              "innerMesh": "PADDING_padded",
+              "innerTriangle": 2980,
+              "outerMesh": "ARMOR_Breastplate",
+              "outerTriangle": 26931,
+              "barycentric": [
+                0.6439305515189865,
+                0.2206759081730285,
+                0.13539354030798498
+              ],
+              "paddingWorld": [
+                0.05748730913076956,
+                0.8995886751492694,
+                0.12112781114714827
+              ],
+              "outerWallWorld": [
+                0.054845988633982386,
+                0.9282094727525448,
+                0.15869586421944867
+              ],
+              "paddingNormal": [
+                -0.3669395223592169,
+                0.33181153992736745,
+                -0.8690549400940188
+              ],
+              "lateralDistanceM": 0.04177809513187439,
+              "bindDistanceM": 0.03846401002914689,
+              "trackedGapM": -0.022182786304015933,
+              "intersections": [],
+              "nearestPaddingCenterToSurface": {
+                "distanceM": 0.04574673534238241,
+                "mesh": "ARMOR_Breastplate",
+                "triangle": 26931,
+                "pointWorld": [
+                  0.055788828975147406,
+                  0.9171501748015537,
+                  0.16333530680384126
+                ]
+              },
+              "reason": "Tracked gap does not establish layer ordering after sliding/folding; actual sampled triangle has no detected intersection."
+            },
+            {
+              "layer": "padding/plate",
+              "region": "hipL",
+              "innerMesh": "PADDING_padded_under_mail",
+              "innerTriangle": 10577,
+              "outerMesh": "ARMOR_Breastplate",
+              "outerTriangle": 26742,
+              "barycentric": [
+                0.5760423442128004,
+                0.18700989483789165,
+                0.23694776094930792
+              ],
+              "paddingWorld": [
+                0.08555407628821676,
+                0.9578918615441749,
+                0.11956547455730149
+              ],
+              "outerWallWorld": [
+                0.08147603765785252,
+                0.9928813582643145,
+                0.13591457976962762
+              ],
+              "paddingNormal": [
+                0.0035486257513343213,
+                -0.4531464610911427,
+                -0.8914290168352446
+              ],
+              "lateralDistanceM": 0.02411134960116819,
+              "bindDistanceM": 0.028827376217122214,
+              "trackedGapM": -0.030443904832549863,
+              "intersections": [],
+              "nearestPaddingCenterToSurface": {
+                "distanceM": 0.02890648051582457,
+                "mesh": "ARMOR_Breastplate",
+                "triangle": 26743,
+                "pointWorld": [
+                  0.08447488405705195,
+                  0.9692402942709074,
+                  0.14612922870815084
+                ]
+              },
+              "reason": "Tracked gap does not establish layer ordering after sliding/folding; actual sampled triangle has no detected intersection."
+            },
+            {
+              "layer": "padding/plate",
+              "region": "armL",
+              "innerMesh": "PADDING_padded_under_mail",
+              "innerTriangle": 9236,
+              "outerMesh": "ARMOR_Breastplate",
+              "outerTriangle": 35846,
+              "barycentric": [
+                0.3442155315662978,
+                0.0350202616270413,
+                0.6207642068066609
+              ],
+              "paddingWorld": [
+                0.12598437119954742,
+                1.37283686129346,
+                0.008564146789397412
+              ],
+              "outerWallWorld": [
+                0.13386725774872632,
+                1.3745034814904455,
+                0.013666060928945756
+              ],
+              "paddingNormal": [
+                -0.7743115456405918,
+                -0.0588909562938979,
+                0.6300583191693195
+              ],
+              "lateralDistanceM": 0.009056608685555183,
+              "bindDistanceM": 0.009721287554411522,
+              "trackedGapM": -0.002987455477873332,
+              "intersections": [],
+              "nearestPaddingCenterToSurface": {
+                "distanceM": 0.005613588759976993,
+                "mesh": "ARMOR_Breastplate",
+                "triangle": 36089,
+                "pointWorld": [
+                  0.13103838163148326,
+                  1.3741072996597785,
+                  0.010651092806286627
                 ]
               },
               "reason": "Tracked gap does not establish layer ordering after sliding/folding; actual sampled triangle has no detected intersection."
@@ -163,13 +292,13 @@
       "bodyBuild": "lean",
       "layers": [
         {
-          "probes": 57,
-          "minTrackedGapM": 0.009666525833154478,
+          "probes": 56,
+          "minTrackedGapM": 0.010015268356546814,
           "worstTrackedPatch": {
             "layer": "padding/mail",
             "region": "hipL",
             "innerMesh": "PADDING_padded",
-            "innerTriangle": 11325,
+            "innerTriangle": 11279,
             "outerMesh": "CLOTH_Underarm_and_leggings001",
             "outerTriangle": 39686,
             "barycentric": [
@@ -178,21 +307,21 @@
               0.38288134422612485
             ],
             "paddingWorld": [
-              0.0785788154195812,
-              0.882607814676889,
-              0.23375401923453024
+              0.07756061833479747,
+              0.8940027822589867,
+              0.23608317795550843
             ],
             "outerWallWorld": [
-              0.0742903758198166,
-              0.8840241187080442,
-              0.2425191977137529
+              0.07315326088719226,
+              0.8965608461560145,
+              0.24473618730068644
             ],
             "paddingNormal": [
-              -0.5347369320312882,
-              0.28676884953597387,
-              0.7948710841750248
+              -0.4994691154554177,
+              0.2691267561704765,
+              0.8234691201370817
             ],
-            "lateralDistanceM": 0.001945061284145353,
+            "lateralDistanceM": 0.0007331173482659129,
             "bindDistanceM": 0.010207450269246344
           },
           "intersectionPatches": [],
@@ -255,13 +384,13 @@
       "bodyBuild": "lean",
       "layers": [
         {
-          "probes": 57,
-          "minTrackedGapM": 0.009632317198307956,
+          "probes": 56,
+          "minTrackedGapM": 0.010005528083804715,
           "worstTrackedPatch": {
             "layer": "padding/mail",
             "region": "hipL",
             "innerMesh": "PADDING_padded",
-            "innerTriangle": 11325,
+            "innerTriangle": 11279,
             "outerMesh": "CLOTH_Underarm_and_leggings001",
             "outerTriangle": 39686,
             "barycentric": [
@@ -270,21 +399,21 @@
               0.38288134422612485
             ],
             "paddingWorld": [
-              0.061722745280167364,
-              0.8643093183148325,
-              0.26376000780238607
+              0.06096639347579433,
+              0.8764287604618156,
+              0.2662332103943802
             ],
             "outerWallWorld": [
-              0.057394868811151314,
-              0.8657569157548681,
-              0.27247890276511905
+              0.05651630013484199,
+              0.8790799567495444,
+              0.2748256931455443
             ],
             "paddingNormal": [
-              -0.5418695386713918,
-              0.29584713600992807,
-              0.7866713895743104
+              -0.5051923780533485,
+              0.277088376045681,
+              0.8173143171492655
             ],
-            "lateralDistanceM": 0.002015849161473127,
+            "lateralDistanceM": 0.0007431958641589146,
             "bindDistanceM": 0.010207450269246344
           },
           "intersectionPatches": [],
@@ -397,13 +526,13 @@
       "bodyBuild": "lean",
       "layers": [
         {
-          "probes": 57,
-          "minTrackedGapM": 0.009632317198307956,
+          "probes": 56,
+          "minTrackedGapM": 0.010005528083804715,
           "worstTrackedPatch": {
             "layer": "padding/mail",
             "region": "hipL",
             "innerMesh": "PADDING_padded",
-            "innerTriangle": 11325,
+            "innerTriangle": 11279,
             "outerMesh": "CLOTH_Underarm_and_leggings001",
             "outerTriangle": 39686,
             "barycentric": [
@@ -412,21 +541,21 @@
               0.38288134422612485
             ],
             "paddingWorld": [
-              0.061722745280167364,
-              0.8643093183148325,
-              0.26376000780238607
+              0.06096639347579433,
+              0.8764287604618156,
+              0.2662332103943802
             ],
             "outerWallWorld": [
-              0.057394868811151314,
-              0.8657569157548681,
-              0.27247890276511905
+              0.05651630013484199,
+              0.8790799567495444,
+              0.2748256931455443
             ],
             "paddingNormal": [
-              -0.5418695386713918,
-              0.29584713600992807,
-              0.7866713895743104
+              -0.5051923780533485,
+              0.277088376045681,
+              0.8173143171492655
             ],
-            "lateralDistanceM": 0.002015849161473127,
+            "lateralDistanceM": 0.0007431958641589146,
             "bindDistanceM": 0.010207450269246344
           },
           "intersectionPatches": [],
@@ -489,79 +618,165 @@
       "bodyBuild": "lean",
       "layers": [
         {
-          "probes": 113,
-          "minTrackedGapM": -0.01932225863687242,
+          "probes": 119,
+          "minTrackedGapM": -0.03062791169338265,
           "worstTrackedPatch": {
             "layer": "padding/plate",
-            "region": "armR",
+            "region": "hipL",
             "innerMesh": "PADDING_padded_under_mail",
-            "innerTriangle": 15720,
+            "innerTriangle": 10577,
             "outerMesh": "ARMOR_Breastplate",
-            "outerTriangle": 31103,
+            "outerTriangle": 26742,
             "barycentric": [
-              0.7055569443689391,
-              0.12484573017986739,
-              0.1695973254511934
+              0.5760423442128004,
+              0.18700989483789165,
+              0.23694776094930792
             ],
             "paddingWorld": [
-              -0.2530695822823291,
-              1.205099855257139,
-              0.4556959594560728
+              0.08014912417812814,
+              0.9301805461419295,
+              0.25007494362570354
             ],
             "outerWallWorld": [
-              -0.26833696762149284,
-              1.1925512666310099,
-              0.4544257422083769
+              0.07616039687176146,
+              0.9620602384366881,
+              0.26807164375110526
             ],
             "paddingNormal": [
-              0.860526105780093,
-              0.5017390640278231,
-              -0.08804960476590402
+              0.0073096369731334935,
+              -0.45800846207972645,
+              -0.8889177790272197
             ],
-            "lateralDistanceM": 0.004338652397747816,
-            "bindDistanceM": 0.020216750559787822
+            "lateralDistanceM": 0.020445952338764666,
+            "bindDistanceM": 0.028827376217122214
           },
           "intersectionPatches": [],
           "inconclusivePatches": [
             {
               "layer": "padding/plate",
-              "region": "armR",
-              "innerMesh": "PADDING_padded_under_mail",
-              "innerTriangle": 15720,
+              "region": "hipL",
+              "innerMesh": "PADDING_padded",
+              "innerTriangle": 2980,
               "outerMesh": "ARMOR_Breastplate",
-              "outerTriangle": 31103,
+              "outerTriangle": 26931,
               "barycentric": [
-                0.7055569443689391,
-                0.12484573017986739,
-                0.1695973254511934
+                0.6439305515189865,
+                0.2206759081730285,
+                0.13539354030798498
               ],
               "paddingWorld": [
-                -0.2530695822823291,
-                1.205099855257139,
-                0.4556959594560728
+                0.052831193723890155,
+                0.8703985825503816,
+                0.2510105487899831
               ],
               "outerWallWorld": [
-                -0.26833696762149284,
-                1.1925512666310099,
-                0.4544257422083769
+                0.05070204274925311,
+                0.896340657558919,
+                0.2891288953030118
               ],
               "paddingNormal": [
-                0.860526105780093,
-                0.5017390640278231,
-                -0.08804960476590402
+                -0.6158322485761715,
+                0.467666316271791,
+                -0.6340653422466722
               ],
-              "lateralDistanceM": 0.004338652397747816,
-              "bindDistanceM": 0.020216750559787822,
-              "trackedGapM": -0.01932225863687242,
+              "lateralDistanceM": 0.04489414124380229,
+              "bindDistanceM": 0.03846401002914689,
+              "trackedGapM": -0.01072608793970273,
               "intersections": [],
               "nearestPaddingCenterToSurface": {
-                "distanceM": 0.016456044236856517,
+                "distanceM": 0.04490025024947125,
                 "mesh": "ARMOR_Breastplate",
-                "triangle": 31485,
+                "triangle": 26931,
                 "pointWorld": [
-                  -0.26824002162712957,
-                  1.1987468595847524,
-                  0.4562424098177209
+                  0.05128231519853419,
+                  0.8863620129719472,
+                  0.29294862620126494
+                ]
+              },
+              "reason": "Tracked gap does not establish layer ordering after sliding/folding; actual sampled triangle has no detected intersection."
+            },
+            {
+              "layer": "padding/plate",
+              "region": "hipL",
+              "innerMesh": "PADDING_padded_under_mail",
+              "innerTriangle": 10577,
+              "outerMesh": "ARMOR_Breastplate",
+              "outerTriangle": 26742,
+              "barycentric": [
+                0.5760423442128004,
+                0.18700989483789165,
+                0.23694776094930792
+              ],
+              "paddingWorld": [
+                0.08014912417812814,
+                0.9301805461419295,
+                0.25007494362570354
+              ],
+              "outerWallWorld": [
+                0.07616039687176146,
+                0.9620602384366881,
+                0.26807164375110526
+              ],
+              "paddingNormal": [
+                0.0073096369731334935,
+                -0.45800846207972645,
+                -0.8889177790272197
+              ],
+              "lateralDistanceM": 0.020445952338764666,
+              "bindDistanceM": 0.028827376217122214,
+              "trackedGapM": -0.03062791169338265,
+              "intersections": [],
+              "nearestPaddingCenterToSurface": {
+                "distanceM": 0.028495619894643567,
+                "mesh": "ARMOR_Breastplate",
+                "triangle": 26743,
+                "pointWorld": [
+                  0.07915563297908916,
+                  0.9405626100357312,
+                  0.2765933537915196
+                ]
+              },
+              "reason": "Tracked gap does not establish layer ordering after sliding/folding; actual sampled triangle has no detected intersection."
+            },
+            {
+              "layer": "padding/plate",
+              "region": "armL",
+              "innerMesh": "PADDING_padded_under_mail",
+              "innerTriangle": 9236,
+              "outerMesh": "ARMOR_Breastplate",
+              "outerTriangle": 35846,
+              "barycentric": [
+                0.3442155315662978,
+                0.0350202616270413,
+                0.6207642068066609
+              ],
+              "paddingWorld": [
+                0.11542622924385604,
+                1.3986275303935358,
+                0.21128191112512684
+              ],
+              "outerWallWorld": [
+                0.12254301075771425,
+                1.393533968678656,
+                0.2150705782217013
+              ],
+              "paddingNormal": [
+                -0.3917016873141955,
+                0.5740610781439527,
+                0.7190435777582709
+              ],
+              "lateralDistanceM": 0.009056603466633093,
+              "bindDistanceM": 0.009721287554411522,
+              "trackedGapM": -0.0029874541128054118,
+              "intersections": [],
+              "nearestPaddingCenterToSurface": {
+                "distanceM": 0.005613585546018424,
+                "mesh": "ARMOR_Breastplate",
+                "triangle": 36089,
+                "pointWorld": [
+                  0.11990595911384803,
+                  1.395478639483517,
+                  0.21251837746561875
                 ]
               },
               "reason": "Tracked gap does not establish layer ordering after sliding/folding; actual sampled triangle has no detected intersection."
@@ -625,79 +840,208 @@
       "bodyBuild": "regular",
       "layers": [
         {
-          "probes": 113,
-          "minTrackedGapM": -0.019683054175824895,
+          "probes": 119,
+          "minTrackedGapM": -0.030821980446172355,
           "worstTrackedPatch": {
             "layer": "padding/plate",
-            "region": "armR",
+            "region": "hipL",
             "innerMesh": "PADDING_padded_under_mail",
-            "innerTriangle": 15720,
+            "innerTriangle": 10577,
             "outerMesh": "ARMOR_Breastplate",
-            "outerTriangle": 31103,
+            "outerTriangle": 26742,
             "barycentric": [
-              0.7055569443689391,
-              0.12484573017986739,
-              0.1695973254511934
+              0.5760423442128004,
+              0.18700989483789165,
+              0.23694776094930792
             ],
             "paddingWorld": [
-              -0.3951863870172898,
-              1.1672796038879558,
-              0.005218434534189771
+              0.08573871353482317,
+              0.9579546814493514,
+              0.12005283545352059
             ],
             "outerWallWorld": [
-              -0.4094585421315853,
-              1.154168921619076,
-              -0.0008154332696901057
+              0.0816197092589574,
+              0.9931287155082937,
+              0.13661127617695495
             ],
             "paddingNormal": [
-              0.8536073080127485,
-              0.45705888887220997,
-              0.2499034529776039
+              0.008545939299784245,
+              -0.4564280464620567,
+              -0.8897192845635723
             ],
-            "lateralDistanceM": 0.004956746932038161,
-            "bindDistanceM": 0.020216750559787822
+            "lateralDistanceM": 0.02404924840346361,
+            "bindDistanceM": 0.028827376217122214
           },
           "intersectionPatches": [],
           "inconclusivePatches": [
             {
               "layer": "padding/plate",
-              "region": "armR",
+              "region": "hipR",
               "innerMesh": "PADDING_padded_under_mail",
-              "innerTriangle": 15720,
+              "innerTriangle": 10274,
               "outerMesh": "ARMOR_Breastplate",
-              "outerTriangle": 31103,
+              "outerTriangle": 31395,
               "barycentric": [
-                0.7055569443689391,
-                0.12484573017986739,
-                0.1695973254511934
+                0.5229359763703467,
+                0.20739652745114762,
+                0.26966749617850566
               ],
               "paddingWorld": [
-                -0.3951863870172898,
-                1.1672796038879558,
-                0.005218434534189771
+                -0.09460852404663102,
+                0.948769901902569,
+                0.12330616111391285
               ],
               "outerWallWorld": [
-                -0.4094585421315853,
-                1.154168921619076,
-                -0.0008154332696901057
+                -0.09291401434264596,
+                0.9623925416406574,
+                0.14504383275484722
               ],
               "paddingNormal": [
-                0.8536073080127485,
-                0.45705888887220997,
-                0.2499034529776039
+                -0.16096938109037173,
+                -0.9583693702925657,
+                -0.23583258561194123
               ],
-              "lateralDistanceM": 0.004956746932038161,
-              "bindDistanceM": 0.020216750559787822,
-              "trackedGapM": -0.019683054175824895,
+              "lateralDistanceM": 0.01789963011972518,
+              "bindDistanceM": 0.02502173316051244,
+              "trackedGapM": -0.0184547361540812,
               "intersections": [],
               "nearestPaddingCenterToSurface": {
-                "distanceM": 0.016763317694298202,
+                "distanceM": 0.02385889380235058,
                 "mesh": "ARMOR_Breastplate",
-                "triangle": 31485,
+                "triangle": 31395,
                 "pointWorld": [
-                  -0.41000639697909436,
-                  1.1610094584543038,
-                  0.0005214779564856437
+                  -0.09427794678166353,
+                  0.9530715306045718,
+                  0.1467717427741623
+                ]
+              },
+              "reason": "Tracked gap does not establish layer ordering after sliding/folding; actual sampled triangle has no detected intersection."
+            },
+            {
+              "layer": "padding/plate",
+              "region": "hipL",
+              "innerMesh": "PADDING_padded",
+              "innerTriangle": 2980,
+              "outerMesh": "ARMOR_Breastplate",
+              "outerTriangle": 26931,
+              "barycentric": [
+                0.6439305515189865,
+                0.2206759081730285,
+                0.13539354030798498
+              ],
+              "paddingWorld": [
+                0.05750101096625364,
+                0.8996005811740512,
+                0.12117785852063412
+              ],
+              "outerWallWorld": [
+                0.05485370425327364,
+                0.9282470065350839,
+                0.15880230780179858
+              ],
+              "paddingNormal": [
+                -0.3602813026343207,
+                0.3295098858970055,
+                -0.8727087819360245
+              ],
+              "lateralDistanceM": 0.0417082224624961,
+              "bindDistanceM": 0.03846401002914689,
+              "trackedGapM": -0.022442131840082792,
+              "intersections": [],
+              "nearestPaddingCenterToSurface": {
+                "distanceM": 0.045781057128757414,
+                "mesh": "ARMOR_Breastplate",
+                "triangle": 26931,
+                "pointWorld": [
+                  0.05580312919513958,
+                  0.9170779378642046,
+                  0.16345745634799075
+                ]
+              },
+              "reason": "Tracked gap does not establish layer ordering after sliding/folding; actual sampled triangle has no detected intersection."
+            },
+            {
+              "layer": "padding/plate",
+              "region": "hipL",
+              "innerMesh": "PADDING_padded_under_mail",
+              "innerTriangle": 10577,
+              "outerMesh": "ARMOR_Breastplate",
+              "outerTriangle": 26742,
+              "barycentric": [
+                0.5760423442128004,
+                0.18700989483789165,
+                0.23694776094930792
+              ],
+              "paddingWorld": [
+                0.08573871353482317,
+                0.9579546814493514,
+                0.12005283545352059
+              ],
+              "outerWallWorld": [
+                0.0816197092589574,
+                0.9931287155082937,
+                0.13661127617695495
+              ],
+              "paddingNormal": [
+                0.008545939299784245,
+                -0.4564280464620567,
+                -0.8897192845635723
+              ],
+              "lateralDistanceM": 0.02404924840346361,
+              "bindDistanceM": 0.028827376217122214,
+              "trackedGapM": -0.030821980446172355,
+              "intersections": [],
+              "nearestPaddingCenterToSurface": {
+                "distanceM": 0.028872794870055125,
+                "mesh": "ARMOR_Breastplate",
+                "triangle": 26743,
+                "pointWorld": [
+                  0.08466790837728587,
+                  0.9689771472077627,
+                  0.14671736073576633
+                ]
+              },
+              "reason": "Tracked gap does not establish layer ordering after sliding/folding; actual sampled triangle has no detected intersection."
+            },
+            {
+              "layer": "padding/plate",
+              "region": "armL",
+              "innerMesh": "PADDING_padded_under_mail",
+              "innerTriangle": 9236,
+              "outerMesh": "ARMOR_Breastplate",
+              "outerTriangle": 35846,
+              "barycentric": [
+                0.3442155315662978,
+                0.0350202616270413,
+                0.6207642068066609
+              ],
+              "paddingWorld": [
+                0.1251073160448418,
+                1.369416864986053,
+                0.02101095229389773
+              ],
+              "outerWallWorld": [
+                0.1337144749111153,
+                1.3716160182829489,
+                0.024958608314272046
+              ],
+              "paddingNormal": [
+                -0.7250631729337892,
+                0.02633672288332362,
+                0.6881785903985629
+              ],
+              "lateralDistanceM": 0.009082369618320471,
+              "bindDistanceM": 0.009721287554411522,
+              "trackedGapM": -0.0034661230710875666,
+              "intersections": [],
+              "nearestPaddingCenterToSurface": {
+                "distanceM": 0.005810099093026929,
+                "mesh": "ARMOR_Breastplate",
+                "triangle": 36089,
+                "pointWorld": [
+                  0.1302526543408606,
+                  1.3707280042890664,
+                  0.023369693275525003
                 ]
               },
               "reason": "Tracked gap does not establish layer ordering after sliding/folding; actual sampled triangle has no detected intersection."
@@ -706,7 +1050,7 @@
           "invalidSourcePatches": [],
           "outerValidation": {
             "nonfiniteTriangles": 0,
-            "unassessedDegenerateTriangles": 106
+            "unassessedDegenerateTriangles": 100
           }
         }
       ],
@@ -761,13 +1105,13 @@
       "bodyBuild": "regular",
       "layers": [
         {
-          "probes": 57,
-          "minTrackedGapM": 0.009674229453355233,
+          "probes": 56,
+          "minTrackedGapM": 0.01002057670376337,
           "worstTrackedPatch": {
             "layer": "padding/mail",
             "region": "hipL",
             "innerMesh": "PADDING_padded",
-            "innerTriangle": 11325,
+            "innerTriangle": 11279,
             "outerMesh": "CLOTH_Underarm_and_leggings001",
             "outerTriangle": 39686,
             "barycentric": [
@@ -776,21 +1120,21 @@
               0.38288134422612485
             ],
             "paddingWorld": [
-              0.07859245689847497,
-              0.8826165163070103,
-              0.2337984767182295
+              0.07757384174443677,
+              0.8940154727971203,
+              0.23612719011548472
             ],
             "outerWallWorld": [
-              0.07430406798966736,
-              0.8840336712075314,
-              0.24256894383695962
+              0.07316646982525545,
+              0.8965750028752593,
+              0.24478540564424925
             ],
             "paddingNormal": [
-              -0.5343784635385946,
-              0.28521028815320854,
-              0.7956725138131231
+              -0.4991672288028082,
+              0.26772967713860374,
+              0.8241073338276901
             ],
-            "lateralDistanceM": 0.0019310581062762346,
+            "lateralDistanceM": 0.0007272276957183865,
             "bindDistanceM": 0.010207450269246344
           },
           "intersectionPatches": [],
@@ -853,13 +1197,13 @@
       "bodyBuild": "regular",
       "layers": [
         {
-          "probes": 57,
-          "minTrackedGapM": 0.009640161299642104,
+          "probes": 56,
+          "minTrackedGapM": 0.010010844859572836,
           "worstTrackedPatch": {
             "layer": "padding/mail",
             "region": "hipL",
             "innerMesh": "PADDING_padded",
-            "innerTriangle": 11325,
+            "innerTriangle": 11279,
             "outerMesh": "CLOTH_Underarm_and_leggings001",
             "outerTriangle": 39686,
             "barycentric": [
@@ -868,21 +1212,21 @@
               0.38288134422612485
             ],
             "paddingWorld": [
-              0.06173628941975336,
-              0.8643189775548319,
-              0.26380419687162765
+              0.06097947492676068,
+              0.8764428474869688,
+              0.26627683111569483
             ],
             "outerWallWorld": [
-              0.05740845458089244,
-              0.8657674952776113,
-              0.2725283589430268
+              0.05652935138539602,
+              0.8790956356923743,
+              0.274874481756871
             ],
             "paddingNormal": [
-              -0.5414817429723223,
-              0.29430997639891654,
-              0.7875145457829493
+              -0.5048556835236834,
+              0.27572026946620537,
+              0.8179847625838256
             ],
-            "lateralDistanceM": 0.002001662296838909,
+            "lateralDistanceM": 0.0007372018322194496,
             "bindDistanceM": 0.010207450269246344
           },
           "intersectionPatches": [],
@@ -995,13 +1339,13 @@
       "bodyBuild": "regular",
       "layers": [
         {
-          "probes": 57,
-          "minTrackedGapM": 0.009640161299642104,
+          "probes": 56,
+          "minTrackedGapM": 0.010010844859572836,
           "worstTrackedPatch": {
             "layer": "padding/mail",
             "region": "hipL",
             "innerMesh": "PADDING_padded",
-            "innerTriangle": 11325,
+            "innerTriangle": 11279,
             "outerMesh": "CLOTH_Underarm_and_leggings001",
             "outerTriangle": 39686,
             "barycentric": [
@@ -1010,21 +1354,21 @@
               0.38288134422612485
             ],
             "paddingWorld": [
-              0.06173628941975336,
-              0.8643189775548319,
-              0.26380419687162765
+              0.06097947492676068,
+              0.8764428474869688,
+              0.26627683111569483
             ],
             "outerWallWorld": [
-              0.05740845458089244,
-              0.8657674952776113,
-              0.2725283589430268
+              0.05652935138539602,
+              0.8790956356923743,
+              0.274874481756871
             ],
             "paddingNormal": [
-              -0.5414817429723223,
-              0.29430997639891654,
-              0.7875145457829493
+              -0.5048556835236834,
+              0.27572026946620537,
+              0.8179847625838256
             ],
-            "lateralDistanceM": 0.002001662296838909,
+            "lateralDistanceM": 0.0007372018322194496,
             "bindDistanceM": 0.010207450269246344
           },
           "intersectionPatches": [],
@@ -1087,79 +1431,165 @@
       "bodyBuild": "regular",
       "layers": [
         {
-          "probes": 113,
-          "minTrackedGapM": -0.020350837780203707,
+          "probes": 119,
+          "minTrackedGapM": -0.031002945639668666,
           "worstTrackedPatch": {
             "layer": "padding/plate",
-            "region": "armR",
+            "region": "hipL",
             "innerMesh": "PADDING_padded_under_mail",
-            "innerTriangle": 15720,
+            "innerTriangle": 10577,
             "outerMesh": "ARMOR_Breastplate",
-            "outerTriangle": 31103,
+            "outerTriangle": 26742,
             "barycentric": [
-              0.7055569443689391,
-              0.12484573017986739,
-              0.1695973254511934
+              0.5760423442128004,
+              0.18700989483789165,
+              0.23694776094930792
             ],
             "paddingWorld": [
-              -0.2549278617922433,
-              1.2040502859252404,
-              0.45579324675658245
+              0.08033440139971493,
+              0.9302391007900026,
+              0.2505635311840412
             ],
             "outerWallWorld": [
-              -0.27095915541851984,
-              1.1908107319465908,
-              0.4545112233844382
+              0.07630666226107971,
+              0.9622888078587839,
+              0.2687741930251364
             ],
             "paddingNormal": [
-              0.8634674393725928,
-              0.49882658336804,
-              -0.07480655632165967
+              0.012527407164282682,
+              -0.4618433258819542,
+              -0.8868730497698276
             ],
-            "lateralDistanceM": 0.004446925955761933,
-            "bindDistanceM": 0.020216750559787822
+            "lateralDistanceM": 0.020343352037411496,
+            "bindDistanceM": 0.028827376217122214
           },
           "intersectionPatches": [],
           "inconclusivePatches": [
             {
               "layer": "padding/plate",
-              "region": "armR",
-              "innerMesh": "PADDING_padded_under_mail",
-              "innerTriangle": 15720,
+              "region": "hipL",
+              "innerMesh": "PADDING_padded",
+              "innerTriangle": 2980,
               "outerMesh": "ARMOR_Breastplate",
-              "outerTriangle": 31103,
+              "outerTriangle": 26931,
               "barycentric": [
-                0.7055569443689391,
-                0.12484573017986739,
-                0.1695973254511934
+                0.6439305515189865,
+                0.2206759081730285,
+                0.13539354030798498
               ],
               "paddingWorld": [
-                -0.2549278617922433,
-                1.2040502859252404,
-                0.45579324675658245
+                0.05284501905847528,
+                0.8704096206302869,
+                0.25106085921609556
               ],
               "outerWallWorld": [
-                -0.27095915541851984,
-                1.1908107319465908,
-                0.4545112233844382
+                0.05071016065276184,
+                0.8963751055515928,
+                0.28923634755984196
               ],
               "paddingNormal": [
-                0.8634674393725928,
-                0.49882658336804,
-                -0.07480655632165967
+                -0.6095974489197693,
+                0.46594067333730593,
+                -0.6413191398987613
               ],
-              "lateralDistanceM": 0.004446925955761933,
-              "bindDistanceM": 0.020216750559787822,
-              "trackedGapM": -0.020350837780203707,
+              "lateralDistanceM": 0.044869827858248106,
+              "bindDistanceM": 0.03846401002914689,
+              "trackedGapM": -0.011082891584135855,
               "intersections": [],
               "nearestPaddingCenterToSurface": {
-                "distanceM": 0.017410236709505953,
+                "distanceM": 0.04493738807683914,
                 "mesh": "ARMOR_Breastplate",
-                "triangle": 31485,
+                "triangle": 26931,
                 "pointWorld": [
-                  -0.2710148524553273,
-                  1.1973954452273132,
-                  0.45598861556701176
+                  0.05129847661625809,
+                  0.8862896246575505,
+                  0.29307041200753764
+                ]
+              },
+              "reason": "Tracked gap does not establish layer ordering after sliding/folding; actual sampled triangle has no detected intersection."
+            },
+            {
+              "layer": "padding/plate",
+              "region": "hipL",
+              "innerMesh": "PADDING_padded_under_mail",
+              "innerTriangle": 10577,
+              "outerMesh": "ARMOR_Breastplate",
+              "outerTriangle": 26742,
+              "barycentric": [
+                0.5760423442128004,
+                0.18700989483789165,
+                0.23694776094930792
+              ],
+              "paddingWorld": [
+                0.08033440139971493,
+                0.9302391007900026,
+                0.2505635311840412
+              ],
+              "outerWallWorld": [
+                0.07630666226107971,
+                0.9622888078587839,
+                0.2687741930251364
+              ],
+              "paddingNormal": [
+                0.012527407164282682,
+                -0.4618433258819542,
+                -0.8868730497698276
+              ],
+              "lateralDistanceM": 0.020343352037411496,
+              "bindDistanceM": 0.028827376217122214,
+              "trackedGapM": -0.031002945639668666,
+              "intersections": [],
+              "nearestPaddingCenterToSurface": {
+                "distanceM": 0.028488536925458247,
+                "mesh": "ARMOR_Breastplate",
+                "triangle": 26743,
+                "pointWorld": [
+                  0.07935395430749505,
+                  0.9403063988789253,
+                  0.2771959356725835
+                ]
+              },
+              "reason": "Tracked gap does not establish layer ordering after sliding/folding; actual sampled triangle has no detected intersection."
+            },
+            {
+              "layer": "padding/plate",
+              "region": "armL",
+              "innerMesh": "PADDING_padded_under_mail",
+              "innerTriangle": 9236,
+              "outerMesh": "ARMOR_Breastplate",
+              "outerTriangle": 35846,
+              "barycentric": [
+                0.3442155315662978,
+                0.0350202616270413,
+                0.6207642068066609
+              ],
+              "paddingWorld": [
+                0.11477017905506344,
+                1.3972785415002067,
+                0.22413253171811767
+              ],
+              "outerWallWorld": [
+                0.12250555418925106,
+                1.391940970457063,
+                0.22661801951586874
+              ],
+              "paddingNormal": [
+                -0.2846796145206138,
+                0.5890054767746743,
+                0.7563266922473602
+              ],
+              "lateralDistanceM": 0.009082364503569869,
+              "bindDistanceM": 0.009721287554411522,
+              "trackedGapM": -0.003466121423764115,
+              "intersections": [],
+              "nearestPaddingCenterToSurface": {
+                "distanceM": 0.005810095877808124,
+                "mesh": "ARMOR_Breastplate",
+                "triangle": 36089,
+                "pointWorld": [
+                  0.11939143983947925,
+                  1.3940855504872824,
+                  0.22561778296391027
                 ]
               },
               "reason": "Tracked gap does not establish layer ordering after sliding/folding; actual sampled triangle has no detected intersection."
@@ -1168,7 +1598,7 @@
           "invalidSourcePatches": [],
           "outerValidation": {
             "nonfiniteTriangles": 0,
-            "unassessedDegenerateTriangles": 106
+            "unassessedDegenerateTriangles": 100
           }
         }
       ],
@@ -1223,79 +1653,208 @@
       "bodyBuild": "strong",
       "layers": [
         {
-          "probes": 113,
-          "minTrackedGapM": -0.02102416721768993,
+          "probes": 119,
+          "minTrackedGapM": -0.031343398840379885,
           "worstTrackedPatch": {
             "layer": "padding/plate",
-            "region": "armR",
+            "region": "hipL",
             "innerMesh": "PADDING_padded_under_mail",
-            "innerTriangle": 15720,
+            "innerTriangle": 10577,
             "outerMesh": "ARMOR_Breastplate",
-            "outerTriangle": 31103,
+            "outerTriangle": 26742,
             "barycentric": [
-              0.7055569443689391,
-              0.12484573017986739,
-              0.1695973254511934
+              0.5760423442128004,
+              0.18700989483789165,
+              0.23694776094930792
             ],
             "paddingWorld": [
-              -0.39775249670241336,
-              1.1658457458566729,
-              0.004530535356783089
+              0.0859951548622216,
+              0.958041931152034,
+              0.12072972422289682
             ],
             "outerWallWorld": [
-              -0.41298030215283676,
-              1.1517855459710036,
-              -0.0018344246357346185
+              0.08181925750603465,
+              0.9934722685335051,
+              0.1375789135443134
             ],
             "paddingNormal": [
-              0.8492870678790582,
-              0.4519891234447883,
-              0.2727953603362859
+              0.01535576071040233,
+              -0.4608558754751427,
+              -0.8873421339331548
             ],
-            "lateralDistanceM": 0.005298338246080857,
-            "bindDistanceM": 0.020216750559787822
+            "lateralDistanceM": 0.02396316873070199,
+            "bindDistanceM": 0.028827376217122214
           },
           "intersectionPatches": [],
           "inconclusivePatches": [
             {
               "layer": "padding/plate",
-              "region": "armR",
+              "region": "hipR",
               "innerMesh": "PADDING_padded_under_mail",
-              "innerTriangle": 15720,
+              "innerTriangle": 10274,
               "outerMesh": "ARMOR_Breastplate",
-              "outerTriangle": 31103,
+              "outerTriangle": 31395,
               "barycentric": [
-                0.7055569443689391,
-                0.12484573017986739,
-                0.1695973254511934
+                0.5229359763703467,
+                0.20739652745114762,
+                0.26966749617850566
               ],
               "paddingWorld": [
-                -0.39775249670241336,
-                1.1658457458566729,
-                0.004530535356783089
+                -0.09491273196025851,
+                0.9488061339279403,
+                0.12402420997409389
               ],
               "outerWallWorld": [
-                -0.41298030215283676,
-                1.1517855459710036,
-                -0.0018344246357346185
+                -0.09318929843835326,
+                0.9625267916266322,
+                0.14604504905919427
               ],
               "paddingNormal": [
-                0.8492870678790582,
-                0.4519891234447883,
-                0.2727953603362859
+                -0.16001957982051646,
+                -0.95757975436049,
+                -0.23965547795318384
               ],
-              "lateralDistanceM": 0.005298338246080857,
-              "bindDistanceM": 0.020216750559787822,
-              "trackedGapM": -0.02102416721768993,
+              "lateralDistanceM": 0.018076499125355455,
+              "bindDistanceM": 0.02502173316051244,
+              "trackedGapM": -0.018691821852671518,
               "intersections": [],
               "nearestPaddingCenterToSurface": {
-                "distanceM": 0.01801729218345449,
+                "distanceM": 0.024008546265951194,
                 "mesh": "ARMOR_Breastplate",
-                "triangle": 31485,
+                "triangle": 31395,
                 "pointWorld": [
-                  -0.41354174979920316,
-                  1.1591997975733643,
-                  -0.001051012429008223
+                  -0.09459825377419676,
+                  0.9527794318554828,
+                  0.14769960439221916
+                ]
+              },
+              "reason": "Tracked gap does not establish layer ordering after sliding/folding; actual sampled triangle has no detected intersection."
+            },
+            {
+              "layer": "padding/plate",
+              "region": "hipL",
+              "innerMesh": "PADDING_padded",
+              "innerTriangle": 2980,
+              "outerMesh": "ARMOR_Breastplate",
+              "outerTriangle": 26931,
+              "barycentric": [
+                0.6439305515189865,
+                0.2206759081730285,
+                0.13539354030798498
+              ],
+              "paddingWorld": [
+                0.05752004383016147,
+                0.8996171174982545,
+                0.12124736961567215
+              ],
+              "outerWallWorld": [
+                0.05486442009739753,
+                0.9282991351414402,
+                0.15895014143702674
+              ],
+              "paddingNormal": [
+                -0.35095270684780716,
+                0.32626520149896204,
+                -0.877714769071957
+              ],
+              "lateralDistanceM": 0.04160844747326918,
+              "bindDistanceM": 0.03846401002914689,
+              "trackedGapM": -0.022802337059419357,
+              "intersections": [],
+              "nearestPaddingCenterToSurface": {
+                "distanceM": 0.04582829152029164,
+                "mesh": "ARMOR_Breastplate",
+                "triangle": 26931,
+                "pointWorld": [
+                  0.05582303363470958,
+                  0.9169770161119664,
+                  0.1636264491265229
+                ]
+              },
+              "reason": "Tracked gap does not establish layer ordering after sliding/folding; actual sampled triangle has no detected intersection."
+            },
+            {
+              "layer": "padding/plate",
+              "region": "hipL",
+              "innerMesh": "PADDING_padded_under_mail",
+              "innerTriangle": 10577,
+              "outerMesh": "ARMOR_Breastplate",
+              "outerTriangle": 26742,
+              "barycentric": [
+                0.5760423442128004,
+                0.18700989483789165,
+                0.23694776094930792
+              ],
+              "paddingWorld": [
+                0.0859951548622216,
+                0.958041931152034,
+                0.12072972422289682
+              ],
+              "outerWallWorld": [
+                0.08181925750603465,
+                0.9934722685335051,
+                0.1375789135443134
+              ],
+              "paddingNormal": [
+                0.01535576071040233,
+                -0.4608558754751427,
+                -0.8873421339331548
+              ],
+              "lateralDistanceM": 0.02396316873070199,
+              "bindDistanceM": 0.028827376217122214,
+              "trackedGapM": -0.031343398840379885,
+              "intersections": [],
+              "nearestPaddingCenterToSurface": {
+                "distanceM": 0.028815148761049465,
+                "mesh": "ARMOR_Breastplate",
+                "triangle": 26743,
+                "pointWorld": [
+                  0.08493662652380517,
+                  0.9686057119813433,
+                  0.1475177598072486
+                ]
+              },
+              "reason": "Tracked gap does not establish layer ordering after sliding/folding; actual sampled triangle has no detected intersection."
+            },
+            {
+              "layer": "padding/plate",
+              "region": "armL",
+              "innerMesh": "PADDING_padded_under_mail",
+              "innerTriangle": 9236,
+              "outerMesh": "ARMOR_Breastplate",
+              "outerTriangle": 35846,
+              "barycentric": [
+                0.3442155315662978,
+                0.0350202616270413,
+                0.6207642068066609
+              ],
+              "paddingWorld": [
+                0.12269852136512378,
+                1.368164912655773,
+                0.03899265058592334
+              ],
+              "outerWallWorld": [
+                0.1323546411972487,
+                1.370982246246001,
+                0.04130930923244857
+              ],
+              "paddingNormal": [
+                -0.6545835656680618,
+                0.2072338287092664,
+                0.7270312894200529
+              ],
+              "lateralDistanceM": 0.009493223948310167,
+              "bindDistanceM": 0.009721287554411522,
+              "trackedGapM": -0.004052607200646862,
+              "intersections": [],
+              "nearestPaddingCenterToSurface": {
+                "distanceM": 0.005946793955297707,
+                "mesh": "ARMOR_Breastplate",
+                "triangle": 36089,
+                "pointWorld": [
+                  0.12782150255940758,
+                  1.3695297035557168,
+                  0.04168648945066827
                 ]
               },
               "reason": "Tracked gap does not establish layer ordering after sliding/folding; actual sampled triangle has no detected intersection."
@@ -1359,13 +1918,13 @@
       "bodyBuild": "strong",
       "layers": [
         {
-          "probes": 57,
-          "minTrackedGapM": 0.009684894026579497,
+          "probes": 56,
+          "minTrackedGapM": 0.010027908220508561,
           "worstTrackedPatch": {
             "layer": "padding/mail",
             "region": "hipL",
             "innerMesh": "PADDING_padded",
-            "innerTriangle": 11325,
+            "innerTriangle": 11279,
             "outerMesh": "CLOTH_Underarm_and_leggings001",
             "outerTriangle": 39686,
             "barycentric": [
@@ -1374,21 +1933,21 @@
               0.38288134422612485
             ],
             "paddingWorld": [
-              0.07861140113002532,
-              0.882628602443155,
-              0.2338602266918847
+              0.07759220528728247,
+              0.8940330994228418,
+              0.2361883215179651
             ],
             "outerWallWorld": [
-              0.0743230824890225,
-              0.8840469379447027,
-              0.24263803240233245
+              0.0731848132024803,
+              0.8965946640402775,
+              0.24485376120602415
             ],
             "paddingNormal": [
-              -0.5338759996723326,
-              0.2830384589568639,
-              0.7967845679512068
+              -0.4987450327528643,
+              0.26578574558901574,
+              0.8249917149559961
             ],
-            "lateralDistanceM": 0.0019115577799315405,
+            "lateralDistanceM": 0.0007194581203387045,
             "bindDistanceM": 0.010207450269246344
           },
           "intersectionPatches": [],
@@ -1451,13 +2010,13 @@
       "bodyBuild": "strong",
       "layers": [
         {
-          "probes": 57,
-          "minTrackedGapM": 0.009651022293293184,
+          "probes": 56,
+          "minTrackedGapM": 0.010018188456962215,
           "worstTrackedPatch": {
             "layer": "padding/mail",
             "region": "hipL",
             "innerMesh": "PADDING_padded",
-            "innerTriangle": 11325,
+            "innerTriangle": 11279,
             "outerMesh": "CLOTH_Underarm_and_leggings001",
             "outerTriangle": 39686,
             "barycentric": [
@@ -1466,21 +2025,21 @@
               0.38288134422612485
             ],
             "paddingWorld": [
-              0.061755098452709586,
-              0.8643323937154885,
-              0.26386557404024674
+              0.06099764129631184,
+              0.8764624137029227,
+              0.2663374188402373
             ],
             "outerWallWorld": [
-              0.057427321309722265,
-              0.8657821883444436,
-              0.27259704483028563
+              0.05654747576338706,
+              0.8791174109197606,
+              0.2749422405039034
             ],
             "paddingNormal": [
-              -0.5409383096998454,
-              0.29216769038842255,
-              0.7886848456716845
+              -0.5043850673284302,
+              0.2738166114617216,
+              0.8189140169417761
             ],
-            "lateralDistanceM": 0.00198189563730557,
+            "lateralDistanceM": 0.0007292731971870343,
             "bindDistanceM": 0.010207450269246344
           },
           "intersectionPatches": [],
@@ -1593,13 +2152,13 @@
       "bodyBuild": "strong",
       "layers": [
         {
-          "probes": 57,
-          "minTrackedGapM": 0.009651022293293184,
+          "probes": 56,
+          "minTrackedGapM": 0.010018188456962215,
           "worstTrackedPatch": {
             "layer": "padding/mail",
             "region": "hipL",
             "innerMesh": "PADDING_padded",
-            "innerTriangle": 11325,
+            "innerTriangle": 11279,
             "outerMesh": "CLOTH_Underarm_and_leggings001",
             "outerTriangle": 39686,
             "barycentric": [
@@ -1608,21 +2167,21 @@
               0.38288134422612485
             ],
             "paddingWorld": [
-              0.061755098452709586,
-              0.8643323937154885,
-              0.26386557404024674
+              0.06099764129631184,
+              0.8764624137029227,
+              0.2663374188402373
             ],
             "outerWallWorld": [
-              0.057427321309722265,
-              0.8657821883444436,
-              0.27259704483028563
+              0.05654747576338706,
+              0.8791174109197606,
+              0.2749422405039034
             ],
             "paddingNormal": [
-              -0.5409383096998454,
-              0.29216769038842255,
-              0.7886848456716845
+              -0.5043850673284302,
+              0.2738166114617216,
+              0.8189140169417761
             ],
-            "lateralDistanceM": 0.00198189563730557,
+            "lateralDistanceM": 0.0007292731971870343,
             "bindDistanceM": 0.010207450269246344
           },
           "intersectionPatches": [],
@@ -1685,79 +2244,165 @@
       "bodyBuild": "strong",
       "layers": [
         {
-          "probes": 113,
-          "minTrackedGapM": -0.021774262548439755,
+          "probes": 119,
+          "minTrackedGapM": -0.031519382907698734,
           "worstTrackedPatch": {
             "layer": "padding/plate",
-            "region": "armR",
+            "region": "hipL",
             "innerMesh": "PADDING_padded_under_mail",
-            "innerTriangle": 15720,
+            "innerTriangle": 10577,
             "outerMesh": "ARMOR_Breastplate",
-            "outerTriangle": 31103,
+            "outerTriangle": 26742,
             "barycentric": [
-              0.7055569443689391,
-              0.12484573017986739,
-              0.1695973254511934
+              0.5760423442128004,
+              0.18700989483789165,
+              0.23694776094930792
             ],
             "paddingWorld": [
-              -0.2575088170333768,
-              1.2025925663298005,
-              0.45592836785716
+              0.0805917315796878,
+              0.9303204265324313,
+              0.2512421236492637
             ],
             "outerWallWorld": [
-              -0.27460108947510975,
-              1.1883933300633136,
-              0.45462995045771953
+              0.07650981300316506,
+              0.9626062666484869,
+              0.26974995937388657
             ],
             "paddingNormal": [
-              0.8672297229930859,
-              0.49470958773844576,
-              -0.05634741659555023
+              0.019623901205389732,
+              -0.46700594817819824,
+              -0.8840363945379528
             ],
-            "lateralDistanceM": 0.004618600003109582,
-            "bindDistanceM": 0.020216750559787822
+            "lateralDistanceM": 0.020201633983229276,
+            "bindDistanceM": 0.028827376217122214
           },
           "intersectionPatches": [],
           "inconclusivePatches": [
             {
               "layer": "padding/plate",
-              "region": "armR",
-              "innerMesh": "PADDING_padded_under_mail",
-              "innerTriangle": 15720,
+              "region": "hipL",
+              "innerMesh": "PADDING_padded",
+              "innerTriangle": 2980,
               "outerMesh": "ARMOR_Breastplate",
-              "outerTriangle": 31103,
+              "outerTriangle": 26931,
               "barycentric": [
-                0.7055569443689391,
-                0.12484573017986739,
-                0.1695973254511934
+                0.6439305515189865,
+                0.2206759081730285,
+                0.13539354030798498
               ],
               "paddingWorld": [
-                -0.2575088170333768,
-                1.2025925663298005,
-                0.45592836785716
+                0.052864223449802905,
+                0.8704249514884554,
+                0.2511307356526165
               ],
               "outerWallWorld": [
-                -0.27460108947510975,
-                1.1883933300633136,
-                0.45462995045771953
+                0.050721435207283595,
+                0.8964229484748594,
+                0.2893855820871988
               ],
               "paddingNormal": [
-                0.8672297229930859,
-                0.49470958773844576,
-                -0.05634741659555023
+                -0.600696588195427,
+                0.4634324781073392,
+                -0.6514552533871104
               ],
-              "lateralDistanceM": 0.004618600003109582,
-              "bindDistanceM": 0.020216750559787822,
-              "trackedGapM": -0.021774262548439755,
+              "lateralDistanceM": 0.04482955499415485,
+              "bindDistanceM": 0.03846401002914689,
+              "trackedGapM": -0.011585838921582858,
               "intersections": [],
               "nearestPaddingCenterToSurface": {
-                "distanceM": 0.01871632865556972,
+                "distanceM": 0.0449885450606418,
                 "mesh": "ARMOR_Breastplate",
-                "triangle": 31485,
+                "triangle": 26931,
                 "pointWorld": [
-                  -0.2748444570878353,
-                  1.1955464555978028,
-                  0.455569389030511
+                  0.0513209689072459,
+                  0.8861885004692925,
+                  0.29323890677912146
+                ]
+              },
+              "reason": "Tracked gap does not establish layer ordering after sliding/folding; actual sampled triangle has no detected intersection."
+            },
+            {
+              "layer": "padding/plate",
+              "region": "hipL",
+              "innerMesh": "PADDING_padded_under_mail",
+              "innerTriangle": 10577,
+              "outerMesh": "ARMOR_Breastplate",
+              "outerTriangle": 26742,
+              "barycentric": [
+                0.5760423442128004,
+                0.18700989483789165,
+                0.23694776094930792
+              ],
+              "paddingWorld": [
+                0.0805917315796878,
+                0.9303204265324313,
+                0.2512421236492637
+              ],
+              "outerWallWorld": [
+                0.07650981300316506,
+                0.9626062666484869,
+                0.26974995937388657
+              ],
+              "paddingNormal": [
+                0.019623901205389732,
+                -0.46700594817819824,
+                -0.8840363945379528
+              ],
+              "lateralDistanceM": 0.020201633983229276,
+              "bindDistanceM": 0.028827376217122214,
+              "trackedGapM": -0.031519382907698734,
+              "intersections": [],
+              "nearestPaddingCenterToSurface": {
+                "distanceM": 0.028468254600442437,
+                "mesh": "ARMOR_Breastplate",
+                "triangle": 26743,
+                "pointWorld": [
+                  0.07962999181503051,
+                  0.9399443108183598,
+                  0.2780170639455883
+                ]
+              },
+              "reason": "Tracked gap does not establish layer ordering after sliding/folding; actual sampled triangle has no detected intersection."
+            },
+            {
+              "layer": "padding/plate",
+              "region": "armL",
+              "innerMesh": "PADDING_padded_under_mail",
+              "innerTriangle": 9236,
+              "outerMesh": "ARMOR_Breastplate",
+              "outerTriangle": 35846,
+              "barycentric": [
+                0.3442155315662978,
+                0.0350202616270413,
+                0.6207642068066609
+              ],
+              "paddingWorld": [
+                0.11385899653137344,
+                1.3954049471082588,
+                0.24198061504405413
+              ],
+              "outerWallWorld": [
+                0.12245353555641397,
+                1.3897284697585977,
+                0.24265613347960976
+              ],
+              "paddingNormal": [
+                -0.13534712910085284,
+                0.6025995551860394,
+                0.7864826321882414
+              ],
+              "lateralDistanceM": 0.009493219203763108,
+              "bindDistanceM": 0.009721287554411522,
+              "trackedGapM": -0.004052605391626437,
+              "intersections": [],
+              "nearestPaddingCenterToSurface": {
+                "distanceM": 0.005946790869352809,
+                "mesh": "ARMOR_Breastplate",
+                "triangle": 36089,
+                "pointWorld": [
+                  0.11855969548142796,
+                  1.3922467231025997,
+                  0.2437953800852792
                 ]
               },
               "reason": "Tracked gap does not establish layer ordering after sliding/folding; actual sampled triangle has no detected intersection."
@@ -1829,48 +2474,48 @@
       "name": "padding hidden under mail lies under it in bind space",
       "passed": true,
       "hiddenRegions": {
-        "armR": 3684,
-        "torso": 7628,
-        "hipR": 709,
-        "armL": 3684,
-        "hipL": 709
+        "armR": 3851,
+        "torso": 7525,
+        "hipR": 627,
+        "armL": 3857,
+        "hipL": 632
       },
-      "hiddenTriangles": 44588,
+      "hiddenTriangles": 44516,
       "uncoveredTriangles": 0,
       "reachM": 0.035,
       "nearM": 0.016,
       "maxDistanceM": 0.02584644285101501,
-      "drawnPaddingTriangles": 15924,
+      "drawnPaddingTriangles": 15996,
       "scope": "Each hidden padding triangle must have the outer layer within near of its centre, or meet it within reach along either side of its normal, in bind space. The outer layers are opaque closed shells; hidden padding is excluded from the posed intersection gate for that layer."
     },
     {
       "name": "padding hidden under plate lies under it in bind space",
       "passed": true,
       "hiddenRegions": {
-        "torso": 5540,
-        "armR": 592,
-        "hipR": 80,
-        "armL": 596,
-        "hipL": 49
+        "armR": 977,
+        "torso": 5479,
+        "hipR": 33,
+        "armL": 978,
+        "hipL": 18
       },
-      "hiddenTriangles": 21646,
+      "hiddenTriangles": 24054,
       "uncoveredTriangles": 0,
       "reachM": 0.035,
       "nearM": 0.016,
-      "maxDistanceM": 0.03433379980830361,
-      "drawnPaddingTriangles": 38866,
+      "maxDistanceM": 0.032767150936131105,
+      "drawnPaddingTriangles": 36458,
       "scope": "Each hidden padding triangle must have the outer layer within near of its centre, or meet it within reach along either side of its normal, in bind space. The outer layers are opaque closed shells; hidden padding is excluded from the posed intersection gate for that layer."
     },
     {
       "name": "mail: local bind patch coverage",
       "passed": true,
-      "count": 57,
+      "count": 56,
       "regions": {
         "torso": 0,
         "armL": 0,
         "armR": 0,
-        "hipL": 28,
-        "hipR": 29
+        "hipL": 29,
+        "hipR": 27
       },
       "hiddenUnderLayer": [
         "torso",
@@ -1881,13 +2526,13 @@
     {
       "name": "plate: local bind patch coverage",
       "passed": true,
-      "count": 113,
+      "count": 119,
       "regions": {
-        "torso": 32,
-        "armL": 5,
-        "armR": 11,
-        "hipL": 29,
-        "hipR": 36
+        "torso": 36,
+        "armL": 10,
+        "armR": 10,
+        "hipL": 30,
+        "hipR": 33
       },
       "hiddenUnderLayer": []
     },
@@ -1906,44 +2551,44 @@
     {
       "name": "lean/plate-rest: sampled garment triangles do not intersect",
       "passed": true,
-      "probes": 113,
+      "probes": 119,
       "invalidSourcePatches": 0,
       "outerValidation": {
         "nonfiniteTriangles": 0,
         "unassessedDegenerateTriangles": 94
       },
       "intersectingPaddingTriangles": 0,
-      "inconclusiveTrackedPatches": 1,
-      "minTrackedGapM": -0.018709449910952906,
+      "inconclusiveTrackedPatches": 4,
+      "minTrackedGapM": -0.030443904832549863,
       "worstTrackedPatch": {
         "layer": "padding/plate",
-        "region": "armR",
+        "region": "hipL",
         "innerMesh": "PADDING_padded_under_mail",
-        "innerTriangle": 15720,
+        "innerTriangle": 10577,
         "outerMesh": "ARMOR_Breastplate",
-        "outerTriangle": 31103,
+        "outerTriangle": 26742,
         "barycentric": [
-          0.7055569443689391,
-          0.12484573017986739,
-          0.1695973254511934
+          0.5760423442128004,
+          0.18700989483789165,
+          0.23694776094930792
         ],
         "paddingWorld": [
-          -0.3933387956259655,
-          1.168311993342728,
-          0.005713719076518924
+          0.08555407628821676,
+          0.9578918615441749,
+          0.11956547455730149
         ],
         "outerWallWorld": [
-          -0.40692288005585603,
-          1.1558849574997696,
-          -0.00008175889825193933
+          0.08147603765785252,
+          0.9928813582643145,
+          0.13591457976962762
         ],
         "paddingNormal": [
-          0.8563893785723373,
-          0.46060818312961815,
-          0.23331809596025394
+          0.0035486257513343213,
+          -0.4531464610911427,
+          -0.8914290168352446
         ],
-        "lateralDistanceM": 0.004743692509655704,
-        "bindDistanceM": 0.020216750559787822
+        "lateralDistanceM": 0.02411134960116819,
+        "bindDistanceM": 0.028827376217122214
       }
     },
     {
@@ -2039,7 +2684,7 @@
     {
       "name": "lean/mail-brace: sampled garment triangles do not intersect",
       "passed": true,
-      "probes": 57,
+      "probes": 56,
       "invalidSourcePatches": 0,
       "outerValidation": {
         "nonfiniteTriangles": 0,
@@ -2047,12 +2692,12 @@
       },
       "intersectingPaddingTriangles": 0,
       "inconclusiveTrackedPatches": 0,
-      "minTrackedGapM": 0.009666525833154478,
+      "minTrackedGapM": 0.010015268356546814,
       "worstTrackedPatch": {
         "layer": "padding/mail",
         "region": "hipL",
         "innerMesh": "PADDING_padded",
-        "innerTriangle": 11325,
+        "innerTriangle": 11279,
         "outerMesh": "CLOTH_Underarm_and_leggings001",
         "outerTriangle": 39686,
         "barycentric": [
@@ -2061,21 +2706,21 @@
           0.38288134422612485
         ],
         "paddingWorld": [
-          0.0785788154195812,
-          0.882607814676889,
-          0.23375401923453024
+          0.07756061833479747,
+          0.8940027822589867,
+          0.23608317795550843
         ],
         "outerWallWorld": [
-          0.0742903758198166,
-          0.8840241187080442,
-          0.2425191977137529
+          0.07315326088719226,
+          0.8965608461560145,
+          0.24473618730068644
         ],
         "paddingNormal": [
-          -0.5347369320312882,
-          0.28676884953597387,
-          0.7948710841750248
+          -0.4994691154554177,
+          0.2691267561704765,
+          0.8234691201370817
         ],
-        "lateralDistanceM": 0.001945061284145353,
+        "lateralDistanceM": 0.0007331173482659129,
         "bindDistanceM": 0.010207450269246344
       }
     },
@@ -2172,7 +2817,7 @@
     {
       "name": "lean/mail-sword: sampled garment triangles do not intersect",
       "passed": true,
-      "probes": 57,
+      "probes": 56,
       "invalidSourcePatches": 0,
       "outerValidation": {
         "nonfiniteTriangles": 0,
@@ -2180,12 +2825,12 @@
       },
       "intersectingPaddingTriangles": 0,
       "inconclusiveTrackedPatches": 0,
-      "minTrackedGapM": 0.009632317198307956,
+      "minTrackedGapM": 0.010005528083804715,
       "worstTrackedPatch": {
         "layer": "padding/mail",
         "region": "hipL",
         "innerMesh": "PADDING_padded",
-        "innerTriangle": 11325,
+        "innerTriangle": 11279,
         "outerMesh": "CLOTH_Underarm_and_leggings001",
         "outerTriangle": 39686,
         "barycentric": [
@@ -2194,21 +2839,21 @@
           0.38288134422612485
         ],
         "paddingWorld": [
-          0.061722745280167364,
-          0.8643093183148325,
-          0.26376000780238607
+          0.06096639347579433,
+          0.8764287604618156,
+          0.2662332103943802
         ],
         "outerWallWorld": [
-          0.057394868811151314,
-          0.8657569157548681,
-          0.27247890276511905
+          0.05651630013484199,
+          0.8790799567495444,
+          0.2748256931455443
         ],
         "paddingNormal": [
-          -0.5418695386713918,
-          0.29584713600992807,
-          0.7866713895743104
+          -0.5051923780533485,
+          0.277088376045681,
+          0.8173143171492655
         ],
-        "lateralDistanceM": 0.002015849161473127,
+        "lateralDistanceM": 0.0007431958641589146,
         "bindDistanceM": 0.010207450269246344
       }
     },
@@ -2395,7 +3040,7 @@
     {
       "name": "lean/mail-pike: sampled garment triangles do not intersect",
       "passed": true,
-      "probes": 57,
+      "probes": 56,
       "invalidSourcePatches": 0,
       "outerValidation": {
         "nonfiniteTriangles": 0,
@@ -2403,12 +3048,12 @@
       },
       "intersectingPaddingTriangles": 0,
       "inconclusiveTrackedPatches": 0,
-      "minTrackedGapM": 0.009632317198307956,
+      "minTrackedGapM": 0.010005528083804715,
       "worstTrackedPatch": {
         "layer": "padding/mail",
         "region": "hipL",
         "innerMesh": "PADDING_padded",
-        "innerTriangle": 11325,
+        "innerTriangle": 11279,
         "outerMesh": "CLOTH_Underarm_and_leggings001",
         "outerTriangle": 39686,
         "barycentric": [
@@ -2417,21 +3062,21 @@
           0.38288134422612485
         ],
         "paddingWorld": [
-          0.061722745280167364,
-          0.8643093183148325,
-          0.26376000780238607
+          0.06096639347579433,
+          0.8764287604618156,
+          0.2662332103943802
         ],
         "outerWallWorld": [
-          0.057394868811151314,
-          0.8657569157548681,
-          0.27247890276511905
+          0.05651630013484199,
+          0.8790799567495444,
+          0.2748256931455443
         ],
         "paddingNormal": [
-          -0.5418695386713918,
-          0.29584713600992807,
-          0.7866713895743104
+          -0.5051923780533485,
+          0.277088376045681,
+          0.8173143171492655
         ],
-        "lateralDistanceM": 0.002015849161473127,
+        "lateralDistanceM": 0.0007431958641589146,
         "bindDistanceM": 0.010207450269246344
       }
     },
@@ -2528,44 +3173,44 @@
     {
       "name": "lean/plate-greatsword: sampled garment triangles do not intersect",
       "passed": true,
-      "probes": 113,
+      "probes": 119,
       "invalidSourcePatches": 0,
       "outerValidation": {
         "nonfiniteTriangles": 0,
         "unassessedDegenerateTriangles": 94
       },
       "intersectingPaddingTriangles": 0,
-      "inconclusiveTrackedPatches": 1,
-      "minTrackedGapM": -0.01932225863687242,
+      "inconclusiveTrackedPatches": 3,
+      "minTrackedGapM": -0.03062791169338265,
       "worstTrackedPatch": {
         "layer": "padding/plate",
-        "region": "armR",
+        "region": "hipL",
         "innerMesh": "PADDING_padded_under_mail",
-        "innerTriangle": 15720,
+        "innerTriangle": 10577,
         "outerMesh": "ARMOR_Breastplate",
-        "outerTriangle": 31103,
+        "outerTriangle": 26742,
         "barycentric": [
-          0.7055569443689391,
-          0.12484573017986739,
-          0.1695973254511934
+          0.5760423442128004,
+          0.18700989483789165,
+          0.23694776094930792
         ],
         "paddingWorld": [
-          -0.2530695822823291,
-          1.205099855257139,
-          0.4556959594560728
+          0.08014912417812814,
+          0.9301805461419295,
+          0.25007494362570354
         ],
         "outerWallWorld": [
-          -0.26833696762149284,
-          1.1925512666310099,
-          0.4544257422083769
+          0.07616039687176146,
+          0.9620602384366881,
+          0.26807164375110526
         ],
         "paddingNormal": [
-          0.860526105780093,
-          0.5017390640278231,
-          -0.08804960476590402
+          0.0073096369731334935,
+          -0.45800846207972645,
+          -0.8889177790272197
         ],
-        "lateralDistanceM": 0.004338652397747816,
-        "bindDistanceM": 0.020216750559787822
+        "lateralDistanceM": 0.020445952338764666,
+        "bindDistanceM": 0.028827376217122214
       }
     },
     {
@@ -2661,44 +3306,44 @@
     {
       "name": "regular/plate-rest: sampled garment triangles do not intersect",
       "passed": true,
-      "probes": 113,
+      "probes": 119,
       "invalidSourcePatches": 0,
       "outerValidation": {
         "nonfiniteTriangles": 0,
-        "unassessedDegenerateTriangles": 106
+        "unassessedDegenerateTriangles": 100
       },
       "intersectingPaddingTriangles": 0,
-      "inconclusiveTrackedPatches": 1,
-      "minTrackedGapM": -0.019683054175824895,
+      "inconclusiveTrackedPatches": 4,
+      "minTrackedGapM": -0.030821980446172355,
       "worstTrackedPatch": {
         "layer": "padding/plate",
-        "region": "armR",
+        "region": "hipL",
         "innerMesh": "PADDING_padded_under_mail",
-        "innerTriangle": 15720,
+        "innerTriangle": 10577,
         "outerMesh": "ARMOR_Breastplate",
-        "outerTriangle": 31103,
+        "outerTriangle": 26742,
         "barycentric": [
-          0.7055569443689391,
-          0.12484573017986739,
-          0.1695973254511934
+          0.5760423442128004,
+          0.18700989483789165,
+          0.23694776094930792
         ],
         "paddingWorld": [
-          -0.3951863870172898,
-          1.1672796038879558,
-          0.005218434534189771
+          0.08573871353482317,
+          0.9579546814493514,
+          0.12005283545352059
         ],
         "outerWallWorld": [
-          -0.4094585421315853,
-          1.154168921619076,
-          -0.0008154332696901057
+          0.0816197092589574,
+          0.9931287155082937,
+          0.13661127617695495
         ],
         "paddingNormal": [
-          0.8536073080127485,
-          0.45705888887220997,
-          0.2499034529776039
+          0.008545939299784245,
+          -0.4564280464620567,
+          -0.8897192845635723
         ],
-        "lateralDistanceM": 0.004956746932038161,
-        "bindDistanceM": 0.020216750559787822
+        "lateralDistanceM": 0.02404924840346361,
+        "bindDistanceM": 0.028827376217122214
       }
     },
     {
@@ -2794,7 +3439,7 @@
     {
       "name": "regular/mail-brace: sampled garment triangles do not intersect",
       "passed": true,
-      "probes": 57,
+      "probes": 56,
       "invalidSourcePatches": 0,
       "outerValidation": {
         "nonfiniteTriangles": 0,
@@ -2802,12 +3447,12 @@
       },
       "intersectingPaddingTriangles": 0,
       "inconclusiveTrackedPatches": 0,
-      "minTrackedGapM": 0.009674229453355233,
+      "minTrackedGapM": 0.01002057670376337,
       "worstTrackedPatch": {
         "layer": "padding/mail",
         "region": "hipL",
         "innerMesh": "PADDING_padded",
-        "innerTriangle": 11325,
+        "innerTriangle": 11279,
         "outerMesh": "CLOTH_Underarm_and_leggings001",
         "outerTriangle": 39686,
         "barycentric": [
@@ -2816,21 +3461,21 @@
           0.38288134422612485
         ],
         "paddingWorld": [
-          0.07859245689847497,
-          0.8826165163070103,
-          0.2337984767182295
+          0.07757384174443677,
+          0.8940154727971203,
+          0.23612719011548472
         ],
         "outerWallWorld": [
-          0.07430406798966736,
-          0.8840336712075314,
-          0.24256894383695962
+          0.07316646982525545,
+          0.8965750028752593,
+          0.24478540564424925
         ],
         "paddingNormal": [
-          -0.5343784635385946,
-          0.28521028815320854,
-          0.7956725138131231
+          -0.4991672288028082,
+          0.26772967713860374,
+          0.8241073338276901
         ],
-        "lateralDistanceM": 0.0019310581062762346,
+        "lateralDistanceM": 0.0007272276957183865,
         "bindDistanceM": 0.010207450269246344
       }
     },
@@ -2927,7 +3572,7 @@
     {
       "name": "regular/mail-sword: sampled garment triangles do not intersect",
       "passed": true,
-      "probes": 57,
+      "probes": 56,
       "invalidSourcePatches": 0,
       "outerValidation": {
         "nonfiniteTriangles": 0,
@@ -2935,12 +3580,12 @@
       },
       "intersectingPaddingTriangles": 0,
       "inconclusiveTrackedPatches": 0,
-      "minTrackedGapM": 0.009640161299642104,
+      "minTrackedGapM": 0.010010844859572836,
       "worstTrackedPatch": {
         "layer": "padding/mail",
         "region": "hipL",
         "innerMesh": "PADDING_padded",
-        "innerTriangle": 11325,
+        "innerTriangle": 11279,
         "outerMesh": "CLOTH_Underarm_and_leggings001",
         "outerTriangle": 39686,
         "barycentric": [
@@ -2949,21 +3594,21 @@
           0.38288134422612485
         ],
         "paddingWorld": [
-          0.06173628941975336,
-          0.8643189775548319,
-          0.26380419687162765
+          0.06097947492676068,
+          0.8764428474869688,
+          0.26627683111569483
         ],
         "outerWallWorld": [
-          0.05740845458089244,
-          0.8657674952776113,
-          0.2725283589430268
+          0.05652935138539602,
+          0.8790956356923743,
+          0.274874481756871
         ],
         "paddingNormal": [
-          -0.5414817429723223,
-          0.29430997639891654,
-          0.7875145457829493
+          -0.5048556835236834,
+          0.27572026946620537,
+          0.8179847625838256
         ],
-        "lateralDistanceM": 0.002001662296838909,
+        "lateralDistanceM": 0.0007372018322194496,
         "bindDistanceM": 0.010207450269246344
       }
     },
@@ -3150,7 +3795,7 @@
     {
       "name": "regular/mail-pike: sampled garment triangles do not intersect",
       "passed": true,
-      "probes": 57,
+      "probes": 56,
       "invalidSourcePatches": 0,
       "outerValidation": {
         "nonfiniteTriangles": 0,
@@ -3158,12 +3803,12 @@
       },
       "intersectingPaddingTriangles": 0,
       "inconclusiveTrackedPatches": 0,
-      "minTrackedGapM": 0.009640161299642104,
+      "minTrackedGapM": 0.010010844859572836,
       "worstTrackedPatch": {
         "layer": "padding/mail",
         "region": "hipL",
         "innerMesh": "PADDING_padded",
-        "innerTriangle": 11325,
+        "innerTriangle": 11279,
         "outerMesh": "CLOTH_Underarm_and_leggings001",
         "outerTriangle": 39686,
         "barycentric": [
@@ -3172,21 +3817,21 @@
           0.38288134422612485
         ],
         "paddingWorld": [
-          0.06173628941975336,
-          0.8643189775548319,
-          0.26380419687162765
+          0.06097947492676068,
+          0.8764428474869688,
+          0.26627683111569483
         ],
         "outerWallWorld": [
-          0.05740845458089244,
-          0.8657674952776113,
-          0.2725283589430268
+          0.05652935138539602,
+          0.8790956356923743,
+          0.274874481756871
         ],
         "paddingNormal": [
-          -0.5414817429723223,
-          0.29430997639891654,
-          0.7875145457829493
+          -0.5048556835236834,
+          0.27572026946620537,
+          0.8179847625838256
         ],
-        "lateralDistanceM": 0.002001662296838909,
+        "lateralDistanceM": 0.0007372018322194496,
         "bindDistanceM": 0.010207450269246344
       }
     },
@@ -3283,44 +3928,44 @@
     {
       "name": "regular/plate-greatsword: sampled garment triangles do not intersect",
       "passed": true,
-      "probes": 113,
+      "probes": 119,
       "invalidSourcePatches": 0,
       "outerValidation": {
         "nonfiniteTriangles": 0,
-        "unassessedDegenerateTriangles": 106
+        "unassessedDegenerateTriangles": 100
       },
       "intersectingPaddingTriangles": 0,
-      "inconclusiveTrackedPatches": 1,
-      "minTrackedGapM": -0.020350837780203707,
+      "inconclusiveTrackedPatches": 3,
+      "minTrackedGapM": -0.031002945639668666,
       "worstTrackedPatch": {
         "layer": "padding/plate",
-        "region": "armR",
+        "region": "hipL",
         "innerMesh": "PADDING_padded_under_mail",
-        "innerTriangle": 15720,
+        "innerTriangle": 10577,
         "outerMesh": "ARMOR_Breastplate",
-        "outerTriangle": 31103,
+        "outerTriangle": 26742,
         "barycentric": [
-          0.7055569443689391,
-          0.12484573017986739,
-          0.1695973254511934
+          0.5760423442128004,
+          0.18700989483789165,
+          0.23694776094930792
         ],
         "paddingWorld": [
-          -0.2549278617922433,
-          1.2040502859252404,
-          0.45579324675658245
+          0.08033440139971493,
+          0.9302391007900026,
+          0.2505635311840412
         ],
         "outerWallWorld": [
-          -0.27095915541851984,
-          1.1908107319465908,
-          0.4545112233844382
+          0.07630666226107971,
+          0.9622888078587839,
+          0.2687741930251364
         ],
         "paddingNormal": [
-          0.8634674393725928,
-          0.49882658336804,
-          -0.07480655632165967
+          0.012527407164282682,
+          -0.4618433258819542,
+          -0.8868730497698276
         ],
-        "lateralDistanceM": 0.004446925955761933,
-        "bindDistanceM": 0.020216750559787822
+        "lateralDistanceM": 0.020343352037411496,
+        "bindDistanceM": 0.028827376217122214
       }
     },
     {
@@ -3416,44 +4061,44 @@
     {
       "name": "strong/plate-rest: sampled garment triangles do not intersect",
       "passed": true,
-      "probes": 113,
+      "probes": 119,
       "invalidSourcePatches": 0,
       "outerValidation": {
         "nonfiniteTriangles": 0,
         "unassessedDegenerateTriangles": 93
       },
       "intersectingPaddingTriangles": 0,
-      "inconclusiveTrackedPatches": 1,
-      "minTrackedGapM": -0.02102416721768993,
+      "inconclusiveTrackedPatches": 4,
+      "minTrackedGapM": -0.031343398840379885,
       "worstTrackedPatch": {
         "layer": "padding/plate",
-        "region": "armR",
+        "region": "hipL",
         "innerMesh": "PADDING_padded_under_mail",
-        "innerTriangle": 15720,
+        "innerTriangle": 10577,
         "outerMesh": "ARMOR_Breastplate",
-        "outerTriangle": 31103,
+        "outerTriangle": 26742,
         "barycentric": [
-          0.7055569443689391,
-          0.12484573017986739,
-          0.1695973254511934
+          0.5760423442128004,
+          0.18700989483789165,
+          0.23694776094930792
         ],
         "paddingWorld": [
-          -0.39775249670241336,
-          1.1658457458566729,
-          0.004530535356783089
+          0.0859951548622216,
+          0.958041931152034,
+          0.12072972422289682
         ],
         "outerWallWorld": [
-          -0.41298030215283676,
-          1.1517855459710036,
-          -0.0018344246357346185
+          0.08181925750603465,
+          0.9934722685335051,
+          0.1375789135443134
         ],
         "paddingNormal": [
-          0.8492870678790582,
-          0.4519891234447883,
-          0.2727953603362859
+          0.01535576071040233,
+          -0.4608558754751427,
+          -0.8873421339331548
         ],
-        "lateralDistanceM": 0.005298338246080857,
-        "bindDistanceM": 0.020216750559787822
+        "lateralDistanceM": 0.02396316873070199,
+        "bindDistanceM": 0.028827376217122214
       }
     },
     {
@@ -3549,7 +4194,7 @@
     {
       "name": "strong/mail-brace: sampled garment triangles do not intersect",
       "passed": true,
-      "probes": 57,
+      "probes": 56,
       "invalidSourcePatches": 0,
       "outerValidation": {
         "nonfiniteTriangles": 0,
@@ -3557,12 +4202,12 @@
       },
       "intersectingPaddingTriangles": 0,
       "inconclusiveTrackedPatches": 0,
-      "minTrackedGapM": 0.009684894026579497,
+      "minTrackedGapM": 0.010027908220508561,
       "worstTrackedPatch": {
         "layer": "padding/mail",
         "region": "hipL",
         "innerMesh": "PADDING_padded",
-        "innerTriangle": 11325,
+        "innerTriangle": 11279,
         "outerMesh": "CLOTH_Underarm_and_leggings001",
         "outerTriangle": 39686,
         "barycentric": [
@@ -3571,21 +4216,21 @@
           0.38288134422612485
         ],
         "paddingWorld": [
-          0.07861140113002532,
-          0.882628602443155,
-          0.2338602266918847
+          0.07759220528728247,
+          0.8940330994228418,
+          0.2361883215179651
         ],
         "outerWallWorld": [
-          0.0743230824890225,
-          0.8840469379447027,
-          0.24263803240233245
+          0.0731848132024803,
+          0.8965946640402775,
+          0.24485376120602415
         ],
         "paddingNormal": [
-          -0.5338759996723326,
-          0.2830384589568639,
-          0.7967845679512068
+          -0.4987450327528643,
+          0.26578574558901574,
+          0.8249917149559961
         ],
-        "lateralDistanceM": 0.0019115577799315405,
+        "lateralDistanceM": 0.0007194581203387045,
         "bindDistanceM": 0.010207450269246344
       }
     },
@@ -3682,7 +4327,7 @@
     {
       "name": "strong/mail-sword: sampled garment triangles do not intersect",
       "passed": true,
-      "probes": 57,
+      "probes": 56,
       "invalidSourcePatches": 0,
       "outerValidation": {
         "nonfiniteTriangles": 0,
@@ -3690,12 +4335,12 @@
       },
       "intersectingPaddingTriangles": 0,
       "inconclusiveTrackedPatches": 0,
-      "minTrackedGapM": 0.009651022293293184,
+      "minTrackedGapM": 0.010018188456962215,
       "worstTrackedPatch": {
         "layer": "padding/mail",
         "region": "hipL",
         "innerMesh": "PADDING_padded",
-        "innerTriangle": 11325,
+        "innerTriangle": 11279,
         "outerMesh": "CLOTH_Underarm_and_leggings001",
         "outerTriangle": 39686,
         "barycentric": [
@@ -3704,21 +4349,21 @@
           0.38288134422612485
         ],
         "paddingWorld": [
-          0.061755098452709586,
-          0.8643323937154885,
-          0.26386557404024674
+          0.06099764129631184,
+          0.8764624137029227,
+          0.2663374188402373
         ],
         "outerWallWorld": [
-          0.057427321309722265,
-          0.8657821883444436,
-          0.27259704483028563
+          0.05654747576338706,
+          0.8791174109197606,
+          0.2749422405039034
         ],
         "paddingNormal": [
-          -0.5409383096998454,
-          0.29216769038842255,
-          0.7886848456716845
+          -0.5043850673284302,
+          0.2738166114617216,
+          0.8189140169417761
         ],
-        "lateralDistanceM": 0.00198189563730557,
+        "lateralDistanceM": 0.0007292731971870343,
         "bindDistanceM": 0.010207450269246344
       }
     },
@@ -3905,7 +4550,7 @@
     {
       "name": "strong/mail-pike: sampled garment triangles do not intersect",
       "passed": true,
-      "probes": 57,
+      "probes": 56,
       "invalidSourcePatches": 0,
       "outerValidation": {
         "nonfiniteTriangles": 0,
@@ -3913,12 +4558,12 @@
       },
       "intersectingPaddingTriangles": 0,
       "inconclusiveTrackedPatches": 0,
-      "minTrackedGapM": 0.009651022293293184,
+      "minTrackedGapM": 0.010018188456962215,
       "worstTrackedPatch": {
         "layer": "padding/mail",
         "region": "hipL",
         "innerMesh": "PADDING_padded",
-        "innerTriangle": 11325,
+        "innerTriangle": 11279,
         "outerMesh": "CLOTH_Underarm_and_leggings001",
         "outerTriangle": 39686,
         "barycentric": [
@@ -3927,21 +4572,21 @@
           0.38288134422612485
         ],
         "paddingWorld": [
-          0.061755098452709586,
-          0.8643323937154885,
-          0.26386557404024674
+          0.06099764129631184,
+          0.8764624137029227,
+          0.2663374188402373
         ],
         "outerWallWorld": [
-          0.057427321309722265,
-          0.8657821883444436,
-          0.27259704483028563
+          0.05654747576338706,
+          0.8791174109197606,
+          0.2749422405039034
         ],
         "paddingNormal": [
-          -0.5409383096998454,
-          0.29216769038842255,
-          0.7886848456716845
+          -0.5043850673284302,
+          0.2738166114617216,
+          0.8189140169417761
         ],
-        "lateralDistanceM": 0.00198189563730557,
+        "lateralDistanceM": 0.0007292731971870343,
         "bindDistanceM": 0.010207450269246344
       }
     },
@@ -4038,44 +4683,44 @@
     {
       "name": "strong/plate-greatsword: sampled garment triangles do not intersect",
       "passed": true,
-      "probes": 113,
+      "probes": 119,
       "invalidSourcePatches": 0,
       "outerValidation": {
         "nonfiniteTriangles": 0,
         "unassessedDegenerateTriangles": 93
       },
       "intersectingPaddingTriangles": 0,
-      "inconclusiveTrackedPatches": 1,
-      "minTrackedGapM": -0.021774262548439755,
+      "inconclusiveTrackedPatches": 3,
+      "minTrackedGapM": -0.031519382907698734,
       "worstTrackedPatch": {
         "layer": "padding/plate",
-        "region": "armR",
+        "region": "hipL",
         "innerMesh": "PADDING_padded_under_mail",
-        "innerTriangle": 15720,
+        "innerTriangle": 10577,
         "outerMesh": "ARMOR_Breastplate",
-        "outerTriangle": 31103,
+        "outerTriangle": 26742,
         "barycentric": [
-          0.7055569443689391,
-          0.12484573017986739,
-          0.1695973254511934
+          0.5760423442128004,
+          0.18700989483789165,
+          0.23694776094930792
         ],
         "paddingWorld": [
-          -0.2575088170333768,
-          1.2025925663298005,
-          0.45592836785716
+          0.0805917315796878,
+          0.9303204265324313,
+          0.2512421236492637
         ],
         "outerWallWorld": [
-          -0.27460108947510975,
-          1.1883933300633136,
-          0.45462995045771953
+          0.07650981300316506,
+          0.9626062666484869,
+          0.26974995937388657
         ],
         "paddingNormal": [
-          0.8672297229930859,
-          0.49470958773844576,
-          -0.05634741659555023
+          0.019623901205389732,
+          -0.46700594817819824,
+          -0.8840363945379528
         ],
-        "lateralDistanceM": 0.004618600003109582,
-        "bindDistanceM": 0.020216750559787822
+        "lateralDistanceM": 0.020201633983229276,
+        "bindDistanceM": 0.028827376217122214
       }
     },
     {
@@ -4173,21 +4818,21 @@
       "passed": true,
       "intersectionPointsWorld": [
         [
-          -0.04564786173714743,
-          0.9060517245109784,
-          -0.1049212128545096
+          -0.04748702488047588,
+          0.9095731493174251,
+          -0.10498258835866489
         ],
         [
-          -0.04753997437563011,
-          0.9090047041740809,
-          -0.10496559757365738
+          -0.04559862781962764,
+          0.9065571069104167,
+          -0.10494753056278908
         ]
       ],
       "patch": {
         "layer": "padding/mail",
         "region": "hipR",
         "innerMesh": "PADDING_padded",
-        "innerTriangle": 1,
+        "innerTriangle": 3,
         "outerMesh": "CLOTH_Underarm_and_leggings001",
         "outerTriangle": 39095,
         "barycentric": [
@@ -4200,13 +4845,13 @@
     {
       "name": "Move actual mail triangle inward60mm",
       "passed": true,
-      "beforeM": 0.020305814933095495,
-      "afterM": -0.0396941839629509,
+      "beforeM": 0.020437784248235096,
+      "afterM": -0.039562213301975895,
       "patch": {
         "layer": "padding/mail",
         "region": "hipR",
         "innerMesh": "PADDING_padded",
-        "innerTriangle": 1,
+        "innerTriangle": 3,
         "outerMesh": "CLOTH_Underarm_and_leggings001",
         "outerTriangle": 39095,
         "barycentric": [
@@ -4224,21 +4869,21 @@
       "passed": true,
       "intersectionPointsWorld": [
         [
-          -0.04564786173714743,
-          0.9060517245109784,
-          -0.1049212128545096
+          -0.04748702488047588,
+          0.9095731493174251,
+          -0.10498258835866489
         ],
         [
-          -0.04753997437563011,
-          0.9090047041740809,
-          -0.10496559757365738
+          -0.04559862781962764,
+          0.9065571069104167,
+          -0.10494753056278908
         ]
       ],
       "patch": {
         "layer": "padding/mail",
         "region": "hipR",
         "innerMesh": "PADDING_padded",
-        "innerTriangle": 1,
+        "innerTriangle": 3,
         "outerMesh": "CLOTH_Underarm_and_leggings001",
         "outerTriangle": 39095,
         "barycentric": [
@@ -4251,13 +4896,13 @@
     {
       "name": "Move actual mail triangle inward60mm",
       "passed": true,
-      "beforeM": 0.020305814933095495,
-      "afterM": -0.0396941839629509,
+      "beforeM": 0.020437784248235096,
+      "afterM": -0.039562213301975895,
       "patch": {
         "layer": "padding/mail",
         "region": "hipR",
         "innerMesh": "PADDING_padded",
-        "innerTriangle": 1,
+        "innerTriangle": 3,
         "outerMesh": "CLOTH_Underarm_and_leggings001",
         "outerTriangle": 39095,
         "barycentric": [
@@ -4272,43 +4917,43 @@
     {
       "layer": "padding/mail",
       "region": "hipR",
-      "unpairedAttemptedPatches": 19,
+      "unpairedAttemptedPatches": 21,
       "reason": "No interior facing same-anatomy wall patch within45mm; includes region seams, joint-weight differences, holes and hems. No clearance conclusion for this patch."
     },
     {
       "layer": "padding/mail",
       "region": "hipL",
-      "unpairedAttemptedPatches": 20,
-      "reason": "No interior facing same-anatomy wall patch within45mm; includes region seams, joint-weight differences, holes and hems. No clearance conclusion for this patch."
-    },
-    {
-      "layer": "padding/plate",
-      "region": "hipR",
-      "unpairedAttemptedPatches": 12,
-      "reason": "No interior facing same-anatomy wall patch within45mm; includes region seams, joint-weight differences, holes and hems. No clearance conclusion for this patch."
-    },
-    {
-      "layer": "padding/plate",
-      "region": "hipL",
       "unpairedAttemptedPatches": 19,
       "reason": "No interior facing same-anatomy wall patch within45mm; includes region seams, joint-weight differences, holes and hems. No clearance conclusion for this patch."
     },
     {
       "layer": "padding/plate",
+      "region": "hipR",
+      "unpairedAttemptedPatches": 15,
+      "reason": "No interior facing same-anatomy wall patch within45mm; includes region seams, joint-weight differences, holes and hems. No clearance conclusion for this patch."
+    },
+    {
+      "layer": "padding/plate",
+      "region": "hipL",
+      "unpairedAttemptedPatches": 18,
+      "reason": "No interior facing same-anatomy wall patch within45mm; includes region seams, joint-weight differences, holes and hems. No clearance conclusion for this patch."
+    },
+    {
+      "layer": "padding/plate",
       "region": "armR",
-      "unpairedAttemptedPatches": 37,
+      "unpairedAttemptedPatches": 38,
       "reason": "No interior facing same-anatomy wall patch within45mm; includes region seams, joint-weight differences, holes and hems. No clearance conclusion for this patch."
     },
     {
       "layer": "padding/plate",
       "region": "torso",
-      "unpairedAttemptedPatches": 16,
+      "unpairedAttemptedPatches": 12,
       "reason": "No interior facing same-anatomy wall patch within45mm; includes region seams, joint-weight differences, holes and hems. No clearance conclusion for this patch."
     },
     {
       "layer": "padding/plate",
       "region": "armL",
-      "unpairedAttemptedPatches": 43,
+      "unpairedAttemptedPatches": 38,
       "reason": "No interior facing same-anatomy wall patch within45mm; includes region seams, joint-weight differences, holes and hems. No clearance conclusion for this patch."
     }
   ],
@@ -4317,25 +4962,25 @@
     {
       "layer": "padding/mail",
       "padding": {
-        "outward-wall": {
-          "faces": 314,
-          "areaM2": 0.03052901003740452
-        },
         "outside-region-height-domain": {
-          "faces": 972,
-          "areaM2": 0.06120941610161721
+          "faces": 1060,
+          "areaM2": 0.06981479659841601
+        },
+        "outward-wall": {
+          "faces": 305,
+          "areaM2": 0.029208159880765968
         },
         "outside-height-domain": {
           "faces": 14298,
-          "areaM2": 1.2297537159170788
+          "areaM2": 1.2296920606010557
         },
         "axial-hem-or-steep-fold": {
           "faces": 14,
           "areaM2": 0.0006591714720164698
         },
         "inward-wall": {
-          "faces": 322,
-          "areaM2": 0.028778428945835995
+          "faces": 315,
+          "areaM2": 0.028234311390524583
         },
         "tangential-wall": {
           "faces": 4,
@@ -4348,28 +4993,28 @@
           "areaM2": 0.5321409014781442
         },
         "outward-wall": {
-          "faces": 15808,
-          "areaM2": 0.8434535647901513
+          "faces": 15901,
+          "areaM2": 0.8482092493070716
         },
         "ambiguous-or-unrecognized-anatomical-weights": {
-          "faces": 464,
-          "areaM2": 0.028525358887902415
+          "faces": 61,
+          "areaM2": 0.0039268586380432615
         },
         "axial-hem-or-steep-fold": {
-          "faces": 652,
-          "areaM2": 0.015706268477285724
+          "faces": 566,
+          "areaM2": 0.01452180454902441
         },
         "inward-wall": {
-          "faces": 16010,
-          "areaM2": 0.8202399175733864
+          "faces": 16120,
+          "areaM2": 0.8258705447001717
         },
         "tangential-wall": {
           "faces": 488,
           "areaM2": 0.026901613436990993
         },
         "outside-region-height-domain": {
-          "faces": 3834,
-          "areaM2": 0.3065359432424142
+          "faces": 4120,
+          "areaM2": 0.3219325957768298
         }
       },
       "scope": "Wall/region classification is independent of signed clearance. Excluded faces and unmatched attempts carry no separation conclusion."
@@ -4377,59 +5022,59 @@
     {
       "layer": "padding/plate",
       "padding": {
-        "outward-wall": {
-          "faces": 9871,
-          "areaM2": 0.5389915923051355
-        },
         "outside-region-height-domain": {
-          "faces": 3514,
-          "areaM2": 0.2450560918606034
+          "faces": 2279,
+          "areaM2": 0.22155990338437712
+        },
+        "outward-wall": {
+          "faces": 9312,
+          "areaM2": 0.5232249313139663
         },
         "outside-height-domain": {
-          "faces": 14035,
-          "areaM2": 1.1140553708054977
+          "faces": 14468,
+          "areaM2": 1.1280861065021441
         },
         "axial-hem-or-steep-fold": {
-          "faces": 536,
-          "areaM2": 0.012560937947268971
+          "faces": 483,
+          "areaM2": 0.010865032684713229
         },
         "inward-wall": {
-          "faces": 9980,
-          "areaM2": 0.5196891283682454
+          "faces": 9479,
+          "areaM2": 0.5071231887535402
         },
         "tangential-wall": {
-          "faces": 414,
-          "areaM2": 0.016273789642235203
+          "faces": 402,
+          "areaM2": 0.015247386740051133
         },
         "ambiguous-or-unrecognized-anatomical-weights": {
-          "faces": 516,
-          "areaM2": 0.029872131913087567
+          "faces": 35,
+          "areaM2": 0.0016829344600927125
         }
       },
       "outerGarment": {
         "outward-wall": {
-          "faces": 10337,
-          "areaM2": 0.7259111547437975
-        },
-        "tangential-wall": {
-          "faces": 1706,
-          "areaM2": 0.020500464287561485
-        },
-        "axial-hem-or-steep-fold": {
-          "faces": 8525,
-          "areaM2": 0.10352112724265174
+          "faces": 11888,
+          "areaM2": 0.9265412070946913
         },
         "inward-wall": {
-          "faces": 10227,
-          "areaM2": 0.7044754511008333
+          "faces": 11677,
+          "areaM2": 0.8927059185046388
+        },
+        "axial-hem-or-steep-fold": {
+          "faces": 10514,
+          "areaM2": 0.2846278136581811
+        },
+        "tangential-wall": {
+          "faces": 2437,
+          "areaM2": 0.04035403862375416
         },
         "outside-height-domain": {
-          "faces": 21561,
-          "areaM2": 1.3404390570778995
+          "faces": 23980,
+          "areaM2": 1.5274342121697242
         },
         "outside-region-height-domain": {
           "faces": 7824,
-          "areaM2": 0.3785388704210783
+          "areaM2": 0.37067685624860663
         }
       },
       "scope": "Wall/region classification is independent of signed clearance. Excluded faces and unmatched attempts carry no separation conclusion."

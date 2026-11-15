@@ -1,0 +1,249 @@
+{
+ "cops": [
+  {
+   "cop": "ARMOR_Toe cap L",
+   "on": "CLOTH_Boot L",
+   "faces": 34,
+   "vertices": 326
+  },
+  {
+   "cop": "ARMOR_Knee L",
+   "on": "CLOTH_Underarm and leggings",
+   "faces": 176,
+   "vertices": 340
+  },
+  {
+   "cop": "ARMOR_Couter L",
+   "on": "CLOTH_Underarm and leggings",
+   "faces": 232,
+   "vertices": 352
+  },
+  {
+   "cop": "ARMOR_Poleyn wing L",
+   "on": "CLOTH_Underarm and leggings",
+   "faces": 182,
+   "vertices": 360
+  },
+  {
+   "cop": "ARMOR_Couter wing L",
+   "on": "CLOTH_Underarm and leggings",
+   "faces": 83,
+   "vertices": 244
+  },
+  {
+   "cop": "ARMOR_Toe cap R",
+   "on": "CLOTH_Boot R",
+   "faces": 34,
+   "vertices": 326
+  },
+  {
+   "cop": "ARMOR_Knee R",
+   "on": "CLOTH_Underarm and leggings",
+   "faces": 176,
+   "vertices": 340
+  },
+  {
+   "cop": "ARMOR_Couter R",
+   "on": "CLOTH_Underarm and leggings",
+   "faces": 232,
+   "vertices": 352
+  },
+  {
+   "cop": "ARMOR_Poleyn wing R",
+   "on": "CLOTH_Underarm and leggings",
+   "faces": 182,
+   "vertices": 360
+  },
+  {
+   "cop": "ARMOR_Couter wing R",
+   "on": "CLOTH_Underarm and leggings",
+   "faces": 83,
+   "vertices": 244
+  }
+ ],
+ "greaves": [
+  {
+   "greave": "L",
+   "parts": 3,
+   "vertices": 718
+  },
+  {
+   "greave": "R",
+   "parts": 3,
+   "vertices": 720
+  }
+ ],
+ "cloth": [
+  {
+   "object": "BODY_Human",
+   "vertices": 30635,
+   "pushed": 158,
+   "maxPushMm": 33.9,
+   "reweighted": 1213,
+   "maxPushMmByPlateBone": {
+    "upperarm01.R": 33.9,
+    "upperarm01.L": 33.9,
+    "spine01": 5.1
+   }
+  },
+  {
+   "object": "Eyes",
+   "vertices": 1064,
+   "pushed": 0,
+   "maxPushMm": 0.0,
+   "reweighted": 0,
+   "maxPushMmByPlateBone": {}
+  },
+  {
+   "object": "CLOTH_Underarm and leggings",
+   "vertices": 28866,
+   "pushed": 2761,
+   "maxPushMm": 5.9,
+   "reweighted": 25673,
+   "maxPushMmByPlateBone": {
+    "upperarm01.R": 5.8,
+    "spine01": 5.9,
+    "lowerarm01.R": 5.6,
+    "upperarm01.L": 5.8,
+    "lowerarm01.L": 5.6
+   }
+  },
+  {
+   "object": "CLOTH_Split padded hip skirt",
+   "vertices": 1074,
+   "pushed": 13,
+   "maxPushMm": 1.5,
+   "reweighted": 1043,
+   "maxPushMmByPlateBone": {
+    "pelvis.R": 0,
+    "upperleg01.R": 1.5,
+    "pelvis.L": 0
+   }
+  },
+  {
+   "object": "CLOTH_Leather boot tops",
+   "vertices": 1120,
+   "pushed": 0,
+   "maxPushMm": 0,
+   "reweighted": 1120,
+   "maxPushMmByPlateBone": {}
+  },
+  {
+   "object": "CLOTH_Boot L",
+   "vertices": 688,
+   "pushed": 287,
+   "maxPushMm": 9.8,
+   "reweighted": 632,
+   "maxPushMmByPlateBone": {
+    "foot.L": 1.1,
+    "lowerleg01.L": 9.8
+   }
+  },
+  {
+   "object": "CLOTH_Closed boot sole L",
+   "vertices": 256,
+   "pushed": 0,
+   "maxPushMm": 0.0,
+   "reweighted": 0,
+   "maxPushMmByPlateBone": {}
+  },
+  {
+   "object": "CLOTH_Sole welt L",
+   "vertices": 330,
+   "pushed": 208,
+   "maxPushMm": 8.5,
+   "reweighted": 220,
+   "maxPushMmByPlateBone": {
+    "foot.L": 8.5
+   }
+  },
+  {
+   "object": "CLOTH_Boot R",
+   "vertices": 688,
+   "pushed": 276,
+   "maxPushMm": 7.3,
+   "reweighted": 632,
+   "maxPushMmByPlateBone": {
+    "foot.R": 1.0,
+    "lowerleg01.R": 7.3
+   }
+  },
+  {
+   "object": "CLOTH_Closed boot sole R",
+   "vertices": 256,
+   "pushed": 0,
+   "maxPushMm": 0.0,
+   "reweighted": 0,
+   "maxPushMmByPlateBone": {}
+  },
+  {
+   "object": "CLOTH_Sole welt R",
+   "vertices": 330,
+   "pushed": 208,
+   "maxPushMm": 8.5,
+   "reweighted": 220,
+   "maxPushMmByPlateBone": {
+    "foot.R": 8.5
+   }
+  },
+  {
+   "object": "CLOTH_Sewn padded collar",
+   "vertices": 312,
+   "pushed": 70,
+   "maxPushMm": 2.1,
+   "reweighted": 312,
+   "maxPushMmByPlateBone": {
+    "spine01": 2.1,
+    "upperarm01.R": 0
+   }
+  },
+  {
+   "object": "HAIR_Cropped",
+   "vertices": 1271,
+   "pushed": 0,
+   "maxPushMm": 0.0,
+   "reweighted": 0,
+   "maxPushMmByPlateBone": {}
+  },
+  {
+   "object": "MAIL_Shirt",
+   "vertices": 18800,
+   "pushed": 0,
+   "maxPushMm": 0,
+   "reweighted": 17268,
+   "follows": "padding"
+  },
+  {
+   "object": "MAIL_Sewn collar",
+   "vertices": 312,
+   "pushed": 0,
+   "maxPushMm": 0,
+   "reweighted": 312,
+   "follows": "padding"
+  },
+  {
+   "object": "MAIL_Split skirt",
+   "vertices": 990,
+   "pushed": 0,
+   "maxPushMm": 0,
+   "reweighted": 982,
+   "follows": "padding"
+  },
+  {
+   "object": "MAIL_Rear seat overlap",
+   "vertices": 1122,
+   "pushed": 0,
+   "maxPushMm": 0,
+   "reweighted": 1024,
+   "follows": "padding"
+  },
+  {
+   "object": "MAIL_Outer belt",
+   "vertices": 768,
+   "pushed": 0,
+   "maxPushMm": 0,
+   "reweighted": 735,
+   "follows": "padding"
+  }
+ ]
+}

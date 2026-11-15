@@ -18,6 +18,7 @@
     "build:strikes": "node scripts/build-strikes.mjs",
     "verify:strikes": "node scripts/verify-strikes.mjs",
     "verify:smooth": "node scripts/verify-smooth.mjs",
+    "verify:armor": "node scripts/verify-armor.mjs",
     "render:duel": "node scripts/render-duel.mjs"
   },
   "dependencies": {

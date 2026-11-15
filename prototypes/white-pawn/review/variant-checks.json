@@ -1,9 +1,9 @@
 {
-  "date": "2026-11-13T17:09:30.938Z",
+  "date": "2026-11-15T00:08:52.774Z",
   "status": "passed",
   "browser": "157.0.8103.50",
-  "glbSha256": "d8438e9bcc458cec5d307c04618d8c113d63193cf3577131bb188114fe153d93",
-  "documentSha256": "fcc1573904fc2c1427866522b56c3dca820aa87ab4c49a392ac42479d3cb5b2c",
+  "glbSha256": "f6a17bbdda97875fdcd45ac0e305c7b7ed175cb70d60034a7593b5ca16314931",
+  "documentSha256": "75027e3e9322f0172aeefe5e034d82d1b183e495e387eb963e751b967b682d26",
   "tests": [
     "Three genuinely different shields; independent plate/mail/padding geometry; visible textured mail and quilting; actual physique displacement and independent experience",
     "Four visible weapon geometries, deterministic reverse seek and planted feet; twohand weapons suppress shield and brace; singlehand restores choice; invalid review is atomic"
@@ -60,7 +60,7 @@
         "fps": null,
         "display": "surface",
         "renderCalls": 26,
-        "triangles": 216912,
+        "triangles": 222752,
         "bones": 163,
         "clips": [
           {
@@ -86,7 +86,7 @@
           "slot": "base",
           "variant": "base",
           "vertices": 31944,
-          "checksum": 524.9800524351816,
+          "checksum": 524.9759368199437,
           "materials": [
             {
               "slot": "skin",
@@ -136,7 +136,7 @@
           "slot": "base",
           "variant": "base",
           "vertices": 3280,
-          "checksum": 12.713726105567767,
+          "checksum": 12.710393944378012,
           "materials": [
             {
               "slot": "Dark leather",
@@ -161,7 +161,7 @@
           "slot": "base",
           "variant": "base",
           "vertices": 1172,
-          "checksum": 1.493745102748508,
+          "checksum": 1.484593065181981,
           "materials": [
             {
               "slot": "Joint recess",
@@ -185,8 +185,8 @@
           "name": "HELMET_Ivory_open_helmet",
           "slot": "helmet",
           "variant": "on",
-          "vertices": 3523,
-          "checksum": 64.5220937882102,
+          "vertices": 3579,
+          "checksum": 65.49076810628563,
           "materials": [
             {
               "slot": "armor.main",
@@ -196,7 +196,7 @@
               "uvChannel": 2,
               "uvSpan": [
                 0.214694581925869,
-                1.9692903757095337
+                1.9840693473815918
               ]
             }
           ],
@@ -277,8 +277,8 @@
           "name": "PADDING_padded",
           "slot": "padding",
           "variant": "padded",
-          "vertices": 7430,
-          "checksum": 51.758977339824646,
+          "vertices": 7371,
+          "checksum": 50.03474894346002,
           "materials": [
             {
               "slot": "padding",
@@ -301,8 +301,8 @@
           "name": "PADDING_padded_under_mail",
           "slot": "padding",
           "variant": "padded",
-          "vertices": 16926,
-          "checksum": 214.60213136350913,
+          "vertices": 15990,
+          "checksum": 206.69703425112453,
           "materials": [
             {
               "slot": "padding",
@@ -325,8 +325,8 @@
           "name": "ARMOR_Breastplate",
           "slot": "plate",
           "variant": "plate",
-          "vertices": 21330,
-          "checksum": 227.0858309190226,
+          "vertices": 24735,
+          "checksum": 266.82372210830096,
           "materials": [
             {
               "slot": "armor.main",
@@ -336,7 +336,7 @@
               "uvChannel": 1,
               "uvSpan": [
                 1.0507657527923584,
-                1.7336275577545166
+                1.7882128953933716
               ]
             }
           ],
@@ -350,8 +350,8 @@
           "name": "ARMOR_Breastplate_1",
           "slot": "plate",
           "variant": "plate",
-          "vertices": 14987,
-          "checksum": 173.28899795821604,
+          "vertices": 15933,
+          "checksum": 188.12904420022414,
           "materials": [
             {
               "slot": "armor.trim",
@@ -361,7 +361,7 @@
               "uvChannel": 1,
               "uvSpan": [
                 1.0578668117523193,
-                1.7345794439315796
+                1.7474968433380127
               ]
             }
           ],
@@ -385,8 +385,8 @@
               "normalMap": true,
               "uvChannel": 1,
               "uvSpan": [
-                0.27755720913410187,
-                1.6569632291793823
+                0.21843554079532623,
+                1.7152109146118164
               ]
             }
           ],
@@ -638,7 +638,7 @@
         "fps": null,
         "display": "surface",
         "renderCalls": 24,
-        "triangles": 154506,
+        "triangles": 154686,
         "bones": 163,
         "clips": [
           {
@@ -664,7 +664,7 @@
           "slot": "base",
           "variant": "base",
           "vertices": 31944,
-          "checksum": 524.9800524351816,
+          "checksum": 524.9759368199437,
           "materials": [
             {
               "slot": "skin",
@@ -714,7 +714,7 @@
           "slot": "base",
           "variant": "base",
           "vertices": 3280,
-          "checksum": 12.713726105567767,
+          "checksum": 12.710393944378012,
           "materials": [
             {
               "slot": "Dark leather",
@@ -739,7 +739,7 @@
           "slot": "base",
           "variant": "base",
           "vertices": 1172,
-          "checksum": 1.493745102748508,
+          "checksum": 1.484593065181981,
           "materials": [
             {
               "slot": "Joint recess",
@@ -763,8 +763,8 @@
           "name": "HELMET_Ivory_open_helmet",
           "slot": "helmet",
           "variant": "on",
-          "vertices": 3523,
-          "checksum": 64.5220937882102,
+          "vertices": 3579,
+          "checksum": 65.49076810628563,
           "materials": [
             {
               "slot": "armor.main",
@@ -774,7 +774,7 @@
               "uvChannel": 2,
               "uvSpan": [
                 0.214694581925869,
-                1.9692903757095337
+                1.9840693473815918
               ]
             }
           ],
@@ -903,8 +903,8 @@
           "name": "PADDING_padded",
           "slot": "padding",
           "variant": "padded",
-          "vertices": 7430,
-          "checksum": 51.758977339824646,
+          "vertices": 7371,
+          "checksum": 50.03474894346002,
           "materials": [
             {
               "slot": "padding",
@@ -927,8 +927,8 @@
           "name": "PADDING_padded_under_plate",
           "slot": "padding",
           "variant": "padded",
-          "vertices": 2714,
-          "checksum": 11.270626584601919,
+          "vertices": 2842,
+          "checksum": 12.057927754648267,
           "materials": [
             {
               "slot": "padding",
@@ -937,8 +937,8 @@
               "normalMap": true,
               "uvChannel": 0,
               "uvSpan": [
-                11.790182113647461,
-                24.4428288936615
+                11.779386520385742,
+                25.07252836227417
               ]
             }
           ],
@@ -1168,7 +1168,7 @@
         "fps": null,
         "display": "surface",
         "renderCalls": 26,
-        "triangles": 207845,
+        "triangles": 213685,
         "bones": 163,
         "clips": [
           {
@@ -1194,7 +1194,7 @@
           "slot": "base",
           "variant": "base",
           "vertices": 31944,
-          "checksum": 524.9800524351816,
+          "checksum": 524.9759368199437,
           "materials": [
             {
               "slot": "skin",
@@ -1244,7 +1244,7 @@
           "slot": "base",
           "variant": "base",
           "vertices": 3280,
-          "checksum": 12.713726105567767,
+          "checksum": 12.710393944378012,
           "materials": [
             {
               "slot": "Dark leather",
@@ -1269,7 +1269,7 @@
           "slot": "base",
           "variant": "base",
           "vertices": 1172,
-          "checksum": 1.493745102748508,
+          "checksum": 1.484593065181981,
           "materials": [
             {
               "slot": "Joint recess",
@@ -1293,8 +1293,8 @@
           "name": "HELMET_Ivory_open_helmet",
           "slot": "helmet",
           "variant": "on",
-          "vertices": 3523,
-          "checksum": 64.5220937882102,
+          "vertices": 3579,
+          "checksum": 65.49076810628563,
           "materials": [
             {
               "slot": "armor.main",
@@ -1304,7 +1304,7 @@
               "uvChannel": 2,
               "uvSpan": [
                 0.214694581925869,
-                1.9692903757095337
+                1.9840693473815918
               ]
             }
           ],
@@ -1385,8 +1385,8 @@
           "name": "PADDING_padded",
           "slot": "padding",
           "variant": "padded",
-          "vertices": 7430,
-          "checksum": 51.758977339824646,
+          "vertices": 7371,
+          "checksum": 50.03474894346002,
           "materials": [
             {
               "slot": "padding",
@@ -1409,8 +1409,8 @@
           "name": "PADDING_padded_under_mail",
           "slot": "padding",
           "variant": "padded",
-          "vertices": 16926,
-          "checksum": 214.60213136350913,
+          "vertices": 15990,
+          "checksum": 206.69703425112453,
           "materials": [
             {
               "slot": "padding",
@@ -1433,8 +1433,8 @@
           "name": "ARMOR_Breastplate",
           "slot": "plate",
           "variant": "plate",
-          "vertices": 21330,
-          "checksum": 227.0858309190226,
+          "vertices": 24735,
+          "checksum": 266.82372210830096,
           "materials": [
             {
               "slot": "armor.main",
@@ -1444,7 +1444,7 @@
               "uvChannel": 1,
               "uvSpan": [
                 1.0507657527923584,
-                1.7336275577545166
+                1.7882128953933716
               ]
             }
           ],
@@ -1458,8 +1458,8 @@
           "name": "ARMOR_Breastplate_1",
           "slot": "plate",
           "variant": "plate",
-          "vertices": 14987,
-          "checksum": 173.28899795821604,
+          "vertices": 15933,
+          "checksum": 188.12904420022414,
           "materials": [
             {
               "slot": "armor.trim",
@@ -1469,7 +1469,7 @@
               "uvChannel": 1,
               "uvSpan": [
                 1.0578668117523193,
-                1.7345794439315796
+                1.7474968433380127
               ]
             }
           ],
@@ -1493,8 +1493,8 @@
               "normalMap": true,
               "uvChannel": 1,
               "uvSpan": [
-                0.27755720913410187,
-                1.6569632291793823
+                0.21843554079532623,
+                1.7152109146118164
               ]
             }
           ],
@@ -1837,7 +1837,7 @@
         "fps": null,
         "display": "surface",
         "renderCalls": 25,
-        "triangles": 207349,
+        "triangles": 213189,
         "bones": 163,
         "clips": [
           {
@@ -1863,7 +1863,7 @@
           "slot": "base",
           "variant": "base",
           "vertices": 31944,
-          "checksum": 524.9800524351816,
+          "checksum": 524.9759368199437,
           "materials": [
             {
               "slot": "skin",
@@ -1913,7 +1913,7 @@
           "slot": "base",
           "variant": "base",
           "vertices": 3280,
-          "checksum": 12.713726105567767,
+          "checksum": 12.710393944378012,
           "materials": [
             {
               "slot": "Dark leather",
@@ -1938,7 +1938,7 @@
           "slot": "base",
           "variant": "base",
           "vertices": 1172,
-          "checksum": 1.493745102748508,
+          "checksum": 1.484593065181981,
           "materials": [
             {
               "slot": "Joint recess",
@@ -1962,8 +1962,8 @@
           "name": "HELMET_Ivory_open_helmet",
           "slot": "helmet",
           "variant": "on",
-          "vertices": 3523,
-          "checksum": 64.5220937882102,
+          "vertices": 3579,
+          "checksum": 65.49076810628563,
           "materials": [
             {
               "slot": "armor.main",
@@ -1973,7 +1973,7 @@
               "uvChannel": 2,
               "uvSpan": [
                 0.214694581925869,
-                1.9692903757095337
+                1.9840693473815918
               ]
             }
           ],
@@ -2054,8 +2054,8 @@
           "name": "PADDING_padded",
           "slot": "padding",
           "variant": "padded",
-          "vertices": 7430,
-          "checksum": 51.758977339824646,
+          "vertices": 7371,
+          "checksum": 50.03474894346002,
           "materials": [
             {
               "slot": "padding",
@@ -2078,8 +2078,8 @@
           "name": "PADDING_padded_under_mail",
           "slot": "padding",
           "variant": "padded",
-          "vertices": 16926,
-          "checksum": 214.60213136350913,
+          "vertices": 15990,
+          "checksum": 206.69703425112453,
           "materials": [
             {
               "slot": "padding",
@@ -2102,8 +2102,8 @@
           "name": "ARMOR_Breastplate",
           "slot": "plate",
           "variant": "plate",
-          "vertices": 21330,
-          "checksum": 227.0858309190226,
+          "vertices": 24735,
+          "checksum": 266.82372210830096,
           "materials": [
             {
               "slot": "armor.main",
@@ -2113,7 +2113,7 @@
               "uvChannel": 1,
               "uvSpan": [
                 1.0507657527923584,
-                1.7336275577545166
+                1.7882128953933716
               ]
             }
           ],
@@ -2127,8 +2127,8 @@
           "name": "ARMOR_Breastplate_1",
           "slot": "plate",
           "variant": "plate",
-          "vertices": 14987,
-          "checksum": 173.28899795821604,
+          "vertices": 15933,
+          "checksum": 188.12904420022414,
           "materials": [
             {
               "slot": "armor.trim",
@@ -2138,7 +2138,7 @@
               "uvChannel": 1,
               "uvSpan": [
                 1.0578668117523193,
-                1.7345794439315796
+                1.7474968433380127
               ]
             }
           ],
@@ -2162,8 +2162,8 @@
               "normalMap": true,
               "uvChannel": 1,
               "uvSpan": [
-                0.27755720913410187,
-                1.6569632291793823
+                0.21843554079532623,
+                1.7152109146118164
               ]
             }
           ],
@@ -2485,7 +2485,7 @@
         "fps": null,
         "display": "surface",
         "renderCalls": 20,
-        "triangles": 204440,
+        "triangles": 210280,
         "bones": 163,
         "clips": [
           {
@@ -2511,7 +2511,7 @@
           "slot": "base",
           "variant": "base",
           "vertices": 31944,
-          "checksum": 524.9800524351816,
+          "checksum": 524.9759368199437,
           "materials": [
             {
               "slot": "skin",
@@ -2561,7 +2561,7 @@
           "slot": "base",
           "variant": "base",
           "vertices": 3280,
-          "checksum": 12.713726105567767,
+          "checksum": 12.710393944378012,
           "materials": [
             {
               "slot": "Dark leather",
@@ -2586,7 +2586,7 @@
           "slot": "base",
           "variant": "base",
           "vertices": 1172,
-          "checksum": 1.493745102748508,
+          "checksum": 1.484593065181981,
           "materials": [
             {
               "slot": "Joint recess",
@@ -2610,8 +2610,8 @@
           "name": "HELMET_Ivory_open_helmet",
           "slot": "helmet",
           "variant": "on",
-          "vertices": 3523,
-          "checksum": 64.5220937882102,
+          "vertices": 3579,
+          "checksum": 65.49076810628563,
           "materials": [
             {
               "slot": "armor.main",
@@ -2621,7 +2621,7 @@
               "uvChannel": 2,
               "uvSpan": [
                 0.214694581925869,
-                1.9692903757095337
+                1.9840693473815918
               ]
             }
           ],
@@ -2702,8 +2702,8 @@
           "name": "PADDING_padded",
           "slot": "padding",
           "variant": "padded",
-          "vertices": 7430,
-          "checksum": 51.758977339824646,
+          "vertices": 7371,
+          "checksum": 50.03474894346002,
           "materials": [
             {
               "slot": "padding",
@@ -2726,8 +2726,8 @@
           "name": "PADDING_padded_under_mail",
           "slot": "padding",
           "variant": "padded",
-          "vertices": 16926,
-          "checksum": 214.60213136350913,
+          "vertices": 15990,
+          "checksum": 206.69703425112453,
           "materials": [
             {
               "slot": "padding",
@@ -2750,8 +2750,8 @@
           "name": "ARMOR_Breastplate",
           "slot": "plate",
           "variant": "plate",
-          "vertices": 21330,
-          "checksum": 227.0858309190226,
+          "vertices": 24735,
+          "checksum": 266.82372210830096,
           "materials": [
             {
               "slot": "armor.main",
@@ -2761,7 +2761,7 @@
               "uvChannel": 1,
               "uvSpan": [
                 1.0507657527923584,
-                1.7336275577545166
+                1.7882128953933716
               ]
             }
           ],
@@ -2775,8 +2775,8 @@
           "name": "ARMOR_Breastplate_1",
           "slot": "plate",
           "variant": "plate",
-          "vertices": 14987,
-          "checksum": 173.28899795821604,
+          "vertices": 15933,
+          "checksum": 188.12904420022414,
           "materials": [
             {
               "slot": "armor.trim",
@@ -2786,7 +2786,7 @@
               "uvChannel": 1,
               "uvSpan": [
                 1.0578668117523193,
-                1.7345794439315796
+                1.7474968433380127
               ]
             }
           ],
@@ -2810,8 +2810,8 @@
               "normalMap": true,
               "uvChannel": 1,
               "uvSpan": [
-                0.27755720913410187,
-                1.6569632291793823
+                0.21843554079532623,
+                1.7152109146118164
               ]
             }
           ],
@@ -3024,7 +3024,7 @@
         "fps": null,
         "display": "surface",
         "renderCalls": 20,
-        "triangles": 204672,
+        "triangles": 210512,
         "bones": 163,
         "clips": [
           {
@@ -3050,7 +3050,7 @@
           "slot": "base",
           "variant": "base",
           "vertices": 31944,
-          "checksum": 524.9800524351816,
+          "checksum": 524.9759368199437,
           "materials": [
             {
               "slot": "skin",
@@ -3100,7 +3100,7 @@
           "slot": "base",
           "variant": "base",
           "vertices": 3280,
-          "checksum": 12.713726105567767,
+          "checksum": 12.710393944378012,
           "materials": [
             {
               "slot": "Dark leather",
@@ -3125,7 +3125,7 @@
           "slot": "base",
           "variant": "base",
           "vertices": 1172,
-          "checksum": 1.493745102748508,
+          "checksum": 1.484593065181981,
           "materials": [
             {
               "slot": "Joint recess",
@@ -3149,8 +3149,8 @@
           "name": "HELMET_Ivory_open_helmet",
           "slot": "helmet",
           "variant": "on",
-          "vertices": 3523,
-          "checksum": 64.5220937882102,
+          "vertices": 3579,
+          "checksum": 65.49076810628563,
           "materials": [
             {
               "slot": "armor.main",
@@ -3160,7 +3160,7 @@
               "uvChannel": 2,
               "uvSpan": [
                 0.214694581925869,
-                1.9692903757095337
+                1.9840693473815918
               ]
             }
           ],
@@ -3241,8 +3241,8 @@
           "name": "PADDING_padded",
           "slot": "padding",
           "variant": "padded",
-          "vertices": 7430,
-          "checksum": 51.758977339824646,
+          "vertices": 7371,
+          "checksum": 50.03474894346002,
           "materials": [
             {
               "slot": "padding",
@@ -3265,8 +3265,8 @@
           "name": "PADDING_padded_under_mail",
           "slot": "padding",
           "variant": "padded",
-          "vertices": 16926,
-          "checksum": 214.60213136350913,
+          "vertices": 15990,
+          "checksum": 206.69703425112453,
           "materials": [
             {
               "slot": "padding",
@@ -3289,8 +3289,8 @@
           "name": "ARMOR_Breastplate",
           "slot": "plate",
           "variant": "plate",
-          "vertices": 21330,
-          "checksum": 227.0858309190226,
+          "vertices": 24735,
+          "checksum": 266.82372210830096,
           "materials": [
             {
               "slot": "armor.main",
@@ -3300,7 +3300,7 @@
               "uvChannel": 1,
               "uvSpan": [
                 1.0507657527923584,
-                1.7336275577545166
+                1.7882128953933716
               ]
             }
           ],
@@ -3314,8 +3314,8 @@
           "name": "ARMOR_Breastplate_1",
           "slot": "plate",
           "variant": "plate",
-          "vertices": 14987,
-          "checksum": 173.28899795821604,
+          "vertices": 15933,
+          "checksum": 188.12904420022414,
           "materials": [
             {
               "slot": "armor.trim",
@@ -3325,7 +3325,7 @@
               "uvChannel": 1,
               "uvSpan": [
                 1.0578668117523193,
-                1.7345794439315796
+                1.7474968433380127
               ]
             }
           ],
@@ -3349,8 +3349,8 @@
               "normalMap": true,
               "uvChannel": 1,
               "uvSpan": [
-                0.27755720913410187,
-                1.6569632291793823
+                0.21843554079532623,
+                1.7152109146118164
               ]
             }
           ],
@@ -3517,7 +3517,7 @@
   "network": [],
   "morphology": {
     "meshes": 15,
-    "maxDelta": 0.04498396727516039
+    "maxDelta": 0.04525212509347121
   },
   "scope": "Actual visible equipment meshes and PBR/UV assignment, sampled morphed vertex displacement, deterministic sampled poses and foot support, review/profile compatibility, 390px software browser. Full collision freedom and real-phone performance are not asserted."
 }

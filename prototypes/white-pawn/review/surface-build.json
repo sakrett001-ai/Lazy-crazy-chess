@@ -14,13 +14,13 @@
     "armor.trim": "steel",
     "armor.main": "steel",
     "armor.leather": "leather",
-    "weapon.wood": "wood",
     "weapon.grip": "leather",
     "weapon.metal": "steel",
-    "shield.trim": "steel",
-    "shield.leather": "leather",
+    "weapon.wood": "wood",
+    "shield.emblem": "paint",
     "shield.wood": "wood",
-    "shield.emblem": "paint"
+    "shield.leather": "leather",
+    "shield.trim": "steel"
   },
   "shields": {
     "tower": {
