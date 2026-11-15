@@ -1,8 +1,8 @@
 {
-  "date": "2026-11-15T00:03:42.479Z",
+  "date": "2026-11-15T11:24:57.129Z",
   "browser": "157.0.8103.50",
-  "glbSha256": "f6a17bbdda97875fdcd45ac0e305c7b7ed175cb70d60034a7593b5ca16314931",
-  "documentSha256": "75027e3e9322f0172aeefe5e034d82d1b183e495e387eb963e751b967b682d26",
+  "glbSha256": "2664f63ca68a110a89080ea1abd2d6d7fedbdd70b91a1b440ac5245ef3e0cb07",
+  "documentSha256": "f3553678788f112d0831f344b18c4c3085588c85808f51c5ac9a0d4ee78bfa57",
   "tests": [
     "Offline load; expected clips and durations; no autoplay or HTTP requests",
     "Default GLB pose matches equipped guard at Guard_Breath t=0",
@@ -155,7 +155,7 @@
   ],
   "errors": [],
   "network": [],
-  "loadMs": 11545,
+  "loadMs": 11037,
   "initial": {
     "pose": "rest",
     "time": 0,
@@ -168,7 +168,7 @@
     "fps": null,
     "display": "surface",
     "renderCalls": 26,
-    "triangles": 222752,
+    "triangles": 222776,
     "bones": 163,
     "clips": [
       {
@@ -194,7 +194,7 @@
     "skinnedMeshes": 48,
     "objects": 224,
     "materials": 27,
-    "vertices": 184451
+    "vertices": 184465
   },
   "performance": {
     "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
@@ -203,9 +203,9 @@
       1000
     ],
     "drawCalls": 26,
-    "triangles": 222752,
-    "p50ReadbackMs": 930.6000000014901,
-    "p95ReadbackMs": 976.8999999985099,
+    "triangles": 222776,
+    "p50ReadbackMs": 794.6999999997206,
+    "p95ReadbackMs": 827.2000000001863,
     "note": "Headless Chromium with software rendering; synchronous render and readback, not sustained real-device FPS."
   },
   "status": "passed",
