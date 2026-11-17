@@ -153,17 +153,22 @@ async function audit(holder){
 function setExperience(veteran){
  for(const a of page.lastScene.children)a.traverse(m=>{const d=m.morphTargetDictionary;if(!d)return;for(const [k,i]of Object.entries(d))if(['veteran','faceveteran','experienceveteran'].includes(norm(k)))m.morphTargetInfluences[i]=veteran?1:0;});
 }
+let duelAdded=false;
 const scenes={
  start:{preset:'start',run:async grab=>{for(let i=0;i<1.5*FPS;i++){await grab('стойка');L.step(1/FPS,30,false);}L.play('e2','e4');for(let i=0;i<20*FPS;i++){if(!L.state().busy)break;await grab('шаг e2–e4');L.step(1/FPS,30,false);}}},
  clash:{preset:'clash',run:async grab=>{for(let i=0;i<8*FPS;i++){await grab('схватка и оборона');L.step(1/FPS,30,false);}}},
- capture:{preset:'capture',run:async grab=>{L.motion.add('duel-516.motion.json',motionText);const used=L.motion.use({duel:0});if(used.duel?.exchange!=='duel516.exchange.attack')throw Error('recorded exchange not taken');
+ capture:{preset:'capture',run:async grab=>{if(!duelAdded){L.motion.add('duel-516.motion.json',motionText);duelAdded=true;}const used=L.motion.use({duel:0});if(used.duel?.exchange!=='duel516.exchange.attack')throw Error('recorded exchange not taken');
   for(let i=0;i<5*FPS;i++){await grab('обмен ударами');L.step(1/FPS,30,false);}L.play('e4','d5');for(let i=0;i<40*FPS;i++){if(!L.state().busy)break;await grab('взятие');L.step(1/FPS,30,false);}}}
 };
 const report={status:'running',fps:FPS,limits:LIMITS,glb:'white-pawn/assets/white-pawn.glb',scope:'CPU-skinned visible meshes of every pawn on the board, sampled at the given rate through scripted scenes; armour→body: soft surface seen through a hard one, rasterised from 12 views at 5 mm pixels; leg→leg: exact triangle edge crossings. Sampling misses contacts shorter than one frame.',scenes:[],totals:{},failures:[]};
 const totals={armourBody:{},legLeg:{}};
 for(const [name,s]of Object.entries(scenes)){if(only&&only!==name)continue;
  for(const experience of ['recruit','veteran']){
-  L.load(s.preset);L.manual(true);L.step(.2,30,false);L.render();setExperience(experience==='veteran');
+  // Every scene starts from the same board state, whatever ran before it:
+  // the board clock (fencing cycles are timed by it) and the recorded
+  // exchange carry over a load, so a scene's frames would depend on the
+  // scenes run before it (--only) and the same frame would get another number.
+  L.load(s.preset);L.motion.use({});L.manual(false);L.manual(true);L.step(.2,30,false);L.render();setExperience(experience==='veteran');
   const frames=[];let n=0;const t1=Date.now();
   const grab=async stage=>{setExperience(experience==='veteran');page.lastScene.updateMatrixWorld(true);
    const pieces={};for(const p of L.state().pieces){if(p.type!=='p'||!L.shown(p.id))continue;

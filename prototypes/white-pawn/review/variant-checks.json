@@ -1,9 +1,9 @@
 {
-  "date": "2026-11-17T06:51:21.019Z",
+  "date": "2026-11-17T11:10:37.560Z",
   "status": "passed",
   "browser": "157.0.8103.50",
-  "glbSha256": "eb79b66d910b948e3d1d1215f95b980bbc5bac0ab55b304d1e62d1a3da7dca09",
-  "documentSha256": "4b8d984630c641422498fdb11c0e4dba3d0fa8a529d825b8f0cf4b9261e9f725",
+  "glbSha256": "0b13f1ec4b07cf93a2d547da0a322bdc7f41d6682eff5e904ba10f9eaf51fcd0",
+  "documentSha256": "ab6e12f57cf90362a5632e35ad3fee6670ffcf3071c4f77b5af35acbd2b2ff7a",
   "tests": [
     "Three genuinely different shields; independent plate/mail/padding geometry; visible textured mail and quilting; actual physique displacement and independent experience",
     "Four visible weapon geometries, deterministic reverse seek and planted feet; twohand weapons suppress shield and brace; singlehand restores choice; invalid review is atomic"
