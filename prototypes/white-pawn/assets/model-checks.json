@@ -1,7 +1,7 @@
 {
   "status": "passed",
-  "sha256": "eb79b66d910b948e3d1d1215f95b980bbc5bac0ab55b304d1e62d1a3da7dca09",
-  "glb_bytes": 19379908,
+  "sha256": "0b13f1ec4b07cf93a2d547da0a322bdc7f41d6682eff5e904ba10f9eaf51fcd0",
+  "glb_bytes": 19380176,
   "meshes": 18,
   "material_primitives": 48,
   "triangles": 307329,

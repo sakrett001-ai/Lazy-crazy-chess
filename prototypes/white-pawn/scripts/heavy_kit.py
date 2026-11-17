@@ -47,10 +47,12 @@ def veteran_shape(name, cos):
             amt, half, z0 = op[1:]
             for c in out:
                 if c.y < -.05: c.y -= amt * max(0, 1 - abs(c.x) / half) * min(1, max(0, (c.z - z0) / .1))
-        elif kind == 'cheek':  # cheek guards reach lower at the back, the front corner stays clear of the collar
-            z1, amt = op[1:]
+        elif kind == 'cheek':  # cheek guards reach lower at the back; the lower front corner rises clear of the collar
+            z1, amt, lift = op[1:]
             for c in out:
-                if c.z < z1: c.z -= amt * (z1 - c.z) / .06 * _smooth01((c.y - CHEEK_FRONT) / .05)
+                if c.z < z1:
+                    back = _smooth01((c.y - CHEEK_FRONT) / .05)
+                    c.z += (z1 - c.z) / .06 * (lift * (1 - back) - amt * back)
     return out
 
 
@@ -220,7 +222,7 @@ def build(rig):
                            Vector((.007, foot, 1.6)), Vector((-.007, foot, 1.6))], [(0, 1, 2, 3)], h, .004, 'head')
     made.append('HELMET_Nasal'); _veteran('HELMET_Nasal', ('collapse',))
     for n in ('HELMET_Cheek guard L', 'HELMET_Cheek guard R', 'HELMET_Cheek edge L', 'HELMET_Cheek edge R'):
-        _veteran(n, ('cheek', 1.66, .03))
+        _veteran(n, ('cheek', 1.66, .008, .02))
     return made
 
 
