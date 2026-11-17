@@ -19,7 +19,7 @@ import {PNG} from 'pngjs';
 //   duel-close.mp4  — the two pawns from the side, close;
 //   duel-board.mp4  — the board's home camera;
 //   duel-sheet.png  — 16 close-up frames, evenly over the clip, with time and phase;
-//   duel-measures.json — per frame: head against chest (yaw, pitch, roll),
+//   duel-measures.json — per frame: head against chest (yaw, pitch, roll), both feet up,
 //     the head's angular acceleration (shake), planted-foot sliding, the
 //     spear's closest approach to the other trunk.
 //   npm run render:duel -- [--fps 30] [--size 1280x720] [--ssaa 2] [--fence 2] [--only close] [--jobs 4] [--seed 1]
@@ -100,7 +100,8 @@ function headAgainstChest(id){const b=bones[id],c=b[CHEST].getWorldQuaternion(ne
 // ---- cameras ----
 scene.updateMatrixWorld(true);
 const pa=new THREE.Vector3(),pv=new THREE.Vector3();bones[A].root.getWorldPosition(pa);bones[V].root.getWorldPosition(pv);
-const mid=pa.clone().add(pv).multiplyScalar(.5),line=pv.clone().sub(pa).setY(0).normalize(),side=new THREE.Vector3(line.z,0,-line.x);
+// The roots are at the pelvis, about a metre up; the camera aims from the floor, so the feet stay in frame.
+const mid=pa.clone().add(pv).multiplyScalar(.5).setY(0),line=pv.clone().sub(pa).setY(0).normalize(),side=new THREE.Vector3(line.z,0,-line.x);
 // The side looking away from the board's home camera would face the trees; take the one towards it.
 if(side.dot(new THREE.Vector3(0,0,1))<0)side.negate();
 const closeCamera=new THREE.PerspectiveCamera(34,W/H,.1,900);
@@ -117,8 +118,8 @@ const spearGap=(by,at)=>{const g=L.grip(by),t=L.tip(by);if(!g||!t||!L.shown(at))
  const k=Object.values(P);let m=Infinity;for(let i=0;i<k.length-1;i++)m=Math.min(m,seg(g,t,k[i],k[i+1]));return+m.toFixed(3);};
 async function grab(stage){
  const f={i:frames.length,t:+(frames.length/FPS).toFixed(3),stage,phase:phaseText()||phase,pieces:{}};
- for(const id of [A,V]){if(!L.shown(id)){f.pieces[id]=null;continue;}const h=headAgainstChest(id),feet=L.feetWorld(id);
-  f.pieces[id]={head:{yaw:h.yaw,pitch:h.pitch,roll:h.roll,total:h.total},hq:h.q.toArray(),feet,spearToOther:spearGap(id,id===A?V:A)};}
+ for(const id of [A,V]){if(!L.shown(id)){f.pieces[id]=null;continue;}const h=headAgainstChest(id),feet=L.feetWorld(id),ground=L.feetGround(id);
+  f.pieces[id]={head:{yaw:h.yaw,pitch:h.pitch,roll:h.roll,total:h.total},hq:h.q.toArray(),feet,ground,spearToOther:spearGap(id,id===A?V:A)};}
  frames.push(f);
  if(f.i%NSHARD===SHARD)for(const v of views){const img=raster.render(scene,v.camera,{shadow:v.shadow});
   await writeFile(path.join(framesDir,`${v.name}-${String(f.i).padStart(5,'0')}.png`),PNG.sync.write({width:img.width,height:img.height,data:img.rgb},{colorType:2,inputColorType:2,inputHasAlpha:false,deflateLevel:3}));}
@@ -141,12 +142,17 @@ for(const id of [A,V]){const seq=frames.map(f=>f.pieces[id]).filter(Boolean),who
  // Foot sliding: a foot low on the ground (≤ 6 cm sole height above the lowest) that moves sideways.
  const slide=[];for(const s of ['foot.L','foot.R'])for(let i=1;i<seq.length;i++){const a=seq[i-1].feet?.[s],b=seq[i].feet?.[s];if(!a||!b)continue;const v=Math.hypot(b[0]-a[0],b[2]-a[2])*FPS,low=Math.max(a[1],b[1])<.12;if(low)slide.push({i,side:s,mps:+v.toFixed(2)});}
  const slow=slide.filter(s=>s.mps>.05&&s.mps<.6);
- summary[who]={frames:seq.length,headYawMaxDeg:deg(Math.max(...yaw)),headYawOver60Frames:yaw.filter(y=>y>60).length,headYawOver90Frames:yaw.filter(y=>y>90).length,
+ // Both feet off the floor at once: a hop (a fencer always has one foot down;
+ // Perry & Burnfield, Gait Analysis, 2010, ch. 2). Ankles 3 cm over their
+ // lowest, while fencing and while the attacker takes (the taken one falls).
+ const live=frames.filter(f=>f.pieces[id]&&(f.stage==='fence'||id===A)).map(f=>f.pieces[id].ground);
+ const low=Math.min(...live.flatMap(g=>[g['foot.L'][1],g['foot.R'][1]])),up=g=>g['foot.L'][1]-low>.03&&g['foot.R'][1]-low>.03;
+ summary[who]={frames:seq.length,bothFeetUpFrames:live.filter(up).length,headYawMaxDeg:deg(Math.max(...yaw)),headYawOver60Frames:yaw.filter(y=>y>60).length,headYawOver90Frames:yaw.filter(y=>y>90).length,
   headPitchRangeDeg:[deg(Math.min(...pitch)),deg(Math.max(...pitch))],headRollMaxDeg:deg(Math.max(...roll)),headTotalMaxDeg:deg(Math.max(...total)),
   headSpeedMaxDegPerS:deg(Math.max(...speed)),headShakeFlips:flips,plantedFootSlideFrames:slow.length,worstSlide:slow.sort((a,b)=>b.mps-a.mps).slice(0,3)};}
 const gaps=frames.filter(f=>f.stage==='fence').flatMap(f=>[f.pieces[A]?.spearToOther,f.pieces[V]?.spearToOther]).filter(x=>x!==null&&x!==undefined);
 summary.fenceSpearClosestToTrunkM=gaps.length?Math.min(...gaps):null;
-if(lead)await writeFile(path.join(out,'duel-measures.json'),JSON.stringify({fps:FPS,size:[W,H],ssaa:SSAA,attacker:A,defender:V,summary,frames:frames.map(({pieces,...f})=>({...f,pieces:Object.fromEntries(Object.entries(pieces).map(([k,p])=>[k,p&&{head:p.head,spearToOther:p.spearToOther,feet:p.feet}]))}))},null,1));
+if(lead)await writeFile(path.join(out,'duel-measures.json'),JSON.stringify({fps:FPS,size:[W,H],ssaa:SSAA,attacker:A,defender:V,summary,frames:frames.map(({pieces,...f})=>({...f,pieces:Object.fromEntries(Object.entries(pieces).map(([k,p])=>[k,p&&{head:p.head,spearToOther:p.spearToOther,feet:p.feet,ground:p.ground}]))}))},null,1));
 
 process.exit(0);
 
