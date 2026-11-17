@@ -156,7 +156,7 @@ export function createFootLock({bones,holder,retarget}){
    const r=recorded(s);let f=state.feet[s];
    // Letting go, the foot is aimed at the stance the clip fades into, not
    // at the blend on the way there (it steps once, onto where it ends up).
-   if(letGo&&stance?.[s]){r.ankle.copy(stance[s]).applyMatrix4(holder.matrixWorld);r.down=true;}
+   if(letGo&&stance?.[s]){r.ankle.copy(stance[s]).applyMatrix4(holder.matrixWorld);r.down=true;r.above=0;}
    // A foot found up is taken as in the carry of a step (it comes down as
    // any step does, where it is when the recorded foot is down).
    // A foot found up (the hold starting over) goes with the recorded foot
@@ -175,13 +175,17 @@ export function createFootLock({bones,holder,retarget}){
     // before the recorded one, and the rest is a second step.
     const dt=Math.max(0,now-state.now),rv=dt>0&&f.R0?Math.hypot(r.ankle.x-f.R0.x,r.ankle.z-f.R0.z)/dt:0;
     const settled=now-(f.down??-Infinity)>=MIN_STAND;
-    // One foot at a time onto the stance: the other stands meanwhile.
-    const other=state.feet[s==='L'?'R':'L'],alone=!letGo||!other||other.mode==='plant';
+    // One foot in the air at a time: a step waits until the other foot is
+    // down. In walking and fencing one foot always bears the weight; both
+    // off the floor at once is running or a jump (Perry & Burnfield, Gait
+    // Analysis, 2010, ch. 2), and on the board it reads as a hop. A leg out
+    // of reach waits too, a frame or two short of its foot.
+    const other=state.feet[s==='L'?'R':'L'],alone=!other||other.mode==='plant';
     // A recorded foot that slides along the floor is followed in one step
     // once it stands still again (STILL, as smoothness.mjs counts a standing
     // foot) or lifts, not chased while it still moves.
     const rest=letGo||!r.down||rv<STILL;
-    if(settled&&((alone&&rest&&flat>(letGo?SETTLE:STEP_HOLD))||(!r.down&&rv>CARRY&&flat>STEP_LIFTED)||H0.distanceTo(f.P)>(l1+l2)*REACH)){
+    if(settled&&alone&&((rest&&flat>(letGo?SETTLE:STEP_HOLD))||(!r.down&&rv>CARRY&&flat>STEP_LIFTED)||H0.distanceTo(f.P)>(l1+l2)*REACH)){
      launch(f,r,now);
     }
    }
@@ -199,7 +203,11 @@ export function createFootLock({bones,holder,retarget}){
     // noise and the build's smoothing); those stay out of the step.
     const gate=r.down&&!letGo?minJerk(u/AIM[0])*(1-minJerk((u-AIM[1])/(1-AIM[1]))):minJerk(u/AIM[0]);
     if(u<1&&gate>0){f.F.x+=(r.ankle.x-f.F.x)*gate;f.F.z+=(r.ankle.z-f.F.z)*gate;}
-    f.F.y=r.ankle.y;
+    // It lands on the floor: the recorded foot lifts the step only while it
+    // is up and moving (a kick, a high step); one up but nearly still is held
+    // off the floor by the camera's depth noise, and a step brought down to
+    // it would stand in the air.
+    f.F.y=!r.down&&rv>CARRY?r.ankle.y:r.ankle.y-Math.max(0,r.above);
     // Up first, then over: the foot rises off its spot before it travels
     // and comes straight down onto the spot it lands on (the ends, OFF of
     // the step, are the lift-off and the set-down).

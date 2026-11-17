@@ -18,6 +18,16 @@ floor, then steps to a new place, then stands still again.
 2. steps: between two stands the foot travels on a minimum-jerk curve
    (Flash & Hogan 1985), lifted by a share of the step, within
    STEP_TIME; standing, it lies flat on the floor (clean.FOOT_FLAT).
+   One foot steps at a time: where the two feet's steps overlap, the later
+   one waits until the other foot is down (or the earlier one goes sooner),
+   shortened to STEP_TIME[0] at most, for a fencer has no flight between
+   steps (in walking both feet are off the floor only in running; Perry &
+   Burnfield, Gait Analysis, 2010, ch. 2). And each foot keeps its own
+   side: given the direction the fighter faces, a stand of the left foot
+   lies at least WIDTH_MIN left of the other foot, and the right one right
+   of it; a stand that crosses over is moved outwards (one camera puts the
+   feet on one line or crosses them by depth error; preferred step width in
+   walking is about 0.13 m, Donelan, Kram & Kuo 2001).
 3. body: the pelvis path and the body over it are smoothed in time
    (zero-lag Gaussian, BODY_SIGMA frames), bones keep their median lengths.
 4. legs: each knee is solved by two-bone IK from the hip to the rebuilt
@@ -44,6 +54,11 @@ STEP_SPEED = 1.6     # m/s, mean foot speed of a step (fencing advance / lunge)
 LIFT = (0.03, 0.10, 0.3)  # m, lowest and highest lift of a step, lift per metre of step
 REACH = 0.995        # share of the leg's full length a planted leg may reach
 DROP_MAX = 0.15      # m, deepest the pelvis comes down for a far foot (a fencing lunge)
+WIDTH_MIN = 0.08     # m, least side distance between the ankles of the two stands (below the
+                     # ≈0.13 m preferred step width of walking, Donelan, Kram & Kuo 2001)
+HOLD_MIN = 0.1       # s, shortest stand between two steps of one foot
+SHIFT_MAX = 0.2      # s, furthest a step is moved to let the other foot land (further, the foot
+                     # lands where the recorded body is not yet or no longer: a wide stance)
 
 
 def gauss(X, sigma):
@@ -127,9 +142,69 @@ def heading_of(X, s, a, b):
     return v / n if n > 1e-6 else np.array([0.0, 0.0, 1.0])
 
 
-def foot_track(X, s, fps, L, seg=None):
+def windows(seg, fps):
+    """Steps of one foot as [u0, u1]: the last frame it stands before the
+    step and the first it stands after. Each step is centred on the cut
+    between two stretches and lasts by its length (STEP_SPEED, STEP_TIME)."""
+    spans = [[a, b] for a, b, _ in seg]
+    for i in range(len(seg) - 1):
+        d = np.linalg.norm(seg[i + 1][2] - seg[i][2])
+        n = int(round(np.clip(d / STEP_SPEED, *STEP_TIME) * fps))
+        lo = int(round(seg[i][1] + 0.5 - n / 2))
+        spans[i][1] = max(lo, spans[i][0] + 1)
+        spans[i + 1][0] = min(lo + n, spans[i + 1][1] - 1)
+    return [[spans[i][1], spans[i + 1][0]] for i in range(len(seg) - 1)]
+
+
+def in_flight(w, t):
+    return w[0] < t < w[1]
+
+
+def one_at_a_time(win, T, fps, hold_s=HOLD_MIN, shift_s=SHIFT_MAX):
+    """Steps of both feet {s: [[u0, u1]]} → the same with no frame where both
+    feet are in the air. Steps are placed in time order; a step that overlaps
+    the other foot's step moves to the nearest start where it does not (and
+    keeps a stand of hold_s after its own previous step), shortened to
+    STEP_TIME[0] if that brings it nearer. Returns the steps, how many
+    frames still have both feet up (none, unless no room was found) and the
+    steps [(s, i)] that found no room."""
+    hold = max(1, int(round(hold_s * fps)))
+    least = max(2, int(round(STEP_TIME[0] * fps)))
+    far = int(round(shift_s * fps))
+    order = sorted(((w[0] + w[1]) / 2, s, i) for s, ws in win.items() for i, w in enumerate(ws))
+    out = {s: [list(w) for w in ws] for s, ws in win.items()}
+    done = {s: [] for s in win}
+    stuck = []
+    for _, s, i in order:
+        o = [x for x in win if x != s][0]
+        u0, u1 = win[s][i]
+        prev = out[s][i - 1][1] + hold if i else 1
+        nxt = (win[s][i + 1][0] - hold) if i + 1 < len(win[s]) else T - 1
+        best = None
+        for n in range(u1 - u0, min(least, u1 - u0) - 1, -1):
+            for shift in sorted(range(-far, far + 1), key=abs):
+                a, b = u0 + shift + (u1 - u0 - n) // 2, u0 + shift + (u1 - u0 - n) // 2 + n
+                if a < prev or b > nxt:
+                    continue
+                if any(a < q1 and q0 < b for q0, q1 in done[o]):
+                    continue
+                cost = abs(shift) + 0.5 * (u1 - u0 - n)
+                if best is None or cost < best[0]:
+                    best = (cost, a, b)
+                break
+        if best is not None:
+            out[s][i] = [best[1], best[2]]
+        else:
+            stuck.append((s, i))
+        done[s].append(tuple(out[s][i]))
+    both = sum(1 for t in range(T) if all(any(in_flight(w, t) for w in out[x]) for x in out))
+    return out, both, stuck
+
+
+def foot_track(X, s, fps, L, seg=None, win=None):
     """Rebuilt ankle [T,3], heel and toe of one foot, its stands in frames and
-    the stretches it was built from ([(t0, t1, place)], given or found)."""
+    the stretches it was built from ([(t0, t1, place)], given or found). The
+    steps' frames ([[u0, u1]], windows) may be given."""
     T = len(X)
     if seg is None:
         seg = stands(gauss(X[:, C.I['ankle' + s], :][:, [0, 2]], 1.0), fps)
@@ -139,15 +214,11 @@ def foot_track(X, s, fps, L, seg=None):
     lift = np.zeros(T)
     head = np.zeros((T, 3))
     plants = []
-    # Each step is centred on the cut between two stretches; a stand holds
-    # from the end of the step into it to the start of the step out.
-    spans = [[a, b] for a, b, _ in seg]
-    for i in range(len(seg) - 1):
-        d = np.linalg.norm(seg[i + 1][2] - seg[i][2])
-        n = int(round(np.clip(d / STEP_SPEED, *STEP_TIME) * fps))
-        lo = int(round(seg[i][1] + 0.5 - n / 2))
-        spans[i][1] = max(lo, spans[i][0] + 1)
-        spans[i + 1][0] = min(lo + n, spans[i + 1][1] - 1)
+    # A stand holds from the end of the step into it to the start of the
+    # step out.
+    if win is None:
+        win = windows(seg, fps)
+    spans = [[win[i - 1][1] if i else 0, win[i][0] if i < len(win) else T - 1] for i in range(len(seg))]
     heads = [heading_of(X, s, a, b) for a, b, _ in seg]
     for i, (a, b, p) in enumerate(seg):
         t0, t1 = spans[i]
@@ -172,9 +243,11 @@ def foot_track(X, s, fps, L, seg=None):
     return A, parts, plants, seg
 
 
-def steady(X, fps, body_sigma=BODY_SIGMA, pelvis_sigma=PELVIS_SIGMA):
+def steady(X, fps, body_sigma=BODY_SIGMA, pelvis_sigma=PELVIS_SIGMA, left=None):
     """Frames [T,33,3] (y up, floor at 0) → (frames, plants {s: [(t0,t1)]},
-    report). The whole body is smoothed, the feet planted, the legs solved."""
+    report). The whole body is smoothed, the feet planted, the legs solved.
+    left: the fighter's left as a horizontal direction (they face the
+    partner); given, each foot keeps its side (WIDTH_MIN)."""
     X = np.asarray(X, float)
     L = C.foot_lengths(C.bone_lengths(X))
     pv = C.pelvis(X)
@@ -189,16 +262,22 @@ def steady(X, fps, body_sigma=BODY_SIGMA, pelvis_sigma=PELVIS_SIGMA):
         flat = np.linalg.norm((H - A)[:, [0, 2]], axis=1)
         return (H[:, 1] - A[:, 1]) - np.sqrt(np.maximum(r ** 2 - flat ** 2, 0)), flat, r
 
-    feet, plants, segs, moved = {}, {}, {}, 0
-    for s in C.SIDES:
-        A, parts, plants[s], segs[s] = foot_track(X, s, fps, L)
-        l1, l2 = L[(f'hip{s}', f'knee{s}')], L[(f'knee{s}', f'ankle{s}')]
-        for _ in range(3):
+    win = {s: None for s in C.SIDES}
+    track = {s: foot_track(X, s, fps, L) for s in C.SIDES}
+    segs = {s: track[s][3] for s in C.SIDES}
+    moved, widened = 0, 0
+
+    def reach():
+        nonlocal moved
+        changed = False
+        for s in C.SIDES:
+            A, _, plants, _ = track[s]
+            l1, l2 = L[(f'hip{s}', f'knee{s}')], L[(f'knee{s}', f'ankle{s}')]
             H = Y[:, C.I['hip' + s]].copy()
             H[:, 1] -= DROP_MAX
             r = REACH * (l1 + l2)
-            new, changed = [], False
-            for (a, b, p), (t0, t1) in zip(segs[s], plants[s]):
+            new = []
+            for (a, b, p), (t0, t1) in zip(segs[s], plants):
                 d = A[t0:t1 + 1] - H[t0:t1 + 1]
                 flat = np.linalg.norm(d[:, [0, 2]], axis=1)
                 room = np.sqrt(np.maximum(r ** 2 - d[:, 1] ** 2, 0))
@@ -210,10 +289,77 @@ def steady(X, fps, body_sigma=BODY_SIGMA, pelvis_sigma=PELVIS_SIGMA):
                     moved += 1
                 new.append((a, b, p))
             segs[s] = new
-            if not changed:
+        return changed
+
+    def width():
+        # Each stand keeps its side of the other foot, as the fighter faces:
+        # a crossing stand moves outwards by half of what it lacks (the
+        # other foot's stand moves the other half) until both are apart.
+        nonlocal widened
+        if left is None:
+            return False
+        side = np.asarray(left, float)[[0, 2]]
+        side = side / np.linalg.norm(side)
+        changed = False
+        for s, sign in (('L', 1.0), ('R', -1.0)):
+            o = 'R' if s == 'L' else 'L'
+            other = track[o][0][:, [0, 2]]
+            new = []
+            for (a, b, p), (t0, t1) in zip(segs[s], track[s][2]):
+                lack = WIDTH_MIN - float((sign * (p - other[t0:t1 + 1]) @ side).min())
+                if lack > 0.003:
+                    p = p + sign * side * (lack / 2 + 0.002)
+                    changed = True
+                    widened += 1
+                new.append((a, b, p))
+            segs[s] = new
+        return changed
+
+    def rebuild():
+        for s in C.SIDES:
+            track[s] = foot_track(X, s, fps, L, segs[s], win[s])
+
+    for _ in range(12):
+        changed = width()
+        changed = reach() or changed
+        if not changed:
+            break
+        rebuild()
+    # One foot in the air at a time; the stands keep their places, the
+    # steps their order.
+    # A step with no room around the other foot's steps comes next to a
+    # stand the foot hardly touched (shorter than PLANT_MIN once the steps
+    # took their frames): that stand is dropped and the two steps become one.
+    merged = 0
+    while True:
+        win, both, stuck = one_at_a_time({s: windows(segs[s], fps) for s in C.SIDES}, len(X), fps)
+        drop = None
+
+        def held(x, j):  # frames stand j of foot x holds between its steps
+            return (win[x][j][0] if j < len(win[x]) else len(X) - 1) - (win[x][j - 1][1] if j else 0)
+        for s, i in stuck:
+            # The stands next to the stuck step, then those next to the other
+            # foot's steps in its way.
+            o = 'R' if s == 'L' else 'L'
+            u0, u1 = win[s][i]
+            near = [(s, j) for j in (i, i + 1)] + [(o, j) for k, (q0, q1) in enumerate(win[o]) if q0 < u1 and u0 < q1 for j in (k, k + 1)]
+            near = [(x, j) for x, j in near if 0 < j < len(segs[x]) - 1 and held(x, j) / fps < PLANT_MIN]
+            if near:
+                drop = min(near, key=lambda c: held(*c))
                 break
-            A, parts, plants[s], segs[s] = foot_track(X, s, fps, L, segs[s])
-        feet[s] = (A, parts)
+        if drop is None:
+            break
+        s, j = drop
+        (a0, b0, p0), (a1, b1, _) = segs[s][j - 1], segs[s][j]
+        segs[s] = segs[s][:j - 1] + [(a0, (a1 + b1) // 2, p0)] + segs[s][j + 1:]
+        merged += 1
+    rebuild()
+    for _ in range(3):
+        if not reach():
+            break
+        rebuild()
+    feet = {s: (track[s][0], track[s][1]) for s in C.SIDES}
+    plants = {s: track[s][2] for s in C.SIDES}
     drop = np.zeros(len(Y))
     for s in C.SIDES:
         l1, l2 = L[(f'hip{s}', f'knee{s}')], L[(f'knee{s}', f'ankle{s}')]
@@ -244,5 +390,6 @@ def steady(X, fps, body_sigma=BODY_SIGMA, pelvis_sigma=PELVIS_SIGMA):
     steps = {s: len(plants[s]) - 1 for s in C.SIDES}
     report = {'bodySigmaFrames': body_sigma, 'pelvisSigmaFrames': pelvis_sigma, 'steps': steps,
               'plants': {s: [[int(a), int(b)] for a, b in plants[s]] for s in C.SIDES},
-              'maxDropM': round(float(drop.max()), 3), 'standsMoved': moved, 'shortFrames': short}
+              'maxDropM': round(float(drop.max()), 3), 'standsMoved': moved, 'standsWidened': widened,
+              'standsMerged': merged, 'bothFeetUpFrames': both, 'shortFrames': short}
     return Y, plants, report
