@@ -11,16 +11,16 @@
     "SHIELD_heater"
   ],
   "materials": {
-    "armor.main": "steel",
     "armor.trim": "steel",
     "armor.leather": "leather",
+    "armor.main": "steel",
     "weapon.wood": "wood",
-    "weapon.metal": "steel",
     "weapon.grip": "leather",
-    "shield.leather": "leather",
+    "weapon.metal": "steel",
+    "shield.wood": "wood",
     "shield.trim": "steel",
     "shield.emblem": "paint",
-    "shield.wood": "wood"
+    "shield.leather": "leather"
   },
   "shields": {
     "tower": {

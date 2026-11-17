@@ -47,14 +47,15 @@ def veteran_shape(name, cos):
             amt, half, z0 = op[1:]
             for c in out:
                 if c.y < -.05: c.y -= amt * max(0, 1 - abs(c.x) / half) * min(1, max(0, (c.z - z0) / .1))
-        elif kind == 'cheek':  # cheek guards reach lower
+        elif kind == 'cheek':  # cheek guards reach lower at the back, the front corner stays clear of the collar
             z1, amt = op[1:]
             for c in out:
-                if c.z < z1: c.z -= amt * (z1 - c.z) / .06
+                if c.z < z1: c.z -= amt * (z1 - c.z) / .06 * _smooth01((c.y - CHEEK_FRONT) / .05)
     return out
 
 
 NECK_Y = -.025  # front-back centre of the gorget ring
+CHEEK_FRONT = -.095  # the cheek guard's lower front corner (bind y)
 
 
 def chin_clear(c):

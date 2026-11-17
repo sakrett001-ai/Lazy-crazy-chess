@@ -13,42 +13,42 @@
    "experience": "recruit",
    "frames": 40,
    "faults": 6451,
-   "seconds": 303.3
+   "seconds": 286.1
   },
   {
    "scene": "start",
    "experience": "veteran",
    "frames": 40,
-   "faults": 6478,
-   "seconds": 297.6
+   "faults": 6477,
+   "seconds": 295.5
   },
   {
    "scene": "clash",
    "experience": "recruit",
    "frames": 80,
    "faults": 3591,
-   "seconds": 161.1
+   "seconds": 157.7
   },
   {
    "scene": "clash",
    "experience": "veteran",
    "frames": 80,
    "faults": 3670,
-   "seconds": 165.9
+   "seconds": 165.1
   },
   {
    "scene": "capture",
    "experience": "recruit",
    "frames": 102,
    "faults": 2766,
-   "seconds": 140.7
+   "seconds": 135.4
   },
   {
    "scene": "capture",
    "experience": "veteran",
    "frames": 117,
-   "faults": 3384,
-   "seconds": 129.2
+   "faults": 3374,
+   "seconds": 118.6
   }
  ],
  "totals": {
@@ -516,7 +516,7 @@
     }
    },
    "шлем → лицо и голова": {
-    "frames": 127,
+    "frames": 126,
     "maxSize": 0.3,
     "maxM": 0.0755,
     "worstAt": {
@@ -579,9 +579,9 @@
     }
    },
    "шлем → корпус": {
-    "frames": 27,
-    "maxSize": 1,
-    "maxM": 0.0605,
+    "frames": 17,
+    "maxSize": 0.5,
+    "maxM": 0.0593,
     "worstAt": {
      "scene": "clash",
      "experience": "veteran",

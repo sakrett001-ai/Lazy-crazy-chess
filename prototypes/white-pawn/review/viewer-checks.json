@@ -1,8 +1,8 @@
 {
-  "date": "2026-11-15T11:24:57.129Z",
+  "date": "2026-11-17T06:47:45.022Z",
   "browser": "157.0.8103.50",
-  "glbSha256": "2664f63ca68a110a89080ea1abd2d6d7fedbdd70b91a1b440ac5245ef3e0cb07",
-  "documentSha256": "f3553678788f112d0831f344b18c4c3085588c85808f51c5ac9a0d4ee78bfa57",
+  "glbSha256": "eb79b66d910b948e3d1d1215f95b980bbc5bac0ab55b304d1e62d1a3da7dca09",
+  "documentSha256": "4b8d984630c641422498fdb11c0e4dba3d0fa8a529d825b8f0cf4b9261e9f725",
   "tests": [
     "Offline load; expected clips and durations; no autoplay or HTTP requests",
     "Default GLB pose matches equipped guard at Guard_Breath t=0",
@@ -155,7 +155,7 @@
   ],
   "errors": [],
   "network": [],
-  "loadMs": 11037,
+  "loadMs": 9734,
   "initial": {
     "pose": "rest",
     "time": 0,
@@ -204,8 +204,8 @@
     ],
     "drawCalls": 26,
     "triangles": 222776,
-    "p50ReadbackMs": 794.6999999997206,
-    "p95ReadbackMs": 827.2000000001863,
+    "p50ReadbackMs": 589.7999999998137,
+    "p95ReadbackMs": 663.1000000005588,
     "note": "Headless Chromium with software rendering; synchronous render and readback, not sustained real-device FPS."
   },
   "status": "passed",
