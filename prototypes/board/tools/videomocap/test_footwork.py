@@ -117,5 +117,58 @@ class FeetTogetherTest(unittest.TestCase):
         self.assertLess((Y0[:, C.I['ankleL'], 0] - Y0[:, C.I['ankleR'], 0]).max(), 0)
 
 
+
+class PelvisToStanceTest(unittest.TestCase):
+    """A passing step seen from the side: the left foot ahead, the left hip
+    turned back by the camera's depth guess. Each ankle must come out on its
+    own side of the pelvis, the thighs apart, not crossed into an X."""
+    fps = 30.0
+
+    @staticmethod
+    def turned(X, deg):
+        X = X.copy()
+        o = (X[:, C.I['hipL']] + X[:, C.I['hipR']]) / 2
+        c, s = np.cos(np.radians(deg)), np.sin(np.radians(deg))
+        for i in (C.I['hipL'], C.I['hipR'], C.I['kneeL'], C.I['kneeR']):  # the thighs with the pelvis
+            v = X[:, i] - o
+            X[:, i, 0], X[:, i, 2] = o[:, 0] + c * v[:, 0] - s * v[:, 2], o[:, 2] + s * v[:, 0] + c * v[:, 2]
+        return X
+
+    @staticmethod
+    def apart(Y):
+        h = (Y[:, C.I['hipL']] - Y[:, C.I['hipR']])[:, [0, 2]]
+        h /= np.linalg.norm(h, axis=1, keepdims=True)
+        return ((Y[:, C.I['ankleL']] - Y[:, C.I['ankleR']])[:, [0, 2]] * h).sum(1)
+
+    def stance(self):
+        L = path([(0, 0.03, 0.4), (2, 0.03, 0.4)])
+        R = path([(0, -0.03, 0.0), (2, -0.03, 0.0)])
+        return self.turned(walk({'L': L, 'R': R}), -40)  # the left hip back
+
+    def test_ankles_on_their_own_sides(self):
+        X = self.stance()
+        self.assertLess(self.apart(X).max(), 0)  # crossed as recorded
+        Y, _, rep = W.steady(X, self.fps, left=(1, 0, 0))
+        self.assertGreaterEqual(self.apart(Y).min(), 0.075, rep)
+        self.assertGreater(rep['pelvisTurnMaxDeg'], 30)
+        self.assertLess(rep['pelvisTurnMaxDeg'], 60)  # the least turn, not a full square-up
+
+    def test_without_the_turn_they_cross(self):
+        # Mutation check: with the turn taken out the same stance stays crossed.
+        keep = W.pelvis_to_stance
+        W.pelvis_to_stance = lambda Y, a, b, s: (Y, np.zeros(len(Y)))
+        try:
+            Y, _, _ = W.steady(self.stance(), self.fps, left=(1, 0, 0))
+        finally:
+            W.pelvis_to_stance = keep
+        self.assertLess(self.apart(Y).min(), 0.075)
+
+    def test_a_square_stance_is_left_alone(self):
+        L = path([(0, 0.12, 0.1), (2, 0.12, 0.1)])
+        R = path([(0, -0.12, 0.0), (2, -0.12, 0.0)])
+        _, _, rep = W.steady(walk({'L': L, 'R': R}), self.fps, left=(1, 0, 0))
+        self.assertEqual(rep['pelvisTurnedFrames'], 0)
+
+
 if __name__ == '__main__':
     unittest.main()

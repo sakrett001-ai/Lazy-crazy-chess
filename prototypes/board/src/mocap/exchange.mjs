@@ -77,16 +77,49 @@ export function cyclePose(clip,t,k,scale){
 // lands where the recording put it. The knee follows by two-bone IK in the
 // plane of the recorded knee.
 const FOOT_POINTS=s=>['ankle'+s,'heel'+s,'toe'+s];
+// Each foot keeps its own side of the other. A stand held while the pelvis
+// drifts sideways is moved back by that drift; a foot planted before the
+// drift and one landing after it then differ by it, and a drift of 13 cm
+// (ролик 516, exchange.attack) put the feet on one line and the thighs
+// crossed into an X with the pelvis turned to them. A stance keeps a step's
+// width across (about 0.13 m, Donelan, Kram & Kuo 2001; WIDTH_MIN in
+// tools/videomocap/footwork.py, recording units): a stand that would come
+// closer moves outwards for the whole of it (a planted foot does not slide),
+// by the least that is needed, and its neighbours' corrections run into it
+// over the swing between.
+export const WIDTH_MIN=.08;
+const at=(list,vals,t)=>{if(!list.length)return 0;
+ for(let i=0;i<list.length;i++){const [a,b]=list[i];if(t<a)return i?vals[i-1]+(vals[i]-vals[i-1])*smooth(t,list[i-1][1],a):vals[0];if(t<=b)return vals[i];}
+ return vals[vals.length-1];};
+function widthFix(clip){
+ if(clip._widthFix)return clip._widthFix;
+ const plants=clip.events.plants,side=u=>travelAt(clip,u).side,feet={};
+ const fix={L:(plants.L||[]).map(()=>0),R:(plants.R||[]).map(()=>0)};
+ // The feet as cyclePose puts them before this correction: lateral, +X left.
+ const lateral=(s,t)=>{const p=sampleClip(clip,t),list=plants[s]||[];let d=0;
+  for(let i=0;i<list.length;i++){const [a,b]=list[i];
+   if(t<a){if(i>0){const [pa,pb]=list[i-1];d=(side(pb)-side(pa))*(1-smooth(t,pb,a));}break;}
+   if(t<=b){d=side(t)-side(a);break;}
+   if(i===list.length-1)d=side(b)-side(a);}
+  return p['ankle'+s][0]-p.pelvis[0]+d;};
+ const order=['L','R'].flatMap(s=>(plants[s]||[]).map((w,i)=>({s,i,a:w[0],b:w[1]}))).sort((u,v)=>u.a-v.a);
+ for(const {s,i,a,b} of order){const o=s==='L'?'R':'L',sign=s==='L'?1:-1;let lack=0;
+  for(let t=a;t<=b+1e-9;t+=1/clip.fps){
+   const mine=lateral(s,t),other=lateral(o,t)+at(plants[o]||[],fix[o],t);
+   lack=Math.max(lack,WIDTH_MIN-sign*(mine-other));}
+  fix[s][i]=sign*Math.max(0,lack);}
+ return clip._widthFix=fix;
+}
 function plantShift(clip,t,scale){
  const plants=clip.events?.plants;if(!plants)return null;
  const gap=u=>{const {forward,side}=travelAt(clip,u);return[side,forward-approachAt(scale,clip,u)];};
- const out={};
+ const out={},fix=widthFix(clip);
  for(const s of ['L','R']){const list=plants[s]||[];let d=[0,0];
   for(let i=0;i<list.length;i++){const [a,b]=list[i];
    if(t<a){if(i>0){const [pa,pb]=list[i-1],ga=gap(pa),gb=gap(pb),w=1-smooth(t,pb,a);d=[(gb[0]-ga[0])*w,(gb[1]-ga[1])*w];}break;}
    if(t<=b){const ga=gap(a),gt=gap(t);d=[gt[0]-ga[0],gt[1]-ga[1]];break;}
    if(i===list.length-1){const ga=gap(a),gb=gap(b);d=[gb[0]-ga[0],gb[1]-ga[1]];}}
-  out[s]=d;}
+  d[0]+=at(list,fix[s],t);out[s]=d;}
  return out;
 }
 function plantFeet(clip,t,scale,points){

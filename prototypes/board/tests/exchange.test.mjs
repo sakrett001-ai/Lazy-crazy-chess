@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {parseMotionFile,prepareClip} from '../src/mocap/format.mjs';
-import {exchangePairs,exchangeLayout,exchangeAt,exchangeArms,cyclePose,trunkLean,levelSpear,shieldAt,keyed,CROSSFADE,SHIELD_LIFT_MAX} from '../src/mocap/exchange.mjs';
+import {exchangePairs,exchangeLayout,exchangeAt,exchangeArms,cyclePose,trunkLean,levelSpear,shieldAt,keyed,CROSSFADE,SHIELD_LIFT_MAX,WIDTH_MIN} from '../src/mocap/exchange.mjs';
 import {createRetargeter} from '../src/mocap/retarget.mjs';
 import {pawnRest} from './pawn-rest.mjs';
 
@@ -40,6 +40,42 @@ test('the shoulders turn over the hips no further than the spine twists',()=>{
  const yaw=(a,b)=>Math.atan2(-(b[2]-a[2]),b[0]-a[0])*180/Math.PI,wrap=a=>((a+540)%360)-180;
  for(const c of clips)for(const f of c.frames){const d=wrap(yaw(f.shoulderL,f.shoulderR)-yaw(f.hipL,f.hipR));
   assert.ok(Math.abs(d)<=51,`${c.name}: twist ${d.toFixed(0)}°`);}
+});
+
+// A stand that drifts: the pelvis comes 15 cm to the right while the right
+// foot is in the air, and it lands 10 cm right of the planted left one, as
+// recorded. The pelvis held on the line, the left foot moved back by the
+// drift (it stays planted) and the right one landing where the recording put
+// it beside the pelvis would stand 5 cm to the LEFT of the left foot: the
+// thighs crossed. Mutation check: the uncorrected stance must cross.
+function driftingStand(){
+ const fps=30,n=61,points=['pelvis','hipL','hipR','kneeL','kneeR','ankleL','ankleR','heelL','heelR','toeL','toeR'];
+ const smooth=(t,a,b)=>{const u=Math.min(1,Math.max(0,(t-a)/(b-a)));return u*u*(3-2*u);};
+ const frames=[];
+ for(let i=0;i<n;i++){const t=i/fps,px=-.15*smooth(t,.3,.7),lift=t>.3&&t<.7?.08*Math.sin(Math.PI*(t-.3)/.4):0;
+  const L=[.06,.08,0],R=[t<.3?-.06:t>.7?-.04:-.06+.02*smooth(t,.3,.7),.08+lift,0],o={};
+  o.pelvis=[px,.9,0];o.hipL=[px+.09,.9,0];o.hipR=[px-.09,.9,0];
+  for(const [s,a] of [['L',L],['R',R]]){o['ankle'+s]=a;o['heel'+s]=[a[0],.02,a[2]-.05];o['toe'+s]=[a[0],.02,a[2]+.15];o['knee'+s]=[(o['hip'+s][0]+a[0])/2,.5,.08];}
+  frames.push(o);}
+ return{name:'drift',fps,count:n,duration:(n-1)/fps,frames,points,travel:[0,0,0],loop:false,side:'defend',events:{plants:{L:[[0,2]],R:[[0,.3],[.7,2]]}}};
+}
+
+test('each foot keeps its own side of the other through a stand that drifts sideways',()=>{
+ const c=driftingStand(),width=t=>{const p=cyclePose(c,t,1,1).points;return p.ankleL[0]-p.ankleR[0];};
+ const f=c.frames[45];
+ assert.ok(f.ankleL[0]-f.ankleR[0]>=WIDTH_MIN,'recorded stance is wide');
+ // without the correction: the planted foot moved back by the drift, the other beside the pelvis
+ const uncorrected=(f.ankleL[0]-f.pelvis[0])+(f.pelvis[0]-c.frames[0].pelvis[0])-(f.ankleR[0]-f.pelvis[0]);
+ assert.ok(uncorrected<0,`uncorrected stance crosses: ${uncorrected.toFixed(3)}`);
+ for(let t=0;t<=c.duration;t+=1/30)assert.ok(width(t)>=WIDTH_MIN-1e-6,`t ${t.toFixed(2)}: feet ${width(t).toFixed(3)} apart`);
+ // and the planted left foot does not slide while it stands
+ const left=t=>cyclePose(c,t,1,1).points.ankleL[0];
+ for(let t=0;t<=c.duration;t+=1/30)assert.ok(Math.abs(left(t)-left(0))<1e-6,`left foot slid ${(left(t)-left(0)).toFixed(3)} at ${t.toFixed(2)}`);
+});
+
+test('in the recorded exchange each foot keeps its own side of the other',()=>{
+ for(const c of clips)for(let t=0;t<=c.duration;t+=1/30){const p=cyclePose(c,t,k,1).points;
+  assert.ok(p.ankleL[0]-p.ankleR[0]>=WIDTH_MIN-1e-3,`${c.name} t ${t.toFixed(2)}: ${(p.ankleL[0]-p.ankleR[0]).toFixed(3)}`);}
 });
 
 test('a figure keeps to the line of the fight: no sideways drift',()=>{

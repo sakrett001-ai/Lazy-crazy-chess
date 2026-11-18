@@ -243,6 +243,44 @@ def foot_track(X, s, fps, L, seg=None, win=None):
     return A, parts, plants, seg
 
 
+def pelvis_to_stance(Y, ankle_l, ankle_r, sigma, width=WIDTH_MIN):
+    """Each ankle on its own side of the pelvis. One camera from the side sees
+    the hips along its axis and guesses their depth: on a passing step the
+    pelvis turned 30–40° against the stance (the left foot ahead and the left
+    hip back), and the thighs crossed into an X, the knees past each other.
+    Walking, the pelvis turns with the stepping leg by a few degrees only
+    (transverse rotation about ±5°, Perry & Burnfield, Gait Analysis, 2010,
+    the chapter on the pelvis and trunk) and the feet keep a step's width apart across it (about 0.13 m,
+    Donelan, Kram & Kuo 2001). The hip line is turned about the vertical
+    through the pelvis (the knees with it) by the least angle that puts the ankles width apart
+    along it (or most of their distance, feet close together), the turn
+    spread over neighbouring frames and never less than needed.
+    Returns the frames and the turn per frame, degrees."""
+    iL, iR = C.I['hipL'], C.I['hipR']
+    h = (Y[:, iL] - Y[:, iR])[:, [0, 2]]
+    f = (ankle_l - ankle_r)[:, [0, 2]]
+    n = np.linalg.norm(f, axis=1)
+    a = np.arctan2(h[:, 0] * f[:, 1] - h[:, 1] * f[:, 0], (h * f).sum(1))  # from the hip line to the feet, signed
+    room = np.arccos(np.clip(np.minimum(width, 0.8 * n) / np.maximum(n, 1e-9), -1, 1))
+    phi = np.where(np.abs(a) > room, a - np.sign(a) * room, 0.0)
+    # The largest turn within reach of each frame, then smoothed: the hip line
+    # comes round and back, not by a frame's jump.
+    k = int(np.ceil(3 * sigma))
+    wide = np.array([phi[max(0, t - k):t + k + 1][np.abs(phi[max(0, t - k):t + k + 1]).argmax()] for t in range(len(phi))])
+    sm = gauss(wide, sigma)
+    phi = np.where(np.abs(sm) >= np.abs(phi), sm, phi)
+    Y = Y.copy()
+    o = (Y[:, iL] + Y[:, iR]) / 2
+    c, s = np.cos(phi), np.sin(phi)
+    # The knees turn with the pelvis (the thighs hang from it): their bend
+    # direction is the pole the legs are solved to below.
+    for i in (iL, iR, C.I['kneeL'], C.I['kneeR']):
+        v = (Y[:, i] - o)[:, [0, 2]]
+        Y[:, i, 0] = o[:, 0] + c * v[:, 0] - s * v[:, 1]
+        Y[:, i, 2] = o[:, 2] + s * v[:, 0] + c * v[:, 1]
+    return Y, np.degrees(phi)
+
+
 def steady(X, fps, body_sigma=BODY_SIGMA, pelvis_sigma=PELVIS_SIGMA, left=None):
     """Frames [T,33,3] (y up, floor at 0) → (frames, plants {s: [(t0,t1)]},
     report). The whole body is smoothed, the feet planted, the legs solved.
@@ -360,6 +398,7 @@ def steady(X, fps, body_sigma=BODY_SIGMA, pelvis_sigma=PELVIS_SIGMA, left=None):
         rebuild()
     feet = {s: (track[s][0], track[s][1]) for s in C.SIDES}
     plants = {s: track[s][2] for s in C.SIDES}
+    Y, turned = pelvis_to_stance(Y, feet['L'][0], feet['R'][0], body_sigma)
     drop = np.zeros(len(Y))
     for s in C.SIDES:
         l1, l2 = L[(f'hip{s}', f'knee{s}')], L[(f'knee{s}', f'ankle{s}')]
@@ -391,5 +430,6 @@ def steady(X, fps, body_sigma=BODY_SIGMA, pelvis_sigma=PELVIS_SIGMA, left=None):
     report = {'bodySigmaFrames': body_sigma, 'pelvisSigmaFrames': pelvis_sigma, 'steps': steps,
               'plants': {s: [[int(a), int(b)] for a, b in plants[s]] for s in C.SIDES},
               'maxDropM': round(float(drop.max()), 3), 'standsMoved': moved, 'standsWidened': widened,
-              'standsMerged': merged, 'bothFeetUpFrames': both, 'shortFrames': short}
+              'standsMerged': merged, 'bothFeetUpFrames': both, 'shortFrames': short,
+              'pelvisTurnedFrames': int((np.abs(turned) > 0.5).sum()), 'pelvisTurnMaxDeg': round(float(np.abs(turned).max()), 1)}
     return Y, plants, report
