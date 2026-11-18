@@ -372,6 +372,9 @@ def build(pair):
         # figure trembles and its feet shuffle over the floor.
         # A faces B along +x, B faces A along -x (y up): A's left is -z, B's +z.
         full[n][lo:hi], stands, feet[n] = W.steady(full[n][lo:hi], fps, left=(0.0, 0.0, -1.0 if n == 'A' else 1.0))
+        # The pelvis is turned to the stance there (each ankle on its own side
+        # of it): the shoulders follow within the twist a spine allows.
+        full[n][lo:hi], _, _ = steady_twist(full[n][lo:hi])
         # The legs re-solved to the planted feet bend in the knees' smoothed
         # plane; it is kept within the hip's rotation again.
         full[n][lo:hi], _, _ = steady_knees(full[n][lo:hi])
@@ -425,7 +428,8 @@ def build(pair):
                     'steps': {n: v['steps'] for n, v in feet.items()}, 'maxDropM': {n: v['maxDropM'] for n, v in feet.items()},
                     'standsMoved': {n: v['standsMoved'] for n, v in feet.items()}, 'widthMinM': W.WIDTH_MIN,
                     'standsWidened': {n: v['standsWidened'] for n, v in feet.items()}, 'standsMerged': {n: v['standsMerged'] for n, v in feet.items()},
-                    'bothFeetUpFrames': {n: v['bothFeetUpFrames'] for n, v in feet.items()}, 'shortFrames': {n: v['shortFrames'] for n, v in feet.items()}},
+                    'bothFeetUpFrames': {n: v['bothFeetUpFrames'] for n, v in feet.items()}, 'shortFrames': {n: v['shortFrames'] for n, v in feet.items()},
+                    'pelvisTurnedFrames': {n: v['pelvisTurnedFrames'] for n, v in feet.items()}, 'pelvisTurnMaxDeg': {n: v['pelvisTurnMaxDeg'] for n, v in feet.items()}},
            'head': {'yawDegrees': NECK_YAW, 'flexionDegrees': NECK_FLEX, 'extensionDegrees': NECK_EXT, 'rollDegrees': NECK_ROLL,
                     'sigmaFrames': HEAD_SIGMA, 'gaze': 'partner eyes, eyes level',
                     'trackedFaceTurnMaxDegrees': {n: round(v, 1) for n, v in heads.items()}},
