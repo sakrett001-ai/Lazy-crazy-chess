@@ -465,3 +465,32 @@ test('Mutieren: a cut into the bind, the hands rise with the blade on his, a ste
  assert.equal(built.strikes[0].loadout.weaponType,'bastard');
  assert.ok(ph.windup<ph.top&&ph.top<ph.blow&&ph.blow<ph.followThrough,JSON.stringify(ph));
 });
+
+test('Wind, stab: a cut into the bind, the blade wound flat over the head, a step into the ox, the thrust from above to the face, and back to the guard',async()=>{
+ const {src,c,at,dir,fr,dist,deg,built,last}=await storyboardClip('wind-stab');
+ const [fx,fz]=c.forward;
+ assert.match(src.source.note+JSON.stringify(src.source),/Feder & Pell|federandpell|feder-pell/i);
+ assert.ok(dir(0)[1]>.4,'vom Tag: the blade up '+dir(0));
+ // the bind: the blade goes forward along the line
+ const b=dir(fr(1.02));
+ assert.ok(b[0]*fx+b[2]*fz>.85,'the cut comes forward into the bind '+b);
+ // the wind keeps the feet; then the right foot steps and the hands stand over the head in the ox
+ assert.ok(dist(at(fr(1.02),'ankleL'),at(fr(1.44),'ankleL'))<.05,'the left foot stands through the wind');
+ assert.ok(dist(at(fr(1.44),'ankleR'),at(fr(1.86),'ankleR'))>.8,'the right foot steps into the ox');
+ const t=fr(1.86);
+ assert.ok(at(t,'wristR')[1]>at(t,'head')[1]&&at(t,'wristL')[1]>at(t,'head')[1],'hands over the head');
+ // the left foot follows and both stand through the thrust, which goes forward and down
+ assert.ok(dist(at(fr(1.86),'ankleL'),at(fr(2.28),'ankleL'))>.3,'the left foot follows');
+ assert.ok(dist(at(fr(2.28),'ankleL'),at(fr(2.62),'ankleL'))<.02&&dist(at(fr(2.28),'ankleR'),at(fr(2.46),'ankleR'))<.02,'the feet stand through the thrust');
+ // the front foot steps back only once the point has stood in the target: its heel stays down through the thrust
+ for(let f=fr(2.28);f<=fr(2.46);f++)assert.ok(at(f,'heelR')[1]<.01,`front heel down at ${(f/c.fps).toFixed(2)} s`);
+ const d=dir(fr(2.46));
+ assert.ok(d[1]<-.05&&d[0]*fx+d[2]*fz>.9,'the thrust goes forward and down '+d);
+ // and back to the guard where it started
+ assert.ok(deg(dir(0),dir(last))<5,'back to the blade line');
+ for(const n of ['wristR','wristL','ankleL','ankleR','pelvis'])assert.ok(dist(at(0,n),at(last,n))<.02,`${n} back where it started`);
+ const ph=built.strikes[0].phases;
+ assert.equal(built.strikes[0].loadout.weaponType,'bastard');
+ assert.ok(ph.windup<ph.top&&ph.top<ph.blow&&ph.blow<ph.followThrough,JSON.stringify(ph));
+ assert.ok(Math.abs(ph.blow-ph.windup-1.44)<.02,'one blow, from the bind to the end of the thrust: '+JSON.stringify(ph));
+});
