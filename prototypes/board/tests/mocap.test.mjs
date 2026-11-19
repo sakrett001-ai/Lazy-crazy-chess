@@ -410,3 +410,58 @@ test('Zornhau Ort, then take it down: hands up over the head with the point down
  assert.ok(ph.windup<ph.top&&ph.top<ph.blow&&ph.blow<ph.followThrough,JSON.stringify(ph));
  assert.ok(Math.abs(ph.top-ph.windup-1.08)<.02&&Math.abs(ph.blow-ph.top-.6)<.02,'windup from the bind, top when the blade is over: '+JSON.stringify(ph));
 });
+
+const storyboardClip=async name=>{
+ const {readFile}=await import('node:fs/promises');
+ const src=JSON.parse(await readFile(new URL(`../tools/strikes/storyboard/feder-pell-zornhau-${name}.lazy-chess.json`,import.meta.url),'utf8')),c=src.clips[0],P=src.points,J=P.length;
+ const at=(f,n)=>{const j=P.indexOf(n);return c.data.slice((f*J+j)*3,(f*J+j)*3+3);};
+ const W=c.weapon,F=W.fields.length,dir=f=>W.data.slice(f*F+3,f*F+6),fr=t=>Math.round(t*c.fps);
+ const dist=(a,b)=>Math.hypot(a[0]-b[0],a[1]-b[1],a[2]-b[2]),deg=(a,b)=>Math.acos(Math.min(1,a[0]*b[0]+a[1]*b[1]+a[2]*b[2]))*180/Math.PI;
+ const {parseMotionFile}=await import('../src/mocap/format.mjs');
+ const built=parseMotionFile(await readFile(new URL(`../motions/bishop-zornhau-${name}.motion.json`,import.meta.url),'utf8'));
+ return {src,c,at,dir,fr,dist,deg,built,last:c.frames-1};
+};
+
+test('Duplieren: a cut into the bind, the blade up, a step with the hands crossed, the cut behind his blade to the head, and back to the same guard',async()=>{
+ const {src,c,at,dir,fr,dist,deg,built,last}=await storyboardClip('duplieren');
+ const [fx,fz]=c.forward;
+ assert.match(src.source.note+JSON.stringify(src.source),/Feder & Pell|federandpell|feder-pell/i);
+ assert.ok(dir(0)[1]>.5,'vom Tag: the blade up '+dir(0));
+ // the right foot steps into the bind and stands while the blade rises
+ assert.ok(dist(at(0,'ankleR'),at(fr(1.02),'ankleR'))>1,'the right foot steps into the bind');
+ assert.ok(dist(at(fr(1.02),'ankleR'),at(fr(1.5),'ankleR'))<.05,'the right foot stands while the blade rises');
+ assert.ok(dir(fr(1.5))[1]>dir(fr(1.02))[1]+.3,'the blade rises out of the bind');
+ // the left foot steps on, the cut behind his blade lands forward, near level
+ assert.ok(dist(at(fr(1.5),'ankleL'),at(fr(2.47),'ankleL'))>1,'the left foot steps in');
+ const d=dir(fr(2.47));
+ assert.ok(d[0]*fx+d[2]*fz>.75&&Math.abs(d[1])<.3,'the cut goes forward '+d);
+ // and the fencer comes round the pell back to where he started
+ assert.ok(deg(dir(0),dir(last))<5,'back to the same blade line');
+ for(const n of ['wristR','wristL','ankleL','ankleR','pelvis'])assert.ok(dist(at(0,n),at(last,n))<.02,`${n} back where it started`);
+ const ph=built.strikes[0].phases;
+ assert.equal(built.strikes[0].loadout.weaponType,'bastard');
+ assert.ok(ph.windup<ph.top&&ph.top<ph.blow&&ph.blow<ph.followThrough,JSON.stringify(ph));
+ assert.ok(Math.abs(ph.blow-ph.windup-1.45)<.02,'one blow, from the bind to the cut behind his blade: '+JSON.stringify(ph));
+});
+
+test('Mutieren: a cut into the bind, the hands rise with the blade on his, a step, the thrust from above down to the low opening, and back to the guard',async()=>{
+ const {src,c,at,dir,fr,dist,deg,built,last}=await storyboardClip('mutieren');
+ const [fx,fz]=c.forward;
+ assert.match(src.source.note+JSON.stringify(src.source),/Feder & Pell|federandpell|feder-pell/i);
+ assert.ok(dir(0)[1]>.5,'vom Tag: the blade up '+dir(0));
+ assert.ok(dist(at(0,'ankleR'),at(fr(1.02),'ankleR'))>1,'the right foot steps into the bind');
+ // over the head, the point down; the left foot has stepped and both stand through the thrust
+ const t=fr(2.07);
+ assert.ok(at(t,'wristR')[1]>at(t,'head')[1]&&at(t,'wristL')[1]>at(t,'head')[1],'hands over the head');
+ assert.ok(dist(at(fr(1.26),'ankleL'),at(fr(1.74),'ankleL'))>.3,'the left foot steps in');
+ assert.ok(dist(at(fr(1.74),'ankleL'),at(t,'ankleL'))<.05&&dist(at(fr(1.74),'ankleR'),at(t,'ankleR'))<.05,'the feet stand through the thrust');
+ const d=dir(t);
+ assert.ok(d[1]<-.45&&d[0]*fx+d[2]*fz>.6,'the thrust goes forward and down '+d);
+ // back to the guard: the feet where they stood, the hands and pelvis within the 3 cm the solver leaves
+ assert.ok(deg(dir(0),dir(last))<8,'back to the blade line');
+ for(const n of ['ankleL','ankleR'])assert.ok(dist(at(0,n),at(last,n))<.01,`${n} back where it stood`);
+ for(const n of ['wristR','wristL','pelvis'])assert.ok(dist(at(0,n),at(last,n))<.04,`${n} back near the guard`);
+ const ph=built.strikes[0].phases;
+ assert.equal(built.strikes[0].loadout.weaponType,'bastard');
+ assert.ok(ph.windup<ph.top&&ph.top<ph.blow&&ph.blow<ph.followThrough,JSON.stringify(ph));
+});
