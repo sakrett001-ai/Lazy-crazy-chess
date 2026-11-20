@@ -494,3 +494,31 @@ test('Wind, stab: a cut into the bind, the blade wound flat over the head, a ste
  assert.ok(ph.windup<ph.top&&ph.top<ph.blow&&ph.blow<ph.followThrough,JSON.stringify(ph));
  assert.ok(Math.abs(ph.blow-ph.windup-1.44)<.02,'one blow, from the bind to the end of the thrust: '+JSON.stringify(ph));
 });
+
+test('Oben abgenommen: a cut into the bind, the left foot steps on as the blade is taken up over the head, the blow from above on the other side, the right foot follows, and back to the guard',async()=>{
+ const {src,c,at,dir,fr,dist,deg,built,last}=await storyboardClip('oben-abgenommen');
+ const [fx,fz]=c.forward;
+ assert.match(src.source.note+JSON.stringify(src.source),/Feder & Pell|federandpell|feder-pell/i);
+ assert.ok(dir(0)[1]>.3,'vom Tag: the blade up '+dir(0));
+ // the bind: the blade goes forward along the line
+ const b=dir(fr(1.02));
+ assert.ok(b[0]*fx+b[2]*fz>.85,'the cut comes forward into the bind '+b);
+ // the right foot has stepped into the bind; its toe stays planted while the heel turns under the taking-up
+ assert.ok(dist(at(0,'ankleR'),at(fr(1.02),'ankleR'))>.15,'the right foot steps into the bind');
+ assert.ok(dist(at(fr(1.02),'toeR'),at(fr(1.62),'toeR'))<.01,'the right toe stays planted');
+ // the left foot steps on while the blade is taken up over the head
+ assert.ok(dist(at(fr(1.26),'ankleL'),at(fr(1.62),'ankleL'))>.4,'the left foot steps on');
+ assert.ok(dir(fr(1.62))[1]>.7,'the blade over the head '+dir(fr(1.62)));
+ // the blow from above lands forward on the left foot; the right foot follows
+ assert.ok(dist(at(fr(1.62),'ankleL'),at(fr(2.22),'ankleL'))<.08,'the left foot stands through the blow');
+ assert.ok(dist(at(fr(1.62),'ankleR'),at(fr(1.98),'ankleR'))>.3,'the right foot follows');
+ const d=dir(fr(2.04));
+ assert.ok(d[0]*fx+d[2]*fz>.8,'the blow goes forward '+d);
+ // and back to the guard where it started
+ assert.ok(deg(dir(0),dir(last))<5,'back to the blade line');
+ for(const n of ['wristR','wristL','ankleL','ankleR','pelvis'])assert.ok(dist(at(0,n),at(last,n))<.02,`${n} back where it started`);
+ const ph=built.strikes[0].phases;
+ assert.equal(built.strikes[0].loadout.weaponType,'bastard');
+ assert.ok(ph.windup<ph.top&&ph.top<ph.blow&&ph.blow<ph.followThrough,JSON.stringify(ph));
+ assert.ok(Math.abs(ph.blow-ph.windup-1.02)<.02,'one blow, from the bind to the blow from above: '+JSON.stringify(ph));
+});
